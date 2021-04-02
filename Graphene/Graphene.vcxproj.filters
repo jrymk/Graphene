@@ -26,6 +26,12 @@
     <ClInclude Include="Graphene.hpp">
       <Filter>來源檔案</Filter>
     </ClInclude>
+    <ClInclude Include="Themes.hpp">
+      <Filter>來源檔案</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderEngine.hpp">
+      <Filter>來源檔案</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Font Include="..\x64\Release\Manrope-Medium.ttf">

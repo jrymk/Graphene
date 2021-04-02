@@ -150,6 +150,8 @@
   <ItemGroup>
     <ClInclude Include="ExceptionHandler.hpp" />
     <ClInclude Include="Graphene.hpp" />
+    <ClInclude Include="RenderEngine.hpp" />
+    <ClInclude Include="Themes.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="..\x64\Release\consola.ttf" />
