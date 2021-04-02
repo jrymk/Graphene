@@ -147,6 +147,14 @@
   <ItemGroup>
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ExceptionHandler.hpp" />
+    <ClInclude Include="Graphene.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="..\x64\Release\consola.ttf" />
+    <Font Include="..\x64\Release\Manrope-Medium.ttf" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

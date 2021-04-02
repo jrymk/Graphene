@@ -19,4 +19,20 @@
       <Filter>來源檔案</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ExceptionHandler.hpp">
+      <Filter>來源檔案</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphene.hpp">
+      <Filter>來源檔案</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="..\x64\Release\Manrope-Medium.ttf">
+      <Filter>資源檔</Filter>
+    </Font>
+    <Font Include="..\x64\Release\consola.ttf">
+      <Filter>資源檔</Filter>
+    </Font>
+  </ItemGroup>
 </Project>
