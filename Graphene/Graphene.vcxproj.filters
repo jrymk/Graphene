@@ -29,7 +29,7 @@
     <ClInclude Include="Themes.hpp">
       <Filter>來源檔案</Filter>
     </ClInclude>
-    <ClInclude Include="RenderEngine.hpp">
+    <ClInclude Include="Renderer.hpp">
       <Filter>來源檔案</Filter>
     </ClInclude>
   </ItemGroup>

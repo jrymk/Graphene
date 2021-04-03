@@ -150,7 +150,7 @@
   <ItemGroup>
     <ClInclude Include="ExceptionHandler.hpp" />
     <ClInclude Include="Graphene.hpp" />
-    <ClInclude Include="RenderEngine.hpp" />
+    <ClInclude Include="Renderer.hpp" />
     <ClInclude Include="Themes.hpp" />
   </ItemGroup>
   <ItemGroup>

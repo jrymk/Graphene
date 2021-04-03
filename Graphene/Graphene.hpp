@@ -96,13 +96,13 @@ public:
 			if (coord.y < 0 || coord.y > 1)
 				eh->warn("normalized coord y value is not in range 0.0 to 1.0", __LINE__);
 
-			int width = renderTexture->getSize().x;
-			int height = renderTexture->getSize().y;
-			int margin = 80;
-			int mapSize = min(width - margin * 2, height - margin * 2);
+			double width = renderTexture->getSize().x;
+			double height = renderTexture->getSize().y;
+			double margin = 80;
+			double mapSize = min(width - margin * 2, height - margin * 2);
 			//eh->info("render texture size: " + to_string(width) + ", " + to_string(height), __LINE__);
 			//eh->flushExceptionsToIOStream();
-			return Vector2f(width / 2 - mapSize / 2 + coord.x * mapSize, height / 2 - mapSize / 2 + coord.y * mapSize);
+			return Vector2f((float)width / 2 - mapSize / 2 + coord.x * mapSize, (float)height / 2 - mapSize / 2 + coord.y * mapSize);
 		}
 
 		NormCoord coordMapping(Vector2f coord) {
@@ -136,9 +136,9 @@ public:
 			rectShape->setOrigin(Vector2f(diagonalDistance / 2, width / 2));
 
 			if (acos(delta.x / diagonalDistance) <= PI / 2)
-				rectShape->setRotation(asin(delta.y / diagonalDistance) / PI * 180);
+				rectShape->setRotation(asin(delta.y / diagonalDistance) / PI * 180.0);
 			else
-				rectShape->setRotation(180 - asin(delta.y / diagonalDistance) / PI * 180);
+				rectShape->setRotation(180.0 - asin(delta.y / diagonalDistance) / PI * 180.0);
 
 			rectShape->setPosition(pointA.x + delta.x / 2, pointA.y + delta.y / 2);
 		}
@@ -188,16 +188,16 @@ public:
 			text.setString("(" + to_string(Mouse::getPosition(*graphene->window).x) + ", " + to_string(Mouse::getPosition(*graphene->window).y) + ")");
 			text.setCharacterSize(12);
 			text.setFillColor(Color(50, 50, 50));
-			text.setOrigin(Vector2f(text.getGlobalBounds().left, 12));
+			text.setOrigin(Vector2f(text.getGlobalBounds().left, 12.0));
 			//text.setPosition(Vector2f(Mouse::getPosition(*graphene->window).x, Mouse::getPosition(*graphene->window).y - 22));
-			text.setPosition(Vector2f(10, graphene->window->getSize().y - 8));
+			text.setPosition(Vector2f(10, graphene->window->getSize().y - 8.0));
 			renderTexture->draw(text);
 
 			text.setString("(" + to_string(min(max(coordMapping(Mouse::getPosition(*graphene->window)).x, 0.0), 1.0)) + ", " + to_string(min(max(coordMapping(Mouse::getPosition(*graphene->window)).y, 0.0), 1.0)) + ")");
 			text.setFillColor(Color(255, 0, 0));
-			text.setOrigin(Vector2f(text.getGlobalBounds().left, 12));
+			text.setOrigin(Vector2f(text.getGlobalBounds().left, 12.0));
 			//text.setPosition(Vector2f(Mouse::getPosition(*graphene->window).x, Mouse::getPosition(*graphene->window).y - 6));
-			text.setPosition(Vector2f(100, graphene->window->getSize().y - 8));
+			text.setPosition(Vector2f(100, graphene->window->getSize().y - 8.0));
 			renderTexture->draw(text);
 
 		}

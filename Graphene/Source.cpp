@@ -5,6 +5,7 @@
 
 #include "Graphene.hpp"
 #include "ExceptionHandler.hpp"
+#include "Renderer.hpp"
 
 using namespace std;
 using namespace sf;
@@ -35,7 +36,7 @@ int main() {
 			if (event.type == Event::Closed)
 				window.close();
 			if (event.type == Event::Resized) {
-				window.setView(View(FloatRect(0, 0, event.size.width, event.size.height)));
+				window.setView(View(FloatRect(0.0, 0.0, (float)event.size.width, (float)event.size.height)));
 			}
 
 		}
