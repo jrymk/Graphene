@@ -14,112 +14,63 @@ public:
 
 	struct Exception {
 		Level level = Level::FATAL;
-		string function = "NULL";
 		string message = "NULL";
+		string file = "NULL";
 		int line = -1;
 	};
 
 	queue<Exception*> exceptionBuffer;
 
-	void throwException(string _message, Level _level, int _line) {
+	void throwException(string _message, Level _level, string _file, int _line) {
 		Exception* newException = new Exception;
 		newException->message = _message;
 		newException->level = _level;
+		newException->file = _file;
 		newException->line = _line;
 		exceptionBuffer.push(newException);
 	}
 
-	void throwException(string _function, string _message, Level _level, int _line) {
-		Exception* newException = new Exception;
-		newException->function = _function;
-		newException->message = _message;
-		newException->level = _level;
-		newException->line = _line;
-		exceptionBuffer.push(newException);
-	}
-
-	void info(string _message, int _line) {
+	void info(string _message, string _file, int _line) {
 		Exception* newException = new Exception;
 		newException->message = _message;
 		newException->level = Level::INFO;
+		newException->file = _file;
 		newException->line = _line;
 		exceptionBuffer.push(newException);
 	}
 
-	void info(string _function, string _message, int _line) {
-		Exception* newException = new Exception;
-		newException->function = _function;
-		newException->function = _function;
-		newException->message = _message;
-		newException->level = Level::INFO;
-		newException->line = _line;
-		exceptionBuffer.push(newException);
-	}
-
-	void ok(string _message, int _line) {
+	void ok(string _message, string _file, int _line) {
 		Exception* newException = new Exception;
 		newException->message = _message;
 		newException->level = Level::OK;
+		newException->file = _file;
 		newException->line = _line;
 		exceptionBuffer.push(newException);
 	}
 
-	void ok(string _function, string _message, int _line) {
-		Exception* newException = new Exception;
-		newException->function = _function;
-		newException->message = _message;
-		newException->level = Level::OK;
-		newException->line = _line;
-		exceptionBuffer.push(newException);
-	}
-
-	void warn(string _message, int _line) {
+	void warn(string _message, string _file, int _line) {
 		Exception* newException = new Exception;
 		newException->message = _message;
 		newException->level = Level::WARN;
+		newException->file = _file;
 		newException->line = _line;
 		exceptionBuffer.push(newException);
 	}
 
-	void warn(string _function, string _message, int _line) {
-		Exception* newException = new Exception;
-		newException->function = _function;
-		newException->message = _message;
-		newException->level = Level::WARN;
-		newException->line = _line;
-		exceptionBuffer.push(newException);
-	}
-
-	void err(string _message, int _line) {
+	void err(string _message, string _file, int _line) {
 		Exception* newException = new Exception;
 		newException->message = _message;
 		newException->level = Level::ERR;
+		newException->file = _file;
 		newException->line = _line;
 		exceptionBuffer.push(newException);
 	}
 
-	void err(string _function, string _message, int _line) {
-		Exception* newException = new Exception;
-		newException->function = _function;
-		newException->message = _message;
-		newException->level = Level::ERR;
-		newException->line = _line;
-		exceptionBuffer.push(newException);
-	}
-
-	void fatal(string _message, int _line) {
+	void fatal(string _message, string _file, int _line) {
 		Exception* newException = new Exception;
 		newException->message = _message;
 		newException->level = Level::FATAL;
-		newException->line = _line;
-		exceptionBuffer.push(newException);
-	}
-
-	void fatal(string _function, string _message, int _line) {
-		Exception* newException = new Exception;
-		newException->function = _function;
-		newException->message = _message;
-		newException->level = Level::FATAL;
+		newException->file = _file;
 		newException->line = _line;
 		exceptionBuffer.push(newException);
 	}
@@ -129,13 +80,23 @@ public:
 		if (!exceptionBuffer.empty()) {
 			exception->message = exceptionBuffer.front()->message;
 			exception->level = exceptionBuffer.front()->level;
+			exception->file = exceptionBuffer.front()->file;
 			exception->line = exceptionBuffer.front()->line;
-			exception->function = exceptionBuffer.front()->function;
 			delete exceptionBuffer.front();
 			exceptionBuffer.pop();
 			return true;
 		}
 		else return false;
+	}
+
+	string fileName(string fullPath) {
+		string temp = "";
+		for (int i = 0; i < fullPath.size(); i++) {
+			temp.push_back(fullPath[i]);
+			if (fullPath[i] == '\\')
+				temp = "";
+		}
+		return temp;
 	}
 
 	void flushExceptionsToIOStream() {
@@ -169,9 +130,9 @@ public:
 			SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 			std::cout << "]";
 			SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-			std::cout << " " << std::setw(3) << exception->line << " | ";
-			if (exception->function != "NULL")
-				std::cout << exception->function << " | ";
+			string file = exception->file;
+			std::cout << " " << std::setw(20) << fileName(exception->file) << " | ";
+			std::cout << " " << std::setw(4) << exception->line << " | ";
 			SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 			std::cout << exception->message << "\n";
 		}

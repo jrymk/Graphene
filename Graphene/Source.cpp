@@ -10,12 +10,11 @@
 
 using namespace std;
 using namespace sf;
-
-
+\
 int main() {
 	ExceptionHandler* eh = new ExceptionHandler();
 
-	RenderWindow window(sf::VideoMode(800, 600), "Graphene");
+	RenderWindow window(sf::VideoMode(800, 600), L"Graphene £\");
 	Renderer renderer(&window, eh);
 	
 	Resources* resources = new Resources(eh);
@@ -23,14 +22,22 @@ int main() {
 
 	Graphene* graphene = new Graphene(&window, eh);
 
-	Renderer::UIElement layout(renderer.windowElement, eh);
-	layout.x->set(0.9, 10);
-	layout.y->set(0.5, 0);
-	layout.w->set(0.8, 0);
-	layout.h->set(0, 100);
-	layout.originX->set(1.0, 0);
-	layout.originY->set(0, 0);
-
+	Renderer::UIElement* layout = new Renderer::UIElement(renderer.windowElement, eh);
+	layout->x->set(0.9, 10);
+	layout->y->set(0.5, 0);
+	layout->w->set(0.8, 0);
+	layout->h->set(0.0, 100);
+	layout->originX->set(1.0, 0);
+	layout->originY->set(0, 0);
+	
+	Renderer::UIElement* squareDemo = new Renderer::UIElement(renderer.windowElement, eh);
+	squareDemo->x->set(0.4, 10);
+	squareDemo->y->set(0.1, 0);
+	squareDemo->w->set(0.5, 0);
+	squareDemo->sizingMode = Renderer::UIElement::SizingMode::RELATIVE_TO_W;
+	squareDemo->h->set(1.0, 0);
+	squareDemo->originX->set(0, 0);
+	squareDemo->originY->set(0, 0);
 
 	/*int v, e;
 	cin >> v >> e;
@@ -46,7 +53,7 @@ int main() {
 
 	Renderer::SimpleText text = Renderer::SimpleText(eh);
 	text.setText("Lorem ipsum dolor sit amet, consectetur adipiscing elit.", resources->fontDefault, 20, resources->colorText);
-	Renderer::UIElement textElement(text.getTexture(), &layout, eh);
+	Renderer::UIElement textElement(text.getTexture(), layout, eh);
 
 	while (window.isOpen()) {
 		Event event;

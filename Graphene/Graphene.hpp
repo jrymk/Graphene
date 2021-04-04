@@ -62,7 +62,7 @@ public:
 	vector<Vertex> verticies;
 	vector<Edge> edges;
 
-	// Handles all the graph rendering, scales automatically depending on the textTexture assigned.
+	// Handles all the graph rendering, scales automatically depending on the texture assigned.
 	class Renderer {
 	public:
 		Graphene* graphene;
@@ -76,13 +76,13 @@ public:
 			eh = _eh;
 			graphene = _graphene;
 			renderTexture = nullptr;
-			eh->info("renderer rendertexture is not defined, use Graphene::Renderer::assignRenderTexture(sf::RenderTexture) to assign a texture for rendering", __LINE__);
-			eh->info("the current rendering system is temporary", __LINE__);
+			eh->info("renderer rendertexture is not defined, use Graphene::Renderer::assignRenderTexture(sf::RenderTexture) to assign a texture for rendering", __FILE__, __LINE__);
+			eh->info("the current rendering system is temporary", __FILE__, __LINE__);
 
 			if (!font.loadFromFile(".\\Manrope-Medium.ttf"))
-				eh->err("font Manrope-Medium.ttf failed to load", __LINE__);
+				eh->err("font Manrope-Medium.ttf failed to load", __FILE__, __LINE__);
 			if (!fontMono.loadFromFile(".\\consola.ttf"))
-				eh->err("font consola.ttf failed to load", __LINE__);
+				eh->err("font consola.ttf failed to load", __FILE__, __LINE__);
 
 		}
 
@@ -92,15 +92,15 @@ public:
 
 		Vector2f coordMapping(NormCoord coord) {
 			if (coord.x < 0 || coord.x > 1)
-				eh->warn("normalized coord x value is not in range 0.0 to 1.0", __LINE__);
+				eh->warn("normalized coord x value is not in range 0.0 to 1.0", __FILE__, __LINE__);
 			if (coord.y < 0 || coord.y > 1)
-				eh->warn("normalized coord y value is not in range 0.0 to 1.0", __LINE__);
+				eh->warn("normalized coord y value is not in range 0.0 to 1.0", __FILE__, __LINE__);
 
 			double width = renderTexture->getSize().x;
 			double height = renderTexture->getSize().y;
 			double margin = 80;
 			double mapSize = min(width - margin * 2, height - margin * 2);
-			//eh->info("render textTexture size: " + to_string(width) + ", " + to_string(height), __LINE__);
+			//eh->info("render texture size: " + to_string(width) + ", " + to_string(height), __FILE__, __LINE__);
 			//eh->flushExceptionsToIOStream();
 			return Vector2f((float)width / 2 - mapSize / 2 + coord.x * mapSize, (float)height / 2 - mapSize / 2 + coord.y * mapSize);
 		}
@@ -241,7 +241,7 @@ public:
 		graph = new Graph(this, _eh);
 		window = _window;
 		eh = _eh;
-		eh->info("new graphene object declared", __LINE__);
+		eh->info("new graphene object declared", __FILE__, __LINE__);
 		eh->flushExceptionsToIOStream();
 	}
 

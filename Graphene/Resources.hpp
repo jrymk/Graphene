@@ -26,7 +26,7 @@ public:
 
 
 	void loadFont() {
-		if (!fontDefault->loadFromFile(".\\Manrope-Medium.ttf")) eh->err("resource Manrope-Medium.ttf failed to load", __LINE__);
-		if (!fontMono->loadFromFile(".\\consola.ttf")) eh->err("resource consola.ttf failed to load", __LINE__);
+		if (!fontDefault->loadFromFile(".\\Manrope-Medium.ttf")) eh->err("resource Manrope-Medium.ttf failed to load", __FILE__, __LINE__);
+		if (!fontMono->loadFromFile(".\\consola.ttf")) eh->err("resource consola.ttf failed to load", __FILE__, __LINE__);
 	}
 };
