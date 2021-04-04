@@ -6,18 +6,33 @@
 #include "Graphene.hpp"
 #include "ExceptionHandler.hpp"
 #include "Renderer.hpp"
+#include "Resources.hpp"
 
 using namespace std;
 using namespace sf;
 
-ExceptionHandler* eh = new ExceptionHandler();
 
 int main() {
+	ExceptionHandler* eh = new ExceptionHandler();
+
 	RenderWindow window(sf::VideoMode(800, 600), "Graphene");
+	Renderer renderer(&window, eh);
+	
+	Resources* resources = new Resources(eh);
+	resources->loadFont();
 
 	Graphene* graphene = new Graphene(&window, eh);
 
-	int v, e;
+	Renderer::UIElement layout(renderer.windowElement, eh);
+	layout.x->set(0.9, 10);
+	layout.y->set(0.5, 0);
+	layout.w->set(0.8, 0);
+	layout.h->set(0, 100);
+	layout.originX->set(1.0, 0);
+	layout.originY->set(0, 0);
+
+
+	/*int v, e;
 	cin >> v >> e;
 	for (int i = 0; i < v; i++) {
 		graphene->verticies.push_back(Graphene::Vertex());
@@ -27,8 +42,11 @@ int main() {
 		int a, b;
 		cin >> a >> b;
 		graphene->edges.push_back(Graphene::Edge(&graphene->verticies[a], &graphene->verticies[b], false));
-	}
+	}*/
 
+	Renderer::SimpleText text = Renderer::SimpleText(eh);
+	text.setText("Lorem ipsum dolor sit amet, consectetur adipiscing elit.", resources->fontDefault, 20, resources->colorText);
+	Renderer::UIElement textElement(text.getTexture(), &layout, eh);
 
 	while (window.isOpen()) {
 		Event event;
@@ -41,37 +59,8 @@ int main() {
 
 		}
 
-		RenderTexture* graphTexture = new RenderTexture();
-		if (!graphTexture->create(window.getSize().x, window.getSize().y/*, ContextSettings(0, 0, 2, 1, 1, 0, false)*/))
-			eh->err("graph texture create failed", __LINE__);
-		graphTexture->clear(Color(240, 240, 240, 255));
-		graphTexture->setSmooth(true);
-		
-		//eh->info("(" + to_string(Mouse::getPosition(window).x) + ", " + to_string(Mouse::getPosition(window).y) + ")", __LINE__);
 
-		
-		window.clear(Color(0, 0, 0, 255));
-
-		//window.draw(Renderer
-
-		// some basic testing
-		graphene->renderer->assignRenderTexture(graphTexture);
-
-
-		graphene->renderer->render();
-
-		graphTexture->display();
-
-		sf::Sprite sprite1;
-		sprite1.setTexture(graphTexture->getTexture());
-
-
-
-		window.draw(sprite1);
-
-		window.display();
-
-		delete graphTexture;
+		renderer.render();
 
 		eh->flushExceptionsToIOStream();
 

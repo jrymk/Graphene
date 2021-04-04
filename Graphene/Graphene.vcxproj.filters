@@ -26,10 +26,10 @@
     <ClInclude Include="Graphene.hpp">
       <Filter>來源檔案</Filter>
     </ClInclude>
-    <ClInclude Include="Themes.hpp">
+    <ClInclude Include="Renderer.hpp">
       <Filter>來源檔案</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer.hpp">
+    <ClInclude Include="Resources.hpp">
       <Filter>來源檔案</Filter>
     </ClInclude>
   </ItemGroup>

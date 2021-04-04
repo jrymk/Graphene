@@ -62,7 +62,7 @@ public:
 	vector<Vertex> verticies;
 	vector<Edge> edges;
 
-	// Handles all the graph rendering, scales automatically depending on the texture assigned.
+	// Handles all the graph rendering, scales automatically depending on the textTexture assigned.
 	class Renderer {
 	public:
 		Graphene* graphene;
@@ -100,7 +100,7 @@ public:
 			double height = renderTexture->getSize().y;
 			double margin = 80;
 			double mapSize = min(width - margin * 2, height - margin * 2);
-			//eh->info("render texture size: " + to_string(width) + ", " + to_string(height), __LINE__);
+			//eh->info("render textTexture size: " + to_string(width) + ", " + to_string(height), __LINE__);
 			//eh->flushExceptionsToIOStream();
 			return Vector2f((float)width / 2 - mapSize / 2 + coord.x * mapSize, (float)height / 2 - mapSize / 2 + coord.y * mapSize);
 		}
