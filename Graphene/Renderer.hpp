@@ -6,6 +6,7 @@
 #include "ExceptionHandler.hpp"
 #include "Resources.hpp"
 #include <random>
+#include <algorithm>
 
 using namespace std;
 using namespace sf;
@@ -67,8 +68,112 @@ public:
 		ExceptionHandler eh;
 
 	public:
+		struct Body {
+		public:
+			enum class Type {
+				NONE,
+				SIMPLE_TEXT,
+
+			};
+
+		private:
+			Resources resources;
+			Type type = Type::NONE;
+			Color* backgroundColor = new Color(0, 0, 0, 0);
+
+			// none
+
+
+			// simple text
+			Font* simpleTextFont = nullptr;
+			Text simpleText;
+			string simpleTextString;
+			unsigned int simpleTextSize = 0;
+			Color* simpleTextColor = nullptr;
+			AdaptiveVector simpleTextAlignmentX;
+			AdaptiveVector simpleTextAlignmentY;
+
+
+
+		public:
+			void setBackgroundColor(Color* _color) {
+				backgroundColor = _color;
+			}
+
+			void setBackgroundColor(Color _color) {
+				backgroundColor = &_color;
+			}
+
+			void setNone() {
+				type = Type::NONE;
+			}
+
+			void setSimpleText(string _str, Font* _font, unsigned int _size, Color* _color, AdaptiveVector _alignmentX, AdaptiveVector _alignmentY) {
+				type = Type::SIMPLE_TEXT;
+				simpleTextString = _str;
+				simpleTextFont = _font;
+				simpleTextSize = _size;
+				simpleTextColor = _color;
+				simpleTextAlignmentX = _alignmentX;
+				simpleTextAlignmentY = _alignmentY;
+			}
+
+
+
+
+			void render(RenderTexture* texture) {
+				RectangleShape rectShape;
+				if (resources.showDebugBoundaries) {
+					rectShape.setOutlineColor(*resources.colorUIBoundsDebug);
+					rectShape.setOutlineThickness(1);
+					rectShape.setSize(Vector2f(texture->getSize().x - 2, texture->getSize().y - 2));
+					rectShape.setPosition(Vector2f(1, 1));
+				}
+				else {
+					rectShape.setSize(Vector2f(texture->getSize().x, texture->getSize().y));
+					rectShape.setPosition(Vector2f(0, 0));
+				}
+				rectShape.setFillColor(*(this->backgroundColor));
+				texture->draw(rectShape);
+
+				switch (this->type) {
+				case Type::NONE:
+					break;
+
+				case Type::SIMPLE_TEXT:
+					simpleText.setFont(*simpleTextFont);
+					simpleText.setString(simpleTextString);
+					simpleText.setCharacterSize(simpleTextSize);
+					simpleText.setFillColor(*simpleTextColor);
+					simpleText.setPosition(Vector2f(0, 0));
+					float tempBoundsLeft = simpleText.getGlobalBounds().left;
+					simpleText.setPosition(
+						this->simpleTextAlignmentX.evaluate(texture->getSize().x) - simpleText.getGlobalBounds().left
+						- this->simpleTextAlignmentX.evaluate(simpleText.getGlobalBounds().width),
+						this->simpleTextAlignmentY.evaluate(texture->getSize().y) - this->simpleTextAlignmentY.evaluate(simpleText.getCharacterSize() * 2)
+					);
+					texture->draw(simpleText);
+
+					if (resources.showDebugBoundaries) {
+						RectangleShape rectShape;
+						rectShape.setFillColor(*resources.colorTransparent);
+						rectShape.setOutlineColor(*resources.colorUIBoundsDebugSub);
+						rectShape.setOutlineThickness(1);
+						rectShape.setSize(Vector2f(simpleText.getGlobalBounds().width - 2, simpleText.getCharacterSize() * 2 - 2));
+						rectShape.setPosition(Vector2f(simpleText.getPosition().x + tempBoundsLeft + 1, simpleText.getPosition().y + 1));
+						texture->draw(rectShape);
+					}
+					break;
+
+				}
+
+				texture->display();
+			}
+
+		};
+
 		UIElement* parent;
-		set<UIElement*> children;
+		vector<UIElement*> children;
 
 		AdaptiveVector x;
 		AdaptiveVector y;
@@ -80,36 +185,25 @@ public:
 		enum class SizingMode { PER_AXIS, RELATIVE_TO_W, RELATIVE_TO_H };
 		SizingMode sizingMode;
 
-		Color backgroundColor;
-
-		bool useOverrideTexture = false;
-		RenderTexture* overrideTexture = nullptr;
-		AdaptiveVector alignmentX;
-		AdaptiveVector alignmentY;
+		Body body;
 
 		UIElement(UIElement* _parent) {
 			parent = _parent;
 			if (_parent != nullptr)
-				parent->children.insert(this);
+				parent->children.push_back(this);
 			x.set(0, 0);
 			y.set(0, 0);
 			w.set(1, 0);
 			h.set(1, 0);
 			originX.set(0, 0);
 			originY.set(0, 0);
-			alignmentX.set(0.5, 0);
 			sizingMode = SizingMode::PER_AXIS;
-
-			alignmentX.set(0.5, 0);
-			alignmentY.set(0.5, 0);
-
-			backgroundColor = Color(0, 0, 0, 0);
 		}
 
 		UIElement(UIElement* _parent, AdaptiveVector _x, AdaptiveVector _y, AdaptiveVector _w, AdaptiveVector _h, AdaptiveVector _originX, AdaptiveVector _originY) {
 			parent = _parent;
 			if (_parent != nullptr)
-				parent->children.insert(this);
+				parent->children.push_back(this);
 			x = _x;
 			y = _y;
 			w = _w;
@@ -117,72 +211,6 @@ public:
 			originX = _originX;
 			originY = _originY;
 			sizingMode = SizingMode::PER_AXIS;
-
-			alignmentX.set(0.5, 0);
-			alignmentY.set(0.5, 0);
-
-			backgroundColor = Color(0, 0, 0, 0);
-		}
-
-		UIElement(RenderTexture* _overrideTexture, UIElement* _parent) {
-			parent = _parent;
-			if (_parent != nullptr)
-				parent->children.insert(this);
-			x.set(0.0, 0);
-			y.set(0.0, 0);
-			w.set(1.0, 0);
-			h.set(1.0, 0);
-			originX.set(0.0, 0);
-			originY.set(0.0, 0);
-			sizingMode = SizingMode::PER_AXIS;
-
-			useOverrideTexture = true;
-			overrideTexture = _overrideTexture;
-			alignmentX.set(0.5, 0);
-			alignmentY.set(0.5, 0);
-
-			backgroundColor = Color(0, 0, 0, 0);
-		}
-
-		UIElement(RenderTexture* _overrideTexture, UIElement* _parent, AdaptiveVector _alignmentX, AdaptiveVector _alignmentY) {
-			parent = _parent;
-			if (_parent != nullptr)
-				parent->children.insert(this);
-			x.set(0.0, 0);
-			y.set(0.0, 0);
-			w.set(1.0, 0);
-			h.set(1.0, 0);
-			originX.set(0, 0);
-			originY.set(0, 0);
-			sizingMode = SizingMode::PER_AXIS;
-
-			useOverrideTexture = true;
-			overrideTexture = _overrideTexture;
-			alignmentX = _alignmentX;
-			alignmentY = _alignmentY;
-
-			backgroundColor = Color(0, 0, 0, 0);
-		}
-
-		UIElement(RenderTexture* _overrideTexture, UIElement* _parent, 
-			AdaptiveVector _x, AdaptiveVector _y, AdaptiveVector _w, AdaptiveVector _h, AdaptiveVector _originX, AdaptiveVector _originY, AdaptiveVector _alignmentX, AdaptiveVector _alignmentY) {
-			parent = _parent;
-			if (_parent != nullptr)
-				parent->children.insert(this);
-			x = _x;
-			y = _y;
-			w = _w;
-			h = _h;
-			originX = _originX;
-			originY = _originY;
-			sizingMode = SizingMode::PER_AXIS;
-
-			useOverrideTexture = true;
-			overrideTexture = _overrideTexture;
-			alignmentX = _alignmentX;
-			alignmentY = _alignmentY;
-
-			backgroundColor = Color(0, 0, 0, 0);
 		}
 
 		~UIElement() {
@@ -196,7 +224,7 @@ public:
 				eh.warn("linking parent container to self, ignored, use delete instead", __FILE__, __LINE__);
 				return;
 			}
-			this->parent->children.erase(this);
+			this->parent->children.erase(remove(this->parent->children.begin(), this->parent->children.end(), this), this->parent->children.end());
 			this->parent = this;
 		}
 
@@ -205,7 +233,7 @@ public:
 				eh.warn("root container can not be unlinked", __FILE__, __LINE__);
 				return;
 			}
-			this->parent->children.erase(this);
+			this->parent->children.erase(remove(this->parent->children.begin(), this->parent->children.end(), this), this->parent->children.end());
 			this->parent = this;
 		}
 
@@ -221,33 +249,10 @@ public:
 		// parent provides the render texture for "this" windowElement
 		void render(RenderTexture* thisTexture) {
 			thisTexture->clear(Color(0, 0, 0, 0));
-			RectangleShape rectShape;
-			rectShape.setOutlineColor(Color(255, 180, 0, 255));
-			rectShape.setOutlineThickness(1);
-			rectShape.setSize(Vector2f(thisTexture->getSize().x - 2, thisTexture->getSize().y - 2));
-			rectShape.setPosition(Vector2f(1, 1));
-			rectShape.setFillColor(this->backgroundColor);
-			thisTexture->draw(rectShape);
 
-			if (this->useOverrideTexture) {
-				Sprite overrideTextureSprite;
-				overrideTextureSprite.setTexture(overrideTexture->getTexture(), true);
-				overrideTextureSprite.setPosition(
-					this->alignmentX.evaluate(thisTexture->getSize().x) - this->alignmentX.evaluate(overrideTexture->getSize().x),
-					this->alignmentY.evaluate(thisTexture->getSize().y) - this->alignmentY.evaluate(overrideTexture->getSize().y)
-				);
-				thisTexture->draw(overrideTextureSprite);
+			this->body.render(thisTexture);
 
-				rectShape.setSize(Vector2f(overrideTexture->getSize().x - 2, overrideTexture->getSize().y - 2));
-				rectShape.setPosition(Vector2f(
-					this->alignmentX.evaluate(thisTexture->getSize().x) - this->alignmentX.evaluate(overrideTexture->getSize().x), 
-					this->alignmentY.evaluate(thisTexture->getSize().y) - this->alignmentY.evaluate(overrideTexture->getSize().y)
-				));
-				rectShape.setOutlineColor(Color(180, 255, 0, 255));
-				thisTexture->draw(rectShape);
-			}
-
-			for (set<UIElement*>::iterator child = this->children.begin(); child != this->children.end(); child++) {
+			for (vector<UIElement*>::iterator child = this->children.begin(); child != this->children.end(); child++) {
 				RenderTexture* childTexture = new RenderTexture();
 
 				unsigned int evaluatedW = (*child)->w.evaluate(thisTexture->getSize().x);

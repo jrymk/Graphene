@@ -22,17 +22,8 @@ int main() {
 	Renderer renderer(&window);
 	Graphene* graphene = new Graphene(&window);
 
-	renderer.windowElement->backgroundColor = Color(250, 250, 250);
+	renderer.windowElement->body.setBackgroundColor(resources.colorBackground);
 
-	Renderer::UIElement layout(renderer.windowElement);
-	layout.x.set(0.9, 10);
-	layout.y.set(0.5, 0);
-	layout.w.set(0.8, 0);
-	layout.h.set(0.0, 100);
-	layout.originX.set(1.0, 0);
-	layout.originY.set(0, 0);
-	layout.backgroundColor = Color(200, 200, 255);
-	
 	Renderer::UIElement squareDemo(renderer.windowElement);
 	squareDemo.x.set(0.4, 10);
 	squareDemo.y.set(0.1, 0);
@@ -41,7 +32,16 @@ int main() {
 	squareDemo.h.set(1.0, 0);
 	squareDemo.originX.set(0, 0);
 	squareDemo.originY.set(0, 0);
+	squareDemo.body.setBackgroundColor(resources.colorOldLace);
 
+	Renderer::UIElement layout(renderer.windowElement);
+	layout.x.set(0.9, 10);
+	layout.y.set(0.5, 0);
+	layout.w.set(0.8, 0);
+	layout.h.set(0.0, 100);
+	layout.originX.set(1.0, 0);
+	layout.originY.set(0, 0);
+	layout.body.setBackgroundColor(resources.colorAzure);
 
 	/*int v, e;
 	cin >> v >> e;
@@ -55,8 +55,14 @@ int main() {
 		graphene->edges.push_back(Graphene::Edge(&graphene->verticies[a], &graphene->verticies[b], false));
 	}*/
 
-	Renderer::SimpleText text("Lorem ipsum dolor sit amet, consectetur adipiscing elit.", resources.fontDefault, 20, resources.colorText);
-	Renderer::UIElement textElement(text.getTexture(), &layout, { 0.0, 0 }, { 1.0, 0 });
+	/*Renderer::SimpleText text("Lorem ipsum dolor sit amet, consectetur adipiscing elit.", resources.fontDefault, 20, resources.colorText);
+	Renderer::UIElement textElement(text.getTexture(), &layout, { 0.0, 0 }, { 1.0, 0 });*/
+
+	Renderer::UIElement textIndent(&layout, { 0.0, 10 }, { 0.0, 0 }, { 1.0, 0 }, { 1.0, 0 }, { 0.0, 0 }, { 0.0, 0 });
+
+	Renderer::UIElement textElement(&textIndent);
+	textElement.body.setSimpleText("Lorem ipsum dolor sit amet, consectetur adipiscing elit.", resources.fontDefault, 30, resources.colorText, { 0.0, 0 }, { 0.5, 0 });
+
 
 	while (window.isOpen()) {
 		Event event;
