@@ -9,7 +9,6 @@
 
 #include "ExceptionHandler.hpp"
 
-
 using namespace std;
 using namespace sf;
 
@@ -17,10 +16,10 @@ random_device rd;
 mt19937 gen(rd());
 uniform_real_distribution<> dis(0.0, 1.0);
 
-class Graphene {
+static class Graphene {
 public:
 	RenderWindow* window;
-	ExceptionHandler* eh;
+	ExceptionHandler eh;
 
 	struct NormCoord {
 		double x;
@@ -63,26 +62,25 @@ public:
 	vector<Edge> edges;
 
 	// Handles all the graph rendering, scales automatically depending on the texture assigned.
-	class Renderer {
+	/*class Renderer {
 	public:
 		Graphene* graphene;
 		RenderTexture* renderTexture;
 		sf::Font font;
 		sf::Font fontMono;
-		ExceptionHandler* eh;
+		ExceptionHandler eh;
 
 
-		Renderer(Graphene* _graphene, ExceptionHandler* _eh) {
-			eh = _eh;
+		Renderer(Graphene* _graphene) {
 			graphene = _graphene;
 			renderTexture = nullptr;
-			eh->info("renderer rendertexture is not defined, use Graphene::Renderer::assignRenderTexture(sf::RenderTexture) to assign a texture for rendering", __FILE__, __LINE__);
-			eh->info("the current rendering system is temporary", __FILE__, __LINE__);
+			eh.info("renderer rendertexture is not defined, use Graphene::Renderer::assignRenderTexture(sf::RenderTexture) to assign a texture for rendering", __FILE__, __LINE__);
+			eh.info("the current rendering system is temporary", __FILE__, __LINE__);
 
 			if (!font.loadFromFile(".\\Manrope-Medium.ttf"))
-				eh->err("font Manrope-Medium.ttf failed to load", __FILE__, __LINE__);
+				eh.err("font Manrope-Medium.ttf failed to load", __FILE__, __LINE__);
 			if (!fontMono.loadFromFile(".\\consola.ttf"))
-				eh->err("font consola.ttf failed to load", __FILE__, __LINE__);
+				eh.err("font consola.ttf failed to load", __FILE__, __LINE__);
 
 		}
 
@@ -92,16 +90,15 @@ public:
 
 		Vector2f coordMapping(NormCoord coord) {
 			if (coord.x < 0 || coord.x > 1)
-				eh->warn("normalized coord x value is not in range 0.0 to 1.0", __FILE__, __LINE__);
+				eh.warn("normalized coord x value is not in range 0.0 to 1.0", __FILE__, __LINE__);
 			if (coord.y < 0 || coord.y > 1)
-				eh->warn("normalized coord y value is not in range 0.0 to 1.0", __FILE__, __LINE__);
+				eh.warn("normalized coord y value is not in range 0.0 to 1.0", __FILE__, __LINE__);
 
 			double width = renderTexture->getSize().x;
 			double height = renderTexture->getSize().y;
 			double margin = 80;
 			double mapSize = min(width - margin * 2, height - margin * 2);
-			//eh->info("render texture size: " + to_string(width) + ", " + to_string(height), __FILE__, __LINE__);
-			//eh->flushExceptionsToIOStream();
+
 			return Vector2f((float)width / 2 - mapSize / 2 + coord.x * mapSize, (float)height / 2 - mapSize / 2 + coord.y * mapSize);
 		}
 
@@ -126,32 +123,30 @@ public:
 
 		// this is a crude function to transform a rectangle shape into a line
 		void lineShape(RectangleShape* rectShape, Vector2f pointA, Vector2f pointB, float width) {
-			rectShape->setRotation(0);
+			rectShape.setRotation(0);
 			Vector2f delta;
 			delta.x = pointB.x - pointA.x;
 			delta.y = pointB.y - pointA.y;
 			double diagonalDistance = sqrt(delta.x * delta.x + delta.y * delta.y);
 
-			rectShape->setSize(Vector2f(diagonalDistance, width));
-			rectShape->setOrigin(Vector2f(diagonalDistance / 2, width / 2));
+			rectShape.setSize(Vector2f(diagonalDistance, width));
+			rectShape.setOrigin(Vector2f(diagonalDistance / 2, width / 2));
 
 			if (acos(delta.x / diagonalDistance) <= PI / 2)
-				rectShape->setRotation(asin(delta.y / diagonalDistance) / PI * 180.0);
+				rectShape.setRotation(asin(delta.y / diagonalDistance) / PI * 180.0);
 			else
-				rectShape->setRotation(180.0 - asin(delta.y / diagonalDistance) / PI * 180.0);
+				rectShape.setRotation(180.0 - asin(delta.y / diagonalDistance) / PI * 180.0);
 
-			rectShape->setPosition(pointA.x + delta.x / 2, pointA.y + delta.y / 2);
+			rectShape.setPosition(pointA.x + delta.x / 2, pointA.y + delta.y / 2);
 		}
 
 		void render() {
 			float lineWidth = 5;
 
-			eh->flushExceptionsToIOStream();
-
 			for (vector<Edge>::iterator edge = graphene->edges.begin(); edge != graphene->edges.end(); edge++) {
 				RectangleShape rectShape;
 				rectShape.setFillColor(Color(120, 120, 120));
-				//eh->flushExceptionsToIOStream();
+				
 				Vector2f startingPoint = coordMapping(edge->startingVertex->coord);
 				Vector2f endingPoint = coordMapping(edge->endingVertex->coord);
 				lineShape(&rectShape, startingPoint, endingPoint, lineWidth);
@@ -202,17 +197,16 @@ public:
 
 		}
 
-	};
+	};*/
 
 	// Handles all the graph calculations
 	class Core {
 	public:
 		Graphene* graphene;
-		ExceptionHandler* eh;
+		ExceptionHandler eh;
 
-		Core(Graphene* _graphene, ExceptionHandler* _eh) {
+		Core(Graphene* _graphene) {
 			graphene = _graphene;
-			eh = _eh;
 		}
 
 	};
@@ -221,28 +215,26 @@ public:
 	class Graph {
 	public:
 		Graphene* graphene;
-		ExceptionHandler* eh;
+		ExceptionHandler eh;
 
-		Graph(Graphene* _graphene, ExceptionHandler* _eh) {
+		Graph(Graphene* _graphene) {
 			graphene = _graphene;
-			eh = _eh;
 		}
 	};
 
 
-	Renderer* renderer;
+	//Renderer* renderer;
 	Core* core;
 	Graph* graph;
 
 
-	Graphene(RenderWindow* _window, ExceptionHandler* _eh) {
-		renderer = new Renderer(this, _eh);
-		core = new Core(this, _eh);
-		graph = new Graph(this, _eh);
+	Graphene(RenderWindow* _window) {
+		//renderer = new Renderer(this);
+		core = new Core(this);
+		graph = new Graph(this);
 		window = _window;
-		eh = _eh;
-		eh->info("new graphene object declared", __FILE__, __LINE__);
-		eh->flushExceptionsToIOStream();
+		eh.info("new graphene object declared", __FILE__, __LINE__);
+		eh.flushExceptionsToIOStream();
 	}
 
 };

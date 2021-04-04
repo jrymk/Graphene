@@ -7,11 +7,9 @@
 using namespace std;
 
 // Handles exceptions thrown by functions, can draw on window instead of printing on terminal for better visuals.
-class ExceptionHandler {
+static class ExceptionHandler {
 public:
 	enum class Level { INFO, OK, WARN, ERR, FATAL };
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-
 	struct Exception {
 		Level level = Level::FATAL;
 		string message = "NULL";
@@ -19,15 +17,19 @@ public:
 		int line = -1;
 	};
 
-	queue<Exception*> exceptionBuffer;
+	deque<Exception*> exceptionBuffer;
 
+private:
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	
+public:
 	void throwException(string _message, Level _level, string _file, int _line) {
 		Exception* newException = new Exception;
 		newException->message = _message;
 		newException->level = _level;
 		newException->file = _file;
 		newException->line = _line;
-		exceptionBuffer.push(newException);
+		exceptionBuffer.push_back(newException);
 	}
 
 	void info(string _message, string _file, int _line) {
@@ -36,7 +38,7 @@ public:
 		newException->level = Level::INFO;
 		newException->file = _file;
 		newException->line = _line;
-		exceptionBuffer.push(newException);
+		exceptionBuffer.push_back(newException);
 	}
 
 	void ok(string _message, string _file, int _line) {
@@ -45,7 +47,7 @@ public:
 		newException->level = Level::OK;
 		newException->file = _file;
 		newException->line = _line;
-		exceptionBuffer.push(newException);
+		exceptionBuffer.push_back(newException);
 	}
 
 	void warn(string _message, string _file, int _line) {
@@ -54,7 +56,7 @@ public:
 		newException->level = Level::WARN;
 		newException->file = _file;
 		newException->line = _line;
-		exceptionBuffer.push(newException);
+		exceptionBuffer.push_back(newException);
 	}
 
 	void err(string _message, string _file, int _line) {
@@ -63,7 +65,7 @@ public:
 		newException->level = Level::ERR;
 		newException->file = _file;
 		newException->line = _line;
-		exceptionBuffer.push(newException);
+		exceptionBuffer.push_back(newException);
 	}
 
 	void fatal(string _message, string _file, int _line) {
@@ -72,7 +74,7 @@ public:
 		newException->level = Level::FATAL;
 		newException->file = _file;
 		newException->line = _line;
-		exceptionBuffer.push(newException);
+		exceptionBuffer.push_back(newException);
 	}
 
 	// Expected use case: Draw on screen without deleting buffer, print on terminal with deleting buffer in the end.
@@ -83,7 +85,7 @@ public:
 			exception->file = exceptionBuffer.front()->file;
 			exception->line = exceptionBuffer.front()->line;
 			delete exceptionBuffer.front();
-			exceptionBuffer.pop();
+			exceptionBuffer.pop_front();
 			return true;
 		}
 		else return false;
