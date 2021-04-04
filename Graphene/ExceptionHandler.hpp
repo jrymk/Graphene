@@ -17,19 +17,22 @@ public:
 		int line = -1;
 	};
 
-	deque<Exception*> exceptionBuffer;
-
 private:
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	
 public:
+	deque<Exception*> getExceptionBuffer() {
+		static deque<Exception*> exceptionBuffer;
+		return exceptionBuffer;
+	}
+
 	void throwException(string _message, Level _level, string _file, int _line) {
 		Exception* newException = new Exception;
 		newException->message = _message;
 		newException->level = _level;
 		newException->file = _file;
 		newException->line = _line;
-		exceptionBuffer.push_back(newException);
+		getExceptionBuffer().push_back(newException);
 	}
 
 	void info(string _message, string _file, int _line) {
@@ -38,7 +41,7 @@ public:
 		newException->level = Level::INFO;
 		newException->file = _file;
 		newException->line = _line;
-		exceptionBuffer.push_back(newException);
+		getExceptionBuffer().push_back(newException);
 	}
 
 	void ok(string _message, string _file, int _line) {
@@ -47,7 +50,7 @@ public:
 		newException->level = Level::OK;
 		newException->file = _file;
 		newException->line = _line;
-		exceptionBuffer.push_back(newException);
+		getExceptionBuffer().push_back(newException);
 	}
 
 	void warn(string _message, string _file, int _line) {
@@ -56,7 +59,7 @@ public:
 		newException->level = Level::WARN;
 		newException->file = _file;
 		newException->line = _line;
-		exceptionBuffer.push_back(newException);
+		getExceptionBuffer().push_back(newException);
 	}
 
 	void err(string _message, string _file, int _line) {
@@ -65,7 +68,7 @@ public:
 		newException->level = Level::ERR;
 		newException->file = _file;
 		newException->line = _line;
-		exceptionBuffer.push_back(newException);
+		getExceptionBuffer().push_back(newException);
 	}
 
 	void fatal(string _message, string _file, int _line) {
@@ -74,18 +77,18 @@ public:
 		newException->level = Level::FATAL;
 		newException->file = _file;
 		newException->line = _line;
-		exceptionBuffer.push_back(newException);
+		getExceptionBuffer().push_back(newException);
 	}
 
 	// Expected use case: Draw on screen without deleting buffer, print on terminal with deleting buffer in the end.
 	bool getException(Exception* exception, bool deleteBuffer) {
-		if (!exceptionBuffer.empty()) {
-			exception->message = exceptionBuffer.front()->message;
-			exception->level = exceptionBuffer.front()->level;
-			exception->file = exceptionBuffer.front()->file;
-			exception->line = exceptionBuffer.front()->line;
-			delete exceptionBuffer.front();
-			exceptionBuffer.pop_front();
+		if (!getExceptionBuffer().empty()) {
+			exception->message = getExceptionBuffer().front()->message;
+			exception->level = getExceptionBuffer().front()->level;
+			exception->file = getExceptionBuffer().front()->file;
+			exception->line = getExceptionBuffer().front()->line;
+			delete getExceptionBuffer().front();
+			getExceptionBuffer().pop_front();
 			return true;
 		}
 		else return false;
