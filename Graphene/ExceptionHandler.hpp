@@ -7,7 +7,7 @@
 using namespace std;
 
 // Handles exceptions thrown by functions, can draw on window instead of printing on terminal for better visuals.
-static class ExceptionHandler {
+class ExceptionHandler {
 public:
 	enum class Level { INFO, OK, WARN, ERR, FATAL };
 	struct Exception {
@@ -54,6 +54,7 @@ public:
 	}
 
 	void warn(string _message, string _file, int _line) {
+		cout << _message << "\n";
 		Exception* newException = new Exception;
 		newException->message = _message;
 		newException->level = Level::WARN;
@@ -63,6 +64,7 @@ public:
 	}
 
 	void err(string _message, string _file, int _line) {
+		cout << _message << "\n";
 		Exception* newException = new Exception;
 		newException->message = _message;
 		newException->level = Level::ERR;

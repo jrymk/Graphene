@@ -66,10 +66,10 @@ public:
 	class UIElement {
 	private:
 		ExceptionHandler eh;
-		
+
 	public:
 
-		struct Body {
+		class Body {
 		public:
 			enum class Type {
 				NONE,
@@ -83,13 +83,14 @@ public:
 			Resources resources;
 			Type type = Type::NONE;
 			Color* backgroundColor = resources.colorTransparent;
+			string debugName;
 
 			// none
 
 
 			// circle
 			CircleShape circle;
-			AdaptiveVector circleRadius = {1.0, 0};
+			AdaptiveVector circleRadius = { 1.0, 0 };
 			Color* circleFillColor = resources.colorTransparent;
 			float circleOutlineThickness = 0;
 			Color* circleOutlineColor = resources.colorTransparent;
@@ -105,7 +106,7 @@ public:
 			AdaptiveVector linePointBY = { 1.0, 0 };
 			float lineThickness = 1;
 			Color* lineFillColor = resources.colorTransparent;
-			float lineOutlineThickness = 0;
+			float lineOutlineThickness = 0.0;
 			Color* lineOutlineColor = resources.colorTransparent;
 			float linePerpendicularOffset = 0;
 			float lineDeltaX = 0.0;
@@ -120,7 +121,7 @@ public:
 			float simpleTextAlignmentX = 0.5;
 			float simpleTextAlignmentY = 0.5;
 			float simpleTextTempBoundsLeft = 0.0;
-
+			float simpleTextTempBoundsTop = 0.0;
 
 
 		public:
@@ -164,11 +165,11 @@ public:
 				linePointBY = _bY;
 				lineThickness = _thickness;
 				lineFillColor = _fillColor;
-				lineOutlineThickness = 0;
+				lineOutlineThickness = 0.0;
 				lineOutlineColor = resources.colorTransparent;
 			}
 
-			void setLine(AdaptiveVector _aX, AdaptiveVector _aY, AdaptiveVector _bX, AdaptiveVector _bY, float _thickness, Color* _fillColor, 
+			void setLine(AdaptiveVector _aX, AdaptiveVector _aY, AdaptiveVector _bX, AdaptiveVector _bY, float _thickness, Color* _fillColor,
 				float _outlineThickness, Color* _outlineColor) {
 				type = Type::LINE;
 				linePointAX = _aX;
@@ -253,24 +254,26 @@ public:
 						rectShape.setFillColor(*resources.colorTransparent);
 						rectShape.setOutlineColor(*resources.colorUIBoundsDebugSub);
 						rectShape.setOutlineThickness(-1);
-						rectShape.setSize(Vector2f(lineRect.getSize().x, lineRect.getSize().y));
-						rectShape.setPosition(Vector2f(lineRect.getPosition().x, lineRect.getPosition().y));
+						rectShape.setSize(Vector2f(lineRect.getGlobalBounds().width, lineRect.getGlobalBounds().height));
+						rectShape.setPosition(Vector2f(lineRect.getGlobalBounds().left, lineRect.getGlobalBounds().top));
 						texture->draw(rectShape);
 					}
 					break;
 
 				case Type::SIMPLE_TEXT:
+					cout << debugName << " rendering with font " << simpleTextFont << "\n";
 					simpleText.setFont(*simpleTextFont);
 					simpleText.setString(simpleTextString);
 					simpleText.setCharacterSize(simpleTextSize);
 					simpleText.setFillColor(*simpleTextColor);
 					simpleText.setPosition(Vector2f(0, 0));
 					simpleTextTempBoundsLeft = simpleText.getGlobalBounds().left;
+					simpleTextTempBoundsTop = simpleText.getGlobalBounds().top;
 					simpleText.setPosition(
 						AdaptiveVector(simpleTextAlignmentX, 0).evaluate(texture->getSize().x) - simpleText.getGlobalBounds().left
 						- AdaptiveVector(simpleTextAlignmentX, 0).evaluate(simpleText.getGlobalBounds().width),
 						AdaptiveVector(simpleTextAlignmentY, 0).evaluate(texture->getSize().y)
-						- AdaptiveVector(simpleTextAlignmentY, 0).evaluate(simpleText.getCharacterSize() * 2)
+						- AdaptiveVector(simpleTextAlignmentY, 0).evaluate(simpleText.getCharacterSize()) - simpleText.getGlobalBounds().top
 					);
 					texture->draw(simpleText);
 
@@ -279,8 +282,8 @@ public:
 						rectShape.setFillColor(*resources.colorTransparent);
 						rectShape.setOutlineColor(*resources.colorUIBoundsDebugSub);
 						rectShape.setOutlineThickness(-1);
-						rectShape.setSize(Vector2f(simpleText.getGlobalBounds().width, simpleText.getCharacterSize() * 2));
-						rectShape.setPosition(Vector2f(simpleText.getPosition().x + simpleTextTempBoundsLeft, simpleText.getPosition().y));
+						rectShape.setSize(Vector2f(simpleText.getGlobalBounds().width, simpleText.getCharacterSize()));
+						rectShape.setPosition(Vector2f(simpleText.getPosition().x + simpleTextTempBoundsLeft, simpleText.getPosition().y + simpleTextTempBoundsTop));
 						texture->draw(rectShape);
 					}
 					break;
@@ -292,7 +295,7 @@ public:
 
 		};
 
-		Body* body = nullptr;
+		Body* body = new Body();
 
 		struct State {
 			bool mouseHovered = false;
@@ -302,7 +305,7 @@ public:
 		State state;
 
 		UIElement* parent;
-		vector<UIElement*> children;
+		deque<UIElement*> children;
 
 		AdaptiveVector x;
 		AdaptiveVector y;
@@ -322,7 +325,6 @@ public:
 
 		UIElement(UIElement* _parent, string _debugName) {
 			parent = _parent;
-			body = new Body();
 			if (_parent != nullptr)
 				parent->children.push_back(this);
 			x.set(0, 0);
@@ -333,11 +335,11 @@ public:
 			originY.set(0, 0);
 			sizingMode = SizingMode::PER_AXIS;
 			debugName = _debugName;
+			body->debugName = debugName;
 		}
 
 		UIElement(UIElement* _parent, string _debugName, AdaptiveVector _x, AdaptiveVector _y, AdaptiveVector _w, AdaptiveVector _h, AdaptiveVector _originX, AdaptiveVector _originY) {
 			parent = _parent;
-			body = new Body();
 			if (_parent != nullptr)
 				parent->children.push_back(this);
 			x = _x;
@@ -348,12 +350,19 @@ public:
 			originY = _originY;
 			sizingMode = SizingMode::PER_AXIS;
 			debugName = _debugName;
+			body->debugName = debugName;
 		}
 
 		~UIElement() {
-			delete body;
-			for (vector<UIElement*>::iterator child = this->children.begin(); child != this->children.end(); child++)
+			delete this->body;
+			for (deque<UIElement*>::iterator child = this->children.begin(); child != this->children.end(); child++)
 				delete (*child);
+		}
+
+		void deleteElement() {
+			if (this->parent != nullptr)
+				this->parent->children.erase(find(this->parent->children.begin(), this->parent->children.end(), this));
+			delete this;
 		}
 
 		void linkContainer(UIElement* _parent) {
@@ -401,7 +410,7 @@ public:
 
 			this->body->render(thisTexture);
 
-			for (vector<UIElement*>::iterator child = this->children.begin(); child != this->children.end(); child++) {
+			for (deque<UIElement*>::iterator child = this->children.begin(); child != this->children.end(); child++) {
 				RenderTexture* childTexture = new RenderTexture();
 
 				unsigned int evaluatedW = (*child)->w.evaluate(thisTexture->getSize().x);

@@ -62,16 +62,17 @@ public:
 	// Handles all the graph rendering, scales automatically depending on the texture assigned.
 	class Renderer {
 	public:
-		Resources resources;
 		Graphene* graphene = nullptr;
 		ExceptionHandler eh;
 		UIEngine::UIElement* graphElement = nullptr;
+		Resources* resources = nullptr;
 
 		Renderer(Graphene* _graphene) {
 			graphene = _graphene;
+			resources = _graphene->resources;
 		}
 
-		void updateGraphElement() {
+		void newGraphElement() {
 			graphElement = new UIEngine::UIElement(nullptr, "graphElement");
 			int edgeID = 0;
 			for (vector<Edge>::iterator edge = graphene->edges.begin(); edge != graphene->edges.end(); edge++) {
@@ -79,8 +80,20 @@ public:
 				edgeElement->body->setLine(
 					{ edge->startingVertex->coord.x, 0 }, { edge->startingVertex->coord.y, 0 },
 					{ edge->endingVertex->coord.x, 0 }, { edge->endingVertex->coord.y, 0 },
-					5, resources.colorGray);
+					5, resources->colorGray);
+				edgeID++;
 			}
+			int vertexID = 0;
+			for (vector<Vertex>::iterator vertex = graphene->verticies.begin(); vertex != graphene->verticies.end(); vertex++) {
+				UIEngine::UIElement* vertexElement = new UIEngine::UIElement(graphElement, "vertex" + to_string(edgeID),
+					{ vertex->coord.x, 0 }, { vertex->coord.y, 0 }, { 0, 60 }, { 0, 60 }, { 0.5, 0 }, { 0.5, 0 });
+				vertexElement->body->setCircle({ 0.0, 20 }, resources->colorGold, -4, resources->colorGoldenrod);
+				UIEngine::UIElement* vertexTextElement = new UIEngine::UIElement(vertexElement, "vertexText" + to_string(edgeID));
+				vertexTextElement->body->setSimpleText(vertex->name, resources->fontDefault, 30, resources->colorText, 0.5, 0.63);
+				vertexID++;
+			}
+
+
 		}
 
 	};
@@ -89,9 +102,11 @@ public:
 	class Core {
 	public:
 		Graphene* graphene;
+		Resources* resources;
 
 		Core(Graphene* _graphene) {
 			graphene = _graphene;
+			resources = _graphene->resources;
 		}
 
 	};
@@ -101,19 +116,23 @@ public:
 	public:
 		Graphene* graphene;
 		ExceptionHandler eh;
+		Resources* resources;
 
 		Graph(Graphene* _graphene) {
 			graphene = _graphene;
+			resources = _graphene->resources;
 		}
 	};
 
 
+	Resources* resources;
 	Renderer* renderer;
 	Core* core;
 	Graph* graph;
 
 
-	Graphene() {
+	Graphene(Resources* _resources) {
+		resources = _resources;
 		ExceptionHandler eh;
 		renderer = new Renderer(this);
 		core = new Core(this);

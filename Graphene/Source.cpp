@@ -20,7 +20,7 @@ int main() {
 	resources.loadFont();
 
 	UIEngine uiEngine(&window);
-	Graphene* graphene = new Graphene();
+	Graphene* graphene = new Graphene(&resources);
 
 
 	int v, e;
@@ -35,12 +35,20 @@ int main() {
 		graphene->edges.push_back(Graphene::Edge(&graphene->verticies[a], &graphene->verticies[b], false));
 	}
 
+	UIEngine::UIElement* graphContainer = new UIEngine::UIElement(uiEngine.rootContainer, "graphContainer", { 0.5, 0 }, { 0.5, 0 }, { 1.0, 0 }, { 1.0, -80 }, { 0.5, 0 }, { 0.5, 0 });
+	graphContainer->sizingMode = UIEngine::UIElement::SizingMode::RELATIVE_TO_H;
+
+
 	/*UIEngine::SimpleText text("Lorem ipsum dolor sit amet, consectetur adipiscing elit.", resources.fontDefault, 20, resources.colorText);
 	UIEngine::UIElement textElement(text.getTexture(), &layout, { 0.0, 0 }, { 1.0, 0 });*/
 
 
 	uiEngine.rootContainer->body->setNone();
 	uiEngine.rootContainer->body->setBackgroundColor(resources.colorBackground);
+
+
+	UIEngine::UIElement* textElement = new UIEngine::UIElement(uiEngine.rootContainer, "textElement");
+	textElement->body->setSimpleText("Lorem ipsum dolor sit amet, consectetur adipiscing elit.", resources.fontDefault, 30, resources.colorLightBlue, 0.0, 1.0);
 
 
 	while (window.isOpen()) {
@@ -54,12 +62,13 @@ int main() {
 
 		}
 
-		graphene->renderer->updateGraphElement();
-		graphene->renderer->graphElement->linkContainer(uiEngine.rootContainer);
+		graphene->renderer->newGraphElement();
+		graphene->renderer->graphElement->linkContainer(graphContainer);
 
+		
 		uiEngine.render();
 	
-		delete graphene->renderer->graphElement;
+		graphene->renderer->graphElement->deleteElement();
 		//delete mouseHoveredItemDisplay;
 
 		eh.flushExceptionsToIOStream();

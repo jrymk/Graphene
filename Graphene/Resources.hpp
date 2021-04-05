@@ -11,12 +11,13 @@ using namespace std;
 using namespace sf;
 
 // this will be a crude resource manager, no management in fact
-static class Resources {
+class Resources {
 public:
-	ExceptionHandler eh;
 	bool showDebugBoundaries = true;
 
-	ContextSettings contextSettings = ContextSettings(0, 0, 4, 0, 4, 0, false);
+	ContextSettings contextSettings = ContextSettings(0, 0, 
+		4, // anti-aliasing
+		0, 4, 0, false);
 
 	Font* fontDefault = new Font();
 	Font* fontMono = new Font();
@@ -24,7 +25,6 @@ public:
 	Color* colorTransparent = new Color(0, 0, 0, 0);
 	Color* colorBackground = new Color(250, 250, 250);
 	Color* colorText = new Color(50, 50, 50);
-
 
 	Color* colorIndianRed = new Color(205, 92, 92);
 	Color* colorLightCoral = new Color(240, 128, 128);
@@ -177,6 +177,8 @@ public:
 	}
 
 	void loadFont() {
+		ExceptionHandler eh;
+		eh.info("loading fonts", __FILE__, __LINE__);
 		if (!fontDefault->loadFromFile(".\\Manrope-Medium.ttf")) eh.err("resource Manrope-Medium.ttf failed to load", __FILE__, __LINE__);
 		if (!fontMono->loadFromFile(".\\consola.ttf")) eh.err("resource consola.ttf failed to load", __FILE__, __LINE__);
 	}
