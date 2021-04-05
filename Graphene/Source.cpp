@@ -5,7 +5,7 @@
 
 #include "Graphene.hpp"
 #include "ExceptionHandler.hpp"
-#include "Renderer.hpp"
+#include "UIEngine.hpp"
 #include "Resources.hpp"
 
 using namespace std;
@@ -14,36 +14,16 @@ using namespace sf;
 int main() {
 	ExceptionHandler eh;
 
-	RenderWindow window(sf::VideoMode(800, 600), L"Graphene £\");
-	
+	RenderWindow window(sf::VideoMode(800, 600), L"Graphene £\", Style::Default, ContextSettings(0, 0, 4, 0, 4, 0, false));
+
 	Resources resources;
 	resources.loadFont();
 
-	Renderer renderer(&window);
-	Graphene* graphene = new Graphene(&window);
+	UIEngine uiEngine(&window);
+	Graphene* graphene = new Graphene(&resources);
 
-	renderer.windowElement->body.setBackgroundColor(resources.colorBackground);
 
-	Renderer::UIElement squareDemo(renderer.windowElement);
-	squareDemo.x.set(0.4, 10);
-	squareDemo.y.set(0.1, 0);
-	squareDemo.w.set(0.5, 0);
-	squareDemo.sizingMode = Renderer::UIElement::SizingMode::RELATIVE_TO_W;
-	squareDemo.h.set(1.0, 0);
-	squareDemo.originX.set(0, 0);
-	squareDemo.originY.set(0, 0);
-	squareDemo.body.setBackgroundColor(resources.colorOldLace);
-
-	Renderer::UIElement layout(renderer.windowElement);
-	layout.x.set(0.9, 10);
-	layout.y.set(0.5, 0);
-	layout.w.set(0.8, 0);
-	layout.h.set(0.0, 100);
-	layout.originX.set(1.0, 0);
-	layout.originY.set(0, 0);
-	layout.body.setBackgroundColor(resources.colorAzure);
-
-	/*int v, e;
+	int v, e;
 	cin >> v >> e;
 	for (int i = 0; i < v; i++) {
 		graphene->verticies.push_back(Graphene::Vertex());
@@ -53,15 +33,22 @@ int main() {
 		int a, b;
 		cin >> a >> b;
 		graphene->edges.push_back(Graphene::Edge(&graphene->verticies[a], &graphene->verticies[b], false));
-	}*/
+	}
 
-	/*Renderer::SimpleText text("Lorem ipsum dolor sit amet, consectetur adipiscing elit.", resources.fontDefault, 20, resources.colorText);
-	Renderer::UIElement textElement(text.getTexture(), &layout, { 0.0, 0 }, { 1.0, 0 });*/
+	UIEngine::UIElement* graphContainer = new UIEngine::UIElement(uiEngine.rootContainer, "graphContainer", { 0.5, 0 }, { 0.5, 0 }, { 1.0, 0 }, { 1.0, -80 }, { 0.5, 0 }, { 0.5, 0 });
+	graphContainer->sizingMode = UIEngine::UIElement::SizingMode::RELATIVE_TO_H;
 
-	Renderer::UIElement textIndent(&layout, { 0.0, 10 }, { 0.0, 0 }, { 1.0, 0 }, { 1.0, 0 }, { 0.0, 0 }, { 0.0, 0 });
 
-	Renderer::UIElement textElement(&textIndent);
-	textElement.body.setSimpleText("Lorem ipsum dolor sit amet, consectetur adipiscing elit.", resources.fontDefault, 30, resources.colorText, { 0.0, 0 }, { 0.5, 0 });
+	/*UIEngine::SimpleText text("Lorem ipsum dolor sit amet, consectetur adipiscing elit.", resources.fontDefault, 20, resources.colorText);
+	UIEngine::UIElement textElement(text.getTexture(), &layout, { 0.0, 0 }, { 1.0, 0 });*/
+
+
+	uiEngine.rootContainer->body->setNone();
+	uiEngine.rootContainer->body->setBackgroundColor(resources.colorBackground);
+
+
+	UIEngine::UIElement* textElement = new UIEngine::UIElement(uiEngine.rootContainer, "textElement");
+	textElement->body->setSimpleText("Lorem ipsum dolor sit amet, consectetur adipiscing elit.", resources.fontDefault, 30, resources.colorLightBlue, 0.0, 1.0);
 
 
 	while (window.isOpen()) {
@@ -75,8 +62,14 @@ int main() {
 
 		}
 
+		graphene->renderer->newGraphElement();
+		graphene->renderer->graphElement->linkContainer(graphContainer);
 
-		renderer.render();
+		
+		uiEngine.render();
+	
+		graphene->renderer->graphElement->deleteElement();
+		//delete mouseHoveredItemDisplay;
 
 		eh.flushExceptionsToIOStream();
 
