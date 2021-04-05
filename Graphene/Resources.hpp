@@ -16,6 +16,8 @@ public:
 	ExceptionHandler eh;
 	bool showDebugBoundaries = true;
 
+	ContextSettings contextSettings = ContextSettings(0, 0, 4, 0, 4, 0, false);
+
 	Font* fontDefault = new Font();
 	Font* fontMono = new Font();
 
@@ -166,8 +168,8 @@ public:
 	Color* colorDarkSlateGray = new Color(47, 79, 79);
 	Color* colorBlack = new Color(0, 0, 0);
 
-	Color* colorUIBoundsDebug = new Color(255, 180, 0, 255);
-	Color* colorUIBoundsDebugSub = new Color(180, 180, 0, 255);
+	Color* colorUIBoundsDebug = new Color(255, 180, 0, 50);
+	Color* colorUIBoundsDebugSub = new Color(180, 180, 0, 50);
 
 
 	Resources() {
