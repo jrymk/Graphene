@@ -13,10 +13,10 @@ using namespace sf;
 // this will be a crude resource manager, no management in fact
 class Resources {
 public:
-	bool showDebugBoundaries = true;
+	bool showDebugBoundaries = false;
 
 	ContextSettings contextSettings = ContextSettings(0, 0, 
-		4, // anti-aliasing
+		2, // anti-aliasing
 		0, 4, 0, false);
 
 	Font* fontDefault = new Font();

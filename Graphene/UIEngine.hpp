@@ -413,6 +413,7 @@ public:
 
 		
 		void render(UI* ui, Vector2f thisPosition, Vector2f thisSize) {
+			ui->elements++;
 			//cout << this->debugName << ": ";
 			Resources resources;
 			if (Mouse::getPosition(*ui->window).x >= thisPosition.x &&
@@ -478,6 +479,7 @@ public:
 		resources = _resources;
 	}
 
+	int elements = 0;
 	float framerate = 0.0;
 	float framerateRollingSum = 0.0;
 	queue<float> framerateRollingAverageQueue;
@@ -501,8 +503,10 @@ public:
 		framerateRollingAverage = framerateRollingSum / 100.0;
 
 		Element* framerateDisplay = new Element(rootContainer, "framerateDisplay", { 0.0, 5 }, { 0.0, 2 }, { 0.0, 20 }, { 0.0, 10 }, 0.0, 0.0);
-		
 		framerateDisplay->body->setSimpleText(to_string((int)round(framerateRollingAverage)), resources->fontMono, 10, resources->colorRed, 0.0, 0.5);
+		Element* elementCountDisplay = new Element(rootContainer, "elementCountDisplay", { 0.0, 5 }, { 0.0, 15 }, { 0.0, 20 }, { 0.0, 10 }, 0.0, 0.0);
+		elementCountDisplay->body->setSimpleText(to_string(elements), resources->fontMono, 10, resources->colorSkyBlue, 0.0, 0.5);
+
 
 
 		window->clear(Color(0, 0, 0, 255));
@@ -514,10 +518,12 @@ public:
 			eh.err("render texture failed to create", __FILE__, __LINE__);
 		windowTexture->setSmooth(true);*/
 		interaction->mouseHoveredElement = nullptr;
+		elements = 0;
 
 		rootContainer->render(this, Vector2f(0, 0), Vector2f(window->getSize().x, window->getSize().y));
 
 		framerateDisplay->deleteElement();
+		elementCountDisplay->deleteElement();
 
 		if (interaction->mouseHoveredElement != nullptr)
 			interaction->mouseHoveredElement->state.mouseHovered = true;
