@@ -13,7 +13,7 @@ using namespace sf;
 
 uniform_int_distribution<> dis255(0, 255);
 
-class UIEngine {
+class UI {
 private:
 	ExceptionHandler eh;
 
@@ -63,7 +63,7 @@ public:
 
 	};
 
-	class UIElement {
+	class Element {
 	private:
 		ExceptionHandler eh;
 
@@ -192,35 +192,37 @@ public:
 				simpleTextAlignmentY = _alignmentY;
 			}
 
-			void render(RenderTexture* texture) {
+			void render(RenderTexture* globalTexture, Vector2f thisPosition, Vector2f thisSize) {
 				RectangleShape rectShape;
 				if (resources.showDebugBoundaries) {
 					rectShape.setOutlineColor(*resources.colorUIBoundsDebug);
-					rectShape.setOutlineThickness(1);
-					rectShape.setSize(Vector2f(texture->getSize().x - 2, texture->getSize().y - 2));
-					rectShape.setPosition(Vector2f(1, 1));
+					rectShape.setOutlineThickness(-1);
 				}
 				else {
-					rectShape.setSize(Vector2f(texture->getSize().x, texture->getSize().y));
-					rectShape.setPosition(Vector2f(0, 0));
+					rectShape.setOutlineColor(*resources.colorTransparent);
+					rectShape.setOutlineThickness(0);
 				}
+				rectShape.setSize(thisSize);
+				rectShape.setPosition(thisPosition);
+
 				rectShape.setFillColor(*(this->backgroundColor));
-				texture->draw(rectShape);
+
+				globalTexture->draw(rectShape);
 
 				switch (this->type) {
 				case Type::NONE:
 					break;
 
 				case Type::CIRCLE:
-					circle.setRadius(circleRadius.evaluate(min(texture->getSize().x, texture->getSize().y)));
+					circle.setRadius(circleRadius.evaluate(min(thisSize.x, thisSize.y)));
 					circle.setFillColor(*circleFillColor);
 					circle.setOutlineThickness(circleOutlineThickness);
 					circle.setOutlineColor(*circleOutlineColor);
 					circle.setPosition(Vector2f(
-						AdaptiveVector(0.5, 0).evaluate(texture->getSize().x) - circle.getRadius(),
-						AdaptiveVector(0.5, 0).evaluate(texture->getSize().y) - circle.getRadius()
+						thisPosition.x + AdaptiveVector(0.5, 0).evaluate(thisSize.x) - circle.getRadius(),
+						thisPosition.y + AdaptiveVector(0.5, 0).evaluate(thisSize.y) - circle.getRadius()
 					));
-					texture->draw(circle);
+					globalTexture->draw(circle);
 
 					if (resources.showDebugBoundaries) {
 						RectangleShape rectShape;
@@ -229,25 +231,28 @@ public:
 						rectShape.setOutlineThickness(-1);
 						rectShape.setSize(Vector2f(circle.getRadius() * 2, circle.getRadius() * 2));
 						rectShape.setPosition(circle.getPosition());
-						texture->draw(rectShape);
+						globalTexture->draw(rectShape);
 					}
 					break;
 
 				case Type::LINE:
 					lineRect.setRotation(0);
-					lineDeltaX = linePointBX.evaluate(texture->getSize().x) - linePointAX.evaluate(texture->getSize().x);
-					lineDeltaY = linePointBY.evaluate(texture->getSize().y) - linePointAY.evaluate(texture->getSize().y);
+					lineDeltaX = linePointBX.evaluate(thisSize.x) - linePointAX.evaluate(thisSize.x);
+					lineDeltaY = linePointBY.evaluate(thisSize.y) - linePointAY.evaluate(thisSize.y);
 					lineRect.setSize(Vector2f(sqrt(lineDeltaX * lineDeltaX + lineDeltaY * lineDeltaY), lineThickness));
 					lineRect.setOrigin(Vector2f(sqrt(lineDeltaX * lineDeltaX + lineDeltaY * lineDeltaY) / 2, lineThickness / 2 + linePerpendicularOffset));
 					if (acos(lineDeltaX / sqrt(lineDeltaX * lineDeltaX + lineDeltaY * lineDeltaY)) <= PI / 2)
 						lineRect.setRotation(asin(lineDeltaY / sqrt(lineDeltaX * lineDeltaX + lineDeltaY * lineDeltaY)) / PI * 180.0);
 					else
 						lineRect.setRotation(180.0 - asin(lineDeltaY / sqrt(lineDeltaX * lineDeltaX + lineDeltaY * lineDeltaY)) / PI * 180.0);
-					lineRect.setPosition(linePointAX.evaluate(texture->getSize().x) + lineDeltaX / 2, linePointAY.evaluate(texture->getSize().y) + lineDeltaY / 2);
+					lineRect.setPosition(
+						thisPosition.x + linePointAX.evaluate(thisSize.x) + lineDeltaX / 2,
+						thisPosition.y + linePointAY.evaluate(thisSize.y) + lineDeltaY / 2
+					);
 					lineRect.setFillColor(*lineFillColor);
 					lineRect.setOutlineThickness(lineOutlineThickness);
 					lineRect.setOutlineColor(*lineOutlineColor);
-					texture->draw(lineRect);
+					globalTexture->draw(lineRect);
 
 					if (resources.showDebugBoundaries) {
 						RectangleShape rectShape;
@@ -256,7 +261,7 @@ public:
 						rectShape.setOutlineThickness(-1);
 						rectShape.setSize(Vector2f(lineRect.getGlobalBounds().width, lineRect.getGlobalBounds().height));
 						rectShape.setPosition(Vector2f(lineRect.getGlobalBounds().left, lineRect.getGlobalBounds().top));
-						texture->draw(rectShape);
+						globalTexture->draw(rectShape);
 					}
 					break;
 
@@ -266,16 +271,16 @@ public:
 					simpleText.setString(simpleTextString);
 					simpleText.setCharacterSize(simpleTextSize);
 					simpleText.setFillColor(*simpleTextColor);
-					simpleText.setPosition(Vector2f(0, 0));
+					simpleText.setPosition(0, 0);
 					simpleTextTempBoundsLeft = simpleText.getGlobalBounds().left;
 					simpleTextTempBoundsTop = simpleText.getGlobalBounds().top;
 					simpleText.setPosition(
-						AdaptiveVector(simpleTextAlignmentX, 0).evaluate(texture->getSize().x) - simpleText.getGlobalBounds().left
-						- AdaptiveVector(simpleTextAlignmentX, 0).evaluate(simpleText.getGlobalBounds().width),
-						AdaptiveVector(simpleTextAlignmentY, 0).evaluate(texture->getSize().y)
-						- AdaptiveVector(simpleTextAlignmentY, 0).evaluate(simpleText.getCharacterSize()) - simpleText.getGlobalBounds().top
+						thisPosition.x + simpleTextAlignmentX * thisSize.x - simpleText.getGlobalBounds().left
+						- simpleTextAlignmentX * simpleText.getGlobalBounds().width,
+						thisPosition.y + simpleTextAlignmentY * thisSize.y
+						- simpleTextAlignmentY *simpleText.getCharacterSize() - simpleText.getGlobalBounds().top
 					);
-					texture->draw(simpleText);
+					globalTexture->draw(simpleText);
 
 					if (resources.showDebugBoundaries) {
 						RectangleShape rectShape;
@@ -283,14 +288,17 @@ public:
 						rectShape.setOutlineColor(*resources.colorUIBoundsDebugSub);
 						rectShape.setOutlineThickness(-1);
 						rectShape.setSize(Vector2f(simpleText.getGlobalBounds().width, simpleText.getCharacterSize()));
-						rectShape.setPosition(Vector2f(simpleText.getPosition().x + simpleTextTempBoundsLeft, simpleText.getPosition().y + simpleTextTempBoundsTop));
-						texture->draw(rectShape);
+						rectShape.setPosition(Vector2f(
+							simpleText.getPosition().x + simpleTextTempBoundsLeft, 
+							simpleText.getPosition().y + simpleTextTempBoundsTop
+						));
+						globalTexture->draw(rectShape);
 					}
 					break;
 
 				}
 
-				texture->display();
+				globalTexture->display();
 			}
 
 		};
@@ -304,8 +312,8 @@ public:
 		};
 		State state;
 
-		UIElement* parent;
-		deque<UIElement*> children;
+		Element* parent;
+		deque<Element*> children;
 
 		AdaptiveVector x;
 		AdaptiveVector y;
@@ -320,10 +328,10 @@ public:
 		SizingMode sizingMode;
 
 		struct Interaction {
-			UIElement* mouseHoveredElement = nullptr;
+			Element* mouseHoveredElement = nullptr;
 		};
 
-		UIElement(UIElement* _parent, string _debugName) {
+		Element(Element* _parent, string _debugName) {
 			parent = _parent;
 			if (_parent != nullptr)
 				parent->children.push_back(this);
@@ -338,7 +346,7 @@ public:
 			body->debugName = debugName;
 		}
 
-		UIElement(UIElement* _parent, string _debugName, AdaptiveVector _x, AdaptiveVector _y, AdaptiveVector _w, AdaptiveVector _h, float _originX, float _originY) {
+		Element(Element* _parent, string _debugName, AdaptiveVector _x, AdaptiveVector _y, AdaptiveVector _w, AdaptiveVector _h, float _originX, float _originY) {
 			parent = _parent;
 			if (_parent != nullptr)
 				parent->children.push_back(this);
@@ -353,10 +361,14 @@ public:
 			body->debugName = debugName;
 		}
 
-		~UIElement() {
+		~Element() {
+			//cout << "deleted " << this->debugName << "\n";
 			delete this->body;
-			for (deque<UIElement*>::iterator child = this->children.begin(); child != this->children.end(); child++)
+			for (deque<Element*>::iterator child = this->children.begin(); child != this->children.end(); child++) {
+				//cout << (*child)->debugName << "\n";
 				delete (*child);
+			}
+				
 		}
 
 		void deleteElement() {
@@ -367,7 +379,8 @@ public:
 			delete this;
 		}
 
-		void linkContainer(UIElement* _parent) {
+		void linkContainer(Element* _parent) {
+			//cout << this->debugName << " linked to " << _parent->debugName << "\n";
 			if (this->parent == nullptr)
 				eh.warn("relinking potential parent container, may lead to unwanted behavior!", __FILE__, __LINE__);
 			if (this == _parent) {
@@ -375,7 +388,7 @@ public:
 				return;
 			}
 			if (this->parent != nullptr)
-				this->parent->children.erase(remove(this->parent->children.begin(), this->parent->children.end(), this), this->parent->children.end());
+				this->parent->children.erase(find(this->parent->children.begin(), this->parent->children.end(), this));
 			this->parent = _parent;
 			this->parent->children.push_back(this);
 		}
@@ -398,53 +411,45 @@ public:
 			);
 		}
 
-		// parent provides the render texture for "this" rootContainer
-		void render(RenderTexture* thisTexture, Vector2i absolutePosition, UIEngine* uiEngine) {
+		
+		void render(RenderTexture* globalTexture, Vector2f thisPosition, Vector2f thisSize, UI* uiEngine) {
+			//cout << this->debugName << ": ";
 			Resources resources;
-			if (Mouse::getPosition(*uiEngine->window).x >= absolutePosition.x && 
-				Mouse::getPosition(*uiEngine->window).x <= absolutePosition.x + thisTexture->getSize().x &&
-				Mouse::getPosition(*uiEngine->window).y >= absolutePosition.y && 
-				Mouse::getPosition(*uiEngine->window).y <= absolutePosition.y + thisTexture->getSize().y) {
+			if (Mouse::getPosition(*uiEngine->window).x >= thisPosition.x &&
+				Mouse::getPosition(*uiEngine->window).x <= thisPosition.x + thisSize.x &&
+				Mouse::getPosition(*uiEngine->window).y >= thisPosition.y &&
+				Mouse::getPosition(*uiEngine->window).y <= thisPosition.y + thisSize.y) {
 				uiEngine->interaction->mouseHoveredElement = this;
+				//cout << "mouse on " << this->debugName << "\n";
 				this->state.mouseHovered = false;
 				this->state.mouseHoveredThrough = true;
+				//cout << "true\n";
+			}
+			else {
+				this->state.mouseHoveredThrough = false;
+				//cout << "false\n";
 			}
 
-			thisTexture->clear(Color(0, 0, 0, 0));
+			this->body->render(globalTexture, thisPosition, thisSize);
 
-			this->body->render(thisTexture);
-
-			for (deque<UIElement*>::iterator child = this->children.begin(); child != this->children.end(); child++) {
-				RenderTexture* childTexture = new RenderTexture();
-
-				unsigned int evaluatedW = (*child)->w.evaluate(thisTexture->getSize().x);
-				unsigned int evaluatedH = (*child)->h.evaluate(thisTexture->getSize().y);
+			for (deque<Element*>::iterator child = this->children.begin(); child != this->children.end(); child++) {
+				Vector2f childSize((*child)->w.evaluate(thisSize.x), (*child)->h.evaluate(thisSize.y));
 				//eh->info("child texture size: " + to_string(evaluatedW) + ", " + to_string(evaluatedH), __FILE__, __LINE__);
 
 				if ((*child)->sizingMode == SizingMode::RELATIVE_TO_H)
-					evaluatedW = (*child)->w.evaluate(evaluatedH);
+					childSize.x = (*child)->w.evaluate(childSize.y);
 				if ((*child)->sizingMode == SizingMode::RELATIVE_TO_W)
-					evaluatedH = (*child)->h.evaluate(evaluatedW);
-
-				if (!childTexture->create(evaluatedW, evaluatedH, resources.contextSettings))
-					eh.err("render texture failed to create", __FILE__, __LINE__);
-
+					childSize.y = (*child)->h.evaluate(childSize.x);
+				
 				// TODO
 
-				(*child)->render(childTexture, Vector2i(
-					absolutePosition.x + (*child)->x.evaluate(thisTexture->getSize().x) - childTexture->getSize().x * (*child)->originX,
-					absolutePosition.y + (*child)->y.evaluate(thisTexture->getSize().y) - childTexture->getSize().y * (*child)->originY
-				), uiEngine);
-				Sprite childTextureSprite;
-				childTextureSprite.setTexture(childTexture->getTexture(), true);
-				childTextureSprite.setPosition(
-					(*child)->x.evaluate(thisTexture->getSize().x) - childTexture->getSize().x * (*child)->originX,
-					(*child)->y.evaluate(thisTexture->getSize().y) - childTexture->getSize().y * (*child)->originY
-				);
-				thisTexture->draw(childTextureSprite);
-				delete childTexture;
+				(*child)->render(globalTexture, Vector2f(
+					thisPosition.x + (*child)->x.evaluate(thisSize.x) - childSize.x * (*child)->originX,
+					thisPosition.y + (*child)->y.evaluate(thisSize.y) - childSize.y * (*child)->originY
+				), childSize, uiEngine);
+	
 			}
-			thisTexture->display();
+			globalTexture->display();
 		}
 	};
 
@@ -453,17 +458,17 @@ public:
 
 public:
 	Resources* resources;
-	UIElement* rootContainer;
+	Element* rootContainer;
 	RenderWindow* window;
-	UIElement::Interaction* interaction;
+	Element::Interaction* interaction;
 
-	UIEngine(RenderWindow* _window, Resources* _resources) {
+	UI(RenderWindow* _window, Resources* _resources) {
 		window = _window;
-		rootContainer = new UIElement(nullptr, "rootContainer");
+		rootContainer = new Element(nullptr, "rootContainer");
 		//cout << "root container set\n";
 		rootContainer->x.set(0, window->getSize().x);
 		rootContainer->y.set(0, window->getSize().y);
-		interaction = new UIElement::Interaction;
+		interaction = new Element::Interaction;
 		resources = _resources;
 	}
 
@@ -477,9 +482,9 @@ public:
 		//cout << framerate << "\n";
 		previousFrame = framerateClock.getElapsedTime();
 
-		UIElement* framerateDisplay = new UIElement(rootContainer, "framerateDisplay", { 0.0, 0 }, { 0.0, 0 }, { 0.0, 60 }, { 0.0, 30 }, 0.0, 0.0);
-
-		framerateDisplay->body->setSimpleText(to_string((int)round(framerate)), resources->fontDefault, 20, resources->colorText, 0.5, 0.5);
+		Element* framerateDisplay = new Element(rootContainer, "framerateDisplay", { 0.0, 0 }, { 0.0, 0 }, { 0.0, 40 }, { 0.0, 20 }, 0.0, 0.0);
+		
+		framerateDisplay->body->setSimpleText(to_string((int)round(framerate)), resources->fontDefault, 20, resources->colorRed, 0.5, 0.5);
 
 		window->clear(Color(0, 0, 0, 255));
 		RenderTexture* windowTexture = new RenderTexture;
@@ -491,7 +496,9 @@ public:
 		windowTexture->setSmooth(true);
 		interaction->mouseHoveredElement = nullptr;
 
-		rootContainer->render(windowTexture, Vector2i(0, 0), this);
+		rootContainer->render(windowTexture, Vector2f(0, 0), Vector2f(windowTexture->getSize().x, windowTexture->getSize().y), this);
+
+		framerateDisplay->deleteElement();
 
 		if (interaction->mouseHoveredElement != nullptr)
 			interaction->mouseHoveredElement->state.mouseHovered = true;
@@ -504,13 +511,12 @@ public:
 
 		window->display();
 
-		framerateDisplay->deleteElement();
 		delete windowTexture;
 	}
 
 	void resetRootContainer() {
 		delete rootContainer;
-		rootContainer = new UIElement(nullptr, "rootContainer");
+		rootContainer = new Element(nullptr, "rootContainer");
 	}
 
 };

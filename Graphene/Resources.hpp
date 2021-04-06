@@ -13,7 +13,7 @@ using namespace sf;
 // this will be a crude resource manager, no management in fact
 class Resources {
 public:
-	bool showDebugBoundaries = false;
+	bool showDebugBoundaries = true;
 
 	ContextSettings contextSettings = ContextSettings(0, 0, 
 		4, // anti-aliasing

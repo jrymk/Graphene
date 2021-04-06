@@ -20,7 +20,7 @@ int main() {
 	Resources resources;
 	resources.loadFont();
 
-	UIEngine uiEngine(&window, &resources);
+	UI ui(&window, &resources);
 	Graphene* graphene = new Graphene(&resources);
 
 
@@ -46,20 +46,19 @@ int main() {
 	graphene->edges.push_back(Graphene::Edge(&graphene->verticies[2], &graphene->verticies[0], false));
 
 
-	UIEngine::UIElement* graphContainer = new UIEngine::UIElement(uiEngine.rootContainer, "graphContainer", { 0.5, 0 }, { 0.5, 0 }, { 1.0, 0 }, { 1.0, -80 }, 0.5, 0.5);
-	graphContainer->sizingMode = UIEngine::UIElement::SizingMode::RELATIVE_TO_H;
 
-
-	/*UIEngine::SimpleText text("Lorem ipsum dolor sit amet, consectetur adipiscing elit.", resources.fontDefault, 20, resources.colorText);
-	UIEngine::UIElement textElement(text.getTexture(), &layout, { 0.0, 0 }, { 1.0, 0 });*/
-
-
-	uiEngine.rootContainer->body->setNone();
-	uiEngine.rootContainer->body->setBackgroundColor(resources.colorBackground);
-
-
-	UIEngine::UIElement* textElement = new UIEngine::UIElement(uiEngine.rootContainer, "textElement");
+	UI::Element* textElement = new UI::Element(ui.rootContainer, "textElement");
 	textElement->body->setSimpleText("Lorem ipsum dolor sit amet, consectetur adipiscing elit.", resources.fontDefault, 30, resources.colorLightBlue, 0.0, 1.0);
+
+
+	UI::Element* graphContainer = new UI::Element(ui.rootContainer, "graphContainer", { 0.5, 0 }, { 0.5, 0 }, { 1.0, 0 }, { 1.0, -80 }, 0.5, 0.5);
+	graphContainer->sizingMode = UI::Element::SizingMode::RELATIVE_TO_H;
+
+
+	ui.rootContainer->body->setNone();
+	ui.rootContainer->body->setBackgroundColor(resources.colorBackground);
+
+	Clock clock;
 
 
 	while (window.isOpen()) {
@@ -72,14 +71,20 @@ int main() {
 			}
 
 		}
-
 		
 		graphene->renderer->newGraphElement();
 		graphene->renderer->graphElement->linkContainer(graphContainer);
 		
 		
-		uiEngine.render();
-	
+		ui.render();
+
+		graphene->verticies[0].coord.x = (sin(clock.getElapsedTime().asMilliseconds() / (float)1000) / 2) + 0.5;
+
+
+		if (ui.interaction->mouseHoveredElement != nullptr) 
+			cout << "hovered on " << ui.interaction->mouseHoveredElement->debugName << "\n";
+		
+
 
 		graphene->renderer->graphElement->deleteElement();
 		

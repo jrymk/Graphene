@@ -64,7 +64,7 @@ public:
 	public:
 		Graphene* graphene = nullptr;
 		ExceptionHandler eh;
-		UIEngine::UIElement* graphElement = nullptr;
+		UI::Element* graphElement = nullptr;
 		Resources* resources = nullptr;
 
 		Renderer(Graphene* _graphene) {
@@ -73,10 +73,10 @@ public:
 		}
 
 		void newGraphElement() {
-			graphElement = new UIEngine::UIElement(nullptr, "graphElement");
+			graphElement = new UI::Element(nullptr, "graphElement");
 			int edgeID = 0;
 			for (vector<Edge>::iterator edge = graphene->edges.begin(); edge != graphene->edges.end(); edge++) {
-				UIEngine::UIElement* edgeElement = new UIEngine::UIElement(graphElement, "edge" + to_string(edgeID));
+				UI::Element* edgeElement = new UI::Element(graphElement, "edge" + to_string(edgeID));
 				edgeElement->body->setLine(
 					{ (float)edge->startingVertex->coord.x, 0 }, { (float)edge->startingVertex->coord.y, 0 },
 					{ (float)edge->endingVertex->coord.x, 0 }, { (float)edge->endingVertex->coord.y, 0 },
@@ -85,10 +85,10 @@ public:
 			}
 			int vertexID = 0;
 			for (vector<Vertex>::iterator vertex = graphene->verticies.begin(); vertex != graphene->verticies.end(); vertex++) {
-				UIEngine::UIElement* vertexElement = new UIEngine::UIElement(graphElement, "vertex" + to_string(edgeID),
+				UI::Element* vertexElement = new UI::Element(graphElement, "vertex" + to_string(edgeID),
 					{ (float)vertex->coord.x, 0 }, { (float)vertex->coord.y, 0 }, { 0, 60 }, { 0, 60 }, 0.5, 0.5);
 				vertexElement->body->setCircle({ 0.0, 20 }, resources->colorGold, -4, resources->colorGoldenrod);
-				UIEngine::UIElement* vertexTextElement = new UIEngine::UIElement(vertexElement, "vertexText" + to_string(edgeID));
+				UI::Element* vertexTextElement = new UI::Element(vertexElement, "vertexText" + to_string(edgeID));
 				vertexTextElement->body->setSimpleText(vertex->name, resources->fontDefault, 30, resources->colorText, 0.5, 0.63);
 				vertexID++;
 			}
