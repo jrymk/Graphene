@@ -192,7 +192,7 @@ public:
 				simpleTextAlignmentY = _alignmentY;
 			}
 
-			void render(RenderTexture* globalTexture, Vector2f thisPosition, Vector2f thisSize) {
+			void render(UI* ui, Vector2f thisPosition, Vector2f thisSize) {
 				RectangleShape rectShape;
 				if (resources.showDebugBoundaries) {
 					rectShape.setOutlineColor(*resources.colorUIBoundsDebug);
@@ -207,7 +207,7 @@ public:
 
 				rectShape.setFillColor(*(this->backgroundColor));
 
-				globalTexture->draw(rectShape);
+				ui->window->draw(rectShape);
 
 				switch (this->type) {
 				case Type::NONE:
@@ -222,7 +222,7 @@ public:
 						thisPosition.x + AdaptiveVector(0.5, 0).evaluate(thisSize.x) - circle.getRadius(),
 						thisPosition.y + AdaptiveVector(0.5, 0).evaluate(thisSize.y) - circle.getRadius()
 					));
-					globalTexture->draw(circle);
+					ui->window->draw(circle);
 
 					if (resources.showDebugBoundaries) {
 						RectangleShape rectShape;
@@ -231,7 +231,7 @@ public:
 						rectShape.setOutlineThickness(-1);
 						rectShape.setSize(Vector2f(circle.getRadius() * 2, circle.getRadius() * 2));
 						rectShape.setPosition(circle.getPosition());
-						globalTexture->draw(rectShape);
+						ui->window->draw(rectShape);
 					}
 					break;
 
@@ -252,7 +252,7 @@ public:
 					lineRect.setFillColor(*lineFillColor);
 					lineRect.setOutlineThickness(lineOutlineThickness);
 					lineRect.setOutlineColor(*lineOutlineColor);
-					globalTexture->draw(lineRect);
+					ui->window->draw(lineRect);
 
 					if (resources.showDebugBoundaries) {
 						RectangleShape rectShape;
@@ -261,7 +261,7 @@ public:
 						rectShape.setOutlineThickness(-1);
 						rectShape.setSize(Vector2f(lineRect.getGlobalBounds().width, lineRect.getGlobalBounds().height));
 						rectShape.setPosition(Vector2f(lineRect.getGlobalBounds().left, lineRect.getGlobalBounds().top));
-						globalTexture->draw(rectShape);
+						ui->window->draw(rectShape);
 					}
 					break;
 
@@ -280,7 +280,7 @@ public:
 						thisPosition.y + simpleTextAlignmentY * thisSize.y
 						- simpleTextAlignmentY *simpleText.getCharacterSize() - simpleText.getGlobalBounds().top
 					);
-					globalTexture->draw(simpleText);
+					ui->window->draw(simpleText);
 
 					if (resources.showDebugBoundaries) {
 						RectangleShape rectShape;
@@ -292,13 +292,13 @@ public:
 							simpleText.getPosition().x + simpleTextTempBoundsLeft, 
 							simpleText.getPosition().y + simpleTextTempBoundsTop
 						));
-						globalTexture->draw(rectShape);
+						ui->window->draw(rectShape);
 					}
 					break;
 
 				}
 
-				globalTexture->display();
+				//ui->window->display();
 			}
 
 		};
@@ -324,7 +324,7 @@ public:
 
 		string debugName;
 
-		enum class SizingMode { PER_AXIS, RELATIVE_TO_W, RELATIVE_TO_H };
+		enum class SizingMode { PER_AXIS, RELATIVE_TO_W, RELATIVE_TO_H, SHRINK_TO_FIT };
 		SizingMode sizingMode;
 
 		struct Interaction {
@@ -412,14 +412,14 @@ public:
 		}
 
 		
-		void render(RenderTexture* globalTexture, Vector2f thisPosition, Vector2f thisSize, UI* uiEngine) {
+		void render(UI* ui, Vector2f thisPosition, Vector2f thisSize) {
 			//cout << this->debugName << ": ";
 			Resources resources;
-			if (Mouse::getPosition(*uiEngine->window).x >= thisPosition.x &&
-				Mouse::getPosition(*uiEngine->window).x <= thisPosition.x + thisSize.x &&
-				Mouse::getPosition(*uiEngine->window).y >= thisPosition.y &&
-				Mouse::getPosition(*uiEngine->window).y <= thisPosition.y + thisSize.y) {
-				uiEngine->interaction->mouseHoveredElement = this;
+			if (Mouse::getPosition(*ui->window).x >= thisPosition.x &&
+				Mouse::getPosition(*ui->window).x <= thisPosition.x + thisSize.x &&
+				Mouse::getPosition(*ui->window).y >= thisPosition.y &&
+				Mouse::getPosition(*ui->window).y <= thisPosition.y + thisSize.y) {
+				ui->interaction->mouseHoveredElement = this;
 				//cout << "mouse on " << this->debugName << "\n";
 				this->state.mouseHovered = false;
 				this->state.mouseHoveredThrough = true;
@@ -430,7 +430,7 @@ public:
 				//cout << "false\n";
 			}
 
-			this->body->render(globalTexture, thisPosition, thisSize);
+			this->body->render(ui, thisPosition, thisSize);
 
 			for (deque<Element*>::iterator child = this->children.begin(); child != this->children.end(); child++) {
 				Vector2f childSize((*child)->w.evaluate(thisSize.x), (*child)->h.evaluate(thisSize.y));
@@ -440,16 +440,22 @@ public:
 					childSize.x = (*child)->w.evaluate(childSize.y);
 				if ((*child)->sizingMode == SizingMode::RELATIVE_TO_W)
 					childSize.y = (*child)->h.evaluate(childSize.x);
-				
+				if ((*child)->sizingMode == SizingMode::SHRINK_TO_FIT) {
+					childSize = Vector2f(
+						childSize.x / max(childSize.x / thisSize.x, childSize.y / thisSize.y),
+						childSize.y / max(childSize.x / thisSize.x, childSize.y / thisSize.y)
+					);
+				}
+
+
 				// TODO
 
-				(*child)->render(globalTexture, Vector2f(
+				(*child)->render(ui, Vector2f(
 					thisPosition.x + (*child)->x.evaluate(thisSize.x) - childSize.x * (*child)->originX,
 					thisPosition.y + (*child)->y.evaluate(thisSize.y) - childSize.y * (*child)->originY
-				), childSize, uiEngine);
+				), childSize);
 	
 			}
-			globalTexture->display();
 		}
 	};
 
@@ -473,45 +479,58 @@ public:
 	}
 
 	float framerate = 0.0;
+	float framerateRollingSum = 0.0;
+	queue<float> framerateRollingAverageQueue;
+	float framerateRollingAverage = 0.0;
 	Clock framerateClock;
 	Time previousFrame = framerateClock.getElapsedTime();
 
 	void render() {
-	
+		
 		framerate = (double)1000000 / (framerateClock.getElapsedTime() - previousFrame).asMicroseconds();
 		//cout << framerate << "\n";
 		previousFrame = framerateClock.getElapsedTime();
 
-		Element* framerateDisplay = new Element(rootContainer, "framerateDisplay", { 0.0, 0 }, { 0.0, 0 }, { 0.0, 40 }, { 0.0, 20 }, 0.0, 0.0);
+		while (framerateRollingAverageQueue.size() >= 100) {
+			framerateRollingSum -= framerateRollingAverageQueue.front();
+			framerateRollingAverageQueue.pop();
+		}
+		framerateRollingSum += framerate;
+		framerateRollingAverageQueue.push(framerate);
+
+		framerateRollingAverage = framerateRollingSum / 100.0;
+
+		Element* framerateDisplay = new Element(rootContainer, "framerateDisplay", { 0.0, 5 }, { 0.0, 2 }, { 0.0, 20 }, { 0.0, 10 }, 0.0, 0.0);
 		
-		framerateDisplay->body->setSimpleText(to_string((int)round(framerate)), resources->fontDefault, 20, resources->colorRed, 0.5, 0.5);
+		framerateDisplay->body->setSimpleText(to_string((int)round(framerateRollingAverage)), resources->fontMono, 10, resources->colorRed, 0.0, 0.5);
+
 
 		window->clear(Color(0, 0, 0, 255));
-		RenderTexture* windowTexture = new RenderTexture;
+		/*RenderTexture* windowTexture = new RenderTexture;
 		if (!windowTexture->create(
 			rootContainer->getTextureSize(window->getSize()).x, 
 			rootContainer->getTextureSize(window->getSize()).y, 
 			resources->contextSettings))
 			eh.err("render texture failed to create", __FILE__, __LINE__);
-		windowTexture->setSmooth(true);
+		windowTexture->setSmooth(true);*/
 		interaction->mouseHoveredElement = nullptr;
 
-		rootContainer->render(windowTexture, Vector2f(0, 0), Vector2f(windowTexture->getSize().x, windowTexture->getSize().y), this);
+		rootContainer->render(this, Vector2f(0, 0), Vector2f(window->getSize().x, window->getSize().y));
 
 		framerateDisplay->deleteElement();
 
 		if (interaction->mouseHoveredElement != nullptr)
 			interaction->mouseHoveredElement->state.mouseHovered = true;
 
-		Sprite windowSprite;
+		/*Sprite windowSprite;
 		windowSprite.setTexture(windowTexture->getTexture(), true);
-		windowSprite.setPosition(0, 0);
+		windowSprite.setPosition(0, 0);*/
 
-		window->draw(windowSprite);
+		//window->draw(windowSprite);
 
 		window->display();
 
-		delete windowTexture;
+		//delete windowTexture;
 	}
 
 	void resetRootContainer() {

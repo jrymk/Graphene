@@ -51,9 +51,12 @@ int main() {
 	textElement->body->setSimpleText("Lorem ipsum dolor sit amet, consectetur adipiscing elit.", resources.fontDefault, 30, resources.colorLightBlue, 0.0, 1.0);
 
 
-	UI::Element* graphContainer = new UI::Element(ui.rootContainer, "graphContainer", { 0.5, 0 }, { 0.5, 0 }, { 1.0, 0 }, { 1.0, -80 }, 0.5, 0.5);
-	graphContainer->sizingMode = UI::Element::SizingMode::RELATIVE_TO_H;
+	UI::Element* graphContainerMargin = new UI::Element(ui.rootContainer, "graphContainerMargin", { 0.5, 0 }, { 0.5, 0 }, { 0.0, 1 }, { 0.0, 1 }, 0.5, 0.5);
+	graphContainerMargin->sizingMode = UI::Element::SizingMode::SHRINK_TO_FIT;
+	graphContainerMargin->body->setBackgroundColor(resources.colorLightGray);
 
+
+	UI::Element* graphContainer = new UI::Element(graphContainerMargin, "graphContainer", { 0.0, 50 }, { 0.0, 50 }, { 1.0, -100 }, { 1.0, -100 }, 0.0, 0.0);
 
 	ui.rootContainer->body->setNone();
 	ui.rootContainer->body->setBackgroundColor(resources.colorBackground);
