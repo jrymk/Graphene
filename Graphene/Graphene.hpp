@@ -78,15 +78,15 @@ public:
 			for (vector<Edge>::iterator edge = graphene->edges.begin(); edge != graphene->edges.end(); edge++) {
 				UIEngine::UIElement* edgeElement = new UIEngine::UIElement(graphElement, "edge" + to_string(edgeID));
 				edgeElement->body->setLine(
-					{ edge->startingVertex->coord.x, 0 }, { edge->startingVertex->coord.y, 0 },
-					{ edge->endingVertex->coord.x, 0 }, { edge->endingVertex->coord.y, 0 },
+					{ (float)edge->startingVertex->coord.x, 0 }, { (float)edge->startingVertex->coord.y, 0 },
+					{ (float)edge->endingVertex->coord.x, 0 }, { (float)edge->endingVertex->coord.y, 0 },
 					5, resources->colorGray);
 				edgeID++;
 			}
 			int vertexID = 0;
 			for (vector<Vertex>::iterator vertex = graphene->verticies.begin(); vertex != graphene->verticies.end(); vertex++) {
 				UIEngine::UIElement* vertexElement = new UIEngine::UIElement(graphElement, "vertex" + to_string(edgeID),
-					{ vertex->coord.x, 0 }, { vertex->coord.y, 0 }, { 0, 60 }, { 0, 60 }, { 0.5, 0 }, { 0.5, 0 });
+					{ (float)vertex->coord.x, 0 }, { (float)vertex->coord.y, 0 }, { 0, 60 }, { 0, 60 }, 0.5, 0.5);
 				vertexElement->body->setCircle({ 0.0, 20 }, resources->colorGold, -4, resources->colorGoldenrod);
 				UIEngine::UIElement* vertexTextElement = new UIEngine::UIElement(vertexElement, "vertexText" + to_string(edgeID));
 				vertexTextElement->body->setSimpleText(vertex->name, resources->fontDefault, 30, resources->colorText, 0.5, 0.63);

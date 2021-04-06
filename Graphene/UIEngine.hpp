@@ -19,20 +19,20 @@ private:
 
 public:
 	struct AdaptiveVector {
-		double relativeComponent;
-		int absoluteComponent;
+		float relativeComponent;
+		float absoluteComponent;
 
 		AdaptiveVector() {
 			relativeComponent = 0.0;
 			absoluteComponent = 0;
 		}
 
-		AdaptiveVector(double _relativeComponent, int _absoluteComponent) {
+		AdaptiveVector(float _relativeComponent, float _absoluteComponent) {
 			relativeComponent = _relativeComponent;
 			absoluteComponent = _absoluteComponent;
 		}
 
-		void set(double _relativeComponent, int _absoluteComponent) {
+		void set(float _relativeComponent, float _absoluteComponent) {
 			relativeComponent = _relativeComponent;
 			absoluteComponent = _absoluteComponent;
 		}
@@ -42,23 +42,23 @@ public:
 			absoluteComponent = 0;
 		}
 
-		void parentRatio(double ratio) {
+		void parentRatio(float ratio) {
 			relativeComponent = ratio;
 			absoluteComponent = 0;
 		}
 
-		void absolute(double value) {
+		void absolute(float value) {
 			relativeComponent = 0.0;
 			absoluteComponent = value;
 		}
 
-		void reverseAbsolute(double value) {
+		void reverseAbsolute(float value) {
 			relativeComponent = 1.0;
 			absoluteComponent = value;
 		}
 
-		double evaluate(unsigned int parent) {
-			return (round(parent * this->relativeComponent + this->absoluteComponent));
+		double evaluate(float parent) {
+			return (parent * this->relativeComponent + this->absoluteComponent);
 		}
 
 	};
@@ -261,7 +261,7 @@ public:
 					break;
 
 				case Type::SIMPLE_TEXT:
-					cout << debugName << " rendering with font " << simpleTextFont << "\n";
+					//cout << debugName << " rendering with font " << simpleTextFont << "\n";
 					simpleText.setFont(*simpleTextFont);
 					simpleText.setString(simpleTextString);
 					simpleText.setCharacterSize(simpleTextSize);
@@ -311,8 +311,8 @@ public:
 		AdaptiveVector y;
 		AdaptiveVector w;
 		AdaptiveVector h;
-		AdaptiveVector originX;
-		AdaptiveVector originY;
+		float originX;
+		float originY;
 
 		string debugName;
 
@@ -331,14 +331,14 @@ public:
 			y.set(0, 0);
 			w.set(1, 0);
 			h.set(1, 0);
-			originX.set(0, 0);
-			originY.set(0, 0);
+			originX = 0.0;
+			originY = 0.0;
 			sizingMode = SizingMode::PER_AXIS;
 			debugName = _debugName;
 			body->debugName = debugName;
 		}
 
-		UIElement(UIElement* _parent, string _debugName, AdaptiveVector _x, AdaptiveVector _y, AdaptiveVector _w, AdaptiveVector _h, AdaptiveVector _originX, AdaptiveVector _originY) {
+		UIElement(UIElement* _parent, string _debugName, AdaptiveVector _x, AdaptiveVector _y, AdaptiveVector _w, AdaptiveVector _h, float _originX, float _originY) {
 			parent = _parent;
 			if (_parent != nullptr)
 				parent->children.push_back(this);
@@ -360,6 +360,8 @@ public:
 		}
 
 		void deleteElement() {
+			if (this == nullptr)
+				return;
 			if (this->parent != nullptr)
 				this->parent->children.erase(find(this->parent->children.begin(), this->parent->children.end(), this));
 			delete this;
@@ -397,10 +399,12 @@ public:
 		}
 
 		// parent provides the render texture for "this" rootContainer
-		void render(RenderTexture* thisTexture, Vector2i globalPosition, UIEngine* uiEngine) {
+		void render(RenderTexture* thisTexture, Vector2i absolutePosition, UIEngine* uiEngine) {
 			Resources resources;
-			if (Mouse::getPosition(*uiEngine->window).x >= globalPosition.x && Mouse::getPosition(*uiEngine->window).x <= globalPosition.x + thisTexture->getSize().x &&
-				Mouse::getPosition(*uiEngine->window).y >= globalPosition.y && Mouse::getPosition(*uiEngine->window).y <= globalPosition.y + thisTexture->getSize().y) {
+			if (Mouse::getPosition(*uiEngine->window).x >= absolutePosition.x && 
+				Mouse::getPosition(*uiEngine->window).x <= absolutePosition.x + thisTexture->getSize().x &&
+				Mouse::getPosition(*uiEngine->window).y >= absolutePosition.y && 
+				Mouse::getPosition(*uiEngine->window).y <= absolutePosition.y + thisTexture->getSize().y) {
 				uiEngine->interaction->mouseHoveredElement = this;
 				this->state.mouseHovered = false;
 				this->state.mouseHoveredThrough = true;
@@ -424,15 +428,18 @@ public:
 
 				if (!childTexture->create(evaluatedW, evaluatedH, resources.contextSettings))
 					eh.err("render texture failed to create", __FILE__, __LINE__);
+
+				// TODO
+
 				(*child)->render(childTexture, Vector2i(
-					globalPosition.x + (*child)->x.evaluate(thisTexture->getSize().x) - (*child)->originX.evaluate(childTexture->getSize().x),
-					globalPosition.y + (*child)->y.evaluate(thisTexture->getSize().y) - (*child)->originY.evaluate(childTexture->getSize().y)
+					absolutePosition.x + (*child)->x.evaluate(thisTexture->getSize().x) - childTexture->getSize().x * (*child)->originX,
+					absolutePosition.y + (*child)->y.evaluate(thisTexture->getSize().y) - childTexture->getSize().y * (*child)->originY
 				), uiEngine);
 				Sprite childTextureSprite;
 				childTextureSprite.setTexture(childTexture->getTexture(), true);
 				childTextureSprite.setPosition(
-					(*child)->x.evaluate(thisTexture->getSize().x) - (*child)->originX.evaluate(childTexture->getSize().x),
-					(*child)->y.evaluate(thisTexture->getSize().y) - (*child)->originY.evaluate(childTexture->getSize().y)
+					(*child)->x.evaluate(thisTexture->getSize().x) - childTexture->getSize().x * (*child)->originX,
+					(*child)->y.evaluate(thisTexture->getSize().y) - childTexture->getSize().y * (*child)->originY
 				);
 				thisTexture->draw(childTextureSprite);
 				delete childTexture;
@@ -445,24 +452,41 @@ public:
 
 
 public:
+	Resources* resources;
 	UIElement* rootContainer;
 	RenderWindow* window;
 	UIElement::Interaction* interaction;
 
-	UIEngine(RenderWindow* _window) {
+	UIEngine(RenderWindow* _window, Resources* _resources) {
 		window = _window;
 		rootContainer = new UIElement(nullptr, "rootContainer");
-		cout << "root container set\n";
+		//cout << "root container set\n";
 		rootContainer->x.set(0, window->getSize().x);
 		rootContainer->y.set(0, window->getSize().y);
 		interaction = new UIElement::Interaction;
+		resources = _resources;
 	}
 
+	float framerate = 0.0;
+	Clock framerateClock;
+	Time previousFrame = framerateClock.getElapsedTime();
+
 	void render() {
-		Resources resources;
+	
+		framerate = (double)1000000 / (framerateClock.getElapsedTime() - previousFrame).asMicroseconds();
+		//cout << framerate << "\n";
+		previousFrame = framerateClock.getElapsedTime();
+
+		UIElement* framerateDisplay = new UIElement(rootContainer, "framerateDisplay", { 0.0, 0 }, { 0.0, 0 }, { 0.0, 60 }, { 0.0, 30 }, 0.0, 0.0);
+
+		framerateDisplay->body->setSimpleText(to_string((int)round(framerate)), resources->fontDefault, 20, resources->colorText, 0.5, 0.5);
+
 		window->clear(Color(0, 0, 0, 255));
 		RenderTexture* windowTexture = new RenderTexture;
-		if (!windowTexture->create(rootContainer->getTextureSize(window->getSize()).x, rootContainer->getTextureSize(window->getSize()).y, resources.contextSettings))
+		if (!windowTexture->create(
+			rootContainer->getTextureSize(window->getSize()).x, 
+			rootContainer->getTextureSize(window->getSize()).y, 
+			resources->contextSettings))
 			eh.err("render texture failed to create", __FILE__, __LINE__);
 		windowTexture->setSmooth(true);
 		interaction->mouseHoveredElement = nullptr;
@@ -479,6 +503,8 @@ public:
 		window->draw(windowSprite);
 
 		window->display();
+
+		framerateDisplay->deleteElement();
 		delete windowTexture;
 	}
 

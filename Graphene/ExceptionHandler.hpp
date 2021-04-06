@@ -54,7 +54,7 @@ public:
 	}
 
 	void warn(string _message, string _file, int _line) {
-		cout << _message << "\n";
+		//cout << _message << "\n";
 		Exception* newException = new Exception;
 		newException->message = _message;
 		newException->level = Level::WARN;
@@ -64,7 +64,7 @@ public:
 	}
 
 	void err(string _message, string _file, int _line) {
-		cout << _message << "\n";
+		//cout << _message << "\n";
 		Exception* newException = new Exception;
 		newException->message = _message;
 		newException->level = Level::ERR;

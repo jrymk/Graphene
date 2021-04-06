@@ -15,15 +15,16 @@ int main() {
 	ExceptionHandler eh;
 
 	RenderWindow window(sf::VideoMode(800, 600), L"Graphene £\", Style::Default, ContextSettings(0, 0, 4, 0, 4, 0, false));
+	window.setActive(false);
 
 	Resources resources;
 	resources.loadFont();
 
-	UIEngine uiEngine(&window);
+	UIEngine uiEngine(&window, &resources);
 	Graphene* graphene = new Graphene(&resources);
 
 
-	int v, e;
+	/*int v, e;
 	cin >> v >> e;
 	for (int i = 0; i < v; i++) {
 		graphene->verticies.push_back(Graphene::Vertex());
@@ -33,9 +34,19 @@ int main() {
 		int a, b;
 		cin >> a >> b;
 		graphene->edges.push_back(Graphene::Edge(&graphene->verticies[a], &graphene->verticies[b], false));
-	}
+	}*/
+	graphene->verticies.push_back(Graphene::Vertex());
+	graphene->verticies[0].name = to_string(0);
+	graphene->verticies.push_back(Graphene::Vertex());
+	graphene->verticies[1].name = to_string(1);
+	graphene->verticies.push_back(Graphene::Vertex());
+	graphene->verticies[2].name = to_string(2);
+	graphene->edges.push_back(Graphene::Edge(&graphene->verticies[0], &graphene->verticies[1], false));
+	graphene->edges.push_back(Graphene::Edge(&graphene->verticies[1], &graphene->verticies[2], false));
+	graphene->edges.push_back(Graphene::Edge(&graphene->verticies[2], &graphene->verticies[0], false));
 
-	UIEngine::UIElement* graphContainer = new UIEngine::UIElement(uiEngine.rootContainer, "graphContainer", { 0.5, 0 }, { 0.5, 0 }, { 1.0, 0 }, { 1.0, -80 }, { 0.5, 0 }, { 0.5, 0 });
+
+	UIEngine::UIElement* graphContainer = new UIEngine::UIElement(uiEngine.rootContainer, "graphContainer", { 0.5, 0 }, { 0.5, 0 }, { 1.0, 0 }, { 1.0, -80 }, 0.5, 0.5);
 	graphContainer->sizingMode = UIEngine::UIElement::SizingMode::RELATIVE_TO_H;
 
 
@@ -62,14 +73,17 @@ int main() {
 
 		}
 
+		
 		graphene->renderer->newGraphElement();
 		graphene->renderer->graphElement->linkContainer(graphContainer);
-
+		
 		
 		uiEngine.render();
 	
+
 		graphene->renderer->graphElement->deleteElement();
-		//delete mouseHoveredItemDisplay;
+		
+		eh.ok("hi!", __FILE__, __LINE__);
 
 		eh.flushExceptionsToIOStream();
 
