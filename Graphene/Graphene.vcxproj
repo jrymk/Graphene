@@ -150,6 +150,7 @@
   <ItemGroup>
     <ClInclude Include="ExceptionHandler.hpp" />
     <ClInclude Include="Graphene.hpp" />
+    <ClInclude Include="UI.hpp" />
     <ClInclude Include="UIEngine.hpp" />
     <ClInclude Include="Resources.hpp" />
   </ItemGroup>

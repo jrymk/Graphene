@@ -14,6 +14,7 @@ using namespace sf;
 class Resources {
 public:
 	bool showDebugBoundaries = false;
+	bool showRenderTriangleOutline = true;
 
 	ContextSettings contextSettings = ContextSettings(0, 0, 
 		2, // anti-aliasing
