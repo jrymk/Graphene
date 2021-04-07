@@ -42,27 +42,32 @@ public:
 		}
 
 
-		void testRender(sf::RenderWindow *window) {
-
-			window->clear(Color(0, 0, 0, 255));
+		void testRender(UI2* ui) {
+			ui->_window->clear(Color(0, 0, 0, 255));
 			vertexArray.clear();
 			/*appendQuad({ 0, 0, resources.colorBackground }, { (float)window->getSize().x, 0, resources.colorBackground },
 				{ (float)window->getSize().x, (float)window->getSize().y, resources.colorBackground }, { 0, (float)window->getSize().y, resources.colorBackground });
 			*/
 			appendTriangle({ 0, 0, resources.colorRed }, { 50, 100, resources.colorRed }, { 150, 300, resources.colorRed });
 
-			window->draw(&vertexArray[0], vertexArray.size(), sf::Triangles);
-			window->display();
+			ui->_window->draw(&vertexArray[0], vertexArray.size(), sf::Triangles);
+			ui->_window->display();
 		}
 
 
 	};
 
 	
+	Renderer* _renderer;
+	sf::RenderWindow* _window;
 
-	void testRender(sf::RenderWindow* window) {
-		Renderer* renderer = new Renderer();
-		renderer->testRender(window);
+	UI2(sf::RenderWindow* window) {
+		_window = window;
+		_renderer = new Renderer();
+	}
+
+	void testRender() {
+		_renderer->testRender(this);
 	}
 
 };

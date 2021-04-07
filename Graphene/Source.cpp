@@ -85,6 +85,8 @@ int main() {
 	graphene->renderer->graphElement->linkContainer(graphContainer);
 
 
+	graphene->core->init();
+
 	while (window.isOpen()) {
 		Event event;
 		while (window.pollEvent(event)) {
@@ -96,7 +98,7 @@ int main() {
 
 		}
 
-
+		graphene->core->update();
 		graphene->renderer->newGraphElement();
 		graphene->renderer->graphElement->linkContainer(graphContainer);
 

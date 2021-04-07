@@ -109,6 +109,14 @@ public:
 			resources = _graphene->resources;
 		}
 
+		void init() {
+
+		}
+
+		void update() {
+
+		}
+
 	};
 
 	// Handles the structure of a graph, and support for multiple graphs, graph stepping, highlighting, etc.
