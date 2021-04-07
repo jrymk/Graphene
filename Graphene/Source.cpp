@@ -117,7 +117,7 @@ int main() {
 		*/
 
 		//ui.render();
-		ui2.testRender();
+
 
 		cout << (int)round((double)1000000 / (clock.getElapsedTime() - previousFrame).asMicroseconds()) << "fps\n";
 		previousFrame = clock.getElapsedTime();

@@ -15,11 +15,336 @@ public:
 	sf::RenderWindow* _window;
 	Resources* _resources;
 
-	class Renderer {
+	class Element {
+	public:
+		struct AdaptiveVector {
+		private:
+			float _relativeComponent;
+			float _absoluteComponent;
+
+		public:
+			AdaptiveVector() {
+				_relativeComponent = 0;
+				_absoluteComponent = 0;
+			}
+
+			AdaptiveVector(float relativeComponent, float absoluteComponent) {
+				_relativeComponent = relativeComponent;
+				_absoluteComponent = absoluteComponent;
+			}
+
+			void set(float relativeComponent, float absoluteComponent) {
+				_relativeComponent = relativeComponent;
+				_absoluteComponent = absoluteComponent;
+			}
+
+			void setRelativeComponent(float relativeComponent) {
+				_relativeComponent = relativeComponent;
+			}
+
+			void setAbsoluteComponent(float absoluteComponent) {
+				_absoluteComponent = absoluteComponent;
+			}
+
+			AdaptiveVector get() {
+				return AdaptiveVector(_relativeComponent, _absoluteComponent);
+			}
+
+			float getRelativeComponent() {
+				return _relativeComponent;
+			}
+
+			float getAbsoluteComponent() {
+				return _absoluteComponent;
+			}
+
+			float evaluate(float parent) {
+				return (parent * this->_relativeComponent + this->_absoluteComponent);
+			}
+		};
+
+		class Body {
+		private:
+			UI2* _ui;
+			Element* _element;
+
+		public:
+			Body(UI2* ui, Element* parentElement) {
+				_ui = ui;
+				_element = parentElement;
+			}
+
+			enum class Type {
+				NONE,
+				CIRCLE,
+				LINE,
+				SIMPLE_TEXT,
+
+			};
+
+		private:
+			Type _type = Type::NONE;
+			Color* _backgroundColor = _ui->_resources->colorTransparent;
+			string _debugName;
+
+		public:
+
+
+			string getDebugName() {
+				return _debugName;
+			}
+
+			void setDebugName(string debugName) {
+				_debugName = debugName;
+			}
+
+
+		private:
+
+			// none
+
+
+			// circle
+			AdaptiveVector circleRadius = { 1.0, 0 };
+			Color* circleFillColor = _ui->_resources->colorTransparent;
+			float circleOutlineThickness = 0;
+			Color* circleOutlineColor = _ui->_resources->colorTransparent;
+
+
+			// rectangle
+
+
+			// line
+			AdaptiveVector linePointAX = { 0.0, 0 };
+			AdaptiveVector linePointAY = { 0.0, 0 };
+			AdaptiveVector linePointBX = { 1.0, 0 };
+			AdaptiveVector linePointBY = { 1.0, 0 };
+			float lineThickness = 1;
+			Color* lineFillColor = _ui->_resources->colorTransparent;
+			float lineOutlineThickness = 0.0;
+			Color* lineOutlineColor = _ui->_resources->colorTransparent;
+			float linePerpendicularOffset = 0;
+
+		};
+
+		enum class SizingMode {
+			PER_AXIS,
+			RELATIVE_TO_W,
+			RELATIVE_TO_H,
+			SHRINK_TO_FIT
+		};
+
+	private:
+		UI2* _ui;
+		Element* _parent;
+		deque<Element*> _children;
+
+		AdaptiveVector _x;
+		AdaptiveVector _y;
+		AdaptiveVector _w;
+		AdaptiveVector _h;
+		float _originX;
+		float _originY;
+		SizingMode _sizingMode;
+
+		Body* _body = new Body(_ui, this);
+
+		string _debugName;
+
+	public:
+		Element(UI2* ui, Element* parent, string debugName) {
+			_ui = ui;
+			_parent = parent;
+			debugName = _debugName;
+			_body->setDebugName(debugName);
+
+			if (parent != nullptr)
+				parent->_children.push_back(this);
+			_x = { 0, 0 };
+			_y = { 0, 0 };
+			_w = { 1, 0 };
+			_h = { 1, 0 };
+			_originX = 0;
+			_originY = 0;
+			_sizingMode = SizingMode::PER_AXIS;
+		}
+
+		Element(UI2* ui, Element* parent, string debugName, AdaptiveVector x, AdaptiveVector y, AdaptiveVector w, AdaptiveVector h, float originX, float originY) {
+			_ui = ui;
+			_parent = parent;
+			debugName = _debugName;
+			_body->setDebugName(debugName);
+
+			if (parent != nullptr)
+				parent->_children.push_back(this);
+			_x = x;
+			_y = y;
+			_w = w;
+			_h = h;
+			_originX = originX;
+			_originY = originY;
+			_sizingMode = SizingMode::PER_AXIS;
+		}
+
+		~Element() {
+			delete this->_body;
+			for (deque<Element*>::iterator child = this->_children.begin(); child != this->_children.end(); child++) {
+				delete (*child);
+			}
+		}
+
+		void deleteElement() {
+			if (this == nullptr)
+				return;
+			if (this->_parent != nullptr)
+				this->_parent->_children.erase(find(this->_parent->_children.begin(), this->_parent->_children.end(), this));
+			delete this;
+		}
+
+		void linkContainer(Element* parent) {
+			if (this == _parent)
+				return;
+			if (this->_parent != nullptr)
+				this->_parent->_children.erase(find(this->_parent->_children.begin(), this->_parent->_children.end(), this));
+			this->_parent = parent;
+			this->_parent->_children.push_back(this);
+		}
+
+		void unlinkContainer() {
+			if (this == this->_parent)
+				return;
+			this->_parent->_children.erase(remove(this->_parent->_children.begin(), this->_parent->_children.end(), this), this->_parent->_children.end());
+			this->_parent = this;
+		}
+
+		Element* getParentElement() {
+			return _parent;
+		}
+
+		deque<Element*>* getChildren() {
+			return &_children;
+		}
+
+		AdaptiveVector getX() {
+			return _x;
+		}
+
+		void setX(float relativeComponent, float absoluteComponent) {
+			_x.set(relativeComponent, absoluteComponent);
+		}
+
+		void setX(AdaptiveVector x) {
+			_x = x;
+		}
+
+		float evalX(float parent) {
+			return _x.evaluate(parent);
+		}
+
+		AdaptiveVector getY() {
+			return _y;
+		}
+
+		void setY(float relativeComponent, float absoluteComponent) {
+			_y.set(relativeComponent, absoluteComponent);
+		}
+
+		void setY(AdaptiveVector y) {
+			_y = y;
+		}
+
+		float evalY(float parent) {
+			return _y.evaluate(parent);
+		}
+
+		AdaptiveVector getW() {
+			return _w;
+		}
+
+		void setW(float relativeComponent, float absoluteComponent) {
+			_w.set(relativeComponent, absoluteComponent);
+		}
+
+		void setW(AdaptiveVector w) {
+			_w = w;
+		}
+
+		float evalW(float parent) {
+			return _w.evaluate(parent);
+		}
+
+		AdaptiveVector getH() {
+			return _h;
+		}
+
+		void setH(float relativeComponent, float absoluteComponent) {
+			_h.set(relativeComponent, absoluteComponent);
+		}
+
+		void setH(AdaptiveVector h) {
+			_h = h;
+		}
+
+		float evalH(float parent) {
+			return _h.evaluate(parent);
+		}
+
+		float getOriginX() {
+			return _originX;
+		}
+
+		void setOriginX(float originX) {
+			_originX = originX;
+		}
+
+		float evalOriginX(float parent) {
+			return _originX * parent;
+		}
+
+		float getOriginY() {
+			return _originY;
+		}
+
+		void setOriginY(float originY) {
+			_originY = originY;
+		}
+
+		float evalOriginY(float parent) {
+			return _originY * parent;
+		}
+
+		SizingMode getSizingMode() {
+			return _sizingMode;
+		}
+
+		void setSizingMode(SizingMode sizingMode) {
+			_sizingMode = sizingMode;
+		}
+
+		Body* getBody() {
+			return _body;
+		}
+
+		string getDebugName() {
+			return _debugName;
+		}
+
+		void setDebugName(string debugName) {
+			_debugName = debugName;
+		}
+
+	};
+
+
+	class LayoutGenerator {
 	private:
 		UI2* _ui;
 
 	public:
+		LayoutGenerator(UI2* ui) {
+			_ui = ui;
+		}
+
 		class VertexArray {
 		public:
 			struct Vertex {
@@ -79,7 +404,7 @@ public:
 				vertexArray.push_back(sf::Vertex(sf::Vector2f(v0._x, v0._y), *color));
 				vertexArray.push_back(sf::Vertex(sf::Vector2f(v1._x, v1._y), *color));
 				vertexArray.push_back(sf::Vertex(sf::Vector2f(v2._x, v2._y), *color));
-				
+
 				if (_ui->_resources->showRenderingDebug) {
 					appendDebugWireframe(v0, v1, 1, sf::Color(min(color->r + 50, 255), min(color->g + 50, 255), min(color->b + 50, 255)));
 					appendDebugWireframe(v1, v2, 1, sf::Color(min(color->r + 50, 255), min(color->g + 50, 255), min(color->b + 50, 255)));
@@ -195,7 +520,7 @@ public:
 					appendTriangle({ topLeftPosition.x + size.x, topLeftPosition.y + cornerRadius }, prevPoint, thisPoint, color);
 					prevPoint = thisPoint;
 				}
-				
+
 				appendTriangle({ topLeftPosition.x + size.x, topLeftPosition.y + cornerRadius }, prevPoint,
 					{ topLeftPosition.x, topLeftPosition.y + size.y - cornerRadius }, color);
 				prevPoint = { topLeftPosition.x, topLeftPosition.y + size.y - cornerRadius };
@@ -206,7 +531,7 @@ public:
 					appendTriangle({ topLeftPosition.x + size.x, topLeftPosition.y + cornerRadius }, prevPoint, thisPoint, color);
 					prevPoint = thisPoint;
 				}
-				
+
 				appendTriangle({ topLeftPosition.x + size.x, topLeftPosition.y + cornerRadius }, prevPoint,
 					{ topLeftPosition.x + cornerRadius, topLeftPosition.y }, color);
 				prevPoint = { topLeftPosition.x + cornerRadius, topLeftPosition.y };
@@ -265,94 +590,58 @@ public:
 			}
 		};
 
+		VertexArray* _vertexArray = new VertexArray(_ui);
 
+		void generateSublayout(Element* thisElement, Vector2f thisPosition, Vector2f thisSize) {
+			for (deque<Element*>::iterator child = thisElement->getChildren()->begin();
+				child != thisElement->getChildren()->end(); child++) {
+				Vector2f childSize((*child)->evalW(thisSize.x), (*child)->evalH(thisSize.y));
 
-
-
-		Renderer(UI2* ui) {
-			_ui = ui;
-		}
-
-		void testRender(UI2* ui) {
-			VertexArray vertexArray(ui);
-			//ui->_window->clear(Color(0, 0, 0, 255));
-			vertexArray.clear();
-
-			vertexArray.appendRectangle({ 0, 0 }, { (float)ui->_window->getSize().x, (float)ui->_window->getSize().y }, ui->_resources->colorBackground);
-
-			/*for (int i = 0; i < 140; i++) {
-				for (int j = 0; j < 70; j++) {
-					vertexArray.appendCircle({ (float)50 + i * 10, (float)50 + j * 10 }, 20, ui->_resources->colorTranslucentYellow, ui->_resources->circlePointCount);
+				if ((*child)->getSizingMode() == Element::SizingMode::RELATIVE_TO_H)
+					childSize.x = (*child)->evalW(childSize.y);
+				if ((*child)->getSizingMode() == Element::SizingMode::RELATIVE_TO_W)
+					childSize.y = (*child)->evalH(childSize.x);
+				if ((*child)->getSizingMode() == Element::SizingMode::SHRINK_TO_FIT) {
+					childSize = Vector2f(
+						childSize.x / max(childSize.x / thisSize.x, childSize.y / thisSize.y),
+						childSize.y / max(childSize.x / thisSize.x, childSize.y / thisSize.y)
+					);
 				}
-			}*/
 
-			vertexArray.appendRoundedRectangle({ 50, 50 }, { 300, 300 }, 30, ui->_resources->colorPink, 20);
+				// TODO: body rendering
 
-
-			vertexArray.appendCircle({ 960, 540 }, 300, ui->_resources->colorDeepSkyBlue, ui->_resources->circlePointCount);
-			vertexArray.appendLine({ 960, 540 }, { (float)sf::Mouse::getPosition(*ui->_window).x, (float)sf::Mouse::getPosition(*ui->_window).y }, 100, 100, ui->_resources->colorOrange);
-
-			cout << "triangles rendered: " << vertexArray.getSize() << "\n";
-
-			ui->_window->draw(vertexArray.getBuffer(), vertexArray.getSize(), sf::Triangles);
-			ui->_window->display();
+					generateSublayout(*child, Vector2f(
+						thisPosition.x + (*child)->evalX(thisSize.x) - (*child)->evalOriginX(childSize.x),
+						thisPosition.y + (*child)->evalY(thisSize.y) - (*child)->evalOriginY(childSize.y)
+					), childSize);
+			}
 		}
 
-	};
+	public:
+		void generateLayout(Element* rootElement, Vector2f topLeftCoord, Vector2f size) {
+			_vertexArray->clear();
+			generateSublayout(rootElement, topLeftCoord, size);
+		}
 
-	Renderer* _renderer;
+		VertexArray* getVertexArray() {
+			return _vertexArray;
+		}
 
-	/*class Element {
-		class Body {
-		public:
-			UI2* _ui;
-			enum class Type {
-				NONE,
-				CIRCLE,
-				LINE,
-				SIMPLE_TEXT,
-
-			};
-			Type _type = Type::NONE;
-			Color* _backgroundColor = _ui->_resources->colorTransparent;
-			string _debugName;
-
-			// none
-
-
-			// circle
-			CircleShape circle;
-			AdaptiveVector circleRadius = { 1.0, 0 };
-			Color* circleFillColor = resources.colorTransparent;
-			float circleOutlineThickness = 0;
-			Color* circleOutlineColor = resources.colorTransparent;
-
-			// rectangle
-
-
-			// line
-			AdaptiveVector linePointAX = { 0.0, 0 };
-			AdaptiveVector linePointAY = { 0.0, 0 };
-			AdaptiveVector linePointBX = { 1.0, 0 };
-			AdaptiveVector linePointBY = { 1.0, 0 };
-			float lineThickness = 1;
-			Color* lineFillColor = resources.colorTransparent;
-			float lineOutlineThickness = 0.0;
-			Color* lineOutlineColor = resources.colorTransparent;
-			float linePerpendicularOffset = 0;
-			float lineDeltaX = 0.0;
-			float lineDeltaY = 0.0;
-
-		};
+		~LayoutGenerator() {
+			delete _vertexArray;
+		}
 
 	};
 
 
 	UI2(sf::RenderWindow* window, Resources* resources) {
 		_window = window;
-		_renderer = new Renderer(this);
 		_resources = resources;
-	}*/
+	}
+
+	void renderUI() {
+
+	}
 
 
 };
