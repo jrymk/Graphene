@@ -14,6 +14,9 @@ using namespace sf;
 class Resources {
 public:
 	bool showDebugBoundaries = false;
+	bool showRenderingDebug = true;
+	unsigned int circlePointCount = 40; // please make it multiple of 4
+	Color* colorTranslucentYellow = new Color(255, 255, 0, 60);
 
 	ContextSettings contextSettings = ContextSettings(0, 0, 
 		2, // anti-aliasing

@@ -7,6 +7,7 @@
 #include "ExceptionHandler.hpp"
 #include "UIEngine.hpp"
 #include "Resources.hpp"
+#include "UI.hpp"
 
 using namespace std;
 using namespace sf;
@@ -29,13 +30,13 @@ int main() {
 	Resources resources;
 	resources.loadFont();
 
-	UI ui(&window, &resources);
-	Graphene* graphene = new Graphene(&resources);
+	//UI ui(&window, &resources);
+	//Graphene* graphene = new Graphene(&resources);
 
 	//window.setActive(false);
 	//Thread renderThread(&render, &ui);
 	//renderThread.launch();
-
+	/*
 	int v = 5;
 	for (int i = 0; i < v; i++) {
 		graphene->verticies.push_back(Graphene::Vertex());
@@ -47,7 +48,7 @@ int main() {
 				graphene->edges.push_back(Graphene::Edge(&graphene->verticies[i], &graphene->verticies[j], false));
 			}
 		}
-	}
+	}*/
 	/*for (int i = 0; i < e; i++) {
 		int a, b;
 		cin >> a >> b;
@@ -65,7 +66,7 @@ int main() {
 	*/
 
 
-	UI::Element* textElement = new UI::Element(ui.rootContainer, "textElement");
+	/*UI::Element* textElement = new UI::Element(ui.rootContainer, "textElement");
 	textElement->body->setSimpleText("Lorem ipsum dolor sit amet, consectetur adipiscing elit.", resources.fontDefault, 30, resources.colorLightBlue, 0.0, 1.0);
 
 
@@ -79,10 +80,16 @@ int main() {
 	ui.rootContainer->body->setNone();
 	ui.rootContainer->body->setBackgroundColor(resources.colorBackground);
 
-	Clock clock;
+	
 
 	graphene->renderer->newGraphElement();
 	graphene->renderer->graphElement->linkContainer(graphContainer);
+	*/
+
+	Clock clock;
+	Time previousFrame = clock.getElapsedTime();
+
+	UI2 ui2(&window, &resources);
 
 
 	while (window.isOpen()) {
@@ -97,7 +104,7 @@ int main() {
 		}
 
 
-		graphene->renderer->newGraphElement();
+		/*graphene->renderer->newGraphElement();
 		graphene->renderer->graphElement->linkContainer(graphContainer);
 
 
@@ -107,19 +114,23 @@ int main() {
 		graphene->verticies[1].coord.y = (0.6 * cos(-clock.getElapsedTime().asMilliseconds() / (float)1760) / 2) + 0.5;
 		graphene->verticies[2].coord.x = (0.3 * sin(clock.getElapsedTime().asMilliseconds() / (float)370) / 2) + 0.5;
 		graphene->verticies[2].coord.y = (0.3 * cos(clock.getElapsedTime().asMilliseconds() / (float)370) / 2) + 0.5;
+		*/
 
+		//ui.render();
+		ui2.testRender();
 
-		ui.render();
+		cout << (int)round((double)1000000 / (clock.getElapsedTime() - previousFrame).asMicroseconds()) << "fps\n";
+		previousFrame = clock.getElapsedTime();
 
 		/*if (ui.interaction->mouseHoveredElement != nullptr)
 			cout << "hovered on " << ui.interaction->mouseHoveredElement->debugName << "\n";*/
 
-		graphene->renderer->graphElement->deleteElement();
+		//graphene->renderer->graphElement->deleteElement();
 
 
-		eh.ok("hi!", __FILE__, __LINE__);
+		//eh.ok("hi!", __FILE__, __LINE__);
 
-		eh.flushExceptionsToIOStream();
+		//eh.flushExceptionsToIOStream();
 
 	}
 
