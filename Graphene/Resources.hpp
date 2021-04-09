@@ -14,19 +14,19 @@ using namespace sf;
 class Resources {
 public:
 	bool showDebugBoundaries = false;
-	bool showRenderingDebug = true;
+	bool showRenderingDebug = false;
 	unsigned int circlePointCount = 40; // please make it multiple of 4
 	Color* colorTranslucentYellow = new Color(255, 255, 0, 60);
 
 	ContextSettings contextSettings = ContextSettings(0, 0, 
-		2, // anti-aliasing
+		4, // anti-aliasing
 		0, 4, 0, false);
 
 	Font* fontDefault = new Font();
 	Font* fontMono = new Font();
 
 	Color* colorTransparent = new Color(0, 0, 0, 0);
-	Color* colorBackground = new Color(250, 250, 250);
+	Color* colorBackground = new Color(250, 250, 250, 255);
 	Color* colorText = new Color(50, 50, 50);
 
 	Color* colorIndianRed = new Color(205, 92, 92);

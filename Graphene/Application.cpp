@@ -24,20 +24,25 @@ using namespace sf;
 int main() {
 	ExceptionHandler eh;
 
-	RenderWindow window(sf::VideoMode(800, 600), L"Graphene £\", Style::Default, ContextSettings(0, 0, 4, 0, 4, 0, false));
-	window.setActive(false);
-
 	Resources resources;
 	resources.loadFont();
 
-	LegacyUI legacyUI(&window, &resources);
-	Graphene* graphene = new Graphene(&resources);
+	RenderWindow window(sf::VideoMode(800, 600), L"Graphene £\", Style::Default, resources.contextSettings);
+	//window.setActive(false);
+
+	//window.setVerticalSyncEnabled(true);
+	window.setFramerateLimit(60);
+
+	
+
+	UI2* ui = new UI2(&window, &resources);
+	Graphene* graphene = new Graphene(ui, &resources);
 
 	//window.setActive(false);
 	//Thread renderThread(&render, &ui);
 	//renderThread.launch();
 	
-	int v = 5;
+	int v = 70;
 	for (int i = 0; i < v; i++) {
 		graphene->verticies.push_back(Graphene::Vertex());
 		graphene->verticies[i].name = to_string(i);
@@ -66,33 +71,37 @@ int main() {
 	*/
 
 
-	LegacyUI::Element* textElement = new LegacyUI::Element(legacyUI.rootContainer, "textElement");
-	textElement->body->setSimpleText("Lorem ipsum dolor sit amet, consectetur adipiscing elit.", resources.fontDefault, 30, resources.colorLightBlue, 0.0, 1.0);
+	/*UI2::Element* textElement = new UI2::Element(legacyUI.rootContainer, "textElement");
+	textElement->getBody()->setSimpleText("Lorem ipsum dolor sit amet, consectetur adipiscing elit.", resources.fontDefault, 30, resources.colorLightBlue, 0.0, 1.0);
+	*/
+
+	//ui->getRootElement()->getBody()->setBackgroundColor(resources.colorBackground);
+
+	UI2::Element* graphContainerMargin = new UI2::Element(ui, ui->getRootElement(), "graphContainerMargin", { 0.5, 0 }, { 0.5, 0 }, { 0.0, 1 }, { 0.0, 1 }, 0.5, 0.5);
+	graphContainerMargin->setSizingMode(UI2::Element::SizingMode::SHRINK_TO_FIT);
+	graphContainerMargin->getBody()->setBackgroundColor(resources.colorLightGray);
 
 
-	LegacyUI::Element* graphContainerMargin = new LegacyUI::Element(legacyUI.rootContainer, "graphContainerMargin", { 0.5, 0 }, { 0.5, 0 }, { 0.0, 1 }, { 0.0, 1 }, 0.5, 0.5);
-	graphContainerMargin->sizingMode = LegacyUI::Element::SizingMode::SHRINK_TO_FIT;
-	graphContainerMargin->body->setBackgroundColor(resources.colorLightGray);
+	UI2::Element* graphContainer = new UI2::Element(ui, graphContainerMargin, "graphContainer", { 0.0, 50 }, { 0.0, 50 }, { 1.0, -100 }, { 1.0, -100 }, 0.0, 0.0);
 
-
-	LegacyUI::Element* graphContainer = new LegacyUI::Element(graphContainerMargin, "graphContainer", { 0.0, 50 }, { 0.0, 50 }, { 1.0, -100 }, { 1.0, -100 }, 0.0, 0.0);
-
-	legacyUI.rootContainer->body->setNone();
-	legacyUI.rootContainer->body->setBackgroundColor(resources.colorBackground);
+	ui->getRootElement()->getBody()->setNone();
+	ui->getRootElement()->getBody()->setBackgroundColor(resources.colorBackground);
 
 	
 
-	graphene->renderer->newGraphElement();
-	graphene->renderer->graphElement->linkContainer(graphContainer);
-	
 
 	Clock clock;
 	Time previousFrame = clock.getElapsedTime();
 
 	//UI2 ui2(&window, &resources);
-
+	Clock mainProfilerClock;
+	////cout << "Main profiler - : " << mainProfilerClock.getElapsedTime().asMicroseconds() << "\n";
+	mainProfilerClock.restart();
 
 	while (window.isOpen()) {
+		//cout << "Main profiler - new loop: " << mainProfilerClock.getElapsedTime().asMicroseconds() << "\n";
+		mainProfilerClock.restart();
+
 		Event event;
 		while (window.pollEvent(event)) {
 			if (event.type == Event::Closed)
@@ -103,10 +112,8 @@ int main() {
 
 		}
 
-
-		/*graphene->renderer->newGraphElement();
-		graphene->renderer->graphElement->linkContainer(graphContainer);
-
+		//cout << "Main profiler - poll events: " << mainProfilerClock.getElapsedTime().asMicroseconds() << "\n";
+		mainProfilerClock.restart();
 
 		graphene->verticies[0].coord.x = (sin(clock.getElapsedTime().asMilliseconds() / (float)920) / 2) + 0.5;
 		graphene->verticies[0].coord.y = (cos(clock.getElapsedTime().asMilliseconds() / (float)920) / 2) + 0.5;
@@ -114,20 +121,31 @@ int main() {
 		graphene->verticies[1].coord.y = (0.6 * cos(-clock.getElapsedTime().asMilliseconds() / (float)1760) / 2) + 0.5;
 		graphene->verticies[2].coord.x = (0.3 * sin(clock.getElapsedTime().asMilliseconds() / (float)370) / 2) + 0.5;
 		graphene->verticies[2].coord.y = (0.3 * cos(clock.getElapsedTime().asMilliseconds() / (float)370) / 2) + 0.5;
-		*/
+		
+		//cout << "Main profiler - graphene movement test: " << mainProfilerClock.getElapsedTime().asMicroseconds() << "\n";
+		mainProfilerClock.restart();
+
+		graphene->renderer->newGraphElement();
+		graphene->renderer->graphElement->linkContainer(graphContainer);
+
+		//cout << "Main profiler - graphene spawn element: " << mainProfilerClock.getElapsedTime().asMicroseconds() << "\n";
+		mainProfilerClock.restart();
+
 
 		//ui2.renderUI();
-		legacyUI.render();
+		ui->renderUI();
 
 		cout << (int)round((double)1000000 / (clock.getElapsedTime() - previousFrame).asMicroseconds()) << "fps\n";
 		previousFrame = clock.getElapsedTime();
 
 		/*if (ui.interaction->mouseHoveredElement != nullptr)
-			cout << "hovered on " << ui.interaction->mouseHoveredElement->debugName << "\n";*/
+			//cout << "hovered on " << ui.interaction->mouseHoveredElement->debugName << "\n";*/
 
 		graphene->renderer->graphElement->deleteElement();
 
 
+		//cout << "Main profiler - end: " << mainProfilerClock.getElapsedTime().asMicroseconds() << "\n";
+		mainProfilerClock.restart();
 		//eh.ok("hi!", __FILE__, __LINE__);
 
 		//eh.flushExceptionsToIOStream();
