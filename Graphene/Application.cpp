@@ -5,15 +5,25 @@
 
 #include "Graphene.hpp"
 #include "ExceptionHandler.hpp"
-#include "UIEngine.hpp"
 #include "Resources.hpp"
 #include "UI.hpp"
+
+// Use dedicated graphic cards by default (nVIDIA graphics)
+extern "C" {
+	__declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
+}
+// Use dedicated graphics card by default (AMD Radeon graphics)
+extern "C" {
+	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
+
 
 using namespace std;
 using namespace sf;
 
 
-/*void render(LegacyUI* ui) {
+// Render window on another thread
+/*void render(UI* ui) {
 	ui->window->setActive(true);
 	while (ui->window->isOpen()) {
 		ui->render();
@@ -27,22 +37,22 @@ int main() {
 	Resources resources;
 	resources.loadFont();
 
-	RenderWindow window(sf::VideoMode(800, 600), L"Graphene �\", Style::Default, resources.contextSettings);
+	RenderWindow window(sf::VideoMode(800, 600), L"Graphene Alpha", Style::Default, resources.contextSettings);
 	//window.setActive(false);
 
 	//window.setVerticalSyncEnabled(true);
-	window.setFramerateLimit(60);
+	//window.setFramerateLimit(60);
 
 	
 
-	UI2* ui = new UI2(&window, &resources);
+	UI* ui = new UI(&window, &resources);
 	Graphene* graphene = new Graphene(ui, &resources);
 
 	//window.setActive(false);
 	//Thread renderThread(&render, &ui);
 	//renderThread.launch();
 	
-	int v = 70;
+	int v = 20;
 	for (int i = 0; i < v; i++) {
 		graphene->verticies.push_back(Graphene::Vertex());
 		graphene->verticies[i].name = to_string(i);
@@ -54,35 +64,13 @@ int main() {
 			}
 		}
 	}
-	/*for (int i = 0; i < e; i++) {
-		int a, b;
-		cin >> a >> b;
-		graphene->edges.push_back(Graphene::Edge(&graphene->verticies[a], &graphene->verticies[b], false));
-	}*/
-	/*graphene->verticies.push_back(Graphene::Vertex());
-	graphene->verticies[0].name = to_string(0);
-	graphene->verticies.push_back(Graphene::Vertex());
-	graphene->verticies[1].name = to_string(1);
-	graphene->verticies.push_back(Graphene::Vertex());
-	graphene->verticies[2].name = to_string(2);*/
-	/*graphene->edges.push_back(Graphene::Edge(&graphene->verticies[0], &graphene->verticies[1], false));
-	graphene->edges.push_back(Graphene::Edge(&graphene->verticies[1], &graphene->verticies[2], false));
-	graphene->edges.push_back(Graphene::Edge(&graphene->verticies[2], &graphene->verticies[0], false));
-	*/
 
-
-	/*UI2::Element* textElement = new UI2::Element(legacyUI.rootContainer, "textElement");
-	textElement->getBody()->setSimpleText("Lorem ipsum dolor sit amet, consectetur adipiscing elit.", resources.fontDefault, 30, resources.colorLightBlue, 0.0, 1.0);
-	*/
-
-	//ui->getRootElement()->getBody()->setBackgroundColor(resources.colorBackground);
-
-	UI2::Element* graphContainerMargin = new UI2::Element(ui, ui->getRootElement(), "graphContainerMargin", { 0.5, 0 }, { 0.5, 0 }, { 0.0, 1 }, { 0.0, 1 }, 0.5, 0.5);
-	graphContainerMargin->setSizingMode(UI2::Element::SizingMode::SHRINK_TO_FIT);
+	UI::Element* graphContainerMargin = new UI::Element(ui, ui->getRootElement(), "graphContainerMargin", { 0.5, 0 }, { 0.5, 0 }, { 0.0, 1 }, { 0.0, 1 }, 0.5, 0.5);
+	graphContainerMargin->setSizingMode(UI::Element::SizingMode::SHRINK_TO_FIT);
 	graphContainerMargin->getBody()->setBackgroundColor(resources.colorLightGray);
 
 
-	UI2::Element* graphContainer = new UI2::Element(ui, graphContainerMargin, "graphContainer", { 0.0, 50 }, { 0.0, 50 }, { 1.0, -100 }, { 1.0, -100 }, 0.0, 0.0);
+	UI::Element* graphContainer = new UI::Element(ui, graphContainerMargin, "graphContainer", { 0.0, 50 }, { 0.0, 50 }, { 1.0, -100 }, { 1.0, -100 }, 0.0, 0.0);
 
 	ui->getRootElement()->getBody()->setNone();
 	ui->getRootElement()->getBody()->setBackgroundColor(resources.colorBackground);
@@ -93,14 +81,15 @@ int main() {
 	Clock clock;
 	Time previousFrame = clock.getElapsedTime();
 
-	//UI2 ui2(&window, &resources);
+
 	Clock mainProfilerClock;
-	////cout << "Main profiler - : " << mainProfilerClock.getElapsedTime().asMicroseconds() << "\n";
+	//cout << "Main profiler - : " << mainProfilerClock.getElapsedTime().asMicroseconds() << "\n";
 	mainProfilerClock.restart();
 
 	graphene->core->init();
 
 	while (window.isOpen()) {
+
 		//cout << "Main profiler - new loop: " << mainProfilerClock.getElapsedTime().asMicroseconds() << "\n";
 		mainProfilerClock.restart();
 
@@ -114,9 +103,6 @@ int main() {
 
 		}
 
-		graphene->core->update();
-		graphene->renderer->newGraphElement();
-		graphene->renderer->graphElement->linkContainer(graphContainer);
 
 		//cout << "Main profiler - poll events: " << mainProfilerClock.getElapsedTime().asMicroseconds() << "\n";
 		mainProfilerClock.restart();
@@ -138,7 +124,7 @@ int main() {
 		mainProfilerClock.restart();
 
 
-		//ui2.renderUI();
+		//UI.renderUI();
 		ui->renderUI();
 
 		cout << (int)round((double)1000000 / (clock.getElapsedTime() - previousFrame).asMicroseconds()) << "fps\n";
@@ -155,7 +141,6 @@ int main() {
 		//eh.ok("hi!", __FILE__, __LINE__);
 
 		//eh.flushExceptionsToIOStream();
-
 	}
 
 	return 0;

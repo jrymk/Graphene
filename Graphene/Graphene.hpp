@@ -62,24 +62,24 @@ public:
 	// Handles all the graph rendering, scales automatically depending on the texture assigned.
 	class Renderer {
 	public:
-		UI2* _ui;
+		UI* _ui;
 		Graphene* graphene = nullptr;
 		ExceptionHandler eh;
-		UI2::Element* graphElement = nullptr;
+		UI::Element* graphElement = nullptr;
 		Resources* resources = nullptr;
 
-		Renderer(Graphene* _graphene, UI2* ui) {
+		Renderer(Graphene* _graphene, UI* ui) {
 			graphene = _graphene;
 			resources = _graphene->resources;
 			_ui = ui;
 		}
 
 		void newGraphElement() {
-			graphElement = new UI2::Element(_ui ,nullptr, "graphElement");
+			graphElement = new UI::Element(_ui ,nullptr, "graphElement");
 			graphElement->getBody()->getBackgroundColor();
 			int edgeID = 0;
 			for (vector<Edge>::iterator edge = graphene->edges.begin(); edge != graphene->edges.end(); edge++) {
-				UI2::Element* edgeElement = new UI2::Element(_ui, graphElement, "edge" + to_string(edgeID));
+				UI::Element* edgeElement = new UI::Element(_ui, graphElement, "edge" + to_string(edgeID));
 				edgeElement->getBody()->setLine(
 					{ (float)edge->startingVertex->coord.x, 0 }, { (float)edge->startingVertex->coord.y, 0 },
 					{ (float)edge->endingVertex->coord.x, 0 }, { (float)edge->endingVertex->coord.y, 0 },
@@ -88,7 +88,7 @@ public:
 			}
 			int vertexID = 0;
 			for (vector<Vertex>::iterator vertex = graphene->verticies.begin(); vertex != graphene->verticies.end(); vertex++) {
-				UI2::Element* vertexElement = new UI2::Element(_ui, graphElement, "vertex" + to_string(edgeID),
+				UI::Element* vertexElement = new UI::Element(_ui, graphElement, "vertex" + to_string(edgeID),
 					{ (float)vertex->coord.x, 0 }, { (float)vertex->coord.y, 0 }, { 0, 60 }, { 0, 60 }, 0.5, 0.5);
 				vertexElement->getBody()->setCircle({ 0.0, 20 }, resources->colorGold, -4, resources->colorGoldenrod);
 				//LegacyUI::Element* vertexTextElement = new LegacyUI::Element(vertexElement, "vertexText" + to_string(edgeID));
@@ -140,10 +140,10 @@ public:
 	Renderer* renderer;
 	Core* core;
 	Graph* graph;
-	UI2* ui;
+	UI* ui;
 
 
-	Graphene(UI2* _ui, Resources* _resources) {
+	Graphene(UI* _ui, Resources* _resources) {
 		resources = _resources;
 		ExceptionHandler eh;
 		ui = _ui;

@@ -15,7 +15,7 @@ class Resources {
 public:
 	bool showDebugBoundaries = false;
 	bool showRenderingDebug = false;
-	unsigned int circlePointCount = 40; // please make it multiple of 4
+	unsigned int circlePointCount = 20; // please make it multiple of 4
 	Color* colorTranslucentYellow = new Color(255, 255, 0, 60);
 
 	ContextSettings contextSettings = ContextSettings(0, 0, 
@@ -185,4 +185,6 @@ public:
 		if (!fontDefault->loadFromFile(".\\Manrope-Medium.ttf")) eh.err("resource Manrope-Medium.ttf failed to load", __FILE__, __LINE__);
 		if (!fontMono->loadFromFile(".\\consola.ttf")) eh.err("resource consola.ttf failed to load", __FILE__, __LINE__);
 	}
+
+
 };

@@ -4,13 +4,14 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
+#include <random>
 #include "Resources.hpp"
 
 uniform_real_distribution<> disNorm(0.0, 1.0);
 
 using namespace std;
 
-class UI2 {
+class UI {
 private:
 	sf::RenderWindow* _window;
 	Resources* _resources;
@@ -44,11 +45,11 @@ public:
 		};
 
 	private:
-		UI2* _ui;
+		UI* _ui;
 		vector<sf::Vertex> vertexArray;
 
 	public:
-		VertexArray(UI2* ui) {
+		VertexArray(UI* ui) {
 			_ui = ui;
 
 		}
@@ -336,7 +337,7 @@ public:
 		};
 
 	private:
-		UI2* _ui;
+		UI* _ui;
 		Element* _parent;
 		deque<Element*> _children;
 
@@ -350,11 +351,11 @@ public:
 
 		class Body {
 		private:
-			UI2* _ui;
+			UI* _ui;
 			Element* _element;
 
 		public:
-			Body(UI2* ui, Element* parentElement) {
+			Body(UI* ui, Element* parentElement) {
 				_ui = ui;
 				_element = parentElement;
 			}
@@ -524,7 +525,7 @@ public:
 		string _debugName;
 
 	public:
-		Element(UI2* ui, Element* parent, string debugName) {
+		Element(UI* ui, Element* parent, string debugName) {
 			_ui = ui;
 			_parent = parent;
 			_debugName = debugName;
@@ -542,7 +543,7 @@ public:
 
 		}
 
-		Element(UI2* ui, Element* parent, string debugName, AdaptiveVector x, AdaptiveVector y, AdaptiveVector w, AdaptiveVector h, float originX, float originY) {
+		Element(UI* ui, Element* parent, string debugName, AdaptiveVector x, AdaptiveVector y, AdaptiveVector w, AdaptiveVector h, float originX, float originY) {
 			_ui = ui;
 			_parent = parent;
 			_debugName = debugName;
@@ -714,11 +715,11 @@ public:
 
 	class LayoutGenerator {
 	private:
-		UI2* _ui;
+		UI* _ui;
 		VertexArray* _vertexArray;
 
 	public:
-		LayoutGenerator(UI2* ui) {
+		LayoutGenerator(UI* ui) {
 			_ui = ui;
 			_vertexArray = new VertexArray(_ui);
 
@@ -771,7 +772,7 @@ public:
 	};
 
 public:
-	UI2(sf::RenderWindow* window, Resources* resources) {
+	UI(sf::RenderWindow* window, Resources* resources) {
 		_window = window;
 		_resources = resources;
 	}
@@ -802,7 +803,7 @@ public:
 		//cout << "       Generate layout: " << profilerClock.getElapsedTime().asMicroseconds() << "\n";
 		profilerClock.restart();
 
-		cout << "\t\t\t\t\tTriangles: " << layoutGenerator.getVertexArray()->getTriangleCount() << "\n";
+		cout << "Triangles: " << layoutGenerator.getVertexArray()->getTriangleCount() << "\n";
 
 		_window->draw(layoutGenerator.getVertexArray()->getBuffer(), layoutGenerator.getVertexArray()->getSize(), sf::Triangles);
 		//cout << "                  Draw: " << profilerClock.getElapsedTime().asMicroseconds() << "\n";
