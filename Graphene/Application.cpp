@@ -13,7 +13,7 @@ using namespace std;
 using namespace sf;
 
 
-/*void render(UI* ui) {
+/*void render(LegacyUI* ui) {
 	ui->window->setActive(true);
 	while (ui->window->isOpen()) {
 		ui->render();
@@ -30,13 +30,13 @@ int main() {
 	Resources resources;
 	resources.loadFont();
 
-	//UI ui(&window, &resources);
-	//Graphene* graphene = new Graphene(&resources);
+	LegacyUI legacyUI(&window, &resources);
+	Graphene* graphene = new Graphene(&resources);
 
 	//window.setActive(false);
 	//Thread renderThread(&render, &ui);
 	//renderThread.launch();
-	/*
+	
 	int v = 5;
 	for (int i = 0; i < v; i++) {
 		graphene->verticies.push_back(Graphene::Vertex());
@@ -48,7 +48,7 @@ int main() {
 				graphene->edges.push_back(Graphene::Edge(&graphene->verticies[i], &graphene->verticies[j], false));
 			}
 		}
-	}*/
+	}
 	/*for (int i = 0; i < e; i++) {
 		int a, b;
 		cin >> a >> b;
@@ -66,30 +66,30 @@ int main() {
 	*/
 
 
-	/*UI::Element* textElement = new UI::Element(ui.rootContainer, "textElement");
+	LegacyUI::Element* textElement = new LegacyUI::Element(legacyUI.rootContainer, "textElement");
 	textElement->body->setSimpleText("Lorem ipsum dolor sit amet, consectetur adipiscing elit.", resources.fontDefault, 30, resources.colorLightBlue, 0.0, 1.0);
 
 
-	UI::Element* graphContainerMargin = new UI::Element(ui.rootContainer, "graphContainerMargin", { 0.5, 0 }, { 0.5, 0 }, { 0.0, 1 }, { 0.0, 1 }, 0.5, 0.5);
-	graphContainerMargin->sizingMode = UI::Element::SizingMode::SHRINK_TO_FIT;
+	LegacyUI::Element* graphContainerMargin = new LegacyUI::Element(legacyUI.rootContainer, "graphContainerMargin", { 0.5, 0 }, { 0.5, 0 }, { 0.0, 1 }, { 0.0, 1 }, 0.5, 0.5);
+	graphContainerMargin->sizingMode = LegacyUI::Element::SizingMode::SHRINK_TO_FIT;
 	graphContainerMargin->body->setBackgroundColor(resources.colorLightGray);
 
 
-	UI::Element* graphContainer = new UI::Element(graphContainerMargin, "graphContainer", { 0.0, 50 }, { 0.0, 50 }, { 1.0, -100 }, { 1.0, -100 }, 0.0, 0.0);
+	LegacyUI::Element* graphContainer = new LegacyUI::Element(graphContainerMargin, "graphContainer", { 0.0, 50 }, { 0.0, 50 }, { 1.0, -100 }, { 1.0, -100 }, 0.0, 0.0);
 
-	ui.rootContainer->body->setNone();
-	ui.rootContainer->body->setBackgroundColor(resources.colorBackground);
+	legacyUI.rootContainer->body->setNone();
+	legacyUI.rootContainer->body->setBackgroundColor(resources.colorBackground);
 
 	
 
 	graphene->renderer->newGraphElement();
 	graphene->renderer->graphElement->linkContainer(graphContainer);
-	*/
+	
 
 	Clock clock;
 	Time previousFrame = clock.getElapsedTime();
 
-	UI2 ui2(&window, &resources);
+	//UI2 ui2(&window, &resources);
 
 
 	while (window.isOpen()) {
@@ -116,8 +116,8 @@ int main() {
 		graphene->verticies[2].coord.y = (0.3 * cos(clock.getElapsedTime().asMilliseconds() / (float)370) / 2) + 0.5;
 		*/
 
-		ui2.renderUI();
-
+		//ui2.renderUI();
+		legacyUI.render();
 
 		cout << (int)round((double)1000000 / (clock.getElapsedTime() - previousFrame).asMicroseconds()) << "fps\n";
 		previousFrame = clock.getElapsedTime();
@@ -125,7 +125,7 @@ int main() {
 		/*if (ui.interaction->mouseHoveredElement != nullptr)
 			cout << "hovered on " << ui.interaction->mouseHoveredElement->debugName << "\n";*/
 
-		//graphene->renderer->graphElement->deleteElement();
+		graphene->renderer->graphElement->deleteElement();
 
 
 		//eh.ok("hi!", __FILE__, __LINE__);

@@ -13,7 +13,7 @@ using namespace sf;
 
 uniform_int_distribution<> dis255(0, 255);
 
-class UI {
+class LegacyUI {
 private:
 	ExceptionHandler eh;
 
@@ -192,7 +192,7 @@ public:
 				simpleTextAlignmentY = _alignmentY;
 			}
 
-			void render(UI* ui, Vector2f thisPosition, Vector2f thisSize) {
+			void render(LegacyUI* ui, Vector2f thisPosition, Vector2f thisSize) {
 				RectangleShape rectShape;
 				if (resources.showDebugBoundaries) {
 					rectShape.setOutlineColor(*resources.colorUIBoundsDebug);
@@ -412,7 +412,7 @@ public:
 		}
 
 		
-		void render(UI* ui, Vector2f thisPosition, Vector2f thisSize) {
+		void render(LegacyUI* ui, Vector2f thisPosition, Vector2f thisSize) {
 			ui->elements++;
 			//cout << this->debugName << ": ";
 			Resources resources;
@@ -469,7 +469,7 @@ public:
 	RenderWindow* window;
 	Element::Interaction* interaction;
 
-	UI(RenderWindow* _window, Resources* _resources) {
+	LegacyUI(RenderWindow* _window, Resources* _resources) {
 		window = _window;
 		rootContainer = new Element(nullptr, "rootContainer");
 		//cout << "root container set\n";

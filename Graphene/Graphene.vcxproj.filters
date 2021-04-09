@@ -32,6 +32,9 @@
     <ClInclude Include="UI.hpp">
       <Filter>來源檔案</Filter>
     </ClInclude>
+    <ClInclude Include="UIEngine.hpp">
+      <Filter>來源檔案</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Font Include="..\x64\Release\Manrope-Medium.ttf">

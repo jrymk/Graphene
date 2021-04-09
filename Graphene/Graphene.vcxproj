@@ -152,6 +152,7 @@
     <ClInclude Include="Graphene.hpp" />
     <ClInclude Include="UI.hpp" />
     <ClInclude Include="Resources.hpp" />
+    <ClInclude Include="UIEngine.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="..\x64\Release\consola.ttf" />

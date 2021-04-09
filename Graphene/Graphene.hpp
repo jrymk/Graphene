@@ -64,7 +64,7 @@ public:
 	public:
 		Graphene* graphene = nullptr;
 		ExceptionHandler eh;
-		UI::Element* graphElement = nullptr;
+		LegacyUI::Element* graphElement = nullptr;
 		Resources* resources = nullptr;
 
 		Renderer(Graphene* _graphene) {
@@ -73,10 +73,10 @@ public:
 		}
 
 		void newGraphElement() {
-			graphElement = new UI::Element(nullptr, "graphElement");
+			graphElement = new LegacyUI::Element(nullptr, "graphElement");
 			int edgeID = 0;
 			for (vector<Edge>::iterator edge = graphene->edges.begin(); edge != graphene->edges.end(); edge++) {
-				UI::Element* edgeElement = new UI::Element(graphElement, "edge" + to_string(edgeID));
+				LegacyUI::Element* edgeElement = new LegacyUI::Element(graphElement, "edge" + to_string(edgeID));
 				edgeElement->body->setLine(
 					{ (float)edge->startingVertex->coord.x, 0 }, { (float)edge->startingVertex->coord.y, 0 },
 					{ (float)edge->endingVertex->coord.x, 0 }, { (float)edge->endingVertex->coord.y, 0 },
@@ -85,10 +85,10 @@ public:
 			}
 			int vertexID = 0;
 			for (vector<Vertex>::iterator vertex = graphene->verticies.begin(); vertex != graphene->verticies.end(); vertex++) {
-				UI::Element* vertexElement = new UI::Element(graphElement, "vertex" + to_string(edgeID),
+				LegacyUI::Element* vertexElement = new LegacyUI::Element(graphElement, "vertex" + to_string(edgeID),
 					{ (float)vertex->coord.x, 0 }, { (float)vertex->coord.y, 0 }, { 0, 60 }, { 0, 60 }, 0.5, 0.5);
 				vertexElement->body->setCircle({ 0.0, 20 }, resources->colorGold, -4, resources->colorGoldenrod);
-				UI::Element* vertexTextElement = new UI::Element(vertexElement, "vertexText" + to_string(edgeID));
+				LegacyUI::Element* vertexTextElement = new LegacyUI::Element(vertexElement, "vertexText" + to_string(edgeID));
 				vertexTextElement->body->setSimpleText(vertex->name, resources->fontDefault, 30, resources->colorText, 0.5, 0.63);
 				vertexID++;
 			}
