@@ -76,9 +76,9 @@ class Engine {
 			vertexArray.push_back(sf::Vertex(sf::Vector2f(v2._x, v2._y), *color));
 
 			if (_ui->resources_->showRenderingDebug) {
-				appendDebugWireframe(v0, v1, 1, sf::Color(min(color->r + 50, 255), min(color->g + 50, 255), min(color->b + 50, 255)));
-				appendDebugWireframe(v1, v2, 1, sf::Color(min(color->r + 50, 255), min(color->g + 50, 255), min(color->b + 50, 255)));
-				appendDebugWireframe(v2, v0, 1, sf::Color(min(color->r + 50, 255), min(color->g + 50, 255), min(color->b + 50, 255)));
+				appendDebugWireframe(v0, v1, 1, sf::Color(min(color->r + 20, 255), min(color->g + 20, 255), min(color->b + 20, 255)));
+				appendDebugWireframe(v1, v2, 1, sf::Color(min(color->r + 20, 255), min(color->g + 20, 255), min(color->b + 20, 255)));
+				appendDebugWireframe(v2, v0, 1, sf::Color(min(color->r + 20, 255), min(color->g + 20, 255), min(color->b + 20, 255)));
 			}
 		}
 
@@ -88,9 +88,9 @@ class Engine {
 			vertexArray.push_back(sf::Vertex(sf::Vector2f(v2._x, v2._y), color));
 
 			if (_ui->resources_->showRenderingDebug) {
-				appendDebugWireframe(v0, v1, 1, sf::Color(min(color.r + 50, 255), min(color.g + 50, 255), min(color.b + 50, 255)));
-				appendDebugWireframe(v1, v2, 1, sf::Color(min(color.r + 50, 255), min(color.g + 50, 255), min(color.b + 50, 255)));
-				appendDebugWireframe(v2, v0, 1, sf::Color(min(color.r + 50, 255), min(color.g + 50, 255), min(color.b + 50, 255)));
+				appendDebugWireframe(v0, v1, 1, sf::Color(min(color.r + 20, 255), min(color.g + 20, 255), min(color.b + 20, 255)));
+				appendDebugWireframe(v1, v2, 1, sf::Color(min(color.r + 20, 255), min(color.g + 20, 255), min(color.b + 20, 255)));
+				appendDebugWireframe(v2, v0, 1, sf::Color(min(color.r + 20, 255), min(color.g + 20, 255), min(color.b + 20, 255)));
 			}
 		}
 
@@ -285,47 +285,47 @@ public:
 	public:
 		struct AdaptiveVector {
 		private:
-			float relativeComponent_;
-			float absoluteComponent_;
+			float rel_;
+			float abs_;
 
 		public:
 			AdaptiveVector() {
-				relativeComponent_ = 0;
-				absoluteComponent_ = 0;
+				rel_ = 0;
+				abs_ = 0;
 			}
 
-			AdaptiveVector(float relativeComponent, float absoluteComponent) {
-				relativeComponent_ = relativeComponent;
-				absoluteComponent_ = absoluteComponent;
+			AdaptiveVector(float rel, float abs) {
+				rel_ = rel;
+				abs_ = abs;
 			}
 
-			void set(float relativeComponent, float absoluteComponent) {
-				relativeComponent_ = relativeComponent;
-				absoluteComponent_ = absoluteComponent;
+			void set(float rel, float abs) {
+				rel_ = rel;
+				abs_ = abs;
 			}
 
-			void setRelativeComponent(float relativeComponent) {
-				relativeComponent_ = relativeComponent;
+			void setRel(float rel) {
+				rel_ = rel;
 			}
 
-			void setAbsoluteComponent(float absoluteComponent) {
-				absoluteComponent_ = absoluteComponent;
+			void setAbs(float abs) {
+				abs_ = abs;
 			}
 
 			AdaptiveVector get() {
-				return { relativeComponent_, absoluteComponent_ };
+				return { rel_, abs_ };
 			}
 
-			float getRelativeComponent() {
-				return relativeComponent_;
+			float getRel() {
+				return rel_;
 			}
 
-			float getAbsoluteComponent() {
-				return absoluteComponent_;
+			float getAbs() {
+				return abs_;
 			}
 
-			float evaluate(float parent) {
-				return (parent * this->relativeComponent_ + this->absoluteComponent_);
+			float eval(float parent) {
+				return (parent * this->rel_ + this->abs_);
 			}
 		};
 
@@ -339,6 +339,9 @@ public:
 	private:
 		Engine* engine_;
 		Element* parent_;
+		Element* firstChild_;
+		Element* previousElement_;
+		Element* nextElement_;
 		deque<Element*> children_;
 
 		AdaptiveVector x_;
@@ -496,13 +499,13 @@ public:
 					break;
 
 				case Type::CIRCLE:
-					vertexArray->appendCircle(sf::Vector2f(position.x + size.x / 2, position.y + size.y / 2), circleRadius.evaluate(size.x), circleFillColor, 40);
+					vertexArray->appendCircle(sf::Vector2f(position.x + size.x / 2, position.y + size.y / 2), circleRadius.eval(size.x), circleFillColor, 40);
 					break;
 
 				case Type::LINE:
 					vertexArray->appendLine(
-						sf::Vector2f(position.x + linePointAX.evaluate(size.x), position.y + linePointAY.evaluate(size.y)),
-						sf::Vector2f(position.x + linePointBX.evaluate(size.x), position.y + linePointBY.evaluate(size.y)),
+						sf::Vector2f(position.x + linePointAX.eval(size.x), position.y + linePointAY.eval(size.y)),
+						sf::Vector2f(position.x + linePointBX.eval(size.x), position.y + linePointBY.eval(size.y)),
 						lineThickness,
 						linePerpendicularOffset,
 						lineFillColor
@@ -558,8 +561,8 @@ public:
 			y_ = y;
 			w_ = w;
 			h_ = h;
-			originX_ = 0;
-			originY_ = 0;
+			originX_ = originX;
+			originY_ = originY;
 			sizingMode_ = SizingMode::PER_AXIS;
 		}
 
@@ -578,7 +581,11 @@ public:
 			delete this;
 		}
 
-		void linkParent(Element* parent) {
+		/*void insertChildAfter(Element* child, Element* after) {
+			//this->children_.insert(child, )
+		}*/
+
+		void linkParentElement(Element* parent) {
 			if (this == parent)
 				return;
 
@@ -590,7 +597,7 @@ public:
 				this->parent_->children_.push_back(this);
 		}
 
-		void unlinkContainer() {
+		void unlinkParentElement() {
 			if (this->parent_ == nullptr)
 				return;
 
@@ -610,8 +617,8 @@ public:
 			return x_;
 		}
 
-		void setX(float relativeComponent, float absoluteComponent) {
-			x_.set(relativeComponent, absoluteComponent);
+		void setX(float rel, float abs) {
+			x_.set(rel, abs);
 		}
 
 		void setX(AdaptiveVector x) {
@@ -619,15 +626,15 @@ public:
 		}
 
 		float evalX(float parent) {
-			return x_.evaluate(parent);
+			return x_.eval(parent);
 		}
 
 		AdaptiveVector getY() {
 			return y_;
 		}
 
-		void setY(float relativeComponent, float absoluteComponent) {
-			y_.set(relativeComponent, absoluteComponent);
+		void setY(float rel, float abs) {
+			y_.set(rel, abs);
 		}
 
 		void setY(AdaptiveVector y) {
@@ -635,15 +642,15 @@ public:
 		}
 
 		float evalY(float parent) {
-			return y_.evaluate(parent);
+			return y_.eval(parent);
 		}
 
 		AdaptiveVector getW() {
 			return w_;
 		}
 
-		void setW(float relativeComponent, float absoluteComponent) {
-			w_.set(relativeComponent, absoluteComponent);
+		void setW(float rel, float abs) {
+			w_.set(rel, abs);
 		}
 
 		void setW(AdaptiveVector w) {
@@ -651,15 +658,15 @@ public:
 		}
 
 		float evalW(float parent) {
-			return w_.evaluate(parent);
+			return w_.eval(parent);
 		}
 
 		AdaptiveVector getH() {
 			return h_;
 		}
 
-		void setH(float relativeComponent, float absoluteComponent) {
-			h_.set(relativeComponent, absoluteComponent);
+		void setH(float rel, float abs) {
+			h_.set(rel, abs);
 		}
 
 		void setH(AdaptiveVector h) {
@@ -667,7 +674,7 @@ public:
 		}
 
 		float evalH(float parent) {
-			return h_.evaluate(parent);
+			return h_.eval(parent);
 		}
 
 		float getOriginX() {
@@ -742,6 +749,7 @@ public:
 
 				switch ((*child)->getSizingMode()) {
 				case Element::SizingMode::PER_AXIS:
+					
 					break;
 
 				case Element::SizingMode::RELATIVE_TO_H:
@@ -758,7 +766,7 @@ public:
 						childSize.y / max(childSize.x / thisSize.x, childSize.y / thisSize.y)
 					);
 					break;
-					
+
 				}
 
 				sf::Vector2f childPosition(
@@ -787,7 +795,7 @@ public:
 
 
 	Element* rootElement_;
-	
+
 	Engine(sf::RenderWindow* window, Resources* resources) {
 		window_ = window;
 		resources_ = resources;

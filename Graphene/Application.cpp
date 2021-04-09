@@ -6,7 +6,7 @@
 #include "ExceptionHandler.hpp"
 #include "Graphene.hpp"
 #include "Resources.hpp"
-#include "UI.hpp"
+#include "Engine.hpp"
 
 // Use dedicated graphic cards by default (nVIDIA graphics)
 extern "C" {
@@ -23,10 +23,10 @@ using namespace sf;
 
 
 // Render window on another thread
-/*void render(UI* ui) {
-	ui->window->setActive(true);
-	while (ui->window->isOpen()) {
-		ui->render();
+/*void render(UI* engine) {
+	engine->window->setActive(true);
+	while (engine->window->isOpen()) {
+		engine->render();
 	}
 }*/
 
@@ -45,14 +45,14 @@ int main() {
 
 	
 
-	UI* ui = new UI(&window, &resources);
-	Graphene* graphene = new Graphene(ui, &resources);
+	Engine* engine = new Engine(&window, &resources);
+	Graphene* graphene = new Graphene(engine, &resources);
 
 	//window.setActive(false);
-	//Thread renderThread(&render, &ui);
+	//Thread renderThread(&render, &engine);
 	//renderThread.launch();
 	
-	int v = 20;
+	int v = 8;
 	for (int i = 0; i < v; i++) {
 		graphene->verticies.push_back(Graphene::Vertex());
 		graphene->verticies[i].name = to_string(i);
@@ -65,15 +65,17 @@ int main() {
 		}
 	}
 
-	UI::Element* graphContainerMargin = new UI::Element(ui, ui->getRootElement(), "graphContainerMargin", { 0.5, 0 }, { 0.5, 0 }, { 0.0, 1 }, { 0.0, 1 }, 0.5, 0.5);
-	graphContainerMargin->setSizingMode(UI::Element::SizingMode::SHRINK_TO_FIT);
+	Engine::Element* graphContainerMargin = new Engine::Element(engine, engine->getRootElement(), "graphContainerMargin", 
+		{ 0.5, 0 }, { 0.5, 0 }, { 0.0, 1 }, { 0.0, 1 }, 0.5, 0.5);
+	graphContainerMargin->setSizingMode(Engine::Element::SizingMode::SHRINK_TO_FIT);
 	graphContainerMargin->getBody()->setBackgroundColor(resources.colorLightGray);
 
 
-	UI::Element* graphContainer = new UI::Element(ui, graphContainerMargin, "graphContainer", { 0.0, 50 }, { 0.0, 50 }, { 1.0, -100 }, { 1.0, -100 }, 0.0, 0.0);
+	Engine::Element* graphContainer = new Engine::Element(engine, graphContainerMargin, "graphContainer", 
+		{ 0.0, 50 }, { 0.0, 50 }, { 1.0, -100 }, { 1.0, -100 }, 0.0, 0.0);
 
-	ui->getRootElement()->getBody()->setNone();
-	ui->getRootElement()->getBody()->setBackgroundColor(resources.colorBackground);
+	engine->getRootElement()->getBody()->setNone();
+	engine->getRootElement()->getBody()->setBackgroundColor(resources.colorBackground);
 
 	
 
@@ -118,20 +120,20 @@ int main() {
 		mainProfilerClock.restart();
 
 		graphene->renderer->newGraphElement();
-		graphene->renderer->graphElement->linkContainer(graphContainer);
+		graphene->renderer->graphElement->linkParentElement(graphContainer);
 
 		//cout << "Main profiler - graphene spawn element: " << mainProfilerClock.getElapsedTime().asMicroseconds() << "\n";
 		mainProfilerClock.restart();
 
 
 		//UI.renderUI();
-		ui->renderUI();
+		engine->render();
 
 		cout << (int)round((double)1000000 / (clock.getElapsedTime() - previousFrame).asMicroseconds()) << "fps\n";
 		previousFrame = clock.getElapsedTime();
 
-		/*if (ui.interaction->mouseHoveredElement != nullptr)
-			//cout << "hovered on " << ui.interaction->mouseHoveredElement->debugName << "\n";*/
+		/*if (engine.interaction->mouseHoveredElement != nullptr)
+			//cout << "hovered on " << engine.interaction->mouseHoveredElement->debugName << "\n";*/
 
 		graphene->renderer->graphElement->deleteElement();
 

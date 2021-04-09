@@ -8,7 +8,7 @@
 #include <SFML/System.hpp>
 
 #include "ExceptionHandler.hpp"
-#include "UI.hpp"
+#include "Engine.hpp"
 
 using namespace std;
 using namespace sf;
@@ -62,24 +62,24 @@ public:
 	// Handles all the graph rendering, scales automatically depending on the texture assigned.
 	class Renderer {
 	public:
-		UI* _ui;
+		Engine* engine_;
 		Graphene* graphene = nullptr;
 		ExceptionHandler eh;
-		UI::Element* graphElement = nullptr;
+		Engine::Element* graphElement = nullptr;
 		Resources* resources = nullptr;
 
-		Renderer(Graphene* _graphene, UI* ui) {
+		Renderer(Graphene* _graphene, Engine* ui) {
 			graphene = _graphene;
 			resources = _graphene->resources;
-			_ui = ui;
+			engine_ = ui;
 		}
 
 		void newGraphElement() {
-			graphElement = new UI::Element(_ui ,nullptr, "graphElement");
+			graphElement = new Engine::Element(engine_ ,nullptr, "graphElement");
 			graphElement->getBody()->getBackgroundColor();
 			int edgeID = 0;
 			for (vector<Edge>::iterator edge = graphene->edges.begin(); edge != graphene->edges.end(); edge++) {
-				UI::Element* edgeElement = new UI::Element(_ui, graphElement, "edge" + to_string(edgeID));
+				Engine::Element* edgeElement = new Engine::Element(engine_, graphElement, "edge" + to_string(edgeID));
 				edgeElement->getBody()->setLine(
 					{ (float)edge->startingVertex->coord.x, 0 }, { (float)edge->startingVertex->coord.y, 0 },
 					{ (float)edge->endingVertex->coord.x, 0 }, { (float)edge->endingVertex->coord.y, 0 },
@@ -88,10 +88,10 @@ public:
 			}
 			int vertexID = 0;
 			for (vector<Vertex>::iterator vertex = graphene->verticies.begin(); vertex != graphene->verticies.end(); vertex++) {
-				UI::Element* vertexElement = new UI::Element(_ui, graphElement, "vertex" + to_string(edgeID),
+				Engine::Element* vertexElement = new Engine::Element(engine_, graphElement, "vertex" + to_string(edgeID),
 					{ (float)vertex->coord.x, 0 }, { (float)vertex->coord.y, 0 }, { 0, 60 }, { 0, 60 }, 0.5, 0.5);
 				vertexElement->getBody()->setCircle({ 0.0, 20 }, resources->colorGold, -4, resources->colorGoldenrod);
-				//LegacyUI::Element* vertexTextElement = new LegacyUI::Element(vertexElement, "vertexText" + to_string(edgeID));
+				//LegacyEngine::Element* vertexTextElement = new LegacyEngine::Element(vertexElement, "vertexText" + to_string(edgeID));
 				//vertexTextElement->body->setSimpleText(vertex->name, resources->fontDefault, 30, resources->colorText, 0.5, 0.63);
 				vertexID++;
 			}
@@ -140,13 +140,13 @@ public:
 	Renderer* renderer;
 	Core* core;
 	Graph* graph;
-	UI* ui;
+	Engine* ui;
 
 
-	Graphene(UI* _ui, Resources* _resources) {
+	Graphene(Engine* engine_, Resources* _resources) {
 		resources = _resources;
 		ExceptionHandler eh;
-		ui = _ui;
+		ui = engine_;
 		renderer = new Renderer(this, ui);
 		core = new Core(this);
 		graph = new Graph(this);
