@@ -11,10 +11,29 @@ uniform_real_distribution<> disNorm(0.0, 1.0);
 using namespace std;
 
 class UI2 {
-public:
+private:
 	sf::RenderWindow* _window;
 	Resources* _resources;
 
+public:
+	sf::RenderWindow* getWindow() {
+		return _window;
+	}
+
+	void setWindow(sf::RenderWindow* window) {
+		_window = window;
+	}
+
+	Resources* getResources() {
+		return _resources;
+	}
+
+	void setResources(Resources* resources) {
+		_resources = resources;
+	}
+
+
+public:
 	class Element {
 	public:
 		struct AdaptiveVector {
@@ -84,7 +103,7 @@ public:
 
 		private:
 			Type _type = Type::NONE;
-			Color* _backgroundColor = _ui->_resources->colorTransparent;
+			Color* _backgroundColor;
 			string _debugName;
 
 		public:
@@ -106,9 +125,9 @@ public:
 
 			// circle
 			AdaptiveVector circleRadius = { 1.0, 0 };
-			Color* circleFillColor = _ui->_resources->colorTransparent;
+			Color* circleFillColor;
 			float circleOutlineThickness = 0;
-			Color* circleOutlineColor = _ui->_resources->colorTransparent;
+			Color* circleOutlineColor;
 
 
 			// rectangle
@@ -120,9 +139,9 @@ public:
 			AdaptiveVector linePointBX = { 1.0, 0 };
 			AdaptiveVector linePointBY = { 1.0, 0 };
 			float lineThickness = 1;
-			Color* lineFillColor = _ui->_resources->colorTransparent;
+			Color* lineFillColor;
 			float lineOutlineThickness = 0.0;
-			Color* lineOutlineColor = _ui->_resources->colorTransparent;
+			Color* lineOutlineColor;
 			float linePerpendicularOffset = 0;
 
 		};
@@ -610,10 +629,10 @@ public:
 
 				// TODO: body rendering
 
-					generateSublayout(*child, Vector2f(
-						thisPosition.x + (*child)->evalX(thisSize.x) - (*child)->evalOriginX(childSize.x),
-						thisPosition.y + (*child)->evalY(thisSize.y) - (*child)->evalOriginY(childSize.y)
-					), childSize);
+				generateSublayout(*child, Vector2f(
+					thisPosition.x + (*child)->evalX(thisSize.x) - (*child)->evalOriginX(childSize.x),
+					thisPosition.y + (*child)->evalY(thisSize.y) - (*child)->evalOriginY(childSize.y)
+				), childSize);
 			}
 		}
 
@@ -627,20 +646,39 @@ public:
 			return _vertexArray;
 		}
 
+		LayoutGenerator() {
+
+		}
+
 		~LayoutGenerator() {
 			delete _vertexArray;
 		}
 
 	};
 
-
+public:
 	UI2(sf::RenderWindow* window, Resources* resources) {
 		_window = window;
 		_resources = resources;
 	}
 
-	void renderUI() {
 
+private:
+	Element* _rootElement = new Element(this, nullptr, "rootElement");
+
+public:
+	Element* getRootElement() {
+		return _rootElement;
+	}
+
+
+public:
+
+	void renderUI() {
+		LayoutGenerator layoutGenerator;
+		layoutGenerator.generateLayout(_rootElement, Vector2f(0, 0), Vector2f((float)_window->getSize().x, (float)_window->getSize().y));
+		_window->draw(layoutGenerator.getVertexArray()->getBuffer(), layoutGenerator.getVertexArray()->getSize(), sf::Triangles);
+		_window->display();
 	}
 
 

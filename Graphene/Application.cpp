@@ -116,7 +116,7 @@ int main() {
 		graphene->verticies[2].coord.y = (0.3 * cos(clock.getElapsedTime().asMilliseconds() / (float)370) / 2) + 0.5;
 		*/
 
-		//ui.render();
+		ui2.renderUI();
 
 
 		cout << (int)round((double)1000000 / (clock.getElapsedTime() - previousFrame).asMicroseconds()) << "fps\n";
