@@ -3,6 +3,7 @@
 #include <iostream>
 #include <iomanip>
 #include <queue>
+#include <utility>
 
 using namespace std;
 
@@ -28,27 +29,27 @@ public:
 
 	void throwException(string _message, Level _level, string _file, int _line) {
 		Exception* newException = new Exception;
-		newException->message = _message;
+		newException->message = std::move(_message);
 		newException->level = _level;
-		newException->file = _file;
+		newException->file = std::move(_file);
 		newException->line = _line;
 		getExceptionBuffer().push_back(newException);
 	}
 
 	void info(string _message, string _file, int _line) {
 		Exception* newException = new Exception;
-		newException->message = _message;
+		newException->message = std::move(_message);
 		newException->level = Level::INFO;
-		newException->file = _file;
+		newException->file = std::move(_file);
 		newException->line = _line;
 		getExceptionBuffer().push_back(newException);
 	}
 
 	void ok(string _message, string _file, int _line) {
 		Exception* newException = new Exception;
-		newException->message = _message;
+		newException->message = std::move(_message);
 		newException->level = Level::OK;
-		newException->file = _file;
+		newException->file = std::move(_file);
 		newException->line = _line;
 		getExceptionBuffer().push_back(newException);
 	}
@@ -56,9 +57,9 @@ public:
 	void warn(string _message, string _file, int _line) {
 		//cout << _message << "\n";
 		Exception* newException = new Exception;
-		newException->message = _message;
+		newException->message = std::move(_message);
 		newException->level = Level::WARN;
-		newException->file = _file;
+		newException->file = std::move(_file);
 		newException->line = _line;
 		getExceptionBuffer().push_back(newException);
 	}
@@ -66,18 +67,18 @@ public:
 	void err(string _message, string _file, int _line) {
 		//cout << _message << "\n";
 		Exception* newException = new Exception;
-		newException->message = _message;
+		newException->message = std::move(_message);
 		newException->level = Level::ERR;
-		newException->file = _file;
+		newException->file = std::move(_file);
 		newException->line = _line;
 		getExceptionBuffer().push_back(newException);
 	}
 
 	void fatal(string _message, string _file, int _line) {
 		Exception* newException = new Exception;
-		newException->message = _message;
+		newException->message = std::move(_message);
 		newException->level = Level::FATAL;
-		newException->file = _file;
+		newException->file = std::move(_file);
 		newException->line = _line;
 		getExceptionBuffer().push_back(newException);
 	}

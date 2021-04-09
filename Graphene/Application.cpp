@@ -1,10 +1,10 @@
-#include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
-#include <SFML/System.hpp>
 #include <iostream>
+#include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
+#include <SFML/Window.hpp>
 
-#include "Graphene.hpp"
 #include "ExceptionHandler.hpp"
+#include "Graphene.hpp"
 #include "Resources.hpp"
 #include "UI.hpp"
 

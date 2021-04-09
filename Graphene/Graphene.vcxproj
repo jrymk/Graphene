@@ -151,7 +151,7 @@
     <ClInclude Include="ExceptionHandler.hpp" />
     <ClInclude Include="Graphene.hpp" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="UI.hpp" />
+    <ClInclude Include="Engine.hpp" />
     <ClInclude Include="Resources.hpp" />
   </ItemGroup>
   <ItemGroup>

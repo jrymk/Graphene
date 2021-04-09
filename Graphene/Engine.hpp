@@ -5,34 +5,15 @@
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 #include <random>
+#include <utility>
+
 #include "Resources.hpp"
 
 uniform_real_distribution<> disNorm(0.0, 1.0);
 
 using namespace std;
 
-class UI {
-private:
-	sf::RenderWindow* _window;
-	Resources* _resources;
-
-public:
-	sf::RenderWindow* getWindow() {
-		return _window;
-	}
-
-	void setWindow(sf::RenderWindow* window) {
-		_window = window;
-	}
-
-	Resources* getResources() {
-		return _resources;
-	}
-
-	void setResources(Resources* resources) {
-		_resources = resources;
-	}
-
+class Engine {
 	class VertexArray {
 	public:
 		struct Vertex {
@@ -45,11 +26,11 @@ public:
 		};
 
 	private:
-		UI* _ui;
+		Engine* _ui;
 		vector<sf::Vertex> vertexArray;
 
 	public:
-		VertexArray(UI* ui) {
+		VertexArray(Engine* ui) {
 			_ui = ui;
 
 		}
@@ -58,11 +39,11 @@ public:
 			vertexArray.clear();
 		}
 
-		unsigned int getSize() {
+		unsigned long long getSize() {
 			return vertexArray.size();
 		}
 
-		unsigned int getTriangleCount() {
+		unsigned long long getTriangleCount() {
 			return getSize() / 3;
 		}
 
@@ -94,7 +75,7 @@ public:
 			vertexArray.push_back(sf::Vertex(sf::Vector2f(v1._x, v1._y), *color));
 			vertexArray.push_back(sf::Vertex(sf::Vector2f(v2._x, v2._y), *color));
 
-			if (_ui->_resources->showRenderingDebug) {
+			if (_ui->resources_->showRenderingDebug) {
 				appendDebugWireframe(v0, v1, 1, sf::Color(min(color->r + 50, 255), min(color->g + 50, 255), min(color->b + 50, 255)));
 				appendDebugWireframe(v1, v2, 1, sf::Color(min(color->r + 50, 255), min(color->g + 50, 255), min(color->b + 50, 255)));
 				appendDebugWireframe(v2, v0, 1, sf::Color(min(color->r + 50, 255), min(color->g + 50, 255), min(color->b + 50, 255)));
@@ -106,7 +87,7 @@ public:
 			vertexArray.push_back(sf::Vertex(sf::Vector2f(v1._x, v1._y), color));
 			vertexArray.push_back(sf::Vertex(sf::Vector2f(v2._x, v2._y), color));
 
-			if (_ui->_resources->showRenderingDebug) {
+			if (_ui->resources_->showRenderingDebug) {
 				appendDebugWireframe(v0, v1, 1, sf::Color(min(color.r + 50, 255), min(color.g + 50, 255), min(color.b + 50, 255)));
 				appendDebugWireframe(v1, v2, 1, sf::Color(min(color.r + 50, 255), min(color.g + 50, 255), min(color.b + 50, 255)));
 				appendDebugWireframe(v2, v0, 1, sf::Color(min(color.r + 50, 255), min(color.g + 50, 255), min(color.b + 50, 255)));
@@ -279,53 +260,72 @@ public:
 		}
 	};
 
+	sf::RenderWindow* window_;
+	Resources* resources_;
 
 public:
+	sf::RenderWindow* getWindow() {
+		return window_;
+	}
+
+	void setWindow(sf::RenderWindow* window) {
+		window_ = window;
+	}
+
+	Resources* getResources() {
+		return resources_;
+	}
+
+	void setResources(Resources* resources) {
+		resources_ = resources;
+	}
+
+
 	class Element {
 	public:
 		struct AdaptiveVector {
 		private:
-			float _relativeComponent;
-			float _absoluteComponent;
+			float relativeComponent_;
+			float absoluteComponent_;
 
 		public:
 			AdaptiveVector() {
-				_relativeComponent = 0;
-				_absoluteComponent = 0;
+				relativeComponent_ = 0;
+				absoluteComponent_ = 0;
 			}
 
 			AdaptiveVector(float relativeComponent, float absoluteComponent) {
-				_relativeComponent = relativeComponent;
-				_absoluteComponent = absoluteComponent;
+				relativeComponent_ = relativeComponent;
+				absoluteComponent_ = absoluteComponent;
 			}
 
 			void set(float relativeComponent, float absoluteComponent) {
-				_relativeComponent = relativeComponent;
-				_absoluteComponent = absoluteComponent;
+				relativeComponent_ = relativeComponent;
+				absoluteComponent_ = absoluteComponent;
 			}
 
 			void setRelativeComponent(float relativeComponent) {
-				_relativeComponent = relativeComponent;
+				relativeComponent_ = relativeComponent;
 			}
 
 			void setAbsoluteComponent(float absoluteComponent) {
-				_absoluteComponent = absoluteComponent;
+				absoluteComponent_ = absoluteComponent;
 			}
 
 			AdaptiveVector get() {
-				return AdaptiveVector(_relativeComponent, _absoluteComponent);
+				return { relativeComponent_, absoluteComponent_ };
 			}
 
 			float getRelativeComponent() {
-				return _relativeComponent;
+				return relativeComponent_;
 			}
 
 			float getAbsoluteComponent() {
-				return _absoluteComponent;
+				return absoluteComponent_;
 			}
 
 			float evaluate(float parent) {
-				return (parent * this->_relativeComponent + this->_absoluteComponent);
+				return (parent * this->relativeComponent_ + this->absoluteComponent_);
 			}
 		};
 
@@ -337,25 +337,25 @@ public:
 		};
 
 	private:
-		UI* _ui;
-		Element* _parent;
-		deque<Element*> _children;
+		Engine* engine_;
+		Element* parent_;
+		deque<Element*> children_;
 
-		AdaptiveVector _x;
-		AdaptiveVector _y;
-		AdaptiveVector _w;
-		AdaptiveVector _h;
-		float _originX;
-		float _originY;
-		SizingMode _sizingMode;
+		AdaptiveVector x_;
+		AdaptiveVector y_;
+		AdaptiveVector w_;
+		AdaptiveVector h_;
+		float originX_;
+		float originY_;
+		SizingMode sizingMode_;
 
 		class Body {
 		private:
-			UI* _ui;
+			Engine* _ui;
 			Element* _element;
 
 		public:
-			Body(UI* ui, Element* parentElement) {
+			Body(Engine* ui, Element* parentElement) {
 				_ui = ui;
 				_element = parentElement;
 			}
@@ -387,7 +387,7 @@ public:
 			}
 
 			void setDebugName(string debugName) {
-				_debugName = debugName;
+				_debugName = std::move(debugName);
 			}
 
 			Color getBackgroundColor() {
@@ -521,295 +521,310 @@ public:
 
 		};
 
-		Body* _body = new Body(_ui, this);
-		string _debugName;
+		Body* body_;
+		string debugName_;
 
 	public:
-		Element(UI* ui, Element* parent, string debugName) {
-			_ui = ui;
-			_parent = parent;
-			_debugName = debugName;
-			_body->setDebugName(debugName);
+		Element(Engine* engine, Element* parent, const string& debugName) {
+			engine_ = engine;
+			parent_ = parent;
+			debugName_ = debugName;
+
+			body_ = new Body(engine_, this);
+			body_->setDebugName(debugName);
 
 			if (parent != nullptr)
-				parent->_children.push_back(this);
-			_x = { 0, 0 };
-			_y = { 0, 0 };
-			_w = { 1, 0 };
-			_h = { 1, 0 };
-			_originX = 0;
-			_originY = 0;
-			_sizingMode = SizingMode::PER_AXIS;
-
+				parent->children_.push_back(this);
+			x_ = { 0, 0 };
+			y_ = { 0, 0 };
+			w_ = { 1, 0 };
+			h_ = { 1, 0 };
+			originX_ = 0;
+			originY_ = 0;
+			sizingMode_ = SizingMode::PER_AXIS;
 		}
 
-		Element(UI* ui, Element* parent, string debugName, AdaptiveVector x, AdaptiveVector y, AdaptiveVector w, AdaptiveVector h, float originX, float originY) {
-			_ui = ui;
-			_parent = parent;
-			_debugName = debugName;
-			_body->setDebugName(debugName);
+		Element(Engine* engine, Element* parent, const string& debugName, AdaptiveVector x, AdaptiveVector y, AdaptiveVector w, AdaptiveVector h, float originX, float originY) {
+			engine_ = engine;
+			parent_ = parent;
+			debugName_ = debugName;
+
+			body_ = new Body(engine_, this);
+			body_->setDebugName(debugName);
 
 			if (parent != nullptr)
-				parent->_children.push_back(this);
-			_x = x;
-			_y = y;
-			_w = w;
-			_h = h;
-			_originX = originX;
-			_originY = originY;
-			_sizingMode = SizingMode::PER_AXIS;
+				parent->children_.push_back(this);
+			x_ = x;
+			y_ = y;
+			w_ = w;
+			h_ = h;
+			originX_ = 0;
+			originY_ = 0;
+			sizingMode_ = SizingMode::PER_AXIS;
 		}
 
 		~Element() {
-			delete this->_body;
-			for (deque<Element*>::iterator child = this->_children.begin(); child != this->_children.end(); child++) {
+			delete this->body_;
+
+			for (deque<Element*>::iterator child = this->children_.begin(); child != this->children_.end(); child++) {
 				delete (*child);
 			}
 		}
 
 		void deleteElement() {
-			if (this == nullptr)
-				return;
-			if (this->_parent != nullptr)
-				this->_parent->_children.erase(find(this->_parent->_children.begin(), this->_parent->_children.end(), this));
+			if (this->parent_ != nullptr)
+				this->parent_->children_.erase(find(this->parent_->children_.begin(), this->parent_->children_.end(), this));
+
 			delete this;
 		}
 
-		void linkContainer(Element* parent) {
-			if (this == _parent)
+		void linkParent(Element* parent) {
+			if (this == parent)
 				return;
-			if (this->_parent != nullptr)
-				this->_parent->_children.erase(find(this->_parent->_children.begin(), this->_parent->_children.end(), this));
-			this->_parent = parent;
-			this->_parent->_children.push_back(this);
+
+			if (this->parent_ != nullptr)
+				this->parent_->children_.erase(find(this->parent_->children_.begin(), this->parent_->children_.end(), this));
+
+			this->parent_ = parent;
+			if (parent != nullptr)
+				this->parent_->children_.push_back(this);
 		}
 
 		void unlinkContainer() {
-			if (this == this->_parent)
+			if (this->parent_ == nullptr)
 				return;
-			this->_parent->_children.erase(remove(this->_parent->_children.begin(), this->_parent->_children.end(), this), this->_parent->_children.end());
-			this->_parent = this;
+
+			this->parent_->children_.erase(remove(this->parent_->children_.begin(), this->parent_->children_.end(), this), this->parent_->children_.end());
+			this->parent_ = nullptr;
 		}
 
 		Element* getParentElement() {
-			return _parent;
+			return parent_;
 		}
 
 		deque<Element*>* getChildren() {
-			return &_children;
+			return &children_;
 		}
 
 		AdaptiveVector getX() {
-			return _x;
+			return x_;
 		}
 
 		void setX(float relativeComponent, float absoluteComponent) {
-			_x.set(relativeComponent, absoluteComponent);
+			x_.set(relativeComponent, absoluteComponent);
 		}
 
 		void setX(AdaptiveVector x) {
-			_x = x;
+			x_ = x;
 		}
 
 		float evalX(float parent) {
-			return _x.evaluate(parent);
+			return x_.evaluate(parent);
 		}
 
 		AdaptiveVector getY() {
-			return _y;
+			return y_;
 		}
 
 		void setY(float relativeComponent, float absoluteComponent) {
-			_y.set(relativeComponent, absoluteComponent);
+			y_.set(relativeComponent, absoluteComponent);
 		}
 
 		void setY(AdaptiveVector y) {
-			_y = y;
+			y_ = y;
 		}
 
 		float evalY(float parent) {
-			return _y.evaluate(parent);
+			return y_.evaluate(parent);
 		}
 
 		AdaptiveVector getW() {
-			return _w;
+			return w_;
 		}
 
 		void setW(float relativeComponent, float absoluteComponent) {
-			_w.set(relativeComponent, absoluteComponent);
+			w_.set(relativeComponent, absoluteComponent);
 		}
 
 		void setW(AdaptiveVector w) {
-			_w = w;
+			w_ = w;
 		}
 
 		float evalW(float parent) {
-			return _w.evaluate(parent);
+			return w_.evaluate(parent);
 		}
 
 		AdaptiveVector getH() {
-			return _h;
+			return h_;
 		}
 
 		void setH(float relativeComponent, float absoluteComponent) {
-			_h.set(relativeComponent, absoluteComponent);
+			h_.set(relativeComponent, absoluteComponent);
 		}
 
 		void setH(AdaptiveVector h) {
-			_h = h;
+			h_ = h;
 		}
 
 		float evalH(float parent) {
-			return _h.evaluate(parent);
+			return h_.evaluate(parent);
 		}
 
 		float getOriginX() {
-			return _originX;
+			return originX_;
 		}
 
 		void setOriginX(float originX) {
-			_originX = originX;
+			originX_ = originX;
 		}
 
 		float evalOriginX(float parent) {
-			return _originX * parent;
+			return originX_ * parent;
 		}
 
 		float getOriginY() {
-			return _originY;
+			return originY_;
 		}
 
 		void setOriginY(float originY) {
-			_originY = originY;
+			originY_ = originY;
 		}
 
 		float evalOriginY(float parent) {
-			return _originY * parent;
+			return originY_ * parent;
 		}
 
 		SizingMode getSizingMode() {
-			return _sizingMode;
+			return sizingMode_;
 		}
 
 		void setSizingMode(SizingMode sizingMode) {
-			_sizingMode = sizingMode;
+			sizingMode_ = sizingMode;
 		}
 
 		Body* getBody() {
-			return _body;
+			return body_;
+		}
+
+		void resetBody() {
+			delete body_;
+			body_ = new Body(engine_, this);
 		}
 
 		string getDebugName() {
-			return _debugName;
+			return debugName_;
 		}
 
 		void setDebugName(string debugName) {
-			_debugName = debugName;
+			debugName_ = std::move(debugName);
 		}
-
-		
-
 
 	};
 
 
 	class LayoutGenerator {
-	private:
-		UI* _ui;
-		VertexArray* _vertexArray;
+		Engine* engine_;
+		VertexArray* vertexArray_;
 
 	public:
-		LayoutGenerator(UI* ui) {
-			_ui = ui;
-			_vertexArray = new VertexArray(_ui);
+		LayoutGenerator(Engine* engine) {
+			engine_ = engine;
+			vertexArray_ = new VertexArray(engine);
 
 		}
-
-
-		
 
 		void generateSublayout(Element* thisElement, Vector2f thisPosition, Vector2f thisSize) {
 			// TODO: body rendering
 			thisElement->getBody()->renderBody(getVertexArray(), thisPosition, thisSize);
-			
-			for (deque<Element*>::iterator child = thisElement->getChildren()->begin();
-				child != thisElement->getChildren()->end(); child++) {
 
+			for (deque<Element*>::iterator child = thisElement->getChildren()->begin(); child != thisElement->getChildren()->end(); child++) {
 				sf::Vector2f childSize((*child)->evalW(thisSize.x), (*child)->evalH(thisSize.y));
 
-				if ((*child)->getSizingMode() == Element::SizingMode::RELATIVE_TO_H)
+				switch ((*child)->getSizingMode()) {
+				case Element::SizingMode::PER_AXIS:
+					break;
+
+				case Element::SizingMode::RELATIVE_TO_H:
 					childSize.x = (*child)->evalW(childSize.y);
-				if ((*child)->getSizingMode() == Element::SizingMode::RELATIVE_TO_W)
+					break;
+
+				case Element::SizingMode::RELATIVE_TO_W:
 					childSize.y = (*child)->evalH(childSize.x);
-				if ((*child)->getSizingMode() == Element::SizingMode::SHRINK_TO_FIT) {
+					break;
+
+				case Element::SizingMode::SHRINK_TO_FIT:
 					childSize = Vector2f(
 						childSize.x / max(childSize.x / thisSize.x, childSize.y / thisSize.y),
 						childSize.y / max(childSize.x / thisSize.x, childSize.y / thisSize.y)
 					);
+					break;
+					
 				}
 
-				sf::Vector2f childPosition(thisPosition.x + (*child)->evalX(thisSize.x) - (*child)->evalOriginX(childSize.x),
-					thisPosition.y + (*child)->evalY(thisSize.y) - (*child)->evalOriginY(childSize.y));
+				sf::Vector2f childPosition(
+					thisPosition.x + (*child)->evalX(thisSize.x) - (*child)->evalOriginX(childSize.x),
+					thisPosition.y + (*child)->evalY(thisSize.y) - (*child)->evalOriginY(childSize.y)
+				);
 
 				generateSublayout(*child, childPosition, childSize);
 			}
 		}
 
-	public:
 		void generateLayout(Element* rootElement, Vector2f topLeftCoord, Vector2f size) {
-			_vertexArray->clear();
+			vertexArray_->clear();
 			generateSublayout(rootElement, topLeftCoord, size);
 		}
 
 		VertexArray* getVertexArray() {
-			return _vertexArray;
+			return vertexArray_;
 		}
 
 		~LayoutGenerator() {
-			delete _vertexArray;
+			delete vertexArray_;
 		}
 
 	};
 
-public:
-	UI(sf::RenderWindow* window, Resources* resources) {
-		_window = window;
-		_resources = resources;
+
+	Element* rootElement_;
+	
+	Engine(sf::RenderWindow* window, Resources* resources) {
+		window_ = window;
+		resources_ = resources;
+
+		rootElement_ = new Element(this, nullptr, "rootElement");
 	}
 
-
-private:
-	Element* _rootElement = new Element(this, nullptr, "rootElement");
-
-public:
 	Element* getRootElement() {
-		return _rootElement;
+		return rootElement_;
 	}
 
+	void resetRootElement() {
+		rootElement_->deleteElement();
+		rootElement_ = new Element(this, nullptr, "rootElement");
+	}
 
-public:
-
-	void renderUI() {
+	void render() {
 		sf::Clock profilerClock;
 		profilerClock.restart();
 
-		_window->clear(sf::Color(0, 0, 0));
+		window_->clear(sf::Color(0, 0, 0));
 
 		LayoutGenerator layoutGenerator(this);
 		//cout << "Spawn layout generator: " << profilerClock.getElapsedTime().asMicroseconds() << "\n";
 		profilerClock.restart();
 
-		layoutGenerator.generateLayout(_rootElement, Vector2f(0, 0), Vector2f((float)_window->getSize().x, (float)_window->getSize().y));
+		layoutGenerator.generateLayout(rootElement_, Vector2f(0, 0), Vector2f((float)window_->getSize().x, (float)window_->getSize().y));
 		//cout << "       Generate layout: " << profilerClock.getElapsedTime().asMicroseconds() << "\n";
 		profilerClock.restart();
 
 		cout << "Triangles: " << layoutGenerator.getVertexArray()->getTriangleCount() << "\n";
 
-		_window->draw(layoutGenerator.getVertexArray()->getBuffer(), layoutGenerator.getVertexArray()->getSize(), sf::Triangles);
+		window_->draw(layoutGenerator.getVertexArray()->getBuffer(), layoutGenerator.getVertexArray()->getSize(), sf::Triangles);
 		//cout << "                  Draw: " << profilerClock.getElapsedTime().asMicroseconds() << "\n";
 		profilerClock.restart();
 
-		_window->display();
+		window_->display();
 		//cout << "               Display: " << profilerClock.getElapsedTime().asMicroseconds() << "\n";
 
 	}
