@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source.cpp">
+    <ClCompile Include="Application.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
   </ItemGroup>
@@ -24,9 +24,6 @@
       <Filter>來源檔案</Filter>
     </ClInclude>
     <ClInclude Include="Graphene.hpp">
-      <Filter>來源檔案</Filter>
-    </ClInclude>
-    <ClInclude Include="UIEngine.hpp">
       <Filter>來源檔案</Filter>
     </ClInclude>
     <ClInclude Include="Resources.hpp">
