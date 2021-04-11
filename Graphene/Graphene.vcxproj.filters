@@ -23,10 +23,31 @@
     <ClInclude Include="Source\ExceptionHandler.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Graphics\Window.hpp">
+    <ClInclude Include="Source\GUE\Renderer\Window.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Graphics\Struct.hpp">
+    <ClInclude Include="Source\GUE\Renderer\Struct.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Renderer\VertexBuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Renderer\Shaders.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\GUE.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Renderer\InitGlew.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Renderer\InitGlfw.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Renderer\Renderer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Renderer\VertexArray.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -93,8 +93,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\ExceptionHandler.hpp" />
-    <ClInclude Include="Source\Graphics\Struct.hpp" />
-    <ClInclude Include="Source\Graphics\Window.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\InitGlew.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\InitGlfw.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\Renderer.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\Shaders.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\Struct.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\VertexArray.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\VertexBuffer.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\Window.hpp" />
+    <ClInclude Include="Source\GUE\GUE.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
