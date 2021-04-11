@@ -8,7 +8,7 @@ namespace gue {
 		glewExperimental = true; // Needed for core profile
 
 		if (glewInit() != GLEW_OK) {
-			ExceptionHandler::err("Failed to initialize GLEW\n");
+			ERR("Failed to initialize GLEW\n");
 			return false;
 		}
 	}

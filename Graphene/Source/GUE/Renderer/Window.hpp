@@ -5,7 +5,7 @@
 #include "InitGlfw.hpp"
 #include "InitGlew.hpp"
 #include "../../ExceptionHandler.hpp"
-#include "Struct.hpp"
+#include "Structures.hpp"
 
 namespace gue {
 	class Window {
@@ -21,7 +21,7 @@ namespace gue {
 		bool createWindow(Vec2u windowSize, const char* title) {
 			gue::initGlfw();
 			
-			ExceptionHandler::dbg("creating window with size " + std::to_string(windowSize.x) + ", " + std::to_string(windowSize.y));
+			DBG("creating window with size " + std::to_string(windowSize.x) + ", " + std::to_string(windowSize.y));
 			m_windowSize = windowSize;
 
 			// setup window properties
@@ -36,7 +36,7 @@ namespace gue {
 
 			if (m_window == nullptr) {
 				// window creation failed
-				ExceptionHandler::err("OpenGL window creation failed");
+				ERR("OpenGL window creation failed");
 				glfwTerminate();
 				return false;
 			}
@@ -55,7 +55,7 @@ namespace gue {
 			// disable Vsync
 			glfwSwapInterval(0);
 
-			ExceptionHandler::ok("window created successfully");
+			OK("window created successfully");
 			return true;
 		}
 

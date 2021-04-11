@@ -44,14 +44,14 @@ namespace gue {
 			glShaderSource(vertexShader, 1, &vertexShaderSourceCStr, nullptr);
 			glCompileShader(vertexShader);
 
-			GLint vertexShaderCompiled
+			GLint vertexShaderCompiled;
 			glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vertexShaderCompiled);
 
 			if (!vertexShaderCompiled) {
 				GLsizei logLength = 0;
 				GLchar logMessage[1024];
 				glGetShaderInfoLog(vertexShader, 1024, &logLength, logMessage);
-				ExceptionHandler::err("vertex shader compilation failed: " + std::string(logMessage));
+				ERR("vertex shader compilation failed: " + std::string(logMessage));
 				return false;
 			}
 
@@ -70,7 +70,7 @@ namespace gue {
 				GLsizei logLength = 0;
 				GLchar logMessage[1024];
 				glGetShaderInfoLog(fragmentShader, 1024, &logLength, logMessage);
-				ExceptionHandler::err("fragment shader compilation failed: " + std::string(logMessage));
+				ERR("fragment shader compilation failed: " + std::string(logMessage));
 				return false;
 			}
 
@@ -90,7 +90,7 @@ namespace gue {
 				GLsizei logLength = 0;
 				GLchar logMessage[1024];
 				glGetShaderInfoLog(fragmentShader, 1024, &logLength, logMessage);
-				ExceptionHandler::err("shader program linkage failed: " + std::string(logMessage));
+				ERR("shader program linkage failed: " + std::string(logMessage));
 				return false;
 			}
 

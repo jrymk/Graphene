@@ -5,7 +5,7 @@
 namespace gue {
 	bool initGlfw() {
 		if (!glfwInit()) {
-			ExceptionHandler::err("Failed to initialize GLFW\n");
+			ERR("Failed to initialize GLFW\n");
 			return false;
 		}
 

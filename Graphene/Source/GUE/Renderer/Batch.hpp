@@ -1,15 +1,14 @@
 #pragma once
 #include <gl/glew.h>
 #include <GLFW/glfw3.h>
-#include "Shaders.hpp"
+#include <vector>
+#include "Vertex.hpp"
 
 namespace gue {
-	
+	class Batch {
+	private:
 
-	
-	void render() {
 		
-	}
-
-	
+		
+	};
 }

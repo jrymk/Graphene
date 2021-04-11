@@ -26,10 +26,10 @@
     <ClInclude Include="Source\GUE\Renderer\Window.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GUE\Renderer\Struct.hpp">
+    <ClInclude Include="Source\GUE\Renderer\Structures.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GUE\Renderer\VertexBuffer.hpp">
+    <ClInclude Include="Source\GUE\Renderer\VertexArray.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\GUE\Renderer\Shaders.hpp">
@@ -44,10 +44,22 @@
     <ClInclude Include="Source\GUE\Renderer\InitGlfw.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GUE\Renderer\Renderer.hpp">
+    <ClInclude Include="Source\GUE\Renderer\Batch.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GUE\Renderer\VertexArray.hpp">
+    <ClInclude Include="Source\GUE\Renderer\Vertex.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Renderer\BatchRenderer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Renderer\Element.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Renderer\CircleElement.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Renderer\LayoutBuilder.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

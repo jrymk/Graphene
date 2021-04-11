@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Renderer/Window.hpp"
-
+#include "Renderer/Element.hpp"
+#include "Renderer/CircleElement.hpp"
+#include "Renderer/Shaders.hpp"
 
 // Use dedicated graphic cards by default
 extern "C" {

@@ -93,13 +93,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\ExceptionHandler.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\BatchRenderer.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\CircleElement.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\Element.hpp" />
     <ClInclude Include="Source\GUE\Renderer\InitGlew.hpp" />
     <ClInclude Include="Source\GUE\Renderer\InitGlfw.hpp" />
-    <ClInclude Include="Source\GUE\Renderer\Renderer.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\LayoutBuilder.hpp" />
     <ClInclude Include="Source\GUE\Renderer\Shaders.hpp" />
-    <ClInclude Include="Source\GUE\Renderer\Struct.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\Structures.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\Vertex.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\Batch.hpp" />
     <ClInclude Include="Source\GUE\Renderer\VertexArray.hpp" />
-    <ClInclude Include="Source\GUE\Renderer\VertexBuffer.hpp" />
     <ClInclude Include="Source\GUE\Renderer\Window.hpp" />
     <ClInclude Include="Source\GUE\GUE.h" />
   </ItemGroup>
