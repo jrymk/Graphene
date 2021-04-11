@@ -31,7 +31,7 @@ using namespace sf;
 }*/
 
 
-int main() {
+int main_() {
 	ExceptionHandler eh;
 
 	Resources resources;

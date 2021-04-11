@@ -15,52 +15,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Application.cpp">
+    <ClCompile Include="Source\Application.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="ExceptionHandler.hpp">
-      <Filter>來源檔案</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphene.hpp">
-      <Filter>來源檔案</Filter>
-    </ClInclude>
-    <ClInclude Include="Resources.hpp">
-      <Filter>來源檔案</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine.hpp">
-      <Filter>來源檔案</Filter>
-    </ClInclude>
-    <ClInclude Include="UI.hpp">
-      <Filter>來源檔案</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Font Include="..\x64\Release\Manrope-Medium.ttf">
-      <Filter>資源檔</Filter>
-    </Font>
-    <Font Include="..\x64\Release\consola.ttf">
-      <Filter>資源檔</Filter>
-    </Font>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Graphene.rc">
-      <Filter>資源檔</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="icon1.ico">
-      <Filter>資源檔</Filter>
-    </Image>
-    <Image Include="icon.png">
-      <Filter>資源檔</Filter>
-    </Image>
-    <Image Include="icon.ico">
-      <Filter>資源檔</Filter>
-    </Image>
   </ItemGroup>
 </Project>
