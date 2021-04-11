@@ -52,7 +52,7 @@ int main() {
 	//Thread renderThread(&render, &engine);
 	//renderThread.launch();
 	
-	int v = 8;
+	int v = 20;
 	for (int i = 0; i < v; i++) {
 		graphene->verticies.push_back(Graphene::Vertex());
 		graphene->verticies[i].name = to_string(i);
