@@ -68,5 +68,8 @@
     <ClInclude Include="Source\GUE\Renderer\ProfilerUtils.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\GUE\Renderer\ScopedVertexArray.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

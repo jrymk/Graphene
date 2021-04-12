@@ -37,8 +37,12 @@ namespace gue {
 			return &m_indices;
 		}
 
+		Window* getWindow() {
+			return m_window;
+		}
+		
 		unsigned int appendVertex(Vec2f pixelCoord, Color color255) {
-			m_vertices.push_back(Vertex(
+			m_vertices.emplace_back(Vertex(
 				Vec2f(pixelCoord.x * 2.0f / m_window->getFramebufferSize().toFloat().x - 1.0f, pixelCoord.y * 2.0f / m_window->getFramebufferSize().toFloat().y - 1.0f),
 				color255.toColorf()
 			));
@@ -46,7 +50,7 @@ namespace gue {
 		}
 
 		void appendIndex(unsigned int index) {
-			m_indices.push_back(index);
+			m_indices.emplace_back(index);
 
 		}
 

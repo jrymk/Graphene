@@ -17,7 +17,6 @@ int main() {
 
 	gue::VertexArray vertexArray(window);
 
-
 	gue::Shader shader;
 	shader.setShaderSource(shader.defaultVertexShader, shader.defaultFragmentShader);
 	shader.loadShader();
@@ -25,12 +24,10 @@ int main() {
 
 	glfwSetInputMode(window.getGLFWWindow(), GLFW_STICKY_KEYS, GL_TRUE);
 
-	double lastTime = glfwGetTime();
-	int nbFrames = 0;
-
 	ExceptionHandler eh;
 	eh.flushExceptionsToIOStream();
 
+	gue::Timer animTimer;
 
 	gue::FramerateCounter framerateCounter;
 
@@ -38,8 +35,9 @@ int main() {
 		GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
 		vertexArray.clear();
+		
+		//vertexArray.printContents();
 
-		//vertexArray.allocate(800000, 2000000);
 
 		auto circle = new gue::CircleElement;
 		circle->x = { 0.5f, 0.0f };
@@ -50,13 +48,13 @@ int main() {
 		//vertexArray.printContents();
 		delete circle;
 
-		for (int i = 0; i < 20; i++) {
-			for (int j = 0; j < 20; j++) {
+		for (int i = 0; i < 60; i++) {
+			for (int j = 0; j < 60; j++) {
 				auto circle2 = new gue::CircleElement;
-				circle2->x = { (float)i / 20.0f, 0.0f };
-				circle2->y = { (float)j / 20.0f, 0.0f };
+				circle2->x = { (float)i / 60.0f, 20 * (float)cos((animTimer.getSeconds() + i + j) * 0.5) };
+				circle2->y = { (float)j / 60.0f, 20 * (float)sin((animTimer.getSeconds() + i + j) * 0.4) };
 				circle2->radius = { 0.01f, 0.0f };
-				circle2->color = { (uint8_t)i, (uint8_t)j, 0, 150 };
+				circle2->color = { (uint8_t)(i * 255 / 60), (uint8_t)(j * 255 / 60), (uint8_t)(round((float)127 * cos((animTimer.getSeconds() + (float)i * 0.2 - (float)j * 0.3) * 0.5) + 127)), 150 };
 				//circle->color = { 255, 211, 0, 5 };
 
 				circle2->generateBuffer(&vertexArray, { 0, 0 }, { window.getFramebufferSize().toFloat().x, window.getFramebufferSize().toFloat().y });
@@ -64,8 +62,8 @@ int main() {
 				delete circle2;
 			}
 		}
-		//vertexArray.printContents();
-
+		
+		
 		vertexArray.draw(shader);
 		
 		//framerate counter
