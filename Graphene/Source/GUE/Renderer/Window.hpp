@@ -79,6 +79,10 @@ namespace gue {
 			// disable Vsync
 			glfwSwapInterval(0);
 
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			
 			OK("window created successfully");
 			return true;
 		}
