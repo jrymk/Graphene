@@ -4,6 +4,8 @@
 #include "Elements/Element.hpp"
 #include "Elements/CircleElement.hpp"
 #include "Renderer/Shaders.hpp"
+#include "System/Timer.hpp"
+#include "Renderer/ProfilerUtils.hpp"
 
 // Use dedicated graphic cards by default
 extern "C" {

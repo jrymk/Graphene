@@ -31,6 +31,9 @@ int main() {
 	ExceptionHandler eh;
 	eh.flushExceptionsToIOStream();
 
+
+	gue::FramerateCounter framerateCounter;
+
 	do {
 		GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
@@ -47,11 +50,11 @@ int main() {
 		//vertexArray.printContents();
 		delete circle;
 
-		for (int i = 0; i < 200; i++) {
-			for (int j = 0; j < 100; j++) {
+		for (int i = 0; i < 20; i++) {
+			for (int j = 0; j < 20; j++) {
 				auto circle2 = new gue::CircleElement;
-				circle2->x = { (float)i / 200.0f, 0.0f };
-				circle2->y = { (float)j / 100.0f, 0.0f };
+				circle2->x = { (float)i / 20.0f, 0.0f };
+				circle2->y = { (float)j / 20.0f, 0.0f };
 				circle2->radius = { 0.01f, 0.0f };
 				circle2->color = { (uint8_t)i, (uint8_t)j, 0, 150 };
 				//circle->color = { 255, 211, 0, 5 };
@@ -65,18 +68,10 @@ int main() {
 
 		vertexArray.draw(shader);
 		
-		double currentTime = glfwGetTime();
-		nbFrames++;
-		//DBG(std::to_string(nbFrames));
-		if (currentTime - lastTime >= 1.0) {
-			DBG("Framerate: " + std::to_string((int)round((double)nbFrames)) + "\tVertices: " + std::to_string(vertexArray.getVertices()->size()) + "\tIndices: " + std::to_string(vertexArray.getIndices()->size()) + "\tTriangles: " + std::to_string(vertexArray.getIndices()->size() / 3));
-			//DBG(std::to_string(glfwGetTime()));
-			nbFrames = 0;
-			lastTime += 1.0;
-		}
-
-		//glfwSetTime((double)0.0);
-
+		//framerate counter
+		framerateCounter.frameCount();
+		DBG(std::to_string(framerateCounter.getFramerate()) + "fps");
+		
 		//DBG(std::to_string(vertexArray.getVertices()->size()));
 
 		// Swap buffers
@@ -87,7 +82,6 @@ int main() {
 		eh.flushExceptionsToIOStream();
 
 	} // Check if the ESC key was pressed or the window was closed
-	while (glfwGetKey(window.getGLFWWindow(), GLFW_KEY_ESCAPE) != GLFW_PRESS &&
-		glfwWindowShouldClose(window.getGLFWWindow()) == 0);
+	while (glfwGetKey(window.getGLFWWindow(), GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window.getGLFWWindow()) == 0);
 
 }
