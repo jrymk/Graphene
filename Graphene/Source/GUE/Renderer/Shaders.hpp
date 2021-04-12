@@ -2,9 +2,7 @@
 #include <gl/glew.h>
 #include <GLFW/glfw3.h>
 #include <string>
-#include <fstream>
 #include <sstream>
-#include <vector>
 #include "../../ExceptionHandler.hpp"
 
 namespace gue {
@@ -37,7 +35,7 @@ namespace gue {
 
 		bool loadShader() {
 			// load and compile vertex shader
-			
+			DBG("loading shaders");
 			const GLchar* vertexShaderSourceCStr = m_vertexShaderSource.c_str();
 
 			const GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -54,7 +52,7 @@ namespace gue {
 				ERR("vertex shader compilation failed: " + std::string(logMessage));
 				return false;
 			}
-
+			
 			// load and compile fragment shader
 			
 			const GLchar* fragmentShaderSourceCStr = m_fragmentShaderSource.c_str();
@@ -73,7 +71,6 @@ namespace gue {
 				ERR("fragment shader compilation failed: " + std::string(logMessage));
 				return false;
 			}
-
 
 			m_programId = glCreateProgram();
 
@@ -94,7 +91,8 @@ namespace gue {
 				return false;
 			}
 
-
+			OK("shaders loaded successfully");
+			
 			// delete shaders
 
 			glDetachShader(m_programId, vertexShader);
