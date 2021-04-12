@@ -18,13 +18,6 @@ int main() {
 
 	gue::VertexArray vertexArray(window);
 
-	gue::CircleElement circle;
-	circle.x = { 0.5f, 0.0f };
-	circle.y = { 0.5f, 0.0f };
-	circle.radius = { 0.35f, 0.0f };
-	circle.color = { 255, 211, 0, 255};
-
-
 	ExceptionHandler eh;
 	eh.flushExceptionsToIOStream();
 
@@ -53,23 +46,48 @@ int main() {
 	gue::Shader shader;
 	shader.setShaderSource(vertexShader, fragmentShader);
 	shader.loadShader();
-	
+
 
 	glfwSetInputMode(window.getGLFWWindow(), GLFW_STICKY_KEYS, GL_TRUE);
-
 
 
 	do {
 		GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
-
 		vertexArray.clear();
-		circle.generateBuffer(&vertexArray, { 0, 0 }, { window.getFramebufferSize().toFloat().x, window.getFramebufferSize().toFloat().y });
 
+		auto circle = new gue::CircleElement;
+		circle->x = { 0.5f, 0.0f };
+		circle->y = { 0.5f, 0.0f };
+		circle->radius = { 0.5f, 0.0f };
+		circle->color = { 255, 255, 255, 255 };
+		circle->generateBuffer(&vertexArray, { 0, 0 }, { window.getFramebufferSize().toFloat().x, window.getFramebufferSize().toFloat().y });
 		//vertexArray.printContents();
+		delete circle;
 		
+		for (int i = 0; i < 100; i++) {
+			for (int j = 0; j < 100; j++) {
+				auto circle2 = new gue::CircleElement;
+				circle2->x = { (float)i / 100.f, 0.0f };
+				circle2->y = { (float)j / 100.0f, 0.0f };
+				circle2->radius = { 0.01f, 0.0f };
+				circle2->color = { (uint8_t)i, (uint8_t)j, 0, 150 };
+				//circle->color = { 255, 211, 0, 5 };
+
+				circle2->generateBuffer(&vertexArray, { 0, 0 }, { window.getFramebufferSize().toFloat().x, window.getFramebufferSize().toFloat().y });
+				//vertexArray.printContents();
+				delete circle2;
+			}
+		}
+		//vertexArray.printContents();
+
 		vertexArray.draw(shader);
 
+		DBG("Framerate: " + std::to_string((int)round((double)1.0 / glfwGetTime())) + "\tTriangles: " + std::to_string(vertexArray.getVertices()->size()));
+		glfwSetTime(0);
+		
+		//DBG(std::to_string(vertexArray.getVertices()->size()));
+		
 		// Swap buffers
 		GLCall(glfwSwapBuffers(window.getGLFWWindow()));
 		GLCall(glfwPollEvents());
