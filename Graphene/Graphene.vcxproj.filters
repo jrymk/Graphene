@@ -53,13 +53,13 @@
     <ClInclude Include="Source\GUE\Renderer\BatchRenderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GUE\Renderer\Element.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\GUE\Renderer\CircleElement.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\GUE\Renderer\LayoutBuilder.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Elements\CircleElement.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Elements\Element.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
