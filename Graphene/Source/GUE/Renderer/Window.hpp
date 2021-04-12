@@ -12,6 +12,7 @@ namespace gue {
 	private:
 		GLFWwindow* m_window = nullptr;
 		Vec2u m_windowSize;
+		//Vec2u m_framebufferSize;
 
 	public:
 		GLFWwindow* getGLFWWindow() {
@@ -33,6 +34,7 @@ namespace gue {
 
 		static void framebufferSizeCallback(GLFWwindow* window, int width, int height) {
 			glViewport(0, 0, width, height);
+			
 			//draw(window);
 		}
 		

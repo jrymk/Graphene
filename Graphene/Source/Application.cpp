@@ -16,18 +16,14 @@ int main() {
 		ERR("failed to create window");
 	}
 
-	gue::VertexArray vertexArray;
+	gue::VertexArray vertexArray(window);
 
 	gue::CircleElement circle;
-	circle.x = { 0.0f, 0.0f };
-	circle.y = { 0.0f, 0.0f };
-	circle.radius = { 0.8f, 0.8f };
-	circle.color = { 1.0f, 0.82745f, 0.0f, 1.0f };
+	circle.x = { 0.5f, 0.0f };
+	circle.y = { 0.5f, 0.0f };
+	circle.radius = { 0.35f, 0.0f };
+	circle.color = { 255, 211, 0, 255};
 
-	vertexArray.clear();
-	circle.generateBuffer(&vertexArray, { 0, 0 }, { 1.0, 1.0 });
-
-	vertexArray.printContents();
 
 	ExceptionHandler eh;
 	eh.flushExceptionsToIOStream();
@@ -66,6 +62,11 @@ int main() {
 	do {
 		GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
+
+		vertexArray.clear();
+		circle.generateBuffer(&vertexArray, { 0, 0 }, { window.getFramebufferSize().toFloat().x, window.getFramebufferSize().toFloat().y });
+
+		//vertexArray.printContents();
 		
 		vertexArray.draw(shader);
 
