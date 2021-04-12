@@ -14,12 +14,17 @@ namespace gue {
 		std::vector<Vertex> m_vertices;
 		std::vector<unsigned int> m_indices;
 		Window* m_window;
-		
+
+		GLuint m_VAO; // vertex array object
+		GLuint m_VBO; // vertex buffer object
+		GLuint m_EBO; // index buffer object
+
+
 	public:
 		VertexArray(Window& window) {
 			m_window = &window;
 		}
-		
+
 		void bindWindow(Window& window) {
 			m_window = &window;
 		}
@@ -34,7 +39,7 @@ namespace gue {
 
 		unsigned int appendVertex(Vec2f pixelCoord, Color color255) {
 			m_vertices.push_back(Vertex(
-				Vec2f( pixelCoord.x * 2.0f / m_window->getFramebufferSize().toFloat().x - 1.0f, pixelCoord.y * 2.0f / m_window->getFramebufferSize().toFloat().y - 1.0f ),
+				Vec2f(pixelCoord.x * 2.0f / m_window->getFramebufferSize().toFloat().x - 1.0f, pixelCoord.y * 2.0f / m_window->getFramebufferSize().toFloat().y - 1.0f),
 				color255.toColorf()
 			));
 			return m_vertices.size() - 1;
@@ -42,9 +47,9 @@ namespace gue {
 
 		void appendIndex(unsigned int index) {
 			m_indices.push_back(index);
-			
+
 		}
-		
+
 		void clear() {
 			m_vertices.clear();
 			m_indices.clear();
@@ -70,45 +75,40 @@ namespace gue {
 				);
 		}
 
-		void allocate(unsigned int vertices, unsigned int indices) {
-			
-		}
 		
 		void draw(Shader& shader) {
-			GLuint VAO; // vertex array object
-			GLuint VBO; // vertex buffer object
-			GLuint EBO; // index buffer object
+			
+			GLCall(glGenVertexArrays(1, &m_VAO));
+			GLCall(glGenBuffers(1, &m_VBO));
+			GLCall(glGenBuffers(1, &m_EBO));
 
-			GLCall(glGenVertexArrays(1, &VAO));
-			GLCall(glGenBuffers(1, &VBO));
-			GLCall(glGenBuffers(1, &EBO));
+			GLCall(glBindVertexArray(m_VAO));
 
-			GLCall(glBindVertexArray(VAO));
+			// allocate memory for vbos and ebos
+			GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_VBO));
+			GLCall(glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(Vertex), &m_vertices[0], GL_DYNAMIC_DRAW));
 
-			GLCall(glBindBuffer(GL_ARRAY_BUFFER, VBO));
-			GLCall(glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(Vertex), &m_vertices[0], GL_STATIC_DRAW));
+			GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO));
+			GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(GLuint), &m_indices[0], GL_DYNAMIC_DRAW));
 
-			GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO));
-			GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(GLuint), &m_indices[0], GL_STATIC_DRAW));
-
-			// vertex positions
+			// set up vertex attributes
 			GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position)));
 			GLCall(glEnableVertexAttribArray(0));
 
-			// vertex colors
 			GLCall(glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color)));
 			GLCall(glEnableVertexAttribArray(1));
 
+			// use specified shader
 			shader.useShader();
 			
-			GLCall(glBindVertexArray(VAO));
+			GLCall(glBindVertexArray(m_VAO));
 			GLCall(glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0));
 
-			GLCall(glDeleteVertexArrays(1, &VAO));
-			GLCall(glDeleteBuffers(1, &VBO));
-			GLCall(glDeleteBuffers(1, &EBO));
-			
+			GLCall(glDeleteVertexArrays(1, &m_VAO));
+			GLCall(glDeleteBuffers(1, &m_VBO));
+			GLCall(glDeleteBuffers(1, &m_EBO));
+
 		}
-		
+
 	};
 }

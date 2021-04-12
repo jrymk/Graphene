@@ -52,9 +52,8 @@ namespace gue {
 				ERR("vertex shader compilation failed: " + std::string(logMessage));
 				return false;
 			}
-			
+
 			// load and compile fragment shader
-			
 			const GLchar* fragmentShaderSourceCStr = m_fragmentShaderSource.c_str();
 
 			const GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -92,21 +91,42 @@ namespace gue {
 			}
 
 			OK("shaders loaded successfully");
-			
-			// delete shaders
 
+			// delete shaders
 			glDetachShader(m_programId, vertexShader);
 			glDetachShader(m_programId, fragmentShader);
 			glDeleteShader(vertexShader);
 			glDeleteShader(fragmentShader);
-			
+
 			return true;
 		}
 
 		void useShader() {
 			glUseProgram(m_programId);
 		}
-		
+
+		const std::string defaultVertexShader =
+			"#version 330 core\n\
+			layout(location = 0) in vec2 aPosition;\n\
+			layout(location = 1) in vec4 aColor;\n\
+			out vec4 vertexColor;\n\
+			\n\
+			void main() {\n\
+			  vertexColor = vec4(aColor.rgba);\n\
+			  gl_Position.xy = aPosition;\n\
+			  gl_Position.z = 1.0;\n\
+			  gl_Position.w = 1.0;\n\
+			}\n";
+
+		const std::string defaultFragmentShader =
+			"#version 330 core\n\
+			out vec4 FragColor;\n\
+			in vec4 vertexColor;\n\
+			\n\
+			void main() {\n\
+			FragColor = vertexColor;\n\
+			\n}";
+
 	};
 }
 

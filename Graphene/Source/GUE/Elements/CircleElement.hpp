@@ -18,7 +18,7 @@ namespace gue {
 		Color color;
 
 	private:
-		unsigned int m_pointCount = 40;
+		unsigned int m_pointCount = 8;
 
 	public:
 		void generateBuffer(VertexArray* vertexArray, Vec2f position, Vec2f size) {
