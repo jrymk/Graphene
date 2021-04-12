@@ -17,6 +17,24 @@ namespace gue {
 		GLFWwindow* getGLFWWindow() {
 			return m_window;
 		}
+
+		static void draw(GLFWwindow* window) {
+			// Rendering code goes here
+			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+			glfwSwapBuffers(window);
+		}
+
+		static void windowSizeCallback(GLFWwindow* window, int width, int height) {
+			glViewport(0, 0, width, height);
+			
+			//draw(window);
+		}
+
+		static void framebufferSizeCallback(GLFWwindow* window, int width, int height) {
+			glViewport(0, 0, width, height);
+			//draw(window);
+		}
 		
 		bool createWindow(Vec2u windowSize, const char* title) {
 			gue::initGlfw();
@@ -52,6 +70,10 @@ namespace gue {
 			// setup viewport
 			glViewport(0, 0, windowSize.x, windowSize.y);
 
+			// updates viewport after screen resize
+			//glfwSetWindowSizeCallback(m_window, windowSizeCallback);
+			glfwSetFramebufferSizeCallback(m_window, framebufferSizeCallback);
+			
 			// disable Vsync
 			glfwSwapInterval(0);
 
@@ -63,6 +85,12 @@ namespace gue {
 			// close window and clear glfw
 			glfwDestroyWindow(m_window);
 			glfwTerminate();
+		}
+
+		Vec2u getFramebufferSize() {
+			int width, height;
+			glfwGetFramebufferSize(m_window, &width, &height);
+			return Vec2i( width, height ).toUnsigned();
 		}
 
 	};
