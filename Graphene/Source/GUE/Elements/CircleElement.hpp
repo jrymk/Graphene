@@ -24,17 +24,17 @@ namespace gue {
 		void generateBuffer(VertexArray* vertexArray, Vec2f position, Vec2f size) {
 			for (int i = 0; i < m_pointCount; i++) {
 				//DBG(std::to_string(radius.evaluate(size.y)));
-				vertexArray->appendVertex(
-					Vec2f((position.x + x.evaluate(size.x) + (radius.evaluate(size.x) * cos((float)i / m_pointCount * 2 * M_PI))),
-						(position.y + y.evaluate(size.y) + (radius.evaluate(size.x) * sin((float)i / m_pointCount * 2 * M_PI)))
+				unsigned int index = vertexArray->appendVertex(
+					Vec2f((position.x + x.evaluate(size.x) + radius.evaluate(min(size.x, size.y)) * cos((float)i / m_pointCount * 2 * M_PI)),
+						(position.y + y.evaluate(size.y) + radius.evaluate(min(size.x, size.y)) * sin((float)i / m_pointCount * 2 * M_PI))
 					),
 					color
 				);
 
 				if (i >= 2) {
-					vertexArray->appendIndex(0);
-					vertexArray->appendIndex(i - 1);
-					vertexArray->appendIndex(i);
+					vertexArray->appendIndex(index - i);
+					vertexArray->appendIndex(index - 1);
+					vertexArray->appendIndex(index);
 				}
 			}
 		}
