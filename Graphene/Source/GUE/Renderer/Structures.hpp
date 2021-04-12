@@ -76,25 +76,6 @@ struct Vec2i {
 };
 
 
-struct Color {
-public:
-	unsigned char r = 0;
-	unsigned char g = 0;
-	unsigned char b = 0;
-	unsigned char a = 0;
-
-	Color() = default;
-
-	Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
-		this->r = r;
-		this->g = g;
-		this->b = b;
-		this->a = a;
-	}
-	
-};
-
-
 struct Colorf {
 public:
 	float r = 0;
@@ -111,6 +92,27 @@ public:
 		this->a = a;
 	}
 
+};
+
+struct Color {
+public:
+	unsigned char r = 0;
+	unsigned char g = 0;
+	unsigned char b = 0;
+	unsigned char a = 0;
+
+	Color() = default;
+
+	Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
+		this->r = r;
+		this->g = g;
+		this->b = b;
+		this->a = a;
+	}
+
+	Colorf toColorf() {
+		return { this->r / 255.0f, this->g / 255.0f, this->b / 255.0f, this->a / 255.0f };
+	}
 };
 
 struct AVec {

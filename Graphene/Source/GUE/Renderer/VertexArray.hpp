@@ -5,6 +5,7 @@
 #include <string>
 #include "Shaders.hpp"
 #include "Vertex.hpp"
+#include "Window.hpp"
 #include "../../ExceptionHandler.hpp"
 
 namespace gue {
@@ -12,12 +13,17 @@ namespace gue {
 	private:
 		std::vector<Vertex> m_vertices;
 		std::vector<unsigned int> m_indices;
-	
+		Window* m_window;
+		
 	public:
-		VertexArray() {
-			
+		VertexArray(Window& window) {
+			m_window = &window;
 		}
 		
+		void bindWindow(Window& window) {
+			m_window = &window;
+		}
+
 		std::vector<Vertex>* getVertices() {
 			return &m_vertices;
 		}
@@ -26,6 +32,18 @@ namespace gue {
 			return &m_indices;
 		}
 
+		void appendVertex(Vec2f pixelCoord, Color color255) {
+			m_vertices.push_back(Vertex(
+				Vec2f( pixelCoord.x * 2.0f / m_window->getFramebufferSize().toFloat().x - 1.0f, pixelCoord.y * 2.0f / m_window->getFramebufferSize().toFloat().y - 1.0f ),
+				color255.toColorf()
+			));
+		}
+
+		void appendIndex(unsigned int index) {
+			m_indices.push_back(index);
+			
+		}
+		
 		void clear() {
 			m_vertices.clear();
 			m_indices.clear();
