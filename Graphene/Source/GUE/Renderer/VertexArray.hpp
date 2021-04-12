@@ -32,11 +32,12 @@ namespace gue {
 			return &m_indices;
 		}
 
-		void appendVertex(Vec2f pixelCoord, Color color255) {
+		unsigned int appendVertex(Vec2f pixelCoord, Color color255) {
 			m_vertices.push_back(Vertex(
 				Vec2f( pixelCoord.x * 2.0f / m_window->getFramebufferSize().toFloat().x - 1.0f, pixelCoord.y * 2.0f / m_window->getFramebufferSize().toFloat().y - 1.0f ),
 				color255.toColorf()
 			));
+			return m_vertices.size() - 1;
 		}
 
 		void appendIndex(unsigned int index) {
@@ -69,6 +70,10 @@ namespace gue {
 				);
 		}
 
+		void allocate(unsigned int vertices, unsigned int indices) {
+			
+		}
+		
 		void draw(Shader& shader) {
 			GLuint VAO; // vertex array object
 			GLuint VBO; // vertex buffer object
