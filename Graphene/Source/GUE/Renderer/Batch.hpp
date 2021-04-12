@@ -7,8 +7,7 @@
 namespace gue {
 	class Batch {
 	private:
-
-		
+	
 		
 	};
 }
