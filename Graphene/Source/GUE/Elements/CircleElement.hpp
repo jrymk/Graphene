@@ -13,10 +13,11 @@ namespace gue {
 	/// <summary>
 	/// Element bounds: Fill parent
 	/// Child bounds: Same as parent
+	/// Maximum children count: Unlimited
 	/// </summary>
 	class CircleElement : public Element {
-	private:
-		
+	public:
+
 	public:
 		AVec x;
 		AVec y;
@@ -24,23 +25,26 @@ namespace gue {
 		Color color;
 
 	private:
-		unsigned int m_pointCount = 40;
+		unsigned int m_pointCount = 20;
 
 	public:
-		CircleElement() : Element() {
+		CircleElement(const std::string& debugName) : Element(debugName) {
 
 		}
 
-		CircleElement(AVec x, AVec y, AVec radius, Color color) : Element() {
+		CircleElement(const std::string& debugName, AVec x, AVec y, AVec radius, Color color) : Element(debugName) {
 			this->x = x;
 			this->y = y;
 			this->radius = radius;
 			this->color = color;
+			//this->m_pointCount = 
 		}
 
-		void generateBuffer(VertexArray* vertexArray, Vec2f position, Vec2f size) {
+		void build(VertexArray* vertexArray, Vec2f position, Vec2f size) override {
+			//std::cout << debugName << "\n";
 			ScopedVertexArray scopedVertexArray(vertexArray);
-			
+
+			// build the vertex array of own
 			for (int i = 0; i < m_pointCount; i++) {
 				//DBG(std::to_string(radius.evaluate(size.y)));
 				scopedVertexArray.appendVertex(
@@ -49,13 +53,20 @@ namespace gue {
 					),
 					color
 				);
-				
+
 				if (i >= 2) {
 					scopedVertexArray.appendIndex(i);
 					scopedVertexArray.appendIndex(i - 1);
 					scopedVertexArray.appendIndex(0);
 				}
 			}
+
+			//recursively call chilren
+			for (auto child = m_childrenElements.begin(); child != m_childrenElements.end(); child++) {
+				//std::cout << (*child)->debugName << "\n";
+				(*child)->build(vertexArray, position, size);
+			}
+
 		}
 
 	};

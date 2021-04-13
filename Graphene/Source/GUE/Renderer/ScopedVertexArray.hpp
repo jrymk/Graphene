@@ -10,7 +10,11 @@ namespace gue {
 	public:
 		ScopedVertexArray(VertexArray* vertexArray) {
 			m_vertexArray = vertexArray;
-			m_startingIndex = vertexArray->getVertices()->size();
+		}
+
+		void allocate() {
+			m_startingIndex = m_vertexArray->getVertices()->size();
+			
 		}
 
 		VertexArray* getVertexArray() {

@@ -2,17 +2,25 @@
 #include <vector>
 #include "../Renderer/Vertex.hpp"
 #include "../Renderer/Structures.hpp"
+#include "../Renderer/VertexArray.hpp"
 #include "../../ExceptionHandler.hpp"
 
 namespace gue {
 	class Element {
+	public:
+		std::string debugName;
 		
-	private:
+	protected:
 		Element* m_parentElement;
 		std::vector<Element*> m_childrenElements;
 	
 	public:
-		Element() {
+		virtual void build(VertexArray* vertexArray, Vec2f position, Vec2f size) {
+			
+		}
+
+		Element(const std::string& debugName) {
+			this->debugName = debugName;
 			m_parentElement = nullptr;
 		}
 
@@ -27,6 +35,9 @@ namespace gue {
 				}
 			}
 
+			//for (int i = 0; i < m_childrenElements.size(); i++)
+			//	std::cout << m_childrenElements[i]->debugName << "\n";
+
 			child->linkParentElement(this);
 		}
 		
@@ -38,6 +49,21 @@ namespace gue {
 			m_parentElement = parentElement;
 		}
 
+		void deleteElement() {
+			for (int i = 0; i < m_childrenElements.size(); i++) {
+				m_childrenElements[i]->deleteElement();
+			}
+			
+			delete this;
+		}
+		
+		void deleteChildren() {
+			for (int i = 0; i < m_childrenElements.size(); i++) {
+				m_childrenElements[i]->deleteElement();
+			}
+
+		}
+		
 		
 	public:
 
