@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/bin-int/Release-x64
+/bin-int/Debug-x64/Graphene.tlog
+/bin-int/Debug-x64
