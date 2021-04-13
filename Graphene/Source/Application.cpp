@@ -44,13 +44,16 @@ int main() {
 		circle->y = { 0.f, 0.0f };
 		circle->radius = { 0.5f, 0.0f };
 		circle->fillColor = { 255, 255, 255, 255 };
-		circle->backgroundColor = { 255, 211, 0, 255 };
-		//vertexArray.printContents();
+		//circle->backgroundColor = { 255, 211, 0, 255 };
 
-		auto padding = new gue::PaddingElement("padding", {0.3f, 0.0f}, {0.0f, 100.0f}, {0.3f, 0.0f}, {0.0f, 200.0f});
+		auto padding = new gue::PaddingElement("padding", {0.1f, 0.0f}, {0.0f, 100.0f}, {0.2f, 0.0f}, {0.0f, 200.0f});
+		//padding->backgroundColor = Color(100, 100, 100, 100);
+		//padding->fillColor = Color(110, 255, 255, 200);
+
+		
 		circle->add(padding, -1);
 		
-		for (int i = 0; i < 20; i++) {
+		/*for (int i = 0; i < 20; i++) {
 			for (int j = 0; j < 20; j++) {
 				auto circle2 = new gue::CircleElement(std::to_string(i) + ", " + std::to_string(j));
 				circle2->x = { (float)i / 20.0f, 30 * (float)cos((animTimer.getSeconds() * 3.0f + i + j) * 0.5) };
@@ -62,8 +65,15 @@ int main() {
 				padding->add(circle2, -1);
 				//vertexArray.printContents();
 			}
-		}
+		}*/
 
+		auto rectr = new gue::RectangleElement("rectangle", { 0.3f, 0.0f }, { 0.5f, 0.0f }, { 0.6f, 0.0f }, { 1.0f, 0.0f }, Color(211, 211, 0, 255));
+		rectr->backgroundColor = Color(100, 255, 100, 200);
+		padding->add(rectr, -1);
+
+
+
+		
 		circle->build({ 0, 0 }, { window.getFramebufferSize().toFloat().x, window.getFramebufferSize().toFloat().y });
 		circle->push(&vertexArray);
 		

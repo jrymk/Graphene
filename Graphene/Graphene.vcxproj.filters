@@ -77,5 +77,8 @@
     <ClInclude Include="Source\GUE\Elements\PaddingElement.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\GUE\Elements\RectangleElement.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

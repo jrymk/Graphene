@@ -38,7 +38,6 @@ namespace gue {
 			this->rightPadding = { 0.0, 10.0f };
 			this->fillColor = Color(0, 0, 0, 0);
 			this->backgroundColor = Color(0, 0, 0, 0);
-
 		}
 
 		PaddingElement(const std::string& debugName, AVec top, AVec left, AVec bottom, AVec right) : Element(debugName) {
@@ -48,7 +47,6 @@ namespace gue {
 			this->rightPadding = right;
 			this->fillColor = Color(0, 0, 0, 0);
 			this->backgroundColor = Color(0, 0, 0, 0);
-			//this->m_pointCount = 
 		}
 
 		void build(Vec2f position, Vec2f size) override {
@@ -68,10 +66,10 @@ namespace gue {
 
 			TriangleFan fillRect;
 			if (fillColor.a > 0) { // with background fill
-				fillRect.addVertex(m_scopedVertexArray->appendVertex({position.x + leftPadding.evaluate(size.x), position.y + topPadding.evaluate(size.y)}, backgroundColor));
-				fillRect.addVertex(m_scopedVertexArray->appendVertex({position.x + size.x - rightPadding.evaluate(size.x), position.y + topPadding.evaluate(size.y)}, backgroundColor));
-				fillRect.addVertex(m_scopedVertexArray->appendVertex({position.x + leftPadding.evaluate(size.x), position.y + size.y - bottomPadding.evaluate(size.y)}, backgroundColor));
-				fillRect.addVertex(m_scopedVertexArray->appendVertex({position.x + size.x - rightPadding.evaluate(size.x), position.y + size.y - bottomPadding.evaluate(size.y)}, backgroundColor));
+				fillRect.addVertex(m_scopedVertexArray->appendVertex({position.x + leftPadding.evaluate(size.x), position.y + topPadding.evaluate(size.y)}, fillColor));
+				fillRect.addVertex(m_scopedVertexArray->appendVertex({position.x + size.x - rightPadding.evaluate(size.x), position.y + topPadding.evaluate(size.y)}, fillColor));
+				fillRect.addVertex(m_scopedVertexArray->appendVertex({position.x + size.x - rightPadding.evaluate(size.x), position.y + size.y - bottomPadding.evaluate(size.y)}, fillColor));
+				fillRect.addVertex(m_scopedVertexArray->appendVertex({position.x + leftPadding.evaluate(size.x), position.y + size.y - bottomPadding.evaluate(size.y)}, fillColor));
 				
 				fillRect.push(m_scopedVertexArray);
 			}

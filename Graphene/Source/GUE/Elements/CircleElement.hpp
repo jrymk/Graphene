@@ -28,7 +28,7 @@ namespace gue {
 		Color backgroundColor;
 
 	private:
-		unsigned int m_pointCount = 20;
+		unsigned int m_pointCount = 40;
 
 	public:
 		CircleElement(const std::string& debugName) : Element(debugName) {

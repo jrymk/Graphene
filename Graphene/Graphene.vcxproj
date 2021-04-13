@@ -96,6 +96,7 @@
     <ClInclude Include="Source\GUE\Elements\CircleElement.hpp" />
     <ClInclude Include="Source\GUE\Elements\Element.hpp" />
     <ClInclude Include="Source\GUE\Elements\PaddingElement.hpp" />
+    <ClInclude Include="Source\GUE\Elements\RectangleElement.hpp" />
     <ClInclude Include="Source\GUE\Renderer\BatchRenderer.hpp" />
     <ClInclude Include="Source\GUE\Renderer\ProfilerUtils.hpp" />
     <ClInclude Include="Source\GUE\Renderer\InitGlew.hpp" />
