@@ -117,7 +117,7 @@ namespace gue {
 				radiusSizingRelation = size.y;
 				break;
 			case RadiusSizingMode::RELATIVE_TO_AVERAGE:
-				radiusSizingRelation = (size.x + size.y) / 2.0;
+				radiusSizingRelation = (size.x + size.y) / 2.0f;
 				break;
 			}
 

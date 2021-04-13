@@ -23,7 +23,7 @@ static void GLClearError() {
 
 static std::string fileName(std::string fullPath) {
 	std::string temp = "";
-	for (int i = 5; i < fullPath.size(); i++) {
+	for (unsigned long long i = 5; i < fullPath.size(); i++) {
 		temp.push_back(fullPath[i]);
 		if (fullPath[i - 5] == 'S' && fullPath[i - 4] == 'o' && fullPath[i - 3] == 'u' &&
 			fullPath[i - 2] == 'r' && fullPath[i - 1] == 'c' && fullPath[i] == 'e')

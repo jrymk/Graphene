@@ -32,7 +32,7 @@ namespace gue {
 
 	public:
 		PaddingElement(const std::string& debugName) : Element(debugName) {
-			this->topPadding = {0.0, 10.0};
+			this->topPadding = { 0.0, 10.0 };
 			this->leftPadding = { 0.0, 10.0 };
 			this->bottomPadding = { 0.0, 10.0 };
 			this->rightPadding = { 0.0, 10.0 };
@@ -54,8 +54,9 @@ namespace gue {
 			m_scopedVertexArray = new ScopedVertexArray();
 
 			// build the vertex array of own
-			TriangleFan backgroundRect;
 			if (backgroundColor.a > 0) { // with background fill
+				TriangleFan backgroundRect;
+
 				backgroundRect.addVertex(m_scopedVertexArray->appendVertex(position, backgroundColor));
 				backgroundRect.addVertex(m_scopedVertexArray->appendVertex({ position.x + size.x, position.y }, backgroundColor));
 				backgroundRect.addVertex(m_scopedVertexArray->appendVertex({ position.x + size.x, position.y + size.y }, backgroundColor));
@@ -64,20 +65,21 @@ namespace gue {
 				backgroundRect.push(m_scopedVertexArray);
 			}
 
-			TriangleFan fillRect;
 			if (fillColor.a > 0) { // with background fill
-				fillRect.addVertex(m_scopedVertexArray->appendVertex({position.x + leftPadding.evaluate(size.x), position.y + topPadding.evaluate(size.y)}, fillColor));
-				fillRect.addVertex(m_scopedVertexArray->appendVertex({position.x + size.x - rightPadding.evaluate(size.x), position.y + topPadding.evaluate(size.y)}, fillColor));
-				fillRect.addVertex(m_scopedVertexArray->appendVertex({position.x + size.x - rightPadding.evaluate(size.x), position.y + size.y - bottomPadding.evaluate(size.y)}, fillColor));
-				fillRect.addVertex(m_scopedVertexArray->appendVertex({position.x + leftPadding.evaluate(size.x), position.y + size.y - bottomPadding.evaluate(size.y)}, fillColor));
-				
+				TriangleFan fillRect;
+
+				fillRect.addVertex(m_scopedVertexArray->appendVertex({ position.x + leftPadding.evaluate(size.x), position.y + topPadding.evaluate(size.y) }, fillColor));
+				fillRect.addVertex(m_scopedVertexArray->appendVertex({ position.x + size.x - rightPadding.evaluate(size.x), position.y + topPadding.evaluate(size.y) }, fillColor));
+				fillRect.addVertex(m_scopedVertexArray->appendVertex({ position.x + size.x - rightPadding.evaluate(size.x), position.y + size.y - bottomPadding.evaluate(size.y) }, fillColor));
+				fillRect.addVertex(m_scopedVertexArray->appendVertex({ position.x + leftPadding.evaluate(size.x), position.y + size.y - bottomPadding.evaluate(size.y) }, fillColor));
+
 				fillRect.push(m_scopedVertexArray);
 			}
 
 			//recursively call chilren to build
 			for (auto child = m_childrenElements.begin(); child != m_childrenElements.end(); child++)
-				(*child)->build({position.x + leftPadding.evaluate(size.x), position.y + topPadding.evaluate(size.y)},
-					{size.x - leftPadding.evaluate(size.x) - rightPadding.evaluate(size.x), size.y - topPadding.evaluate(size.y) - bottomPadding.evaluate(size.y)});
+				(*child)->build({ position.x + leftPadding.evaluate(size.x), position.y + topPadding.evaluate(size.y) },
+					{ size.x - leftPadding.evaluate(size.x) - rightPadding.evaluate(size.x), size.y - topPadding.evaluate(size.y) - bottomPadding.evaluate(size.y) });
 
 		}
 
@@ -90,7 +92,7 @@ namespace gue {
 				//recursively call chilren to push
 				for (auto child = m_childrenElements.begin(); child != m_childrenElements.end(); child++)
 					(*child)->push(vertexArray);
-	
+
 			}
 		}
 
