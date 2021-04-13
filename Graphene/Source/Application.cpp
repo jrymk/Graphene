@@ -35,7 +35,6 @@ int main() {
 		GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
 		vertexArray.clear();
-
 		
 
 		vertexArray.draw(shader);

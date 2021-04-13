@@ -1,66 +1,90 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="來源檔案">
+    <Filter Include="Source Files">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="標頭檔">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="資源檔">
+    <Filter Include="Resources Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Application.cpp">
-      <Filter>來源檔案</Filter>
+    <ClCompile Include="Source\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\glad\src\glad.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ExceptionHandler.hpp">
-      <Filter>來源檔案</Filter>
+    <ClInclude Include="Source\ExceptionHandler.hpp">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Graphene.hpp">
-      <Filter>來源檔案</Filter>
+    <ClInclude Include="Source\GUE\Renderer\Window.hpp">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resources.hpp">
-      <Filter>來源檔案</Filter>
+    <ClInclude Include="Source\GUE\Renderer\Structures.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine.hpp">
-      <Filter>來源檔案</Filter>
+    <ClInclude Include="Source\GUE\Renderer\VertexArray.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UI.hpp">
-      <Filter>來源檔案</Filter>
+    <ClInclude Include="Source\GUE\Renderer\Shaders.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>標頭檔</Filter>
+    <ClInclude Include="Source\GUE\GUE.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Font Include="..\x64\Release\Manrope-Medium.ttf">
-      <Filter>資源檔</Filter>
-    </Font>
-    <Font Include="..\x64\Release\consola.ttf">
-      <Filter>資源檔</Filter>
-    </Font>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Graphene.rc">
-      <Filter>資源檔</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="icon1.ico">
-      <Filter>資源檔</Filter>
-    </Image>
-    <Image Include="icon.png">
-      <Filter>資源檔</Filter>
-    </Image>
-    <Image Include="icon.ico">
-      <Filter>資源檔</Filter>
-    </Image>
+    <ClInclude Include="Source\GUE\Renderer\InitGlad.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Renderer\InitGlfw.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Renderer\Batch.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Renderer\Vertex.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Renderer\BatchRenderer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Renderer\LayoutBuilder.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Elements\CircleElement.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Elements\Element.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\System\Timer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Renderer\ProfilerUtils.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Renderer\ScopedVertexArray.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Renderer\TriangleFan.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Elements\PaddingElement.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Elements\RectangleElement.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Elements\LineElement.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
