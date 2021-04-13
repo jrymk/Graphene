@@ -35,40 +35,43 @@ int main() {
 		GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
 		vertexArray.clear();
-		
+
 		//vertexArray.printContents();
 
 
 		auto circle = new gue::CircleElement("root circle");
 		circle->x = { 0.5f, 0.0f };
-		circle->y = { 0.5f, 0.0f };
-		circle->radius = { 0.5f, 0.0f };
-		circle->color = { 255, 255, 255, 255 };
+		circle->y = { 0.f, 0.0f };
+		circle->radius = { 0.15f, 0.0f };
+		circle->fillColor = { 255, 255, 255, 255 };
+		circle->backgroundColor = { 255, 211, 0, 255 };
 		//vertexArray.printContents();
 
 		for (int i = 0; i < 60; i++) {
 			for (int j = 0; j < 60; j++) {
 				auto circle2 = new gue::CircleElement(std::to_string(i) + ", " + std::to_string(j));
-				circle2->x = { (float)i / 60.0f, 20 * (float)cos((animTimer.getSeconds() + i + j) * 0.5) };
-				circle2->y = { (float)j / 60.0f, 20 * (float)sin((animTimer.getSeconds() + i + j) * 0.4) };
-				circle2->radius = { 0.01f, 0.0f };
-				circle2->color = { (uint8_t)(i * 255 / 60), (uint8_t)(j * 255 / 60), (uint8_t)(round((float)127 * cos((animTimer.getSeconds() + (float)i * 0.2 - (float)j * 0.3) * 0.5) + 127)), 150 };
+				circle2->x = { (float)i / 60.0f, 15 * (float)cos((animTimer.getSeconds() * 3.0f + i + j) * 0.5) };
+				circle2->y = { (float)j / 60.0f, 15 * (float)sin((animTimer.getSeconds() * 3.0f + i + j) * 0.4) };
+				circle2->radius = { 0.1f, 0.0f };
+				circle2->fillColor = { (uint8_t)(i * 255 / 60), (uint8_t)(j * 255 / 60), (uint8_t)(round((float)127 * cos((animTimer.getSeconds() * 3.0f + (float)i * 0.2 - (float)j * 0.3) * 0.5) + 127)), 150 };
 				//circle->color = { 255, 211, 0, 5 };
 
 				circle->add(circle2, -1);
 				//vertexArray.printContents();
 			}
 		}
+
+		circle->build({ 0, 0 }, { window.getFramebufferSize().toFloat().x, window.getFramebufferSize().toFloat().y });
+		circle->push(&vertexArray);
 		
-		circle->build(&vertexArray, { 0, 0 }, { window.getFramebufferSize().toFloat().x, window.getFramebufferSize().toFloat().y });
 		circle->deleteElement();
-		
+
 		vertexArray.draw(shader);
-		
+
 		//framerate counter
 		framerateCounter.frameCount();
 		DBG(std::to_string(framerateCounter.getFramerate()) + "fps\tTriangles: " + std::to_string(vertexArray.getVertices()->size() / 3));
-		
+
 		//DBG(std::to_string(vertexArray.getVertices()->size()));
 
 		// Swap buffers

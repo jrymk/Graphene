@@ -43,7 +43,8 @@ namespace gue {
 		
 		unsigned int appendVertex(Vec2f pixelCoord, Color color255) {
 			m_vertices.emplace_back(Vertex(
-				Vec2f(pixelCoord.x * 2.0f / m_window->getFramebufferSize().toFloat().x - 1.0f, pixelCoord.y * 2.0f / m_window->getFramebufferSize().toFloat().y - 1.0f),
+				Vec2f(pixelCoord.x * 2.0f / m_window->getFramebufferSize().toFloat().x - 1.0f, 
+					-pixelCoord.y * 2.0f / m_window->getFramebufferSize().toFloat().y + 1.0f),
 				color255.toColorf()
 			));
 			return m_vertices.size() - 1;

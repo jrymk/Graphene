@@ -15,10 +15,14 @@ namespace gue {
 		std::vector<Element*> m_childrenElements;
 	
 	public:
-		virtual void build(VertexArray* vertexArray, Vec2f position, Vec2f size) {
+		virtual void build(Vec2f position, Vec2f size) {
 			
 		}
 
+		virtual void push(VertexArray* vertexArray) {
+			
+		}
+		
 		Element(const std::string& debugName) {
 			this->debugName = debugName;
 			m_parentElement = nullptr;
