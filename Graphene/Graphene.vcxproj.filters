@@ -18,6 +18,9 @@
     <ClCompile Include="Source\Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Dependencies\glad\src\glad.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\ExceptionHandler.hpp">
@@ -38,7 +41,7 @@
     <ClInclude Include="Source\GUE\GUE.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GUE\Renderer\InitGlew.hpp">
+    <ClInclude Include="Source\GUE\Renderer\InitGlad.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\GUE\Renderer\InitGlfw.hpp">
@@ -78,6 +81,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\GUE\Elements\RectangleElement.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Elements\LineElement.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

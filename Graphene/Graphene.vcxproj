@@ -59,13 +59,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN64\include;$(SolutionDir)Dependencies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN64\include;$(SolutionDir)Dependencies\glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN64\lib-vc2019;$(SolutionDir)Dependencies\glew-2.1.0\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32s.lib;glfw3.lib;Opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN64\lib-vc2019;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;Opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -76,7 +76,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN64\include;$(SolutionDir)Dependencies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN64\include;$(SolutionDir)Dependencies\glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -84,22 +84,24 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN64\lib-vc2019;$(SolutionDir)Dependencies\glew-2.1.0\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32s.lib;glfw3.lib;Opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN64\lib-vc2019;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;Opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Dependencies\glad\src\glad.c" />
     <ClCompile Include="Source\Application.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\ExceptionHandler.hpp" />
     <ClInclude Include="Source\GUE\Elements\CircleElement.hpp" />
     <ClInclude Include="Source\GUE\Elements\Element.hpp" />
+    <ClInclude Include="Source\GUE\Elements\LineElement.hpp" />
     <ClInclude Include="Source\GUE\Elements\PaddingElement.hpp" />
     <ClInclude Include="Source\GUE\Elements\RectangleElement.hpp" />
     <ClInclude Include="Source\GUE\Renderer\BatchRenderer.hpp" />
     <ClInclude Include="Source\GUE\Renderer\ProfilerUtils.hpp" />
-    <ClInclude Include="Source\GUE\Renderer\InitGlew.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\InitGlad.hpp" />
     <ClInclude Include="Source\GUE\Renderer\InitGlfw.hpp" />
     <ClInclude Include="Source\GUE\Renderer\LayoutBuilder.hpp" />
     <ClInclude Include="Source\GUE\Renderer\Shaders.hpp" />
