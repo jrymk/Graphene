@@ -34,14 +34,14 @@ namespace gue {
 
 	public:
 		LineElement(const std::string& debugName) : Element(debugName) {
-			this->pointAx = { 0.0f, 0.0f };
-			this->pointAy = { 0.0f, 0.0f };
-			this->pointBx = { 0.0f, 1.0f };
-			this->pointBy = { 0.0f, 1.0f };
-			this->thickness = { 0.0f, 1.0f };
+			this->pointAx = { 0.0, 0.0 };
+			this->pointAy = { 0.0, 0.0 };
+			this->pointBx = { 0.0, 1.0 };
+			this->pointBy = { 0.0, 1.0 };
+			this->thickness = { 0.0, 1.0 };
 			this->fillColor = Color(255, 0, 0, 50);
 			this->backgroundColor = Color(0, 0, 0, 0);
-			this->offset = { 0.0f, 0.0f };
+			this->offset = { 0.0, 0.0 };
 		}
 
 		LineElement(const std::string& debugName, AVec pointAx, AVec pointAy, AVec pointBx, AVec pointBy, AVec thickness, Color fillColor) : Element(debugName) {
@@ -52,7 +52,7 @@ namespace gue {
 			this->thickness = thickness;
 			this->fillColor = fillColor;
 			this->backgroundColor = Color(0, 0, 0, 0);
-			this->offset = { 0.0f, 0.0f };
+			this->offset = { 0.0, 0.0 };
 		}
 
 		void build(Vec2f position, Vec2f size) override {
@@ -74,25 +74,25 @@ namespace gue {
 				backgroundRect.push(m_scopedVertexArray);
 			}
 
-			TriangleFan fillRect;
+			TriangleFan lineShape;
 			if (fillColor.a > 0) { // with background fill
 				Vec2f delta = { pointBx.evaluate(size.x) - pointAx.evaluate(size.x), pointBy.evaluate(size.y) - pointAy.evaluate(size.y) };
 				float distance = sqrt(delta.x * delta.x + delta.y * delta.y);
 
-				fillRect.addVertex(m_scopedVertexArray->appendVertex(
+				lineShape.addVertex(m_scopedVertexArray->appendVertex(
 					{ position.x + pointAx.evaluate(size.x) + delta.y * ((thickness.evaluate(min(size.x, size.y)) / 2 - offset.evaluate(min(size.x, size.y))) / distance),
 						position.y + pointAy.evaluate(size.y) - delta.x * ((thickness.evaluate(min(size.x, size.y)) / 2 - offset.evaluate(min(size.x, size.y))) / distance) }, fillColor));
-				fillRect.addVertex(m_scopedVertexArray->appendVertex(
+				lineShape.addVertex(m_scopedVertexArray->appendVertex(
 					{ position.x + pointBx.evaluate(size.x) + delta.y * ((thickness.evaluate(min(size.x, size.y)) / 2 - offset.evaluate(min(size.x, size.y))) / distance),
 						position.y + pointBy.evaluate(size.y) - delta.x * ((thickness.evaluate(min(size.x, size.y)) / 2 - offset.evaluate(min(size.x, size.y))) / distance) }, fillColor));
-				fillRect.addVertex(m_scopedVertexArray->appendVertex(
+				lineShape.addVertex(m_scopedVertexArray->appendVertex(
 					{ position.x + pointBx.evaluate(size.x) - delta.y * ((thickness.evaluate(min(size.x, size.y)) / 2 + offset.evaluate(min(size.x, size.y))) / distance),
 						position.y + pointBy.evaluate(size.y) + delta.x * ((thickness.evaluate(min(size.x, size.y)) / 2 + offset.evaluate(min(size.x, size.y))) / distance) }, fillColor));
-				fillRect.addVertex(m_scopedVertexArray->appendVertex(
+				lineShape.addVertex(m_scopedVertexArray->appendVertex(
 					{ position.x + pointAx.evaluate(size.x) - delta.y * ((thickness.evaluate(min(size.x, size.y)) / 2 + offset.evaluate(min(size.x, size.y))) / distance),
 						position.y + pointAy.evaluate(size.y) + delta.x * ((thickness.evaluate(min(size.x, size.y)) / 2 + offset.evaluate(min(size.x, size.y))) / distance) }, fillColor));
 
-				fillRect.push(m_scopedVertexArray);
+				lineShape.push(m_scopedVertexArray);
 
 			}
 

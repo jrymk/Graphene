@@ -32,10 +32,10 @@ namespace gue {
 
 	public:
 		PaddingElement(const std::string& debugName) : Element(debugName) {
-			this->topPadding = {0.0f, 10.0f};
-			this->leftPadding = { 0.0f, 10.0f };
-			this->bottomPadding = { 0.0f, 10.0f };
-			this->rightPadding = { 0.0f, 10.0f };
+			this->topPadding = {0.0, 10.0};
+			this->leftPadding = { 0.0, 10.0 };
+			this->bottomPadding = { 0.0, 10.0 };
+			this->rightPadding = { 0.0, 10.0 };
 			this->fillColor = Color(0, 0, 0, 0);
 			this->backgroundColor = Color(0, 0, 0, 0);
 		}

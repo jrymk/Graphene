@@ -99,6 +99,7 @@
     <ClInclude Include="Source\GUE\Elements\LineElement.hpp" />
     <ClInclude Include="Source\GUE\Elements\PaddingElement.hpp" />
     <ClInclude Include="Source\GUE\Elements\RectangleElement.hpp" />
+    <ClInclude Include="Source\GUE\Elements\RoundedRectangle.hpp" />
     <ClInclude Include="Source\GUE\Renderer\BatchRenderer.hpp" />
     <ClInclude Include="Source\GUE\Renderer\ProfilerUtils.hpp" />
     <ClInclude Include="Source\GUE\Renderer\InitGlad.hpp" />

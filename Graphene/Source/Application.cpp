@@ -36,7 +36,12 @@ int main() {
 
 		vertexArray.clear();
 		
+		auto roundedRect = new gue::RoundedRectangle("rounded rect", { 0.1, 0 }, { 0.1, 0 }, { 0.8, 0 }, { 0.8, 0 }, { 0, 30 }, Color(200, 200, 200, 255));
 
+		roundedRect->build({0, 0}, window.getFramebufferSize().toFloat());
+		roundedRect->push(&vertexArray);
+
+		
 		vertexArray.draw(shader);
 
 		//framerate counter

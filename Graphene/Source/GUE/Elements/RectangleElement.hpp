@@ -32,10 +32,10 @@ namespace gue {
 
 	public:
 		RectangleElement(const std::string& debugName) : Element(debugName) {
-			this->x = { 0.0f, 0.0f };
-			this->y = { 0.0f, 0.0f };
-			this->w = { 0.0f, 1.0f };
-			this->h = { 0.0f, 1.0f };
+			this->x = { 0.0, 0.0 };
+			this->y = { 0.0, 0.0 };
+			this->w = { 0.0, 1.0 };
+			this->h = { 0.0, 1.0 };
 			this->fillColor = Color(255, 0, 0, 50);
 			this->backgroundColor = Color(0, 0, 0, 0);
 		}

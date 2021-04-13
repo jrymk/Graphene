@@ -4,6 +4,7 @@
 #include "Elements/Element.hpp"
 #include "Elements/RectangleElement.hpp"
 #include "Elements/CircleElement.hpp"
+#include "Elements/RoundedRectangle.hpp"
 #include "Elements/LineElement.hpp"
 #include "Elements/PaddingElement.hpp"
 #include "Renderer/Shaders.hpp"

@@ -16,7 +16,7 @@ namespace gue {
 	/// Child bounds: Same as parent
 	/// Maximum children count: Don't
 	/// </summary>
-	class CircleElement : public Element {
+	class RoundedRectangle : public Element {
 	public:
 		ScopedVertexArray* m_scopedVertexArray = nullptr;
 
@@ -29,12 +29,19 @@ namespace gue {
 			RELATIVE_TO_AVERAGE,
 
 		};
-
+	
 	public:
 		AVec x;
 		AVec y;
+		AVec w;
+		AVec h;
 		AVec radius;
 		RadiusSizingMode radiusSizingMode;
+		bool useSharedRadius;
+		AVec radiusTopLeft;
+		AVec radiusTopRight;
+		AVec radiusBottomLeft;
+		AVec radiusBottomRight;
 		Color fillColor;
 		Color backgroundColor;
 
@@ -42,24 +49,38 @@ namespace gue {
 		unsigned int m_pointCount = 40;
 
 	public:
-		CircleElement(const std::string& debugName) : Element(debugName) {
-			this->x = AVec(0.5, 0.0);
-			this->y = AVec(0.5, 0.0);
-			this->radius = AVec(0.5, 0.0);
+		RoundedRectangle(const std::string& debugName) : Element(debugName) {
+			this->x = { 0.0, 0.0 };
+			this->y = { 0.0, 0.0 };
+			this->w = { 1.0, 0.0 };
+			this->h = { 1.0, 0.0 };
+			this->radius = { 0.2, 0.0 };
 			this->radiusSizingMode = RadiusSizingMode::RELATIVE_TO_MIN;
+			this->useSharedRadius = true;
+			this->radiusTopLeft = { 0.0, 0.0 };
+			this->radiusTopRight = { 0.0, 0.0 };
+			this->radiusBottomLeft = { 0.0, 0.0 };
+			this->radiusBottomRight = { 0.0, 0.0 };
 			this->fillColor = Color(255, 0, 0, 50);
 			this->backgroundColor = Color(0, 0, 0, 0);
 
 		}
 
-		CircleElement(const std::string& debugName, AVec x, AVec y, AVec radius, Color fillColor) : Element(debugName) {
+		RoundedRectangle(const std::string& debugName, AVec x, AVec y, AVec w, AVec h, AVec radius, Color fillColor) : Element(debugName) {
 			this->x = x;
 			this->y = y;
+			this->w = w;
+			this->h = h;
 			this->radius = radius;
 			this->radiusSizingMode = RadiusSizingMode::RELATIVE_TO_MIN;
+			this->useSharedRadius = true;
+			this->radiusTopLeft = { 0.0, 0.0 };
+			this->radiusTopRight = { 0.0, 0.0 };
+			this->radiusBottomLeft = { 0.0, 0.0 };
+			this->radiusBottomRight = { 0.0, 0.0 };
 			this->fillColor = fillColor;
 			this->backgroundColor = Color(0, 0, 0, 0);
-			//this->m_pointCount = 
+
 		}
 
 		void build(Vec2f position, Vec2f size) override {
@@ -100,22 +121,54 @@ namespace gue {
 				break;
 			}
 
-			TriangleFan circleShape;
+			TriangleFan roundedRectangleShape;
 
-			float radiusTemp = radius.evaluate(radiusSizingRelation);
-
-			for (unsigned int i = 0; i < m_pointCount; i++) {
-				//DBG(std::to_string(radius.evaluate(size.y)));
-
-				circleShape.addVertex(m_scopedVertexArray->appendVertex(
-					Vec2f((position.x + x.evaluate(size.x) + radiusTemp * cos((float)i / m_pointCount * 2 * M_PI)),
-						(position.y + y.evaluate(size.y) + radiusTemp * sin((float)i / m_pointCount * 2 * M_PI))
+			float radiusTemp = useSharedRadius ? radius.evaluate(radiusSizingRelation) : radiusBottomRight.evaluate(radiusSizingRelation);
+			
+			for (unsigned int i = 0; i <= m_pointCount / 4; i++) {
+				roundedRectangleShape.addVertex(m_scopedVertexArray->appendVertex(
+					Vec2f((position.x + x.evaluate(size.x) + w.evaluate(size.x) + radiusTemp * cos((float)i / m_pointCount * 2 * M_PI) - 1),
+						(position.y + y.evaluate(size.y) + h.evaluate(size.y) + radiusTemp * sin((float)i / m_pointCount * 2 * M_PI) - 1)
 					),
 					fillColor
 				));
 			}
 
-			circleShape.push(m_scopedVertexArray);
+			radiusTemp = useSharedRadius ? radius.evaluate(radiusSizingRelation) : radiusBottomLeft.evaluate(radiusSizingRelation);
+
+			for (unsigned int i = m_pointCount / 4; i <= m_pointCount / 2; i++) {
+				roundedRectangleShape.addVertex(m_scopedVertexArray->appendVertex(
+					Vec2f((position.x + x.evaluate(size.x) + radiusTemp * cos((float)i / m_pointCount * 2 * M_PI) + 1),
+						(position.y + y.evaluate(size.y) + h.evaluate(size.y) + radiusTemp * sin((float)i / m_pointCount * 2 * M_PI) - 1)
+					),
+					fillColor
+				));
+			}
+
+			radiusTemp = useSharedRadius ? radius.evaluate(radiusSizingRelation) : radiusTopLeft.evaluate(radiusSizingRelation);
+
+			for (unsigned int i = m_pointCount / 2; i <= 3 * m_pointCount / 4; i++) {
+				roundedRectangleShape.addVertex(m_scopedVertexArray->appendVertex(
+					Vec2f((position.x + x.evaluate(size.x) + radiusTemp * cos((float)i / m_pointCount * 2 * M_PI) + 1),
+						(position.y + y.evaluate(size.y) + radiusTemp * sin((float)i / m_pointCount * 2 * M_PI) + 1)
+					),
+					fillColor
+				));
+			}
+
+			radiusTemp = useSharedRadius ? radius.evaluate(radiusSizingRelation) : radiusTopRight.evaluate(radiusSizingRelation);
+
+			for (unsigned int i = 3 * m_pointCount / 4; i <= m_pointCount; i++) {
+				roundedRectangleShape.addVertex(m_scopedVertexArray->appendVertex(
+					Vec2f((position.x + x.evaluate(size.x) + w.evaluate(size.x) + radiusTemp * cos((float)i / m_pointCount * 2 * M_PI) - 1),
+						(position.y + y.evaluate(size.y) + radiusTemp * sin((float)i / m_pointCount * 2 * M_PI) + 1)
+					),
+					fillColor
+				));
+			}
+
+			
+			roundedRectangleShape.push(m_scopedVertexArray);
 
 			//recursively call chilren to build
 			for (auto child = m_childrenElements.begin(); child != m_childrenElements.end(); child++)

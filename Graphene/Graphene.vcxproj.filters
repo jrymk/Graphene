@@ -86,5 +86,8 @@
     <ClInclude Include="Source\GUE\Elements\LineElement.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\GUE\Elements\RoundedRectangle.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
