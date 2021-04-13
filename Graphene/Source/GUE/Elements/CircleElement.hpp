@@ -32,7 +32,12 @@ namespace gue {
 
 	public:
 		CircleElement(const std::string& debugName) : Element(debugName) {
+			this->x = AVec(0.5f, 0);
+			this->y = AVec(0.5f, 0);
+			this->radius = AVec(0.5f, 0);
+			this->fillColor = Color(255, 0, 0, 50);
 			this->backgroundColor = Color(0, 0, 0, 0);
+
 		}
 
 		CircleElement(const std::string& debugName, AVec x, AVec y, AVec radius, Color fillColor) : Element(debugName) {

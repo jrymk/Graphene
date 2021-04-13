@@ -42,21 +42,24 @@ int main() {
 		auto circle = new gue::CircleElement("root circle");
 		circle->x = { 0.5f, 0.0f };
 		circle->y = { 0.f, 0.0f };
-		circle->radius = { 0.15f, 0.0f };
+		circle->radius = { 0.5f, 0.0f };
 		circle->fillColor = { 255, 255, 255, 255 };
 		circle->backgroundColor = { 255, 211, 0, 255 };
 		//vertexArray.printContents();
 
-		for (int i = 0; i < 60; i++) {
-			for (int j = 0; j < 60; j++) {
+		auto padding = new gue::PaddingElement("padding", {0.3f, 0.0f}, {0.0f, 100.0f}, {0.3f, 0.0f}, {0.0f, 200.0f});
+		circle->add(padding, -1);
+		
+		for (int i = 0; i < 20; i++) {
+			for (int j = 0; j < 20; j++) {
 				auto circle2 = new gue::CircleElement(std::to_string(i) + ", " + std::to_string(j));
-				circle2->x = { (float)i / 60.0f, 15 * (float)cos((animTimer.getSeconds() * 3.0f + i + j) * 0.5) };
-				circle2->y = { (float)j / 60.0f, 15 * (float)sin((animTimer.getSeconds() * 3.0f + i + j) * 0.4) };
+				circle2->x = { (float)i / 20.0f, 30 * (float)cos((animTimer.getSeconds() * 3.0f + i + j) * 0.5) };
+				circle2->y = { (float)j / 20.0f, 30 * (float)sin((animTimer.getSeconds() * 3.0f + i + j) * 0.4) };
 				circle2->radius = { 0.1f, 0.0f };
-				circle2->fillColor = { (uint8_t)(i * 255 / 60), (uint8_t)(j * 255 / 60), (uint8_t)(round((float)127 * cos((animTimer.getSeconds() * 3.0f + (float)i * 0.2 - (float)j * 0.3) * 0.5) + 127)), 150 };
+				circle2->fillColor = { (uint8_t)(i * 255 / 20), (uint8_t)(j * 255 / 20), (uint8_t)(round((float)127 * cos((animTimer.getSeconds() * 3.0f + (float)i * 0.2 - (float)j * 0.3) * 0.5) + 127)), 60 };
 				//circle->color = { 255, 211, 0, 5 };
 
-				circle->add(circle2, -1);
+				padding->add(circle2, -1);
 				//vertexArray.printContents();
 			}
 		}

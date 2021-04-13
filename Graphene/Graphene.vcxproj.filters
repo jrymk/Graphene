@@ -71,10 +71,10 @@
     <ClInclude Include="Source\GUE\Renderer\ScopedVertexArray.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GUE\Elements\PaddingElement.hpp">
+    <ClInclude Include="Source\GUE\Renderer\TriangleFan.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GUE\Renderer\TriangleFan.hpp">
+    <ClInclude Include="Source\GUE\Elements\PaddingElement.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
