@@ -14,7 +14,7 @@ namespace gue {
 	/// <summary>
 	/// Element bounds: Fill parent
 	/// Child bounds: Same as parent
-	/// Maximum children count: Unlimited
+	/// Maximum children count: Don't
 	/// </summary>
 	class CircleElement : public Element {
 	public:
@@ -32,9 +32,9 @@ namespace gue {
 
 	public:
 		CircleElement(const std::string& debugName) : Element(debugName) {
-			this->x = AVec(0.5f, 0);
-			this->y = AVec(0.5f, 0);
-			this->radius = AVec(0.5f, 0);
+			this->x = AVec(0.5f, 0.0f);
+			this->y = AVec(0.5f, 0.0f);
+			this->radius = AVec(0.5f, 0.0f);
 			this->fillColor = Color(255, 0, 0, 50);
 			this->backgroundColor = Color(0, 0, 0, 0);
 
@@ -90,11 +90,12 @@ namespace gue {
 			if (m_scopedVertexArray != nullptr) {
 				//push scoped data to vertex array
 				m_scopedVertexArray->pushToVertexArray(vertexArray);
+				m_scopedVertexArray->deleteScope();
 				
 				//recursively call chilren to push
 				for (auto child = m_childrenElements.begin(); child != m_childrenElements.end(); child++)
 					(*child)->push(vertexArray);
-	
+
 			}
 		}
 

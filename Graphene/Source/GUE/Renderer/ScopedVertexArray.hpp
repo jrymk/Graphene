@@ -79,6 +79,10 @@ namespace gue {
 				vertexArray->getIndices()->emplace_back(m_indices[i] + startingIndex);
 
 		}
+
+		void deleteScope() {
+			delete this;
+		}
 		
 	};
 }

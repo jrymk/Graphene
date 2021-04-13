@@ -32,10 +32,10 @@ namespace gue {
 
 	public:
 		PaddingElement(const std::string& debugName) : Element(debugName) {
-			this->topPadding = {0.0, 10.0f};
-			this->leftPadding = { 0.0, 10.0f };
-			this->bottomPadding = { 0.0, 10.0f };
-			this->rightPadding = { 0.0, 10.0f };
+			this->topPadding = {0.0f, 10.0f};
+			this->leftPadding = { 0.0f, 10.0f };
+			this->bottomPadding = { 0.0f, 10.0f };
+			this->rightPadding = { 0.0f, 10.0f };
 			this->fillColor = Color(0, 0, 0, 0);
 			this->backgroundColor = Color(0, 0, 0, 0);
 		}
@@ -85,7 +85,8 @@ namespace gue {
 			if (m_scopedVertexArray != nullptr) {
 				//push scoped data to vertex array
 				m_scopedVertexArray->pushToVertexArray(vertexArray);
-				
+				m_scopedVertexArray->deleteScope();
+
 				//recursively call chilren to push
 				for (auto child = m_childrenElements.begin(); child != m_childrenElements.end(); child++)
 					(*child)->push(vertexArray);

@@ -13,8 +13,8 @@
 namespace gue {
 	/// <summary>
 	/// Element bounds: Fill parent
-	/// Child bounds: Same as parent
-	/// Maximum children count: Unlimited
+	/// Child bounds: Fill parent
+	/// Maximum children count: Not recommended
 	/// </summary>
 	class RectangleElement : public Element {
 	public:
@@ -32,10 +32,10 @@ namespace gue {
 
 	public:
 		RectangleElement(const std::string& debugName) : Element(debugName) {
-			this->x = { 0.0, 0.0f };
-			this->y = { 0.0, 0.0f };
-			this->w = { 0.0, 1.0f };
-			this->h = { 0.0, 1.0f };
+			this->x = { 0.0f, 0.0f };
+			this->y = { 0.0f, 0.0f };
+			this->w = { 0.0f, 1.0f };
+			this->h = { 0.0f, 1.0f };
 			this->fillColor = Color(255, 0, 0, 50);
 			this->backgroundColor = Color(0, 0, 0, 0);
 		}
@@ -92,6 +92,7 @@ namespace gue {
 			if (m_scopedVertexArray != nullptr) {
 				//push scoped data to vertex array
 				m_scopedVertexArray->pushToVertexArray(vertexArray);
+				m_scopedVertexArray->deleteScope();
 
 				//recursively call chilren to push
 				for (auto child = m_childrenElements.begin(); child != m_childrenElements.end(); child++)

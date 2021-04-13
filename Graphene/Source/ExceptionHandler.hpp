@@ -3,7 +3,7 @@
 #include <queue>
 #include <iostream>
 #include <windows.h>
-#include <gl/glew.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #define ASSERT(x) if (!(x)) __debugbreak()

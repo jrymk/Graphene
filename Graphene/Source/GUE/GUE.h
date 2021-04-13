@@ -2,8 +2,9 @@
 
 #include "Renderer/Window.hpp"
 #include "Elements/Element.hpp"
-#include "Elements/CircleElement.hpp"
 #include "Elements/RectangleElement.hpp"
+#include "Elements/CircleElement.hpp"
+#include "Elements/LineElement.hpp"
 #include "Elements/PaddingElement.hpp"
 #include "Renderer/Shaders.hpp"
 #include "System/Timer.hpp"

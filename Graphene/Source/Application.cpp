@@ -43,17 +43,19 @@ int main() {
 		circle->x = { 0.5f, 0.0f };
 		circle->y = { 0.f, 0.0f };
 		circle->radius = { 0.5f, 0.0f };
-		circle->fillColor = { 255, 255, 255, 255 };
+		circle->fillColor = { 255, 0, 210, 100 };
 		//circle->backgroundColor = { 255, 211, 0, 255 };
 
-		auto padding = new gue::PaddingElement("padding", {0.1f, 0.0f}, {0.0f, 100.0f}, {0.2f, 0.0f}, {0.0f, 200.0f});
+
+
+		auto padding = new gue::PaddingElement("padding", { 0.1f, 0.0f }, { 0.0f, 100.0f }, { 0.2f, 0.0f }, { 0.0f, 200.0f });
 		//padding->backgroundColor = Color(100, 100, 100, 100);
 		//padding->fillColor = Color(110, 255, 255, 200);
 
-		
+
 		circle->add(padding, -1);
-		
-		/*for (int i = 0; i < 20; i++) {
+
+		for (int i = 0; i < 20; i++) {
 			for (int j = 0; j < 20; j++) {
 				auto circle2 = new gue::CircleElement(std::to_string(i) + ", " + std::to_string(j));
 				circle2->x = { (float)i / 20.0f, 30 * (float)cos((animTimer.getSeconds() * 3.0f + i + j) * 0.5) };
@@ -62,21 +64,34 @@ int main() {
 				circle2->fillColor = { (uint8_t)(i * 255 / 20), (uint8_t)(j * 255 / 20), (uint8_t)(round((float)127 * cos((animTimer.getSeconds() * 3.0f + (float)i * 0.2 - (float)j * 0.3) * 0.5) + 127)), 60 };
 				//circle->color = { 255, 211, 0, 5 };
 
-				padding->add(circle2, -1);
+				circle->add(circle2, -1);
 				//vertexArray.printContents();
 			}
-		}*/
+		}
 
-		auto rectr = new gue::RectangleElement("rectangle", { 0.3f, 0.0f }, { 0.5f, 0.0f }, { 0.6f, 0.0f }, { 1.0f, 0.0f }, Color(211, 211, 0, 255));
+		/*auto rectr = new gue::RectangleElement("rectangle", { 0.3f, 0.0f }, { 0.5f, 0.0f }, { 0.6f, 0.0f }, { 1.0f, 0.0f }, Color(211, 211, 0, 255));
 		rectr->backgroundColor = Color(100, 255, 100, 200);
-		padding->add(rectr, -1);
+		padding->add(rectr, -1);*/
+
+		auto line = new gue::LineElement("line", { 0.1f, 0.0f }, { 0.2f, 0.0f }, { 1.0f, -200.0f }, { 0.5f, 0.0f }, { 0.0f, 50.0f }, Color(255, 255, 255, 255));
+		circle->add(line, -1);
+
+		auto line2 = new gue::LineElement("line", { 0.1f, 0.0f }, { 0.2f, 0.0f }, { 1.0f, -200.0f }, { 0.6f, 0.0f }, { 0.0f, 10.0f }, Color(255, 255, 255, 255));
+		circle->add(line2, -1);
+
+		auto line3 = new gue::LineElement("line", { 0.1f, 0.0f }, { 0.2f, 0.0f }, { 1.0f, -200.0f }, { 0.7f, 0.0f }, { 0.0f, 3.0f }, Color(255, 255, 255, 255));
+		circle->add(line3, -1);
+
+		auto line4 = new gue::LineElement("line", { 0.1f, 0.0f }, { 0.2f, 0.0f }, { 1.0f, -200.0f }, { 0.8f, 0.0f }, { 0.0f, 1.0f }, Color(255, 255, 255, 255));
+		circle->add(line4, -1);
 
 
 
-		
+
+
 		circle->build({ 0, 0 }, { window.getFramebufferSize().toFloat().x, window.getFramebufferSize().toFloat().y });
 		circle->push(&vertexArray);
-		
+
 		circle->deleteElement();
 
 		vertexArray.draw(shader);

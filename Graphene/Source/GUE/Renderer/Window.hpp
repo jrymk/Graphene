@@ -1,9 +1,9 @@
 ﻿#pragma once
-#include <gl/glew.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <string>
+#include "InitGlad.hpp"
 #include "InitGlfw.hpp"
-#include "InitGlew.hpp"
 #include "../../ExceptionHandler.hpp"
 #include "Structures.hpp"
 
@@ -65,7 +65,7 @@ namespace gue {
 			glfwMakeContextCurrent(m_window);
 
 			// initialize glew after creating OpenGL context
-			gue::initGlew();
+			gue::initGlad();
 			
 			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // use core profile
 
