@@ -57,7 +57,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN64\include;$(SolutionDir)Dependencies\glad\include;$(SolutionDir)Dependencies\freetype-gl;$(SolutionDir)Dependencies\freetype-gl-cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -74,7 +74,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATIC;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN64\include;$(SolutionDir)Dependencies\glad\include;$(SolutionDir)Dependencies\freetype-gl;$(SolutionDir)Dependencies\freetype-gl-cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -94,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\ExceptionHandler.hpp" />
+    <ClInclude Include="Source\GUE\Defines\Colors.hpp" />
     <ClInclude Include="Source\GUE\Elements\CircleElement.hpp" />
     <ClInclude Include="Source\GUE\Elements\Element.hpp" />
     <ClInclude Include="Source\GUE\Elements\LineElement.hpp" />
@@ -101,7 +102,6 @@
     <ClInclude Include="Source\GUE\Elements\RectangleElement.hpp" />
     <ClInclude Include="Source\GUE\Elements\RoundedRectangle.hpp" />
     <ClInclude Include="Source\GUE\Elements\Text.hpp" />
-    <ClInclude Include="Source\GUE\Renderer\BatchRenderer.hpp" />
     <ClInclude Include="Source\GUE\Renderer\ProfilerUtils.hpp" />
     <ClInclude Include="Source\GUE\Renderer\Init.hpp" />
     <ClInclude Include="Source\GUE\Renderer\LayoutBuilder.hpp" />
