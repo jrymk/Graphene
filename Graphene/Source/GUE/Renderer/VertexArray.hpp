@@ -55,6 +55,13 @@ namespace gue {
 
 		}
 
+		void appendIndex(unsigned int index0, unsigned int index1, unsigned int index2) {
+			m_indices.emplace_back(index0);
+			m_indices.emplace_back(index1);
+			m_indices.emplace_back(index2);
+
+		}
+
 		void clear() {
 			m_vertices.clear();
 			m_indices.clear();

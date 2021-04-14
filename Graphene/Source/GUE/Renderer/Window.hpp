@@ -2,8 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <string>
-#include "InitGlad.hpp"
-#include "InitGlfw.hpp"
+#include "Init.hpp"
 #include "../../ExceptionHandler.hpp"
 #include "Structures.hpp"
 

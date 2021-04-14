@@ -59,7 +59,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN64\include;$(SolutionDir)Dependencies\glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN64\include;$(SolutionDir)Dependencies\glad\include;$(SolutionDir)Dependencies\freetype-gl;$(SolutionDir)Dependencies\freetype-gl-cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -76,7 +76,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN64\include;$(SolutionDir)Dependencies\glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN64\include;$(SolutionDir)Dependencies\glad\include;$(SolutionDir)Dependencies\freetype-gl;$(SolutionDir)Dependencies\freetype-gl-cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -100,10 +100,10 @@
     <ClInclude Include="Source\GUE\Elements\PaddingElement.hpp" />
     <ClInclude Include="Source\GUE\Elements\RectangleElement.hpp" />
     <ClInclude Include="Source\GUE\Elements\RoundedRectangle.hpp" />
+    <ClInclude Include="Source\GUE\Elements\Text.hpp" />
     <ClInclude Include="Source\GUE\Renderer\BatchRenderer.hpp" />
     <ClInclude Include="Source\GUE\Renderer\ProfilerUtils.hpp" />
-    <ClInclude Include="Source\GUE\Renderer\InitGlad.hpp" />
-    <ClInclude Include="Source\GUE\Renderer\InitGlfw.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\Init.hpp" />
     <ClInclude Include="Source\GUE\Renderer\LayoutBuilder.hpp" />
     <ClInclude Include="Source\GUE\Renderer\Shaders.hpp" />
     <ClInclude Include="Source\GUE\Renderer\Structures.hpp" />

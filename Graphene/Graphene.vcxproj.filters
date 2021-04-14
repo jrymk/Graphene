@@ -41,10 +41,7 @@
     <ClInclude Include="Source\GUE\GUE.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GUE\Renderer\InitGlad.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\GUE\Renderer\InitGlfw.hpp">
+    <ClInclude Include="Source\GUE\Renderer\Init.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\GUE\Renderer\Batch.hpp">
@@ -87,6 +84,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\GUE\Elements\RoundedRectangle.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Elements\Text.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
