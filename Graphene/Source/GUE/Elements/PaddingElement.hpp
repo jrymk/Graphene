@@ -17,9 +17,7 @@ namespace gue {
 	/// Maximum children count: Unlimited
 	/// </summary>
 	class PaddingElement : public Element {
-	public:
-		ScopedVertexArray* m_scopedVertexArray = nullptr;
-
+		
 	public:
 		AVec topPadding;
 		AVec leftPadding;
@@ -49,51 +47,38 @@ namespace gue {
 			this->backgroundColor = Color(0, 0, 0, 0);
 		}
 
-		void build(Vec2f position, Vec2f size) override {
+		void build(VertexArray* vertexArray, Vec2f position, Vec2f size) override {
 			//std::cout << debugName << "\n";
-			m_scopedVertexArray = new ScopedVertexArray();
+			ScopedVertexArray scopedVertexArray(vertexArray);
 
 			// build the vertex array of own
 			if (backgroundColor.a > 0) { // with background fill
 				TriangleFan backgroundRect;
 
-				backgroundRect.addVertex(m_scopedVertexArray->appendVertex(position, backgroundColor));
-				backgroundRect.addVertex(m_scopedVertexArray->appendVertex({ position.x + size.x, position.y }, backgroundColor));
-				backgroundRect.addVertex(m_scopedVertexArray->appendVertex({ position.x + size.x, position.y + size.y }, backgroundColor));
-				backgroundRect.addVertex(m_scopedVertexArray->appendVertex({ position.x, position.y + size.y }, backgroundColor));
+				backgroundRect.addVertex(scopedVertexArray.appendVertex(position, backgroundColor));
+				backgroundRect.addVertex(scopedVertexArray.appendVertex({ position.x + size.x, position.y }, backgroundColor));
+				backgroundRect.addVertex(scopedVertexArray.appendVertex({ position.x + size.x, position.y + size.y }, backgroundColor));
+				backgroundRect.addVertex(scopedVertexArray.appendVertex({ position.x, position.y + size.y }, backgroundColor));
 
-				backgroundRect.push(m_scopedVertexArray);
+				backgroundRect.push(&scopedVertexArray);
 			}
 
 			if (fillColor.a > 0) { // with background fill
 				TriangleFan fillRect;
 
-				fillRect.addVertex(m_scopedVertexArray->appendVertex({ position.x + leftPadding.evaluate(size.x), position.y + topPadding.evaluate(size.y) }, fillColor));
-				fillRect.addVertex(m_scopedVertexArray->appendVertex({ position.x + size.x - rightPadding.evaluate(size.x), position.y + topPadding.evaluate(size.y) }, fillColor));
-				fillRect.addVertex(m_scopedVertexArray->appendVertex({ position.x + size.x - rightPadding.evaluate(size.x), position.y + size.y - bottomPadding.evaluate(size.y) }, fillColor));
-				fillRect.addVertex(m_scopedVertexArray->appendVertex({ position.x + leftPadding.evaluate(size.x), position.y + size.y - bottomPadding.evaluate(size.y) }, fillColor));
+				fillRect.addVertex(scopedVertexArray.appendVertex({ position.x + leftPadding.evaluate(size.x), position.y + topPadding.evaluate(size.y) }, fillColor));
+				fillRect.addVertex(scopedVertexArray.appendVertex({ position.x + size.x - rightPadding.evaluate(size.x), position.y + topPadding.evaluate(size.y) }, fillColor));
+				fillRect.addVertex(scopedVertexArray.appendVertex({ position.x + size.x - rightPadding.evaluate(size.x), position.y + size.y - bottomPadding.evaluate(size.y) }, fillColor));
+				fillRect.addVertex(scopedVertexArray.appendVertex({ position.x + leftPadding.evaluate(size.x), position.y + size.y - bottomPadding.evaluate(size.y) }, fillColor));
 
-				fillRect.push(m_scopedVertexArray);
+				fillRect.push(&scopedVertexArray);
 			}
 
 			//recursively call chilren to build
 			for (auto child = m_childrenElements.begin(); child != m_childrenElements.end(); child++)
-				(*child)->build({ position.x + leftPadding.evaluate(size.x), position.y + topPadding.evaluate(size.y) },
+				(*child)->build(vertexArray, { position.x + leftPadding.evaluate(size.x), position.y + topPadding.evaluate(size.y) },
 					{ size.x - leftPadding.evaluate(size.x) - rightPadding.evaluate(size.x), size.y - topPadding.evaluate(size.y) - bottomPadding.evaluate(size.y) });
 
-		}
-
-		void push(VertexArray* vertexArray) override {
-			if (m_scopedVertexArray != nullptr) {
-				//push scoped data to vertex array
-				m_scopedVertexArray->pushToVertexArray(vertexArray);
-				m_scopedVertexArray->deleteScope();
-
-				//recursively call chilren to push
-				for (auto child = m_childrenElements.begin(); child != m_childrenElements.end(); child++)
-					(*child)->push(vertexArray);
-
-			}
 		}
 
 	};

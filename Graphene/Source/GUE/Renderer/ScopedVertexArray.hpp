@@ -6,83 +6,64 @@
 namespace gue {
 	class ScopedVertexArray {
 	private:
-		std::vector<Vertex> m_vertices;
-		std::vector<unsigned int> m_indices;
+		unsigned long long m_startingIndex;
+		unsigned long long m_startingIndicesSize;
+		VertexArray* m_vertexArray;
 
 	public:
-		ScopedVertexArray() {
-			
+		ScopedVertexArray(VertexArray* vertexArray) {
+			this->m_vertexArray = vertexArray;
+			this->m_startingIndex = vertexArray->getVertices()->size();
+			this->m_startingIndicesSize = vertexArray->getIndices()->size();
 		}
 
 		std::vector<Vertex>* getVertices() {
-			return &m_vertices;
+			return m_vertexArray->getVertices();
 		}
 
 		std::vector<unsigned int>* getIndices() {
-			return &m_indices;
+			return m_vertexArray->getIndices();
 		}
 
 		unsigned int appendVertex(Vec2f pixelCoord, Color color255) {
-			m_vertices.emplace_back(pixelCoord, color255.toColorf());
-			return m_vertices.size() - 1;
+			m_vertexArray->appendVertex(pixelCoord, color255);
+			return m_vertexArray->getVertices()->size() - 1 - m_startingIndex;
 		}
 
 		void appendIndex(unsigned int index) {
-			m_indices.emplace_back(index);
+			m_vertexArray->appendIndex(m_startingIndex + index);
 		}
 
 		void appendIndex(unsigned int index0, unsigned int index1, unsigned int index2) {
-			m_indices.emplace_back(index0);
-			m_indices.emplace_back(index1);
-			m_indices.emplace_back(index2);
+			m_vertexArray->appendIndex(m_startingIndex + index0);
+			m_vertexArray->appendIndex(m_startingIndex + index1);
+			m_vertexArray->appendIndex(m_startingIndex + index2);
 		}
 
-		void clear() {
-			m_vertices.clear();
-			m_indices.clear();
+		void restore() {
+			m_vertexArray->getVertices()->resize(m_startingIndex);
+			m_vertexArray->getIndices()->resize(m_startingIndicesSize);
 		}
 
 		void printContents() {
 			DBG("Vertices: ");
-			for (int i = 0; i < m_vertices.size(); i++)
+			for (int i = 0; i < m_vertexArray->getVertices()->size(); i++)
 				DBG(
-					std::to_string(m_vertices[i].position.x) + std::string(", ") +
-					std::to_string(m_vertices[i].position.y) + std::string(", ") +
-					std::to_string(m_vertices[i].color.r) + std::string(", ") +
-					std::to_string(m_vertices[i].color.g) + std::string(", ") +
-					std::to_string(m_vertices[i].color.b) + std::string(", ") +
-					std::to_string(m_vertices[i].color.a)
+					std::to_string((*m_vertexArray->getVertices())[i].position.x) + std::string(", ") +
+					std::to_string((*m_vertexArray->getVertices())[i].position.y) + std::string(", ") +
+					std::to_string((*m_vertexArray->getVertices())[i].color.r) + std::string(", ") +
+					std::to_string((*m_vertexArray->getVertices())[i].color.g) + std::string(", ") +
+					std::to_string((*m_vertexArray->getVertices())[i].color.b) + std::string(", ") +
+					std::to_string((*m_vertexArray->getVertices())[i].color.a)
 				);
 			DBG("Indices: ");
-			for (int i = 0; i < m_indices.size(); i += 3)
+			for (int i = 0; i < m_vertexArray->getIndices()->size(); i += 3)
 				DBG(
-					std::to_string(m_indices[i]) + std::string(", ") +
-					std::to_string(m_indices[i + 1]) + std::string(", ") +
-					std::to_string(m_indices[i + 2])
+					std::to_string((*m_vertexArray->getIndices())[i]) + std::string(", ") +
+					std::to_string((*m_vertexArray->getIndices())[i + 1]) + std::string(", ") +
+					std::to_string((*m_vertexArray->getIndices())[i + 2])
 				);
 		}
 
-		void pushToVertexArray(VertexArray* vertexArray) {
-			unsigned int startingIndex = vertexArray->getVertices()->size();
-
-			m_vertices.emplace_back();
-
-			
-			for (int i = 0; i < m_vertices.size(); i++)
-				vertexArray->getVertices()->emplace_back(Vertex(
-					Vec2f(m_vertices[i].position.x * 2.0f / vertexArray->getWindow()->getFramebufferSize().toFloat().x - 1.0f,
-						-m_vertices[i].position.y * 2.0f / vertexArray->getWindow()->getFramebufferSize().toFloat().y + 1.0f),
-					m_vertices[i].color
-				));
-
-			for (int i = 0; i < m_indices.size(); i++)
-				vertexArray->getIndices()->emplace_back(m_indices[i] + startingIndex);
-
-		}
-
-		void deleteScope() {
-			delete this;
-		}
-		
 	};
 }

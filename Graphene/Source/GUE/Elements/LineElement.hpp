@@ -17,8 +17,6 @@ namespace gue {
 	/// Maximum children count: Don't
 	/// </summary>
 	class LineElement : public Element {
-	public:
-		ScopedVertexArray* m_scopedVertexArray = nullptr;
 
 	public:
 		AVec pointAx;
@@ -55,23 +53,24 @@ namespace gue {
 			this->offset = { 0.0, 0.0 };
 		}
 
-		void build(Vec2f position, Vec2f size) override {
+		void build(VertexArray* vertexArray, Vec2f position, Vec2f size) override {
 			//std::cout << debugName << "\n";
-			m_scopedVertexArray = new ScopedVertexArray();
 
+			ScopedVertexArray scopedVertexArray(vertexArray);
+			
 			// build the vertex array of own
 			TriangleFan backgroundRect;
 			if (backgroundColor.a > 0) { // with background fill
-				backgroundRect.addVertex(m_scopedVertexArray->appendVertex(
+				backgroundRect.addVertex(scopedVertexArray.appendVertex(
 					{ position.x, position.y }, backgroundColor));
-				backgroundRect.addVertex(m_scopedVertexArray->appendVertex(
+				backgroundRect.addVertex(scopedVertexArray.appendVertex(
 					{ position.x + size.x, position.y }, backgroundColor));
-				backgroundRect.addVertex(m_scopedVertexArray->appendVertex(
+				backgroundRect.addVertex(scopedVertexArray.appendVertex(
 					{ position.x + size.x, position.y + size.y }, backgroundColor));
-				backgroundRect.addVertex(m_scopedVertexArray->appendVertex(
+				backgroundRect.addVertex(scopedVertexArray.appendVertex(
 					{ position.x, position.y + size.y }, backgroundColor));
 
-				backgroundRect.push(m_scopedVertexArray);
+				backgroundRect.push(&scopedVertexArray);
 			}
 
 			TriangleFan lineShape;
@@ -79,40 +78,27 @@ namespace gue {
 				Vec2f delta = { pointBx.evaluate(size.x) - pointAx.evaluate(size.x), pointBy.evaluate(size.y) - pointAy.evaluate(size.y) };
 				float distance = sqrt(delta.x * delta.x + delta.y * delta.y);
 
-				lineShape.addVertex(m_scopedVertexArray->appendVertex(
+				lineShape.addVertex(scopedVertexArray.appendVertex(
 					{ position.x + pointAx.evaluate(size.x) + delta.y * ((thickness.evaluate(min(size.x, size.y)) / 2 - offset.evaluate(min(size.x, size.y))) / distance),
 						position.y + pointAy.evaluate(size.y) - delta.x * ((thickness.evaluate(min(size.x, size.y)) / 2 - offset.evaluate(min(size.x, size.y))) / distance) }, fillColor));
-				lineShape.addVertex(m_scopedVertexArray->appendVertex(
+				lineShape.addVertex(scopedVertexArray.appendVertex(
 					{ position.x + pointBx.evaluate(size.x) + delta.y * ((thickness.evaluate(min(size.x, size.y)) / 2 - offset.evaluate(min(size.x, size.y))) / distance),
 						position.y + pointBy.evaluate(size.y) - delta.x * ((thickness.evaluate(min(size.x, size.y)) / 2 - offset.evaluate(min(size.x, size.y))) / distance) }, fillColor));
-				lineShape.addVertex(m_scopedVertexArray->appendVertex(
+				lineShape.addVertex(scopedVertexArray.appendVertex(
 					{ position.x + pointBx.evaluate(size.x) - delta.y * ((thickness.evaluate(min(size.x, size.y)) / 2 + offset.evaluate(min(size.x, size.y))) / distance),
 						position.y + pointBy.evaluate(size.y) + delta.x * ((thickness.evaluate(min(size.x, size.y)) / 2 + offset.evaluate(min(size.x, size.y))) / distance) }, fillColor));
-				lineShape.addVertex(m_scopedVertexArray->appendVertex(
+				lineShape.addVertex(scopedVertexArray.appendVertex(
 					{ position.x + pointAx.evaluate(size.x) - delta.y * ((thickness.evaluate(min(size.x, size.y)) / 2 + offset.evaluate(min(size.x, size.y))) / distance),
 						position.y + pointAy.evaluate(size.y) + delta.x * ((thickness.evaluate(min(size.x, size.y)) / 2 + offset.evaluate(min(size.x, size.y))) / distance) }, fillColor));
 
-				lineShape.push(m_scopedVertexArray);
+				lineShape.push(&scopedVertexArray);
 
 			}
 
 			//recursively call chilren to build
 			for (auto child = m_childrenElements.begin(); child != m_childrenElements.end(); child++)
-				(*child)->build(position, size);
+				(*child)->build(vertexArray, position, size);
 
-		}
-
-		void push(VertexArray* vertexArray) override {
-			if (m_scopedVertexArray != nullptr) {
-				//push scoped data to vertex array
-				m_scopedVertexArray->pushToVertexArray(vertexArray);
-				m_scopedVertexArray->deleteScope();
-
-				//recursively call chilren to push
-				for (auto child = m_childrenElements.begin(); child != m_childrenElements.end(); child++)
-					(*child)->push(vertexArray);
-
-			}
 		}
 
 	};

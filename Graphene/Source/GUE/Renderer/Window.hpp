@@ -87,7 +87,7 @@ namespace gue {
 		}
 
 		void closeWindow() {
-			// close window and clear glfw
+			// close window and restore glfw
 			glfwDestroyWindow(m_window);
 			glfwTerminate();
 		}

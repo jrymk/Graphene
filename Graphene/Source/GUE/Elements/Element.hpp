@@ -15,19 +15,23 @@ namespace gue {
 		std::vector<Element*> m_childrenElements;
 	
 	public:
-		virtual void build(Vec2f position, Vec2f size) {
+		virtual void build(VertexArray* vertexArray, Vec2f position, Vec2f size) {
 			
 		}
 
-		virtual void push(VertexArray* vertexArray) {
-			
-		}
-		
 		Element(const std::string& debugName) {
 			this->debugName = debugName;
 			m_parentElement = nullptr;
 		}
 
+		void add(Element* child) {
+			if (child != nullptr) { // parent element defined
+				m_childrenElements.emplace_back(child);
+			}
+			
+			child->linkParentElement(this);
+		}
+		
 		void add(Element* child, long long slot) {
 			if (child != nullptr) { // parent element defined
 				if (slot < 0) // slot not defined, for unordered containers

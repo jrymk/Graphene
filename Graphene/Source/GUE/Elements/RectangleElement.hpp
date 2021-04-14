@@ -17,8 +17,6 @@ namespace gue {
 	/// Maximum children count: Not recommended
 	/// </summary>
 	class RectangleElement : public Element {
-	public:
-		ScopedVertexArray* m_scopedVertexArray = nullptr;
 
 	public:
 		AVec x;
@@ -49,57 +47,44 @@ namespace gue {
 			this->backgroundColor = Color(0, 0, 0, 0);
 		}
 
-		void build(Vec2f position, Vec2f size) override {
+		void build(VertexArray* vertexArray, Vec2f position, Vec2f size) override {
 			//std::cout << debugName << "\n";
-			m_scopedVertexArray = new ScopedVertexArray();
+			ScopedVertexArray scopedVertexArray(vertexArray);
 
 			// build the vertex array of own
 			TriangleFan backgroundRect;
 			if (backgroundColor.a > 0) { // with background fill
-				backgroundRect.addVertex(m_scopedVertexArray->appendVertex(
-					{   position.x,            position.y },          backgroundColor));
-				backgroundRect.addVertex(m_scopedVertexArray->appendVertex(
-					{ position.x + size.x,   position.y },          backgroundColor));
-				backgroundRect.addVertex(m_scopedVertexArray->appendVertex(
+				backgroundRect.addVertex(scopedVertexArray.appendVertex(
+					{   position.x, position.y }, backgroundColor));
+				backgroundRect.addVertex(scopedVertexArray.appendVertex(
+					{ position.x + size.x,   position.y }, backgroundColor));
+				backgroundRect.addVertex(scopedVertexArray.appendVertex(
 					{ position.x + size.x, position.y + size.y }, backgroundColor));
-				backgroundRect.addVertex(m_scopedVertexArray->appendVertex(
-					{   position.x,          position.y + size.y }, backgroundColor));
+				backgroundRect.addVertex(scopedVertexArray.appendVertex(
+					{   position.x, position.y + size.y }, backgroundColor));
 
-				backgroundRect.push(m_scopedVertexArray);
+				backgroundRect.push(&scopedVertexArray);
 			}
 
 			TriangleFan fillRect;
 			if (fillColor.a > 0) { // with background fill
-				fillRect.addVertex(m_scopedVertexArray->appendVertex(
-					{ position.x + x.evaluate(size.x),                      position.y + y.evaluate(size.y) }, fillColor));
-				fillRect.addVertex(m_scopedVertexArray->appendVertex(
+				fillRect.addVertex(scopedVertexArray.appendVertex(
+					{ position.x + x.evaluate(size.x), position.y + y.evaluate(size.y) }, fillColor));
+				fillRect.addVertex(scopedVertexArray.appendVertex(
 					{ position.x + x.evaluate(size.x) + w.evaluate(size.x), position.y + y.evaluate(size.y) }, fillColor));
-				fillRect.addVertex(m_scopedVertexArray->appendVertex(
+				fillRect.addVertex(scopedVertexArray.appendVertex(
 					{ position.x + x.evaluate(size.x) + w.evaluate(size.x), position.y + y.evaluate(size.y) + h.evaluate(size.y) }, fillColor));
-				fillRect.addVertex(m_scopedVertexArray->appendVertex(
-					{ position.x + x.evaluate(size.x),                      position.y + y.evaluate(size.y) + h.evaluate(size.y) }, fillColor));
+				fillRect.addVertex(scopedVertexArray.appendVertex(
+					{ position.x + x.evaluate(size.x), position.y + y.evaluate(size.y) + h.evaluate(size.y) }, fillColor));
 
-				fillRect.push(m_scopedVertexArray);
+				fillRect.push(&scopedVertexArray);
 			}
 
 			//recursively call chilren to build
 			for (auto child = m_childrenElements.begin(); child != m_childrenElements.end(); child++)
-				(*child)->build(position, size);
+				(*child)->build(vertexArray, position, size);
 
 		}
-
-		void push(VertexArray* vertexArray) override {
-			if (m_scopedVertexArray != nullptr) {
-				//push scoped data to vertex array
-				m_scopedVertexArray->pushToVertexArray(vertexArray);
-				m_scopedVertexArray->deleteScope();
-
-				//recursively call chilren to push
-				for (auto child = m_childrenElements.begin(); child != m_childrenElements.end(); child++)
-					(*child)->push(vertexArray);
-
-			}
-		}
-
+		
 	};
 }
