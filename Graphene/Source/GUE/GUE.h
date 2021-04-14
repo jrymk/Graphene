@@ -1,16 +1,19 @@
 #pragma once
 
-#include "Renderer/Window.hpp"
+#define GLFW_INCLUDE_NONE
 #include "Elements/Element.hpp"
 #include "Elements/RectangleElement.hpp"
 #include "Elements/CircleElement.hpp"
 #include "Elements/RoundedRectangle.hpp"
 #include "Elements/LineElement.hpp"
 #include "Elements/PaddingElement.hpp"
+#include "Renderer/Window.hpp"
 #include "Renderer/Shaders.hpp"
 #include "Renderer/Batch.hpp"
-#include "System/Timer.hpp"
 #include "Renderer/ProfilerUtils.hpp"
+#include "System/Timer.hpp"
+#include "Defines/Colors.hpp"
+#include "../ExceptionHandler.hpp"
 
 // Use dedicated graphic cards by default
 extern "C" {
