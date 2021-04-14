@@ -173,8 +173,8 @@ namespace gue {
 
 				for (unsigned int i = 0; i <= m_pointCount / 4; i++) {
 					roundedRectangleShape.addVertex(scopedVertexArray.appendVertex(
-						Vec2f((position.x + x.evaluate(size.x) + w.evaluate(size.x) + radiusTemp * cos((float)i / m_pointCount * 2 * M_PI) - 1),
-							(position.y + y.evaluate(size.y) + h.evaluate(size.y) + radiusTemp * sin((float)i / m_pointCount * 2 * M_PI) - 1)
+						Vec2f((position.x + x.evaluate(size.x) + w.evaluate(size.x) + radiusTemp * cos((float)i / m_pointCount * 2 * M_PI) - radiusTemp),
+							(position.y + y.evaluate(size.y) + h.evaluate(size.y) + radiusTemp * sin((float)i / m_pointCount * 2 * M_PI) - radiusTemp)
 						),
 						fillColor
 					));
@@ -184,8 +184,8 @@ namespace gue {
 
 				for (unsigned int i = m_pointCount / 4; i <= m_pointCount / 2; i++) {
 					roundedRectangleShape.addVertex(scopedVertexArray.appendVertex(
-						Vec2f((position.x + x.evaluate(size.x) + radiusTemp * cos((float)i / m_pointCount * 2 * M_PI) + 1),
-							(position.y + y.evaluate(size.y) + h.evaluate(size.y) + radiusTemp * sin((float)i / m_pointCount * 2 * M_PI) - 1)
+						Vec2f((position.x + x.evaluate(size.x) + radiusTemp * cos((float)i / m_pointCount * 2 * M_PI) + radiusTemp),
+							(position.y + y.evaluate(size.y) + h.evaluate(size.y) + radiusTemp * sin((float)i / m_pointCount * 2 * M_PI) - radiusTemp)
 						),
 						fillColor
 					));
@@ -195,8 +195,8 @@ namespace gue {
 
 				for (unsigned int i = m_pointCount / 2; i <= 3 * m_pointCount / 4; i++) {
 					roundedRectangleShape.addVertex(scopedVertexArray.appendVertex(
-						Vec2f((position.x + x.evaluate(size.x) + radiusTemp * cos((float)i / m_pointCount * 2 * M_PI) + 1),
-							(position.y + y.evaluate(size.y) + radiusTemp * sin((float)i / m_pointCount * 2 * M_PI) + 1)
+						Vec2f((position.x + x.evaluate(size.x) + radiusTemp * cos((float)i / m_pointCount * 2 * M_PI) + radiusTemp),
+							(position.y + y.evaluate(size.y) + radiusTemp * sin((float)i / m_pointCount * 2 * M_PI) + radiusTemp)
 						),
 						fillColor
 					));
@@ -206,8 +206,8 @@ namespace gue {
 
 				for (unsigned int i = 3 * m_pointCount / 4; i <= m_pointCount; i++) {
 					roundedRectangleShape.addVertex(scopedVertexArray.appendVertex(
-						Vec2f((position.x + x.evaluate(size.x) + w.evaluate(size.x) + radiusTemp * cos((float)i / m_pointCount * 2 * M_PI) - 1),
-							(position.y + y.evaluate(size.y) + radiusTemp * sin((float)i / m_pointCount * 2 * M_PI) + 1)
+						Vec2f((position.x + x.evaluate(size.x) + w.evaluate(size.x) + radiusTemp * cos((float)i / m_pointCount * 2 * M_PI) - radiusTemp),
+							(position.y + y.evaluate(size.y) + radiusTemp * sin((float)i / m_pointCount * 2 * M_PI) + radiusTemp)
 						),
 						fillColor
 					));
