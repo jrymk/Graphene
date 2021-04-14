@@ -1,8 +1,8 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
 #include <vector>
 #include <string>
+#include <GLFW/glfw3.h>
 #include "Shaders.hpp"
 #include "Vertex.hpp"
 #include "Window.hpp"

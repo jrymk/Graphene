@@ -63,7 +63,7 @@ namespace gue {
 			// set OpenGL context to the window
 			glfwMakeContextCurrent(m_window);
 
-			// initialize glew after creating OpenGL context
+			// initialize glad after creating OpenGL context
 			gue::initGlad();
 			
 			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // use core profile

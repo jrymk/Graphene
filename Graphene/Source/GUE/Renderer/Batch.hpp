@@ -1,6 +1,6 @@
 #pragma once
-#include <GLFW/glfw3.h>
 #include <vector>
+#include <GLFW/glfw3.h>
 #include "Vertex.hpp"
 #include "VertexArray.hpp"
 #include "Window.hpp"
