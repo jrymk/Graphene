@@ -91,6 +91,10 @@ public:
 		this->b = b;
 		this->a = a;
 	}
+	
+	Colorf setAlpha(float alpha) {
+		return { this->r, this->g, this->b, alpha };
+	}
 
 };
 
@@ -109,6 +113,10 @@ public:
 		this->b = b;
 		this->a = a;
 	}
+
+	Color setAlpha(unsigned char alpha) {
+		return { this->r, this->g, this->b, alpha };
+	} 
 
 	Colorf toColorf() {
 		return { this->r / 255.0f, this->g / 255.0f, this->b / 255.0f, this->a / 255.0f };
