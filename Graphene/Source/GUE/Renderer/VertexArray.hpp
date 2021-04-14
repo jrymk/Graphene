@@ -21,8 +21,8 @@ namespace gue {
 
 
 	public:
-		VertexArray(Window& window) {
-			m_window = &window;
+		VertexArray(Window* window) {
+			m_window = window;
 		}
 
 		void bindWindow(Window& window) {

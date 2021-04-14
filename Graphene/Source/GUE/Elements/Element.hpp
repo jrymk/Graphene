@@ -3,6 +3,7 @@
 #include "../Renderer/Vertex.hpp"
 #include "../Renderer/Structures.hpp"
 #include "../Renderer/VertexArray.hpp"
+#include "../Renderer/Batch.hpp"
 #include "../../ExceptionHandler.hpp"
 
 namespace gue {
@@ -15,7 +16,7 @@ namespace gue {
 		std::vector<Element*> m_childrenElements;
 	
 	public:
-		virtual void build(VertexArray* vertexArray, Vec2f position, Vec2f size) {
+		virtual void build(Batch* batch, Vec2f position, Vec2f size) {
 			
 		}
 

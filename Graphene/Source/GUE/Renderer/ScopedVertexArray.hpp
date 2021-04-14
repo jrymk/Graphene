@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "Structures.hpp"
+#include "Batch.hpp"
 #include "VertexArray.hpp"
 
 namespace gue {
@@ -11,10 +12,10 @@ namespace gue {
 		VertexArray* m_vertexArray;
 
 	public:
-		ScopedVertexArray(VertexArray* vertexArray) {
-			this->m_vertexArray = vertexArray;
-			this->m_startingIndex = vertexArray->getVertices()->size();
-			this->m_startingIndicesSize = vertexArray->getIndices()->size();
+		ScopedVertexArray(Batch* batch) {
+			this->m_vertexArray = batch->getVertexArray();
+			this->m_startingIndex = batch->getVertexArray()->getVertices()->size();
+			this->m_startingIndicesSize = batch->getVertexArray()->getIndices()->size();
 		}
 
 		std::vector<Vertex>* getVertices() {

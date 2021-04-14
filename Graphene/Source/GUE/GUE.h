@@ -8,6 +8,7 @@
 #include "Elements/LineElement.hpp"
 #include "Elements/PaddingElement.hpp"
 #include "Renderer/Shaders.hpp"
+#include "Renderer/Batch.hpp"
 #include "System/Timer.hpp"
 #include "Renderer/ProfilerUtils.hpp"
 

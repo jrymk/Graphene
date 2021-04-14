@@ -53,10 +53,10 @@ namespace gue {
 			this->offset = { 0.0, 0.0 };
 		}
 
-		void build(VertexArray* vertexArray, Vec2f position, Vec2f size) override {
+		void build(Batch* batch, Vec2f position, Vec2f size) override {
 			//std::cout << debugName << "\n";
 
-			ScopedVertexArray scopedVertexArray(vertexArray);
+			ScopedVertexArray scopedVertexArray(batch);
 			
 			// build the vertex array of own
 			TriangleFan backgroundRect;
@@ -97,7 +97,7 @@ namespace gue {
 
 			//recursively call chilren to build
 			for (auto child = m_childrenElements.begin(); child != m_childrenElements.end(); child++)
-				(*child)->build(vertexArray, position, size);
+				(*child)->build(batch, position, size);
 
 		}
 

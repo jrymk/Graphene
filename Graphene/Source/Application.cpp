@@ -15,7 +15,7 @@ int main() {
 		ERR("failed to create window");
 	}
 
-	gue::VertexArray vertexArray(window);
+	gue::VertexArray vertexArray(&window);
 
 	gue::Shader shader;
 	shader.setShaderSource(shader.defaultVertexShader, shader.defaultFragmentShader);
