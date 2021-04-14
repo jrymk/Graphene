@@ -6,7 +6,6 @@
 #include <fstream>
 
 #include "GUE/GUE.h"
-#include "ExceptionHandler.hpp"
 
 
 int main() {
