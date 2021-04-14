@@ -7,15 +7,15 @@
 namespace gue {
 	class ScopedVertexArray {
 	private:
+		VertexArray* m_vertexArray;
 		unsigned long long m_startingIndex;
 		unsigned long long m_startingIndicesSize;
-		VertexArray* m_vertexArray;
 
 	public:
-		ScopedVertexArray(Batch* batch) {
-			this->m_vertexArray = batch->getVertexArray();
-			this->m_startingIndex = batch->getVertexArray()->getVertices()->size();
-			this->m_startingIndicesSize = batch->getVertexArray()->getIndices()->size();
+		ScopedVertexArray(Batch& batch) {
+			this->m_vertexArray = batch.getVertexArray();
+			this->m_startingIndex = batch.getVertexArray()->getVertices()->size();
+			this->m_startingIndicesSize = batch.getVertexArray()->getIndices()->size();
 		}
 
 		std::vector<Vertex>* getVertices() {

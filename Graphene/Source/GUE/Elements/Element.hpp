@@ -16,7 +16,7 @@ namespace gue {
 		std::vector<Element*> m_childrenElements;
 	
 	public:
-		virtual void build(Batch* batch, Vec2f position, Vec2f size) {
+		virtual void build(Batch& batch, Vec2f position, Vec2f size) {
 			
 		}
 

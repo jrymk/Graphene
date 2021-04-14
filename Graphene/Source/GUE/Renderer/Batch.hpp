@@ -25,6 +25,18 @@ namespace gue {
 			m_vertexArray->draw(*m_shader);
 		}
 
+		unsigned int getVerticesCount() {
+			return m_vertexArray->getVertices()->size();
+		}
+		
+		unsigned int getTriangleCount() {
+			return m_vertexArray->getIndices()->size() / 3;
+		}
+
+		unsigned int getIndicesCount() {
+			return m_vertexArray->getIndices()->size();
+		}
+
 		VertexArray* getVertexArray() {
 			return m_vertexArray;
 		}

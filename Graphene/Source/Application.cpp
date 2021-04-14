@@ -15,17 +15,20 @@ int main() {
 		ERR("failed to create window");
 	}
 
-	gue::VertexArray vertexArray(&window);
 
 	gue::Shader shader;
 	shader.setShaderSource(shader.defaultVertexShader, shader.defaultFragmentShader);
 	shader.loadShader();
 
-
+	
 	glfwSetInputMode(window.getGLFWWindow(), GLFW_STICKY_KEYS, GL_TRUE);
 
 	ExceptionHandler eh;
 	eh.flushExceptionsToIOStream();
+
+
+	
+	gue::Batch mainBatch(window, shader);
 
 	gue::Timer animTimer;
 
@@ -34,21 +37,22 @@ int main() {
 	do {
 		GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
-		vertexArray.clear();
+		mainBatch.clearBatch();
 		
 		auto roundedRect = new gue::RoundedRectangle("rounded rect", { 0.1, 0 }, { 0.1, 0 }, { 0.8, 0 }, { 0.8, 0 }, { 0, 30 }, Color(200, 200, 200, 255));
 
 		auto circle = new gue::CircleElement("circle", { 0.5f, 0.0f }, { 0.5f, 0.0f }, { 0.5f, 0.0f }, Color(255, 211, 0, 255));
 		roundedRect->add(circle, -1);
 		
-		roundedRect->build(&vertexArray, {0, 0}, window.getFramebufferSize().toFloat());
+		roundedRect->build(mainBatch, {0, 0}, window.getFramebufferSize().toFloat());
 
 
-		vertexArray.draw(shader);
+		mainBatch.drawBatch();
 
+		
 		//framerate counter
 		framerateCounter.frameCount();
-		DBG(std::to_string(framerateCounter.getFramerate()) + "fps\tTriangles: " + std::to_string(vertexArray.getVertices()->size() / 3));
+		DBG(std::to_string(framerateCounter.getFramerate()) + "fps\tTriangles: " + std::to_string(mainBatch.getTriangleCount()));
 
 		//DBG(std::to_string(m_vertexArray.getVertices()->size()));
 
