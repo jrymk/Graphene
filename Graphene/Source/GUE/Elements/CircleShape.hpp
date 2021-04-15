@@ -16,7 +16,7 @@ namespace gue {
 	/// Child bounds: Same as parent
 	/// Maximum children count: Don't
 	/// </summary>
-	class CircleElement : public Element {
+	class CircleShape : public Element {
 	public:
 
 		enum class RadiusSizingMode {
@@ -41,7 +41,7 @@ namespace gue {
 		unsigned int m_pointCount = 40;
 
 	public:
-		CircleElement(const std::string& debugName) : Element(debugName) {
+		CircleShape(const std::string& debugName) : Element(debugName) {
 			this->x = AVec(0.5, 0.0);
 			this->y = AVec(0.5, 0.0);
 			this->radius = AVec(0.5, 0.0);
@@ -51,7 +51,7 @@ namespace gue {
 
 		}
 
-		CircleElement(const std::string& debugName, AVec x, AVec y, AVec radius, Color fillColor) : Element(debugName) {
+		CircleShape(const std::string& debugName, AVec x, AVec y, AVec radius, Color fillColor) : Element(debugName) {
 			this->x = x;
 			this->y = y;
 			this->radius = radius;

@@ -16,7 +16,7 @@ namespace gue {
 	/// Child bounds: Depend on padding settings
 	/// Maximum children count: Unlimited
 	/// </summary>
-	class PaddingElement : public Element {
+	class PaddingLayout : public Element {
 		
 	public:
 		AVec topPadding;
@@ -29,7 +29,7 @@ namespace gue {
 	private:
 
 	public:
-		PaddingElement(const std::string& debugName) : Element(debugName) {
+		PaddingLayout(const std::string& debugName) : Element(debugName) {
 			this->topPadding = { 0.0, 10.0 };
 			this->leftPadding = { 0.0, 10.0 };
 			this->bottomPadding = { 0.0, 10.0 };
@@ -38,7 +38,7 @@ namespace gue {
 			this->backgroundColor = Color(0, 0, 0, 0);
 		}
 
-		PaddingElement(const std::string& debugName, AVec top, AVec left, AVec bottom, AVec right) : Element(debugName) {
+		PaddingLayout(const std::string& debugName, AVec top, AVec left, AVec bottom, AVec right) : Element(debugName) {
 			this->topPadding = top;
 			this->leftPadding = left;
 			this->bottomPadding = bottom;

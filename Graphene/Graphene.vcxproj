@@ -95,12 +95,12 @@
   <ItemGroup>
     <ClInclude Include="Source\ExceptionHandler.hpp" />
     <ClInclude Include="Source\GUE\Defines\Colors.hpp" />
-    <ClInclude Include="Source\GUE\Elements\CircleElement.hpp" />
+    <ClInclude Include="Source\GUE\Elements\CircleShape.hpp" />
     <ClInclude Include="Source\GUE\Elements\Element.hpp" />
-    <ClInclude Include="Source\GUE\Elements\LineElement.hpp" />
-    <ClInclude Include="Source\GUE\Elements\PaddingElement.hpp" />
-    <ClInclude Include="Source\GUE\Elements\RectangleElement.hpp" />
-    <ClInclude Include="Source\GUE\Elements\RoundedRectangle.hpp" />
+    <ClInclude Include="Source\GUE\Elements\LineShape.hpp" />
+    <ClInclude Include="Source\GUE\Elements\PaddingLayout.hpp" />
+    <ClInclude Include="Source\GUE\Elements\RectangleShape.hpp" />
+    <ClInclude Include="Source\GUE\Elements\RoundedRectangleShape.hpp" />
     <ClInclude Include="Source\GUE\Elements\Text.hpp" />
     <ClInclude Include="Source\GUE\Renderer\ProfilerUtils.hpp" />
     <ClInclude Include="Source\GUE\Renderer\Init.hpp" />
@@ -108,6 +108,7 @@
     <ClInclude Include="Source\GUE\Renderer\Shaders.hpp" />
     <ClInclude Include="Source\GUE\Renderer\Structures.hpp" />
     <ClInclude Include="Source\GUE\Renderer\ScopedVertexArray.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\Text.hpp" />
     <ClInclude Include="Source\GUE\Renderer\TriangleFan.hpp" />
     <ClInclude Include="Source\GUE\Renderer\Vertex.hpp" />
     <ClInclude Include="Source\GUE\Renderer\Batch.hpp" />

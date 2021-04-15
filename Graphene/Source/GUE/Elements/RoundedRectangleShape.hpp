@@ -16,7 +16,7 @@ namespace gue {
 	/// Child bounds: Same as parent
 	/// Maximum children count: Don't
 	/// </summary>
-	class RoundedRectangle : public Element {
+	class RoundedRectangleShape : public Element {
 	public:
 
 		enum class SizingMode {
@@ -58,7 +58,7 @@ namespace gue {
 		unsigned int m_pointCount = 40;
 
 	public:
-		RoundedRectangle(const std::string& debugName) : Element(debugName) {
+		RoundedRectangleShape(const std::string& debugName) : Element(debugName) {
 			this->x = { 0.0, 0.0 };
 			this->y = { 0.0, 0.0 };
 			this->w = { 1.0, 0.0 };
@@ -76,7 +76,7 @@ namespace gue {
 
 		}
 
-		RoundedRectangle(const std::string& debugName, AVec x, AVec y, AVec w, AVec h, AVec radius, Color fillColor) : Element(debugName) {
+		RoundedRectangleShape(const std::string& debugName, AVec x, AVec y, AVec w, AVec h, AVec radius, Color fillColor) : Element(debugName) {
 			this->x = x;
 			this->y = y;
 			this->w = w;

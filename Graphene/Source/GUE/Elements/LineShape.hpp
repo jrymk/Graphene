@@ -16,7 +16,7 @@ namespace gue {
 	/// Child bounds: Fill parent
 	/// Maximum children count: Don't
 	/// </summary>
-	class LineElement : public Element {
+	class LineShape : public Element {
 
 	public:
 		AVec pointAx;
@@ -31,7 +31,7 @@ namespace gue {
 	private:
 
 	public:
-		LineElement(const std::string& debugName) : Element(debugName) {
+		LineShape(const std::string& debugName) : Element(debugName) {
 			this->pointAx = { 0.0, 0.0 };
 			this->pointAy = { 0.0, 0.0 };
 			this->pointBx = { 0.0, 1.0 };
@@ -42,7 +42,7 @@ namespace gue {
 			this->offset = { 0.0, 0.0 };
 		}
 
-		LineElement(const std::string& debugName, AVec pointAx, AVec pointAy, AVec pointBx, AVec pointBy, AVec thickness, Color fillColor) : Element(debugName) {
+		LineShape(const std::string& debugName, AVec pointAx, AVec pointAy, AVec pointBx, AVec pointBy, AVec thickness, Color fillColor) : Element(debugName) {
 			this->pointAx = pointAx;
 			this->pointAy = pointAy;
 			this->pointBx = pointBx;

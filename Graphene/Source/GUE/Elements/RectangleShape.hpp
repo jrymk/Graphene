@@ -16,7 +16,7 @@ namespace gue {
 	/// Child bounds: Fill parent
 	/// Maximum children count: Not recommended
 	/// </summary>
-	class RectangleElement : public Element {
+	class RectangleShape : public Element {
 
 	public:
 
@@ -41,7 +41,7 @@ namespace gue {
 	private:
 
 	public:
-		RectangleElement(const std::string& debugName) : Element(debugName) {
+		RectangleShape(const std::string& debugName) : Element(debugName) {
 			this->x = { 0.0, 0.0 };
 			this->y = { 0.0, 0.0 };
 			this->w = { 0.0, 1.0 };
@@ -51,7 +51,7 @@ namespace gue {
 			this->backgroundColor = Color(0, 0, 0, 0);
 		}
 
-		RectangleElement(const std::string& debugName, AVec x, AVec y, AVec w, AVec h, Color fillColor) : Element(debugName) {
+		RectangleShape(const std::string& debugName, AVec x, AVec y, AVec w, AVec h, Color fillColor) : Element(debugName) {
 			this->x = x;
 			this->y = y;
 			this->w = h;

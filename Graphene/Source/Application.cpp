@@ -38,9 +38,9 @@ int main() {
 
 		mainBatch.clearBatch();
 		
-		auto roundedRect = new gue::RoundedRectangle("rounded rect", { 0.1, 0 }, { 0.1, 0 }, { 0.8, 0 }, { 0.8, 0 }, { 0, 30 }, Color(200, 200, 200, 255));
+		auto roundedRect = new gue::RoundedRectangleShape("rounded rect", { 0.1, 0 }, { 0.1, 0 }, { 0.8, 0 }, { 0.8, 0 }, { 0, 30 }, Color(200, 200, 200, 255));
 
-		auto circle = new gue::CircleElement("circle", { 0.5f, 0.0f }, { 0.5f, 0.0f }, { 0.5f, 0.0f }, Color(255, 211, 0, 255));
+		auto circle = new gue::CircleShape("circle", { 0.5f, 0.0f }, { 0.5f, 0.0f }, { 0.5f, 0.0f }, Color(255, 211, 0, 255));
 		roundedRect->add(circle, -1);
 		
 		roundedRect->build(mainBatch, {0, 0}, window.getFramebufferSize().toFloat());

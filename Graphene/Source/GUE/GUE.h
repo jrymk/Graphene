@@ -2,11 +2,11 @@
 
 #define GLFW_INCLUDE_NONE
 #include "Elements/Element.hpp"
-#include "Elements/RectangleElement.hpp"
-#include "Elements/CircleElement.hpp"
-#include "Elements/RoundedRectangle.hpp"
-#include "Elements/LineElement.hpp"
-#include "Elements/PaddingElement.hpp"
+#include "Elements/RectangleShape.hpp"
+#include "Elements/CircleShape.hpp"
+#include "Elements/RoundedRectangleShape.hpp"
+#include "Elements/LineShape.hpp"
+#include "Elements/PaddingLayout.hpp"
 #include "Renderer/Window.hpp"
 #include "Renderer/Shaders.hpp"
 #include "Renderer/Batch.hpp"
