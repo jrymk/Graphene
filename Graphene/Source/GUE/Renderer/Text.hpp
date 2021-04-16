@@ -11,6 +11,8 @@
 #include <texture-font.h>
 #include <texture-atlas.h>
 #include <vector.h>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 
 /* Freetype GL - A C OpenGL Freetype engine
@@ -24,11 +26,7 @@ namespace gue {
 	class Text {
 
 
-
-#include <GLFW/glfw3.h>
-
-
- // ------------------------------------------------------- typedef & struct ---
+		// ------------------------------------------------------- typedef & struct ---
 		typedef struct {
 			float x, y, z;    // position
 			float s, t;       // texture
@@ -48,11 +46,11 @@ namespace gue {
 			char* text, vec4* color, vec2* pen) {
 			size_t i;
 			float r = color->red, g = color->green, b = color->blue, a = color->alpha;
-			for (i = 0; i < strlen(text); ++i)     {
+			for (i = 0; i < strlen(text); ++i) {
 				texture_glyph_t* glyph = texture_font_get_glyph(font, text + i);
-				if (glyph != NULL)         {
+				if (glyph != NULL) {
 					float kerning = 0.0f;
-					if (i > 0)             {
+					if (i > 0) {
 						kerning = texture_glyph_get_kerning(glyph, text + i - 1);
 					}
 					pen->x += kerning;
@@ -86,7 +84,7 @@ namespace gue {
 			buffer = vertex_buffer_new("vertex:3f,tex_coord:2f,color:4f");
 			vec2 pen = { {5,400} };
 			vec4 black = { {0,0,0,1} };
-			for (i = 7; i < 27; ++i)     {
+			for (i = 7; i < 27; ++i) {
 				font = texture_font_new_from_file(atlas, i, filename);
 				pen.x = 5;
 				pen.y -= font->height;
@@ -146,7 +144,7 @@ namespace gue {
 
 		// --------------------------------------------------------------- keyboard ---
 		void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
-			if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)     {
+			if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 				glfwSetWindowShouldClose(window, GL_TRUE);
 			}
 		}
@@ -158,80 +156,17 @@ namespace gue {
 		}
 
 
-		// ------------------------------------------------------------------- main ---
-		int main(int argc, char** argv) {
-			GLFWwindow* window;
-			char* screenshot_path = NULL;
-
-			if (argc > 1)     {
-				if (argc == 3 && 0 == strcmp("--screenshot", argv[1]))
-					screenshot_path = argv[2];
-				else         {
-					fprintf(stderr, "Unknown or incomplete parameters given\n");
-					exit(EXIT_FAILURE);
-				}
-			}
-
-			glfwSetErrorCallback(error_callback);
-
-			if (!glfwInit())     {
-				exit(EXIT_FAILURE);
-			}
-
-			glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
-			glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-
-			window = glfwCreateWindow(800, 500, argv[0], NULL, NULL);
-
-			if (!window)     {
-				glfwTerminate();
-				exit(EXIT_FAILURE);
-			}
-
-			glfwMakeContextCurrent(window);
-			glfwSwapInterval(1);
-
-			glfwSetFramebufferSizeCallback(window, reshape);
-			glfwSetWindowRefreshCallback(window, display);
-			glfwSetKeyCallback(window, keyboard);
-
-#ifndef __APPLE__
-			glewExperimental = GL_TRUE;
-			GLenum err = glewInit();
-			if (GLEW_OK != err)     {
-				/* Problem: glewInit failed, something is seriously wrong. */
-				fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
-				exit(EXIT_FAILURE);
-			}
-			fprintf(stderr, "Using GLEW %s\n", glewGetString(GLEW_VERSION));
-#endif
-
+		void printText() {
 			init();
-
-			glfwShowWindow(window);
-			reshape(window, 800, 500);
-
-			while (!glfwWindowShouldClose(window))     {
-				display(window);
-				glfwPollEvents();
-
-				if (screenshot_path)         {
-					screenshot(window, screenshot_path);
-					glfwSetWindowShouldClose(window, 1);
-				}
-			}
+			
+			display(window);
 
 			glDeleteTextures(1, &atlas->id);
 			atlas->id = 0;
 			texture_atlas_delete(atlas);
-
-			glfwDestroyWindow(window);
-			glfwTerminate();
-
-			return EXIT_SUCCESS;
 		}
 
-		
+
 	};
-	
+
 }
