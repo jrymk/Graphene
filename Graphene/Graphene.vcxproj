@@ -94,6 +94,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\ExceptionHandler.hpp" />
+    <ClInclude Include="Source\GUE\Batch\BatchAllocator.hpp" />
+    <ClInclude Include="Source\GUE\Batch\BatchInclude.h" />
     <ClInclude Include="Source\GUE\Batch\BatchRenderer.hpp" />
     <ClInclude Include="Source\GUE\Defines\Colors.hpp" />
     <ClInclude Include="Source\GUE\Elements\CircleShape.hpp" />

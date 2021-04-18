@@ -9,8 +9,8 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Vertex.hpp"
-#include "../Renderer/Shaders.hpp"
 #include "../Renderer/Window.hpp"
+#include "../Renderer/Shaders.hpp"
 #include "../../ExceptionHandler.hpp"
 
 namespace gue {

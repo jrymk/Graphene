@@ -1,6 +1,9 @@
 #pragma once
 
 #define GLFW_INCLUDE_NONE
+
+#include "Batch/BatchInclude.h"
+
 #include "Elements/Element.hpp"
 #include "Elements/RectangleShape.hpp"
 #include "Elements/CircleShape.hpp"
@@ -10,7 +13,7 @@
 #include "Renderer/Window.hpp"
 #include "Renderer/Shaders.hpp"
 #include "Renderer/ProfilerUtils.hpp"
-#include "Batch/Batch.hpp"
+
 #include "System/Timer.hpp"
 #include "Defines/Colors.hpp"
 #include "../ExceptionHandler.hpp"
