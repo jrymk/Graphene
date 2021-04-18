@@ -7,7 +7,6 @@
 #include "Element.hpp"
 #include "../Renderer/Structures.hpp"
 #include "../Renderer/TriangleFan.hpp"
-#include "../Batch/ScopedVertexArray.hpp"
 #include "../../ExceptionHandler.hpp"
 
 namespace gue {
@@ -61,9 +60,11 @@ namespace gue {
 			this->backgroundColor = Color(0, 0, 0, 0);
 		}
 
-		void build(Batch& batch, Vec2f position, Vec2f size) override {
+		void build(VertexArray& vertexArray, Vec2f position, Vec2f size) override {
 			//std::cout << debugName << "\n";
-			ScopedVertexArray scopedVertexArray(batch);
+			BatchAllocator batch(vertexArray);
+
+			batch.beginAlloc();
 
 			// build the vertex array of own
 
@@ -71,16 +72,16 @@ namespace gue {
 
 				TriangleFan backgroundRect;
 
-				backgroundRect.addVertex(scopedVertexArray.appendVertex(
+				backgroundRect.addVertex(batch.add(
 					{ position.x, position.y }, backgroundColor));
-				backgroundRect.addVertex(scopedVertexArray.appendVertex(
+				backgroundRect.addVertex(batch.add(
 					{ position.x + size.x, position.y }, backgroundColor));
-				backgroundRect.addVertex(scopedVertexArray.appendVertex(
+				backgroundRect.addVertex(batch.add(
 					{ position.x + size.x, position.y + size.y }, backgroundColor));
-				backgroundRect.addVertex(scopedVertexArray.appendVertex(
+				backgroundRect.addVertex(batch.add(
 					{ position.x, position.y + size.y }, backgroundColor));
 
-				backgroundRect.push(&scopedVertexArray);
+				backgroundRect.push(&batch);
 			}
 
 
@@ -117,23 +118,25 @@ namespace gue {
 				
 				TriangleFan fillRect;
 
-				fillRect.addVertex(scopedVertexArray.appendVertex(
+				fillRect.addVertex(batch.add(
 					{ position.x + x.evaluate(size.x), position.y + y.evaluate(size.y) }, fillColor));
-				fillRect.addVertex(scopedVertexArray.appendVertex(
+				fillRect.addVertex(batch.add(
 					{ position.x + x.evaluate(size.x) + width, position.y + y.evaluate(size.y) }, fillColor));
-				fillRect.addVertex(scopedVertexArray.appendVertex(
+				fillRect.addVertex(batch.add(
 					{ position.x + x.evaluate(size.x) + width, position.y + y.evaluate(size.y) + height }, fillColor));
-				fillRect.addVertex(scopedVertexArray.appendVertex(
+				fillRect.addVertex(batch.add(
 					{ position.x + x.evaluate(size.x), position.y + y.evaluate(size.y) + height }, fillColor));
 
-				fillRect.push(&scopedVertexArray);
+				fillRect.push(&batch);
 				
 			}
 
 			
-			//recursively call chilren to build
+			//recursively call children to build
 			for (auto child = m_childrenElements.begin(); child != m_childrenElements.end(); child++)
-				(*child)->build(batch, position, size);
+				(*child)->build(vertexArray, position, size);
+
+			batch.endAlloc();
 
 		}
 

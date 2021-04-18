@@ -7,7 +7,6 @@
 #include "Element.hpp"
 #include "../Renderer/Structures.hpp"
 #include "../Renderer/TriangleFan.hpp"
-#include "../Batch/ScopedVertexArray.hpp"
 #include "../../ExceptionHandler.hpp"
 
 namespace gue {
@@ -53,24 +52,25 @@ namespace gue {
 			this->offset = { 0.0, 0.0 };
 		}
 
-		void build(Batch& batch, Vec2f position, Vec2f size) override {
+		void build(VertexArray& vertexArray, Vec2f position, Vec2f size) override {
 			//std::cout << debugName << "\n";
 
-			ScopedVertexArray scopedVertexArray(batch);
-			
+			BatchAllocator batch(vertexArray);
+			batch.beginAlloc();
+
 			// build the vertex array of own
 			TriangleFan backgroundRect;
 			if (backgroundColor.a > 0) { // with background fill
-				backgroundRect.addVertex(scopedVertexArray.appendVertex(
+				backgroundRect.addVertex(batch.add(
 					{ position.x, position.y }, backgroundColor));
-				backgroundRect.addVertex(scopedVertexArray.appendVertex(
+				backgroundRect.addVertex(batch.add(
 					{ position.x + size.x, position.y }, backgroundColor));
-				backgroundRect.addVertex(scopedVertexArray.appendVertex(
+				backgroundRect.addVertex(batch.add(
 					{ position.x + size.x, position.y + size.y }, backgroundColor));
-				backgroundRect.addVertex(scopedVertexArray.appendVertex(
+				backgroundRect.addVertex(batch.add(
 					{ position.x, position.y + size.y }, backgroundColor));
 
-				backgroundRect.push(&scopedVertexArray);
+				backgroundRect.push(&batch);
 			}
 
 			TriangleFan lineShape;
@@ -78,26 +78,26 @@ namespace gue {
 				Vec2f delta = { pointBx.evaluate(size.x) - pointAx.evaluate(size.x), pointBy.evaluate(size.y) - pointAy.evaluate(size.y) };
 				float distance = sqrt(delta.x * delta.x + delta.y * delta.y);
 
-				lineShape.addVertex(scopedVertexArray.appendVertex(
+				lineShape.addVertex(batch.add(
 					{ position.x + pointAx.evaluate(size.x) + delta.y * ((thickness.evaluate(min(size.x, size.y)) / 2 - offset.evaluate(min(size.x, size.y))) / distance),
 						position.y + pointAy.evaluate(size.y) - delta.x * ((thickness.evaluate(min(size.x, size.y)) / 2 - offset.evaluate(min(size.x, size.y))) / distance) }, fillColor));
-				lineShape.addVertex(scopedVertexArray.appendVertex(
+				lineShape.addVertex(batch.add(
 					{ position.x + pointBx.evaluate(size.x) + delta.y * ((thickness.evaluate(min(size.x, size.y)) / 2 - offset.evaluate(min(size.x, size.y))) / distance),
 						position.y + pointBy.evaluate(size.y) - delta.x * ((thickness.evaluate(min(size.x, size.y)) / 2 - offset.evaluate(min(size.x, size.y))) / distance) }, fillColor));
-				lineShape.addVertex(scopedVertexArray.appendVertex(
+				lineShape.addVertex(batch.add(
 					{ position.x + pointBx.evaluate(size.x) - delta.y * ((thickness.evaluate(min(size.x, size.y)) / 2 + offset.evaluate(min(size.x, size.y))) / distance),
 						position.y + pointBy.evaluate(size.y) + delta.x * ((thickness.evaluate(min(size.x, size.y)) / 2 + offset.evaluate(min(size.x, size.y))) / distance) }, fillColor));
-				lineShape.addVertex(scopedVertexArray.appendVertex(
+				lineShape.addVertex(batch.add(
 					{ position.x + pointAx.evaluate(size.x) - delta.y * ((thickness.evaluate(min(size.x, size.y)) / 2 + offset.evaluate(min(size.x, size.y))) / distance),
 						position.y + pointAy.evaluate(size.y) + delta.x * ((thickness.evaluate(min(size.x, size.y)) / 2 + offset.evaluate(min(size.x, size.y))) / distance) }, fillColor));
 
-				lineShape.push(&scopedVertexArray);
+				lineShape.push(&batch);
 
 			}
 
-			//recursively call chilren to build
+			//recursively call children to build
 			for (auto child = m_childrenElements.begin(); child != m_childrenElements.end(); child++)
-				(*child)->build(batch, position, size);
+				(*child)->build(vertexArray, position, size);
 
 		}
 

@@ -48,10 +48,11 @@ namespace gue {
 			this->backgroundColor = Color(0, 0, 0, 0);
 		}
 
-		void build(Batch& batch, Vec2f position, Vec2f size) override {
+		void build(VertexArray& vertexArray, Vec2f position, Vec2f size) override {
 			//std::cout << debugName << "\n";
 
-			ScopedVertexArray scopedVertexArray(batch);
+			BatchAllocator batch(vertexArray);
+			batch.beginAlloc();
 
 			// build the vertex array of own
 			TriangleFan backgroundRect;

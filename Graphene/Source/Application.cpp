@@ -25,9 +25,8 @@ int main() {
 	ExceptionHandler eh;
 	eh.flushExceptionsToIOStream();
 
-
-	
-	gue::Batch mainBatch(window, shader);
+	gue::VertexArray vertexArray(window);
+	vertexArray.clear();
 
 	gue::Timer animTimer;
 
@@ -36,22 +35,21 @@ int main() {
 	do {
 		GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
-		mainBatch.clearBatch();
 		
 		auto roundedRect = new gue::RoundedRectangleShape("rounded rect", { 0.1, 0 }, { 0.1, 0 }, { 0.8, 0 }, { 0.8, 0 }, { 0, 30 }, Color(200, 200, 200, 255));
 
 		auto circle = new gue::CircleShape("circle", { 0.5f, 0.0f }, { 0.5f, 0.0f }, { 0.5f, 0.0f }, Color(255, 211, 0, 255));
 		roundedRect->add(circle, -1);
 		
-		roundedRect->build(mainBatch, {0, 0}, window.getFramebufferSize().toFloat());
+		roundedRect->build(vertexArray, {0, 0}, window.getFramebufferSize().toFloat());
 
 
-		mainBatch.drawBatch();
+		vertexArray.draw(shader);
 
 		
 		//framerate counter
 		framerateCounter.frameCount();
-		DBG(std::to_string(framerateCounter.getFramerate()) + "fps\tTriangles: " + std::to_string(mainBatch.getTriangleCount()));
+		DBG(std::to_string(framerateCounter.getFramerate()) + "fps\tTriangles: " + std::to_string(vertexArray.getTriangleCount()));
 
 		//DBG(std::to_string(m_vertexArray.getVertices()->size()));
 

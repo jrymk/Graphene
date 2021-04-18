@@ -7,7 +7,6 @@
 #include "Element.hpp"
 #include "../Renderer/Structures.hpp"
 #include "../Renderer/TriangleFan.hpp"
-#include "../Batch/ScopedVertexArray.hpp"
 #include "../../ExceptionHandler.hpp"
 
 namespace gue {
@@ -94,21 +93,22 @@ namespace gue {
 
 		}
 
-		void build(Batch& batch, Vec2f position, Vec2f size) override {
+		void build(VertexArray& vertexArray, Vec2f position, Vec2f size) override {
 			//std::cout << debugName << "\n";
-			ScopedVertexArray scopedVertexArray(batch);
+			BatchAllocator batch(vertexArray);
+			batch.beginAlloc();
 
 			// build the vertex array of own
 			if (backgroundColor.a > 0) { // with background fill
 				
 				TriangleFan backgroundRect;
 
-				backgroundRect.addVertex(scopedVertexArray.appendVertex(position, backgroundColor));
-				backgroundRect.addVertex(scopedVertexArray.appendVertex({ position.x + size.x, position.y }, backgroundColor));
-				backgroundRect.addVertex(scopedVertexArray.appendVertex({ position.x + size.x, position.y + size.y }, backgroundColor));
-				backgroundRect.addVertex(scopedVertexArray.appendVertex({ position.x, position.y + size.y }, backgroundColor));
+				backgroundRect.addVertex(batch.add(position, backgroundColor));
+				backgroundRect.addVertex(batch.add({ position.x + size.x, position.y }, backgroundColor));
+				backgroundRect.addVertex(batch.add({ position.x + size.x, position.y + size.y }, backgroundColor));
+				backgroundRect.addVertex(batch.add({ position.x, position.y + size.y }, backgroundColor));
 
-				backgroundRect.push(&scopedVertexArray);
+				backgroundRect.push(&batch);
 			}
 
 
@@ -172,7 +172,7 @@ namespace gue {
 
 
 				for (unsigned int i = 0; i <= m_pointCount / 4; i++) {
-					roundedRectangleShape.addVertex(scopedVertexArray.appendVertex(
+					roundedRectangleShape.addVertex(batch.add(
 						Vec2f((position.x + x.evaluate(size.x) + w.evaluate(size.x) + radiusTemp * cos((float)i / m_pointCount * 2 * M_PI) - radiusTemp),
 							(position.y + y.evaluate(size.y) + h.evaluate(size.y) + radiusTemp * sin((float)i / m_pointCount * 2 * M_PI) - radiusTemp)
 						),
@@ -183,7 +183,7 @@ namespace gue {
 				radiusTemp = useSharedRadius ? radius.evaluate(radiusSizingRelation) : radiusBottomLeft.evaluate(radiusSizingRelation);
 
 				for (unsigned int i = m_pointCount / 4; i <= m_pointCount / 2; i++) {
-					roundedRectangleShape.addVertex(scopedVertexArray.appendVertex(
+					roundedRectangleShape.addVertex(batch.add(
 						Vec2f((position.x + x.evaluate(size.x) + radiusTemp * cos((float)i / m_pointCount * 2 * M_PI) + radiusTemp),
 							(position.y + y.evaluate(size.y) + h.evaluate(size.y) + radiusTemp * sin((float)i / m_pointCount * 2 * M_PI) - radiusTemp)
 						),
@@ -194,7 +194,7 @@ namespace gue {
 				radiusTemp = useSharedRadius ? radius.evaluate(radiusSizingRelation) : radiusTopLeft.evaluate(radiusSizingRelation);
 
 				for (unsigned int i = m_pointCount / 2; i <= 3 * m_pointCount / 4; i++) {
-					roundedRectangleShape.addVertex(scopedVertexArray.appendVertex(
+					roundedRectangleShape.addVertex(batch.add(
 						Vec2f((position.x + x.evaluate(size.x) + radiusTemp * cos((float)i / m_pointCount * 2 * M_PI) + radiusTemp),
 							(position.y + y.evaluate(size.y) + radiusTemp * sin((float)i / m_pointCount * 2 * M_PI) + radiusTemp)
 						),
@@ -205,7 +205,7 @@ namespace gue {
 				radiusTemp = useSharedRadius ? radius.evaluate(radiusSizingRelation) : radiusTopRight.evaluate(radiusSizingRelation);
 
 				for (unsigned int i = 3 * m_pointCount / 4; i <= m_pointCount; i++) {
-					roundedRectangleShape.addVertex(scopedVertexArray.appendVertex(
+					roundedRectangleShape.addVertex(batch.add(
 						Vec2f((position.x + x.evaluate(size.x) + w.evaluate(size.x) + radiusTemp * cos((float)i / m_pointCount * 2 * M_PI) - radiusTemp),
 							(position.y + y.evaluate(size.y) + radiusTemp * sin((float)i / m_pointCount * 2 * M_PI) + radiusTemp)
 						),
@@ -214,12 +214,12 @@ namespace gue {
 				}
 
 
-				roundedRectangleShape.push(&scopedVertexArray);
+				roundedRectangleShape.push(&batch);
 			}
 
-			//recursively call chilren to build
+			//recursively call children to build
 			for (auto child = m_childrenElements.begin(); child != m_childrenElements.end(); child++)
-				(*child)->build(batch, position, size);
+				(*child)->build(vertexArray, position, size);
 
 		}
 

@@ -22,6 +22,9 @@ namespace gue {
 		// one vertex array have one transformation, useful for fast hardware accelerated scroll and zoom, pan, rotation
 		glm::mat4 transformation = glm::mat2(1.0f);
 
+		unsigned int nextAvailableVertex = 0;
+		unsigned int nextAvailableTriangle = 0;
+
 	private:
 
 		// this class only contains the basics
@@ -37,9 +40,9 @@ namespace gue {
 
 	public:
 
-		VertexArray(Window* window) {
+		VertexArray(Window& window) {
 			// a vertex array is tied to a window object for the screen resolution data and such
-			m_window = window;
+			m_window = &window;
 		}
 
 		void bindWindow(Window& window) {
@@ -91,10 +94,11 @@ namespace gue {
 
 		// since the primitives are always triangles in this case, the append function is heavily tied to triangles
 		// don't append a single index or else something bad may happen
-		void appendTriangle(unsigned int index0, unsigned int index1, unsigned int index2) {
+		unsigned int appendTriangle(unsigned int index0, unsigned int index1, unsigned int index2) {
 			m_indices.emplace_back(index0);
 			m_indices.emplace_back(index1);
 			m_indices.emplace_back(index2);
+			return m_indices.size() / 3 - 1;
 		}
 
 		// clear function, for no particular reason
