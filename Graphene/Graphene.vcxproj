@@ -59,7 +59,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN64\include;$(SolutionDir)Dependencies\glad\include;$(SolutionDir)Dependencies\freetype-gl;$(SolutionDir)Dependencies\glm-0.9.9.8;$(SolutionDir)Dependencies\imgui</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN64\include;$(SolutionDir)Dependencies\glad\include;$(SolutionDir)Dependencies\freetype\include;$(SolutionDir)Dependencies\freetype-gl;$(SolutionDir)Dependencies\glm-0.9.9.8</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -76,7 +76,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN64\include;$(SolutionDir)Dependencies\glad\include;$(SolutionDir)Dependencies\freetype-gl;$(SolutionDir)Dependencies\glm-0.9.9.8;$(SolutionDir)Dependencies\imgui</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN64\include;$(SolutionDir)Dependencies\glad\include;$(SolutionDir)Dependencies\freetype\include;$(SolutionDir)Dependencies\freetype-gl;$(SolutionDir)Dependencies\glm-0.9.9.8</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -91,9 +91,52 @@
   <ItemGroup>
     <ClCompile Include="..\Dependencies\glad\src\glad.c" />
     <ClCompile Include="Source\Application.cpp" />
+    <ClCompile Include="Source\imgui\imgui.cpp" />
+    <ClCompile Include="Source\imgui\imgui_demo.cpp" />
+    <ClCompile Include="Source\imgui\imgui_draw.cpp" />
+    <ClCompile Include="Source\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="Source\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="Source\imgui\imgui_tables.cpp" />
+    <ClCompile Include="Source\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Source\imgui\misc\cpp\imgui_stdlib.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\ExceptionHandler.hpp" />
+    <ClInclude Include="Source\GUE\Batch\BatchAllocator.hpp" />
+    <ClInclude Include="Source\GUE\Batch\BatchInclude.h" />
+    <ClInclude Include="Source\GUE\Batch\BatchRenderer.hpp" />
+    <ClInclude Include="Source\GUE\Batch\Vertex.hpp" />
+    <ClInclude Include="Source\GUE\Batch\VertexArray.hpp" />
+    <ClInclude Include="Source\GUE\Defines\Colors.hpp" />
+    <ClInclude Include="Source\GUE\Elements\CircleShape.hpp" />
+    <ClInclude Include="Source\GUE\Elements\Element.hpp" />
+    <ClInclude Include="Source\GUE\Elements\LineSetShape.hpp" />
+    <ClInclude Include="Source\GUE\Elements\LineShape.hpp" />
+    <ClInclude Include="Source\GUE\Elements\PaddingLayout.hpp" />
+    <ClInclude Include="Source\GUE\Elements\PanAndZoomLayout.hpp" />
+    <ClInclude Include="Source\GUE\Elements\RectangleShape.hpp" />
+    <ClInclude Include="Source\GUE\Elements\RoundedRectangleShape.hpp" />
+    <ClInclude Include="Source\GUE\Elements\Text.hpp" />
+    <ClInclude Include="Source\GUE\GUE.h" />
+    <ClInclude Include="Source\GUE\Renderer\Init.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\LayoutBuilder.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\ProfilerUtils.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\Shaders.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\Structures.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\Text.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\TriangleFan.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\VertexArray.hpp" />
+    <ClInclude Include="Source\GUE\Renderer\Window.hpp" />
+    <ClInclude Include="Source\GUE\System\Timer.hpp" />
+    <ClInclude Include="Source\imgui\imconfig.h" />
+    <ClInclude Include="Source\imgui\imgui.h" />
+    <ClInclude Include="Source\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="Source\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="Source\imgui\imgui_internal.h" />
+    <ClInclude Include="Source\imgui\imstb_rectpack.h" />
+    <ClInclude Include="Source\imgui\imstb_textedit.h" />
+    <ClInclude Include="Source\imgui\imstb_truetype.h" />
+    <ClInclude Include="Source\imgui\misc\cpp\imgui_stdlib.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
