@@ -3,6 +3,9 @@
 #include <vector>
 #include <string>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "Shaders.hpp"
 #include "Vertex.hpp"
 #include "Window.hpp"
@@ -11,6 +14,9 @@
 namespace gue {
 	
 	class VertexArray {
+	public:
+		glm::mat4 transformation = glm::mat2(1.0f);
+		
 	private:
 		std::vector<Vertex> m_vertices;
 		std::vector<unsigned int> m_indices;
@@ -108,6 +114,8 @@ namespace gue {
 
 			// use specified shader
 			shader.useShader();
+
+			glUniformMatrix4fv(shader.transformationLocation, 1, GL_FALSE, glm::value_ptr(transformation));
 			
 			GLCall(glBindVertexArray(m_VAO));
 			GLCall(glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0));

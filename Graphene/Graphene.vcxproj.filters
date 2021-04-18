@@ -93,4 +93,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\GUE\Elements\LineSetShape.hpp" />
+  </ItemGroup>
 </Project>

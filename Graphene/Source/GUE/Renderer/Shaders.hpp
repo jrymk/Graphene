@@ -7,6 +7,10 @@
 
 namespace gue {
 	class Shader {
+
+	public:
+		unsigned int transformationLocation;
+	
 	private:
 		std::string m_vertexShaderSource;
 		std::string m_fragmentShaderSource;
@@ -53,6 +57,7 @@ namespace gue {
 				return false;
 			}
 
+			
 			// load and compile fragment shader
 			const GLchar* fragmentShaderSourceCStr = m_fragmentShaderSource.c_str();
 
@@ -98,6 +103,9 @@ namespace gue {
 			glDeleteShader(vertexShader);
 			glDeleteShader(fragmentShader);
 
+			
+			transformationLocation = glGetUniformLocation(m_programId, "transform");
+
 			return true;
 		}
 
@@ -110,12 +118,11 @@ namespace gue {
 			layout(location = 0) in vec2 aPosition;\n\
 			layout(location = 1) in vec4 aColor;\n\
 			out vec4 vertexColor;\n\
+			uniform mat4 transform;\n\
 			\n\
 			void main() {\n\
 			  vertexColor = vec4(aColor.rgba);\n\
-			  gl_Position.xy = aPosition;\n\
-			  gl_Position.z = 1.0;\n\
-			  gl_Position.w = 1.0;\n\
+			  gl_Position = transform * vec4(aPosition, 1.0, 1.0);\n\
 			}\n";
 
 		const std::string defaultFragmentShader =

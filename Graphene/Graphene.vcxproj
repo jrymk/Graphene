@@ -59,7 +59,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN64\include;$(SolutionDir)Dependencies\glad\include;$(SolutionDir)Dependencies\freetype-gl;$(SolutionDir)Dependencies\freetype-gl-cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN64\include;$(SolutionDir)Dependencies\glad\include;$(SolutionDir)Dependencies\freetype-gl;$(SolutionDir)Dependencies\glm-0.9.9.8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -76,7 +76,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN64\include;$(SolutionDir)Dependencies\glad\include;$(SolutionDir)Dependencies\freetype-gl;$(SolutionDir)Dependencies\freetype-gl-cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN64\include;$(SolutionDir)Dependencies\glad\include;$(SolutionDir)Dependencies\freetype-gl;$(SolutionDir)Dependencies\glm-0.9.9.8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -116,6 +116,9 @@
     <ClInclude Include="Source\GUE\Renderer\Window.hpp" />
     <ClInclude Include="Source\GUE\GUE.h" />
     <ClInclude Include="Source\GUE\System\Timer.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\GUE\Elements\LineSetShape.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
