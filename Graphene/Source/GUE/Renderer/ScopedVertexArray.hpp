@@ -31,14 +31,9 @@ namespace gue {
 			return m_vertexArray->getVertices()->size() - 1 - m_startingIndex;
 		}
 
-		void appendIndex(unsigned int index) {
-			m_vertexArray->appendIndex(m_startingIndex + index);
-		}
 
-		void appendIndex(unsigned int index0, unsigned int index1, unsigned int index2) {
-			m_vertexArray->appendIndex(m_startingIndex + index0);
-			m_vertexArray->appendIndex(m_startingIndex + index1);
-			m_vertexArray->appendIndex(m_startingIndex + index2);
+		void appendTriangle(unsigned int index0, unsigned int index1, unsigned int index2) {
+			m_vertexArray->appendTriangle(m_startingIndex + index0, m_startingIndex + index1, m_startingIndex + index2);
 		}
 
 		void restore() {

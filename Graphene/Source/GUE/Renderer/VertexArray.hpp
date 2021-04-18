@@ -9,15 +9,16 @@
 #include "../../ExceptionHandler.hpp"
 
 namespace gue {
+	
 	class VertexArray {
 	private:
 		std::vector<Vertex> m_vertices;
 		std::vector<unsigned int> m_indices;
 		Window* m_window;
 
-		GLuint m_VAO; // vertex array object
-		GLuint m_VBO; // vertex buffer object
-		GLuint m_EBO; // index buffer object
+		GLuint m_VAO = 0; // vertex array object
+		GLuint m_VBO = 0; // vertex buffer object
+		GLuint m_EBO = 0; // index buffer object
 
 
 	public:
@@ -50,12 +51,7 @@ namespace gue {
 			return m_vertices.size() - 1;
 		}
 
-		void appendIndex(unsigned int index) {
-			m_indices.emplace_back(index);
-
-		}
-
-		void appendIndex(unsigned int index0, unsigned int index1, unsigned int index2) {
+		void appendTriangle(unsigned int index0, unsigned int index1, unsigned int index2) {
 			m_indices.emplace_back(index0);
 			m_indices.emplace_back(index1);
 			m_indices.emplace_back(index2);
@@ -123,4 +119,17 @@ namespace gue {
 		}
 
 	};
+
+	struct TriangleAddress {
+		VertexArray* vertexArray;
+		unsigned int location;
+
+		TriangleAddress() = default;
+
+		TriangleAddress(VertexArray* vertexArray, unsigned int location) {
+			this->vertexArray = vertexArray;
+			this->location = location;
+		}
+	};
+	
 }

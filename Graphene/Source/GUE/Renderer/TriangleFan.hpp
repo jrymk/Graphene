@@ -21,16 +21,14 @@ namespace gue {
 		void push(ScopedVertexArray* scopedVertexArray) {
 			while (m_builtTriangles + 3 <= m_indices.size()) {
 				m_builtTriangles++;
-				scopedVertexArray->appendIndex(m_indices[0], m_indices[m_builtTriangles], m_indices[m_builtTriangles + 1]);
+				scopedVertexArray->appendTriangle(m_indices[0], m_indices[m_builtTriangles], m_indices[m_builtTriangles + 1]);
 			}
 		}
 		
 		void push(VertexArray* vertexArray) {
 			while (m_builtTriangles + 3 <= m_indices.size()) {
 				m_builtTriangles++;
-				vertexArray->appendIndex(m_indices[0]);
-				vertexArray->appendIndex(m_indices[m_builtTriangles]);
-				vertexArray->appendIndex(m_indices[m_builtTriangles + 1]);
+				vertexArray->appendTriangle(m_indices[0], m_indices[m_builtTriangles], m_indices[m_builtTriangles + 1]);
 			}
 		}
 		
