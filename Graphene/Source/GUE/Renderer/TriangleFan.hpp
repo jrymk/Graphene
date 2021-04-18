@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
-#include "VertexArray.hpp"
-#include "ScopedVertexArray.hpp"
+#include "../Batch/VertexArray.hpp"
+#include "../Batch/ScopedVertexArray.hpp"
 
 namespace gue {
 	class TriangleFan {

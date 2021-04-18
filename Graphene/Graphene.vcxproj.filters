@@ -32,9 +32,6 @@
     <ClInclude Include="Source\GUE\Renderer\Structures.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GUE\Renderer\VertexArray.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\GUE\Renderer\Shaders.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -44,10 +41,10 @@
     <ClInclude Include="Source\GUE\Renderer\Init.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GUE\Renderer\Batch.hpp">
+    <ClInclude Include="Source\GUE\Batch\Batch.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GUE\Renderer\Vertex.hpp">
+    <ClInclude Include="Source\GUE\Batch\Vertex.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\GUE\Renderer\LayoutBuilder.hpp">
@@ -65,7 +62,7 @@
     <ClInclude Include="Source\GUE\Renderer\ProfilerUtils.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GUE\Renderer\ScopedVertexArray.hpp">
+    <ClInclude Include="Source\GUE\Batch\ScopedVertexArray.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\GUE\Renderer\TriangleFan.hpp">
@@ -90,6 +87,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\GUE\Renderer\Text.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Elements\PanAndZoomLayout.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Batch\VertexArray.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUE\Batch\BatchRenderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

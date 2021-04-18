@@ -1,9 +1,9 @@
 #pragma once
 #include <vector>
-#include "../Renderer/Vertex.hpp"
+#include "../Batch/Vertex.hpp"
+#include "../Batch/VertexArray.hpp"
 #include "../Renderer/Structures.hpp"
-#include "../Renderer/VertexArray.hpp"
-#include "../Renderer/Batch.hpp"
+#include "../Batch/Batch.hpp"
 #include "../../ExceptionHandler.hpp"
 
 namespace gue {

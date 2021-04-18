@@ -1,5 +1,5 @@
 #pragma once
-#include "Structures.hpp"
+#include "../Renderer/Structures.hpp"
 
 namespace gue {
 	struct Vertex {

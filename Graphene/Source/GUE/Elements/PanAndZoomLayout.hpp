@@ -6,44 +6,44 @@
 
 #include "Element.hpp"
 #include "../Renderer/Structures.hpp"
+#include "../Renderer/ScopedVertexArray.hpp"
 #include "../Renderer/TriangleFan.hpp"
-#include "../Batch/ScopedVertexArray.hpp"
 #include "../../ExceptionHandler.hpp"
 
 namespace gue {
 	/// <summary>
 	/// Element bounds: Fill parent
-	/// Child bounds: Depend on padding settings
+	/// Child bounds: 0.0 - 1.0
 	/// Maximum children count: Unlimited
+	///
+	/// pan: child coordinate in the center
+	/// zoom: 1.0 means when panned to (0.5, 0.5) it fits in the screen (ZOOM_TO_FIT)
 	/// </summary>
-	class PaddingLayout : public Element {
-		
+	class PanAndZoomLayout : public Element {
+
 	public:
-		AVec topPadding;
-		AVec leftPadding;
-		AVec bottomPadding;
-		AVec rightPadding;
+		float panX;
+		float panY;
+		float zoom;
 		Color fillColor;
 		Color backgroundColor;
 
 	private:
 
 	public:
-		PaddingLayout(const std::string& debugName) : Element(debugName) {
-			this->topPadding = { 0.0, 10.0 };
-			this->leftPadding = { 0.0, 10.0 };
-			this->bottomPadding = { 0.0, 10.0 };
-			this->rightPadding = { 0.0, 10.0 };
+		PanAndZoomLayout(const std::string& debugName) : Element(debugName) {
+			this->panX = 0.5;
+			this->panY = 0.5;
+			this->zoom = 1.0;
 			this->fillColor = Color(0, 0, 0, 0);
 			this->backgroundColor = Color(0, 0, 0, 0);
 		}
 
-		PaddingLayout(const std::string& debugName, AVec top, AVec left, AVec bottom, AVec right) : Element(debugName) {
-			this->topPadding = top;
-			this->leftPadding = left;
-			this->bottomPadding = bottom;
-			this->rightPadding = right;
-			this->fillColor = Color(0, 0, 0, 0);
+		PanAndZoomLayout(const std::string& debugName, Color fillColor) : Element(debugName) {
+			this->panX = 0.5;
+			this->panY = 0.5;
+			this->zoom = 1.0;
+			this->fillColor = fillColor;
 			this->backgroundColor = Color(0, 0, 0, 0);
 		}
 
@@ -63,7 +63,7 @@ namespace gue {
 				backgroundRect.push(&scopedVertexArray);
 			}
 
-			if (fillColor.a > 0) { // with background fill
+			if (fillColor.a > 0) {
 				TriangleFan fillRect;
 
 				fillRect.addVertex(scopedVertexArray.appendVertex({ position.x + leftPadding.evaluate(size.x), position.y + topPadding.evaluate(size.y) }, fillColor));

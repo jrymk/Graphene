@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 #include "Vertex.hpp"
 #include "VertexArray.hpp"
-#include "Window.hpp"
+#include "../Renderer/Window.hpp"
 
 namespace gue {
 	class Batch {

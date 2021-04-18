@@ -1,8 +1,8 @@
 #pragma once
 #include <vector>
-#include "Structures.hpp"
 #include "Batch.hpp"
 #include "VertexArray.hpp"
+#include "../Renderer/Structures.hpp"
 
 namespace gue {
 	class ScopedVertexArray {

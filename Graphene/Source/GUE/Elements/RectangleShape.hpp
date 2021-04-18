@@ -6,8 +6,8 @@
 
 #include "Element.hpp"
 #include "../Renderer/Structures.hpp"
-#include "../Renderer/ScopedVertexArray.hpp"
 #include "../Renderer/TriangleFan.hpp"
+#include "../Batch/ScopedVertexArray.hpp"
 #include "../../ExceptionHandler.hpp"
 
 namespace gue {
