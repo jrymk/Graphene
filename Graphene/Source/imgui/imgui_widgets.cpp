@@ -7,7 +7,7 @@ Index of this file:
 
 // [SECTION] Forward Declarations
 // [SECTION] Widgets: Text, etc.
-// [SECTION] Widgets: Main (Button, Image, Checkbox, RadioButton, ProgressBar, Bullet, ToggleButton etc.)
+// [SECTION] Widgets: Main (Button, Image, Checkbox, RadioButton, ProgressBar, Bullet, etc.)
 // [SECTION] Widgets: Low-level Layout helpers (Spacing, Dummy, NewLine, Separator, etc.)
 // [SECTION] Widgets: ComboBox
 // [SECTION] Data Type and Data Formatting Helpers
@@ -425,7 +425,6 @@ void ImGui::BulletTextV(const char* fmt, va_list args)
 // - RadioButton()
 // - ProgressBar()
 // - Bullet()
-// - ToggleButton()
 //-------------------------------------------------------------------------
 
 // The ButtonBehavior() function is key to many interactions and used by many/most widgets.
@@ -1298,39 +1297,6 @@ void ImGui::Bullet()
     ImU32 text_col = GetColorU32(ImGuiCol_Text);
     RenderBullet(window->DrawList, bb.Min + ImVec2(style.FramePadding.x + g.FontSize * 0.5f, line_height * 0.5f), text_col);
     SameLine(0, style.FramePadding.x * 2.0f);
-}
-
-void ImGui::ToggleButton(const char* str_id, bool* v) {
-    ImVec4* colors = ImGui::GetStyle().Colors;
-	ImVec2 p = ImGui::GetCursorScreenPos();
-	ImDrawList* draw_list = ImGui::GetWindowDrawList();
-
-	float height = ImGui::GetFrameHeight();
-	float width = height * 1.55f;
-	float radius = height * 0.50f;
-
-	ImGui::InvisibleButton(str_id, ImVec2(width, height));
-	if (ImGui::IsItemClicked())
-		*v = !*v;
-
-	float t = *v ? 1.0f : 0.0f;
-
-	ImGuiContext& g = *GImGui;
-	float ANIM_SPEED = 0.08f;
-	if (g.LastActiveId == g.CurrentWindow->GetID(str_id))// && g.LastActiveIdTimer < ANIM_SPEED)
-	{
-		float t_anim = ImSaturate(g.LastActiveIdTimer / ANIM_SPEED);
-		t = *v ? (t_anim) : (1.0f - t_anim);
-	}
- 
-	ImU32 col_bg;
-	if (ImGui::IsItemHovered())
-		col_bg = ImGui::GetColorU32(ImLerp(colors[ImGuiCol_FrameBgHovered], colors[ImGuiCol_ButtonActive], t));
-	else
-		col_bg = ImGui::GetColorU32(ImLerp(colors[ImGuiCol_FrameBg], colors[ImGuiCol_ButtonActive], t));
-
-	draw_list->AddRectFilled(p, ImVec2(p.x + width, p.y + height), col_bg, height * 0.5f);
-	draw_list->AddCircleFilled(ImVec2(p.x + radius + t * (width - radius * 2.0f), p.y + radius), radius - 1.5f, IM_COL32(255, 255, 255, 255));
 }
 
 //-------------------------------------------------------------------------
