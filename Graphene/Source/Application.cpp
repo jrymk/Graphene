@@ -9,27 +9,24 @@
 #include "imgui/imgui_impl_glfw.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "GUE/GUE.h"
+#include "ExceptionHandler.hpp"
+#include "Callbacks.hpp"
 
-static void glfw_error_callback(int error, const char* description) {
-	fprintf(stderr, "Glfw Error %d: %s\n", error, description);
-}
 
 int main() {
-	// Setup window
+
 	glfwSetErrorCallback(glfw_error_callback);
 	if (!glfwInit())
 		return 1;
 
 
-	// Create window with graphics context
-	GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1280, 720, u8"Graphene α", NULL, NULL);
 	if (window == NULL)
 		return 1;
+
 	glfwMakeContextCurrent(window);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-		ERR("Failed to initialize GLAD\n");
 		return false;
 	}
 
@@ -80,6 +77,9 @@ int main() {
 	//ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
 	//IM_ASSERT(font != NULL);
 	io.Fonts->AddFontFromFileTTF("./Manrope-Regular.ttf", 18.0f);
+	io.Fonts->AddFontFromFileTTF("./Roboto-Medium.ttf", 18.0f);
+	io.Fonts->AddFontFromFileTTF("./JetBrainsMono-Regular.ttf", 18.0f);
+	io.Fonts->AddFontFromFileTTF("./msjh.ttf", 18.0f);
 	// Our state
 	bool show_demo_window = true;
 	bool show_another_window = true;

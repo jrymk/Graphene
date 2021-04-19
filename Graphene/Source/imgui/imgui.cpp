@@ -16136,8 +16136,8 @@ void ImGui::ShowMetricsWindow(bool* p_open)
             DebugStartItemPicker();
         SameLine();
         MetricsHelpMarker("Will call the IM_DEBUG_BREAK() macro to break in debugger.\nWarning: If you don't have a debugger attached, this will probably crash.");
-
-        Checkbox("Show windows begin order", &cfg->ShowWindowsBeginOrder);
+        
+        ToggleButton("Show windows begin order", &cfg->ShowWindowsBeginOrder);
         Checkbox("Show windows rectangles", &cfg->ShowWindowsRects);
         SameLine();
         SetNextItemWidth(GetFontSize() * 12);
