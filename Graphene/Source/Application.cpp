@@ -20,11 +20,19 @@ static void useStyle() {
 	ImGuiStyle* style = &ImGui::GetStyle();
 
 	style->FrameRounding = 6.0f;
-	style->GrabRounding = 4.0f;
+	style->GrabRounding = 6.0f;
 	style->PopupRounding = 4.0f;
 	style->ChildRounding = 4.0f;
 	style->TabRounding = 6.0f;
 	style->WindowRounding = 8.0f;
+
+	style->WindowPadding = { 8.0f, 8.0f };
+	style->FramePadding = { 8.0f, 4.0f };
+	style->ItemSpacing = { 8.0f, 8.0f };
+	style->FrameBorderSize = 1.0f;
+
+	style->DisplaySafeAreaPadding.x = 8.0f;
+	style->DisplaySafeAreaPadding.y = 8.0f;
 
 	style->Colors[ImGuiCol_WindowBg].w = 1.0f;
 }
@@ -108,16 +116,16 @@ int main() {
 			static float f = 0.0f;
 			static int counter = 0;
 
-			ImGui::Begin(u8"你好", 0, ImGuiWindowFlags_NoCollapse);                          // Create a window called "Hello, world!" and append into it.
+			ImGui::Begin(u8"你好", 0, ImGuiWindowFlags_NoCollapse);
 
-			ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-			ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+			ImGui::Text("This is some useful text.");
+			ImGui::Checkbox("Demo Window", &show_demo_window);
 			ImGui::Checkbox("Another Window", &show_another_window);
 
-			ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-			ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+			ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+			ImGui::ColorEdit3("clear color", (float*)&clear_color);
 
-			if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+			if (ImGui::Button("Button"))
 				counter++;
 			ImGui::SameLine();
 			ImGui::Text("counter = %d", counter);
