@@ -103,7 +103,6 @@
     <ClCompile Include="Source\imgui\misc\cpp\imgui_stdlib.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Callbacks.hpp" />
     <ClInclude Include="Source\ExceptionHandler.hpp" />
     <ClInclude Include="Source\imgui\imconfig.h" />
     <ClInclude Include="Source\imgui\imgui.h" />
