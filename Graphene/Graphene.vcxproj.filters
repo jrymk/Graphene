@@ -86,5 +86,8 @@
     <ClInclude Include="Source\imgui\addons\imguivariouscontrols\imguivariouscontrols.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\graphene\Graphene.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -145,8 +145,8 @@ int main() {
 	ImGui_ImplOpenGL3_Init("#version 330");
 
 	ImFontConfig config;
-	config.OversampleH = 4;
-	config.OversampleV = 4;
+	config.OversampleH = 8;
+	config.OversampleV = 1;
 	config.MergeMode = false;
 	// default font for Latin characters (default: Manrope)
 	io.Fonts->AddFontFromFileTTF("./Manrope-Regular.ttf", 18.0f, &config, io.Fonts->GetGlyphRangesDefault());
@@ -154,9 +154,14 @@ int main() {
 	config.MergeMode = true;
 	// fallback font for Chinese characters (default: Microsoft JhengHei UI Regular)
 	io.Fonts->AddFontFromFileTTF("./msjh.ttf", 18.0f, &config, io.Fonts->GetGlyphRangesChineseFull());
+	
 	//io.Fonts->AddFontFromFileTTF("./NotoSansTC-Regular.otf", 18.0f, &config, io.Fonts->GetGlyphRangesChineseFull());
 	//io.Fonts->AddFontFromFileTTF("./Roboto-Medium.ttf", 18.0f, &config, io.Fonts->GetGlyphRangesDefault());
 	//io.Fonts->AddFontFromFileTTF("./JetBrainsMono-Regular.ttf", 18.0f, &config, io.Fonts->GetGlyphRangesDefault());
+
+	config.MergeMode = false;
+	ImFont* vertexTextFont = io.Fonts->AddFontFromFileTTF("./JetBrainsMono-Regular.ttf", 36.0f, &config, io.Fonts->GetGlyphRangesDefault());
+
 
 	bool show_demo_window = true;
 	bool show_another_window = true;
@@ -188,6 +193,7 @@ int main() {
 			static bool adding_line = false;
 
 			ImGui::Text("Mouse Left: drag to add lines,\nMouse Right: drag to scroll, click for context menu.");
+			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 			// Typically you would use a BeginChild()/EndChild() pair to benefit from a clipping region + own scrolling.
 			// Here we demonstrate that this can be replaced by simple offsetting + custom drawing + PushClipRect/PopClipRect() calls.
@@ -262,11 +268,20 @@ int main() {
 				for (float y = fmodf(scrolling.y, GRID_STEP); y < canvas_sz.y; y += GRID_STEP)
 					draw_list->AddLine(ImVec2(canvas_p0.x, canvas_p0.y + y), ImVec2(canvas_p1.x, canvas_p0.y + y), IM_COL32(200, 200, 200, 40));
 			}
-			for (int n = 0; n < points.Size; n += 2)
-				draw_list->AddLine(ImVec2(origin.x + points[n].x, origin.y + points[n].y), ImVec2(origin.x + points[n + 1].x, origin.y + points[n + 1].y), IM_COL32(255, 255, 0, 255), 2.0f);
+			for (int n = 0; n < points.Size; n += 2) {
+				draw_list->AddLine(ImVec2(origin.x + points[n].x, origin.y + points[n].y),
+					ImVec2(origin.x + points[n + 1].x, origin.y + points[n + 1].y), IM_COL32(200, 200, 200, 255), 5.0f);
+				draw_list->AddCircleFilled(ImVec2(origin.x + points[n].x, origin.y + points[n].y), 20.0f, IM_COL32(255, 211, 0, 255));
+
+				ImGui::PushFont(vertexTextFont);
+				float font_size = ImGui::GetFontSize() * std::to_string(n / 2).size() / 2;
+				draw_list->AddText(vertexTextFont, 36.0f, ImVec2(origin.x + points[n].x - font_size + (font_size / 2), origin.y + points[n].y - 18.0f),
+					IM_COL32(15, 15, 15, 255), std::to_string(n / 2).c_str(), 0, 0.0f, 0);
+				ImGui::PopFont();
+
+			}
 			draw_list->PopClipRect();
 
-			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 			ImGui::End();
 		}
 

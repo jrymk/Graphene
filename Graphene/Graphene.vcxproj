@@ -105,6 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\ExceptionHandler.hpp" />
+    <ClInclude Include="Source\graphene\Graphene.hpp" />
     <ClInclude Include="Source\imgui\addons\imguivariouscontrols\imguivariouscontrols.h" />
     <ClInclude Include="Source\imgui\imconfig.h" />
     <ClInclude Include="Source\imgui\imgui.h" />
