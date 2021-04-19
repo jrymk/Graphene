@@ -40,17 +40,15 @@ int main() {
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+	// multi viewport is disabled, so windows don't get hidden by the main window
+	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	io.ConfigViewportsNoDecoration = true;
 	io.ConfigViewportsNoDefaultParent = true;
 	io.ConfigWindowsMoveFromTitleBarOnly = true;
 
 	ImGui::StyleColorsLight();
 
-	ImGuiStyle& style = ImGui::GetStyle();
-
-	style.WindowRounding = 0.0f;
-	style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+	useStyle();
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -60,11 +58,16 @@ int main() {
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
 
-	io.Fonts->AddFontFromFileTTF("./Manrope-Regular.ttf", 18.0f);
-	io.Fonts->AddFontFromFileTTF("./Roboto-Medium.ttf", 18.0f);
-	io.Fonts->AddFontFromFileTTF("./JetBrainsMono-Regular.ttf", 18.0f);
-	io.Fonts->AddFontFromFileTTF("./msjh.ttf", 18.0f);
-	io.Fonts->AddFontFromFileTTF("./msjh2.ttf", 18.0f);
+	ImFontConfig config;
+	config.OversampleH = 1;
+	config.OversampleV = 1;
+	config.PixelSnapH = true;
+	config.MergeMode = false;
+	io.Fonts->AddFontFromFileTTF("./msjh.ttf", 16.0f, &config, io.Fonts->GetGlyphRangesChineseFull());
+	io.Fonts->AddFontFromFileTTF("./Manrope-Regular.ttf", 18.0f, &config, io.Fonts->GetGlyphRangesDefault());
+	io.Fonts->AddFontFromFileTTF("./NotoSansTC-Regular.otf", 18.0f, &config, io.Fonts->GetGlyphRangesChineseFull());
+	io.Fonts->AddFontFromFileTTF("./Roboto-Medium.ttf", 18.0f, &config, io.Fonts->GetGlyphRangesDefault());
+	io.Fonts->AddFontFromFileTTF("./JetBrainsMono-Regular.ttf", 18.0f, &config, io.Fonts->GetGlyphRangesDefault());
 
 	bool show_demo_window = true;
 	bool show_another_window = true;
@@ -108,7 +111,7 @@ int main() {
 		}
 
 		if (show_another_window) {
-			ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+			ImGui::Begin("Another Window", &show_another_window, ImGuiWindowFlags_NoCollapse);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
 			ImGui::Text("Hello from another window!");
 			if (ImGui::Button("Close Me"))
 				show_another_window = false;
