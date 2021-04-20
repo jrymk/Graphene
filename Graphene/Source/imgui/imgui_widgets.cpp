@@ -6304,7 +6304,7 @@ bool ImGui::ListBox(const char* label, int* current_item, bool (*items_getter)(v
 // - PlotLines()
 // - PlotHistogram()
 //-------------------------------------------------------------------------
-// Plot/Graph widgets are not very good.
+// Plot/Structure widgets are not very good.
 // Consider writing your own, or using a third-party one, see:
 // - ImPlot https://github.com/epezent/implot
 // - others https://github.com/ocornut/imgui/wiki/Useful-Widgets

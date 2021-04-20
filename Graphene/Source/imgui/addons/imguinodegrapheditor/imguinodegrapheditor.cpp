@@ -1402,7 +1402,7 @@ void NodeGraphEditor::render()
 
 			draw_list->ChannelsMerge();
 
-			//#   define DEBUG_NODE_CULLING     // Debug works for a single Node Graph Editor present only
+			//#   define DEBUG_NODE_CULLING     // Debug works for a single Node Structure Editor present only
 #   ifdef DEBUG_NODE_CULLING
 			static int lastNumberOfCulledNodes=0;
 			if (enableNodeCulling && numberOfCulledNodes!=lastNumberOfCulledNodes) {
@@ -1412,7 +1412,7 @@ void NodeGraphEditor::render()
 #   undef DEBUG_NODE_CULLING
 #   endif //DEBUG_NODE_CULLING
 
-			//#   define DEBUG_LINK_CULLING     // Debug works for a single Node Graph Editor present only
+			//#   define DEBUG_LINK_CULLING     // Debug works for a single Node Structure Editor present only
 #   ifdef DEBUG_LINK_CULLING
 			static int lastNumberOfCulledLinks=0;
 			if (enableLinkCulling && numberOfCulledLinks!=lastNumberOfCulledLinks) {

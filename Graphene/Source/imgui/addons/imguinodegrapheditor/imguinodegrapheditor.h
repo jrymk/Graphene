@@ -13,7 +13,7 @@
  *   // Basic usage:
     // Here we create a window (please skip if already in a window)
     ImGui::SetNextWindowSize(ImVec2(700,600), ImGuiSetCond_FirstUseEver);
-    if (ImGui::Begin("Example: Custom Node Graph", NULL))
+    if (ImGui::Begin("Example: Custom Node Structure", NULL))
     {
         ImGui::TestNodeGraphEditor();   // see its code for further info
 
@@ -48,7 +48,7 @@
 /*
 -> BUG: When MMB drags the background ImGui::GetIO().WantMouseCapture incorrectly returns false (because g.ActiveID==0; no idea on how to fix this)
         This happens only with the glfw3 binding (not sure if it depends on its version or not)
--> FIXED: Interference of rectangular selections in multiple Node Graph Editors
+-> FIXED: Interference of rectangular selections in multiple Node Structure Editors
 -> FIXED: When links are very horizontal, holding SHIFT down, they are not hoverable (because the AABB's height of the link is zero).
 -> FIXED: https://github.com/Flix01/imgui/issues/16
 */

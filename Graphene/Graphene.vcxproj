@@ -108,7 +108,8 @@
   <ItemGroup>
     <ClInclude Include="Source\ExceptionHandler.hpp" />
     <ClInclude Include="Source\graphene\Graphene.h" />
-    <ClInclude Include="Source\graphene\Structures.hpp" />
+    <ClInclude Include="Source\graphene\Structure.hpp" />
+    <ClInclude Include="Source\graphene\Graph.hpp" />
     <ClInclude Include="Source\imgui\addons\imguinodegrapheditor\imguinodegrapheditor.h" />
     <ClInclude Include="Source\imgui\addons\imguivariouscontrols\imguivariouscontrols.h" />
     <ClInclude Include="Source\imgui\imconfig.h" />
