@@ -29,20 +29,39 @@ namespace Graphene {
 			NormCoord operator+(NormCoord a) {
 				return NormCoord(this->x + a.x, this->y + a.y);
 			}
+
 			NormCoord operator-(NormCoord a) {
 				return NormCoord(this->x - a.x, this->y - a.y);
 			}
+
 			NormCoord operator*(double a) {
 				return NormCoord(this->x * a, this->y * a);
 			}
+
 			NormCoord operator/(double a) {
 				return NormCoord(this->x / a, this->y / a);
 			}
+
 			double operator*(NormCoord a) {
 				return this->x * a.x + this->y * a.y;
 			}
+
 			double operator^(NormCoord a) {
 				return this->x * a.y - this->y * a.x;
+			}
+
+			double length() {
+				return sqrt(this->x * this->x + this->y + this->y);
+			}
+
+			void normalize() {
+				double len = this->length();
+				this->x = this->x / len;
+				this->y = this->y / len;
+			}
+
+			friend std::ostream& operator<<(std::ostream& os, const NormCoord& nd) {
+				return std::cout << "(" << nd.x << ", " << nd.y << ")";
 			}
 		};
 
