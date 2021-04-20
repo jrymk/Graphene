@@ -48,6 +48,9 @@
     <ClCompile Include="Source\imgui\addons\imguivariouscontrols\imguivariouscontrols.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\imgui\addons\imguinodegrapheditor\imguinodegrapheditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\ExceptionHandler.hpp">
@@ -87,6 +90,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\graphene\Graphene.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\imgui\addons\imguinodegrapheditor\imguinodegrapheditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -93,6 +93,7 @@
   <ItemGroup>
     <ClCompile Include="..\Dependencies\glad\src\glad.c" />
     <ClCompile Include="Source\Application.cpp" />
+    <ClCompile Include="Source\imgui\addons\imguinodegrapheditor\imguinodegrapheditor.cpp" />
     <ClCompile Include="Source\imgui\addons\imguivariouscontrols\imguivariouscontrols.cpp" />
     <ClCompile Include="Source\imgui\imgui.cpp" />
     <ClCompile Include="Source\imgui\imgui_demo.cpp" />
@@ -106,6 +107,7 @@
   <ItemGroup>
     <ClInclude Include="Source\ExceptionHandler.hpp" />
     <ClInclude Include="Source\graphene\Graphene.hpp" />
+    <ClInclude Include="Source\imgui\addons\imguinodegrapheditor\imguinodegrapheditor.h" />
     <ClInclude Include="Source\imgui\addons\imguivariouscontrols\imguivariouscontrols.h" />
     <ClInclude Include="Source\imgui\imconfig.h" />
     <ClInclude Include="Source\imgui\imgui.h" />

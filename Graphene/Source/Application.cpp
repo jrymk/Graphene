@@ -10,7 +10,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "ExceptionHandler.hpp"
-#include "imgui/addons/imguivariouscontrols/imguivariouscontrols.h"
+#include "imgui/addons/imguinodegrapheditor/imguinodegrapheditor.h"
 
 
 static void glfw_error_callback(int error, const char* description) {
@@ -106,7 +106,7 @@ int main() {
 
 	glfwWindowHint(GLFW_MAXIMIZED, true);
 
-	GLFWwindow* window = glfwCreateWindow(1280, 720, u8"Graphene α", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1280, 720, u8"Graphene pre-α", NULL, NULL);
 	if (window == NULL)
 		return 2;
 
@@ -145,16 +145,16 @@ int main() {
 	ImGui_ImplOpenGL3_Init("#version 330");
 
 	ImFontConfig config;
-	config.OversampleH = 8;
+	config.OversampleH = 2;
 	config.OversampleV = 1;
 	config.MergeMode = false;
 	// default font for Latin characters (default: Manrope)
-	io.Fonts->AddFontFromFileTTF("./Manrope-Regular.ttf", 18.0f, &config, io.Fonts->GetGlyphRangesDefault());
+	io.Fonts->AddFontFromFileTTF("./Manrope-Regular.ttf", 16.0f, &config, io.Fonts->GetGlyphRangesDefault());
 
 	config.MergeMode = true;
 	// fallback font for Chinese characters (default: Microsoft JhengHei UI Regular)
-	io.Fonts->AddFontFromFileTTF("./msjh.ttf", 18.0f, &config, io.Fonts->GetGlyphRangesChineseFull());
-	
+	io.Fonts->AddFontFromFileTTF("./msjh.ttf", 16.0f, &config, io.Fonts->GetGlyphRangesChineseFull());
+
 	//io.Fonts->AddFontFromFileTTF("./NotoSansTC-Regular.otf", 18.0f, &config, io.Fonts->GetGlyphRangesChineseFull());
 	//io.Fonts->AddFontFromFileTTF("./Roboto-Medium.ttf", 18.0f, &config, io.Fonts->GetGlyphRangesDefault());
 	//io.Fonts->AddFontFromFileTTF("./JetBrainsMono-Regular.ttf", 18.0f, &config, io.Fonts->GetGlyphRangesDefault());
@@ -163,11 +163,10 @@ int main() {
 	ImFont* vertexTextFont = io.Fonts->AddFontFromFileTTF("./JetBrainsMono-Regular.ttf", 36.0f, &config, io.Fonts->GetGlyphRangesDefault());
 
 
-	bool show_demo_window = true;
-	bool show_another_window = true;
-
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+	std::vector<std::vector<bool>> graphene_graph;
+	int graphene_edges = 5;
 
 	while (!glfwWindowShouldClose(window)) {
 
@@ -178,6 +177,72 @@ int main() {
 		ImGui::NewFrame();
 
 		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+
+		static bool show_demo_window;
+		static bool graphene_live_update = false;
+
+		{
+			ImGui::Begin("Toolbar");
+
+			ImGui::Checkbox("Enable live update", &graphene_live_update);
+			ImGui::SameLine();
+			if (ImGui::Button("Update graph")) {
+
+			}
+
+			ImGui::BeginTabBar("Input mode#graph_mode");
+
+			if (ImGui::BeginTabItem("Raw input")) {
+
+				static char text[65536] = "";
+				static ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput;
+
+				ImGui::InputTextMultiline("##source", text, IM_ARRAYSIZE(text), ImVec2(-FLT_MIN, -FLT_MIN), flags);
+
+				ImGui::EndTabItem();
+			}
+
+
+			if (ImGui::BeginTabItem("Adjacency Matrix")) {
+
+				ImGui::SliderInt("Vertices", &graphene_edges, 0, 20, "%d", 0);
+
+				graphene_graph.resize(graphene_edges);
+				for (int i = 0; i < graphene_edges; i++)
+					graphene_graph[i].resize(graphene_edges);
+
+
+				if (ImGui::BeginTable("checkbocGridTable", graphene_edges + 1, 1 << 13, ImVec2(0, 0), 0.0)) {
+					ImGui::TableNextRow();
+					ImGui::TableNextColumn();
+					for (int column = 0; column < graphene_edges; column++) {
+						ImGui::TableNextColumn();
+						ImGui::Text(std::to_string(column).c_str());
+					}
+					for (int row = 0; row < graphene_edges; row++) {
+						ImGui::TableNextRow();
+						ImGui::TableNextColumn();
+						ImGui::Text(std::to_string(row).c_str());
+
+						for (int column = 0; column < graphene_edges; column++) {
+							ImGui::TableNextColumn();
+
+							bool check = graphene_graph[row][column];
+							ImGui::Checkbox((std::string("##") + std::to_string(row) + std::string(",") + std::to_string(column)).c_str(), &check);
+							graphene_graph[row][column] = check;
+							graphene_graph[column][row] = check;
+						}
+					}
+					ImGui::EndTable();
+				}
+
+				ImGui::EndTabItem();
+			}
+
+
+			ImGui::End();
+		}
+
 
 		if (show_demo_window)
 			ImGui::ShowDemoWindow(&show_demo_window);
@@ -213,18 +278,29 @@ int main() {
 			if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
 			ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
 
-			// Draw border and background color
-			ImGuiIO& io = ImGui::GetIO();
-			ImDrawList* draw_list = ImGui::GetWindowDrawList();
-			draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));
-			draw_list->AddRect(canvas_p0, canvas_p1, IM_COL32(255, 255, 255, 255));
-
 			// This will catch our interactions
 			ImGui::InvisibleButton("canvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
 			const bool is_hovered = ImGui::IsItemHovered(); // Hovered
 			const bool is_active = ImGui::IsItemActive();   // Held
 			const ImVec2 origin(canvas_p0.x + scrolling.x, canvas_p0.y + scrolling.y); // Lock scrolled origin
 			const ImVec2 mouse_pos_in_canvas(io.MousePos.x - origin.x, io.MousePos.y - origin.y);
+
+			// Draw grid + all lines in the canvas
+			ImGuiIO& io = ImGui::GetIO();
+			ImDrawList* draw_list = ImGui::GetWindowDrawList();
+			draw_list->PushClipRect(canvas_p0, canvas_p1, true);
+
+			// Draw border and background color
+			draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(0, 0, 0, 255));
+			draw_list->AddRectFilled(ImVec2(origin.x, origin.y), ImVec2(origin.x + 1000.0f, origin.y + 1000.0f), IM_COL32(50, 50, 50, 255));
+
+			// Pan (we use a zero mouse threshold when there's no context menu)
+			// You may decide to make that threshold dynamic based on whether the mouse is hovering something etc.
+			const float mouse_threshold_for_pan = opt_enable_context_menu ? -1.0f : 0.0f;
+			if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan)) {
+				scrolling.x += io.MouseDelta.x;
+				scrolling.y += io.MouseDelta.y;
+			}
 
 			// Add first and second point
 			if (is_hovered && !adding_line && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
@@ -236,14 +312,6 @@ int main() {
 				points.back() = mouse_pos_in_canvas;
 				if (!ImGui::IsMouseDown(ImGuiMouseButton_Left))
 					adding_line = false;
-			}
-
-			// Pan (we use a zero mouse threshold when there's no context menu)
-			// You may decide to make that threshold dynamic based on whether the mouse is hovering something etc.
-			const float mouse_threshold_for_pan = opt_enable_context_menu ? -1.0f : 0.0f;
-			if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan)) {
-				scrolling.x += io.MouseDelta.x;
-				scrolling.y += io.MouseDelta.y;
 			}
 
 			// Context menu (under default mouse threshold)
@@ -259,14 +327,18 @@ int main() {
 				ImGui::EndPopup();
 			}
 
-			// Draw grid + all lines in the canvas
-			draw_list->PushClipRect(canvas_p0, canvas_p1, true);
 			if (opt_enable_grid) {
-				const float GRID_STEP = 64.0f;
-				for (float x = fmodf(scrolling.x, GRID_STEP); x < canvas_sz.x; x += GRID_STEP)
-					draw_list->AddLine(ImVec2(canvas_p0.x + x, canvas_p0.y), ImVec2(canvas_p0.x + x, canvas_p1.y), IM_COL32(200, 200, 200, 40));
-				for (float y = fmodf(scrolling.y, GRID_STEP); y < canvas_sz.y; y += GRID_STEP)
-					draw_list->AddLine(ImVec2(canvas_p0.x, canvas_p0.y + y), ImVec2(canvas_p1.x, canvas_p0.y + y), IM_COL32(200, 200, 200, 40));
+				const float GRID_STEP = 50.0f;
+				for (float x = fmodf(scrolling.x, GRID_STEP); x < canvas_sz.x; x += GRID_STEP) {
+					if (canvas_p0.x + x >= origin.x && canvas_p0.x + x <= origin.x + 1000.0f)
+						draw_list->AddLine(ImVec2(canvas_p0.x + x, max(canvas_p0.y, origin.y)),
+							ImVec2(canvas_p0.x + x, min(canvas_p1.y, origin.y + 1000.0f)), IM_COL32(200, 200, 200, 40));
+				}
+				for (float y = fmodf(scrolling.y, GRID_STEP); y < canvas_sz.y; y += GRID_STEP) {
+					if (canvas_p0.y + y >= origin.y && canvas_p0.y + y <= origin.y + 1000.0f)
+						draw_list->AddLine(ImVec2(max(canvas_p0.x, origin.x), canvas_p0.y + y),
+							ImVec2(min(canvas_p1.x, origin.x + 1000.0f), canvas_p0.y + y), IM_COL32(200, 200, 200, 40));
+				}
 			}
 			for (int n = 0; n < points.Size; n += 2) {
 				draw_list->AddLine(ImVec2(origin.x + points[n].x, origin.y + points[n].y),
@@ -289,9 +361,9 @@ int main() {
 			static float f = 0.0f;
 			static int counter = 0;
 
-			ImGui::Begin(u8"中文標題", 0, ImGuiWindowFlags_NoCollapse);
+			ImGui::Begin(u8"Dear ImGUI", 0, ImGuiWindowFlags_NoCollapse);
 
-			ImGui::Text(u8"我是中文文字。");
+			ImGui::Text(u8"Graphene pre-alpha");
 			ImGui::Checkbox(u8"顯示演示視窗", &show_demo_window);
 
 			ImGui::SliderFloat(u8"浮點數", &f, 0.0f, 1.0f);
