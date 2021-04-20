@@ -50,42 +50,35 @@ namespace Graphene {
 			return sqrt(dx * dx + dy * dy);
 		}
 
-		double length(Structure::NormCoord a) {
+		double length(Structure::Vec2f a) {
 			return sqrt(a.x * a.x + a.y * a.y);
 		}
 
-		Structure::NormCoord normalized(Structure::NormCoord a) {
-			double len = length(a);
-			if (len == 0) 
-				return a;
-			return Structure::NormCoord(a.x / len, a.y / len);
-		}
-
-		Structure::NormCoord attractForce(Structure::Vertex& u, Structure::Vertex& v) {
+		Structure::Vec2f attractForce(Structure::Vertex& u, Structure::Vertex& v) {
 			double dis = distance(u, v);
 			if (dis == 0.0) 
-				return Structure::NormCoord(0, 0);
+				return Structure::Vec2f(0, 0);
 			double coeff = m_c1 * log10(dis / m_c2);
-			return normalized((v.coord - u.coord) * coeff);
+			return (v.coord - u.coord) * coeff;
 		}
 
-		Structure::NormCoord repelForce(Structure::Vertex& u, Structure::Vertex& v) {
+		Structure::Vec2f repelForce(Structure::Vertex& u, Structure::Vertex& v) {
 			double dis = distance(u, v);
 			if (dis == 0.0) 
-				return Structure::NormCoord(0, 0);
+				return Structure::Vec2f(0, 0);
 			double coeff = -m_c3 / sqrt(dis);
-			return normalized((v.coord - u.coord) * coeff);
+			return (v.coord - u.coord) * coeff;
 		}
 
 		void initializePos() {
 			for (int i = 0; i < (int)m_graph->verticies.size(); i++) {
-				m_graph->verticies[i].coord = Structure::NormCoord(genRandom(), genRandom());
+				m_graph->verticies[i].coord = Structure::Vec2f(genRandom(), genRandom());
 			}
 		}
 
 		void updatePos() {
 			for (std::vector<Structure::Vertex>::iterator u = m_graph->verticies.begin(); u != m_graph->verticies.end(); u++) {
-				Structure::NormCoord resultForce(0, 0);
+				Structure::Vec2f resultForce(0, 0);
 				for (std::vector<Structure::Vertex>::iterator v = m_graph->verticies.begin(); v != m_graph->verticies.end(); v++) {
 					resultForce = resultForce + attractForce(*u, *v);
 				}
@@ -93,7 +86,6 @@ namespace Graphene {
 					resultForce = resultForce + repelForce(*u, *v);
 				}
 				u->coord = u->coord + resultForce * m_c4;
-				u->coord.normalize();
 			}
 			//for (vector<Vertex>::iterator u = graphene->verticies.begin(); u != graphene->verticies.end(); u++) {
 			//	u->coord.normalize();

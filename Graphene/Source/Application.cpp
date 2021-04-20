@@ -1,10 +1,12 @@
 ﻿#include <cstdio>
 #include <cstdlib>
 #include <string>
+#include <sstream>
 #include <vector>
 #include <iostream>
 #include <fstream>
 #include "imgui/imgui.h"
+#include "imgui/imgui_internal.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
 #include "imgui/backends/imgui_impl_glfw.h"
 #include <glad/glad.h>
@@ -156,18 +158,22 @@ int main() {
 	// fallback font for Chinese characters (default: Microsoft JhengHei UI Regular)
 	io.Fonts->AddFontFromFileTTF("./msjh.ttf", 16.0f, &config, io.Fonts->GetGlyphRangesChineseFull());
 
-	//io.Fonts->AddFontFromFileTTF("./NotoSansTC-Regular.otf", 18.0f, &config, io.Fonts->GetGlyphRangesChineseFull());
-	//io.Fonts->AddFontFromFileTTF("./Roboto-Medium.ttf", 18.0f, &config, io.Fonts->GetGlyphRangesDefault());
-	//io.Fonts->AddFontFromFileTTF("./JetBrainsMono-Regular.ttf", 18.0f, &config, io.Fonts->GetGlyphRangesDefault());
-
 	config.MergeMode = false;
 	ImFont* vertexTextFont = io.Fonts->AddFontFromFileTTF("./JetBrainsMono-Regular.ttf", 36.0f, &config, io.Fonts->GetGlyphRangesDefault());
+
 
 
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	std::vector<std::vector<bool>> graphene_graph;
-	int graphene_edges = 5;
+
+	int graphene_vertices = 5;
+
+	bool use_normalized = true;
+
+	Graphene::Graph graph;
+	Graphene::Core core(graph);
+
 
 	while (!glfwWindowShouldClose(window)) {
 
@@ -180,23 +186,96 @@ int main() {
 		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
 		static bool show_demo_window;
-		static bool graphene_live_update = false;
+		static bool graphene_live_update;
 
 		{
 			ImGui::Begin("Toolbar");
 
 			ImGui::Checkbox("Enable live update", &graphene_live_update);
-			ImGui::SameLine();
-			if (ImGui::Button("Update graph")) {
 
+			ImGui::SameLine();
+
+			if (ImGui::Button("Update graph") || graphene_live_update) {
+				core.updatePos();
 			}
 
-			ImGui::BeginTabBar("Input mode#graph_mode");
+		}
+
+		{
+			ImGui::Begin("Vertex Info");
+
+			static ImGuiTableFlags flags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_Hideable;
+
+			ImVec2 outer_size = ImVec2(0.0f, 0.0f);
+			if (ImGui::BeginTable("table_scrollx", 5, flags, outer_size)) {
+
+				ImGui::TableSetupScrollFreeze(1, 1);
+				ImGui::TableSetupColumn("Vertex #", ImGuiTableColumnFlags_NoHide); // Make the first column not hideable to match our use of TableSetupScrollFreeze()
+				ImGui::TableSetupColumn("PosX");
+				ImGui::TableSetupColumn("PosY");
+				ImGui::TableSetupColumn("NormX");
+				ImGui::TableSetupColumn("MormY");
+
+				ImGui::TableHeadersRow();
+				for (int vertex = 0; vertex < graph.totalVertex; vertex++) {
+					ImGui::TableNextRow();
+
+					for (int column = 0; column < 5; column++) {
+
+						if (!ImGui::TableSetColumnIndex(column) && column > 0)
+							continue;
+
+						switch (column) {
+						case 0:
+							ImGui::Text("%d", vertex);
+							break;
+						case 1:
+							ImGui::Text("%f", graph.verticies[vertex].coord.x);
+							break;
+						case 2:
+							ImGui::Text("%f", graph.verticies[vertex].coord.y);
+							break;
+						case 3:
+							ImGui::Text("%f", graph.verticies[vertex].normalized.x);
+							break;
+						case 4:
+							ImGui::Text("%f", graph.verticies[vertex].normalized.y);
+							break;
+
+						}
+
+					}
+
+				}
+				ImGui::EndTable();
+			}
+
+			ImGui::End();
+		}
+
+
+		{
+			ImGui::Begin("Input");
+
+			ImGui::BeginTabBar("input_method");
 
 			if (ImGui::BeginTabItem("Raw input")) {
-
 				static char text[65536] = "";
 				static ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput;
+
+				if (ImGui::Button("Update")) {
+					std::stringstream ss;
+					ss << text;
+					int v, e;
+					ss >> v >> e;
+					std::vector<std::pair<std::pair<int, int>, bool>> temp_graph;
+					for (int i = 0; i < e; i++) {
+						int a, b;
+						ss >> a >> b;
+						temp_graph.push_back({ { a, b }, false });
+					}
+					graph.initialize(v, e, temp_graph);
+				}
 
 				ImGui::InputTextMultiline("##source", text, IM_ARRAYSIZE(text), ImVec2(-FLT_MIN, -FLT_MIN), flags);
 
@@ -205,41 +284,71 @@ int main() {
 
 
 			if (ImGui::BeginTabItem("Adjacency Matrix")) {
+				bool check_update = false;
+				int prev_vertices = graphene_vertices;
 
-				ImGui::SliderInt("Vertices", &graphene_edges, 0, 20, "%d", 0);
+				ImGui::SliderInt("Vertices", &graphene_vertices, 0, 20, "%d", 0);
+				if (prev_vertices != graphene_vertices)
+					check_update = true;
 
-				graphene_graph.resize(graphene_edges);
-				for (int i = 0; i < graphene_edges; i++)
-					graphene_graph[i].resize(graphene_edges);
+				graphene_graph.resize(graphene_vertices);
+				for (int i = 0; i < graphene_vertices; i++)
+					graphene_graph[i].resize(graphene_vertices);
 
 
-				if (ImGui::BeginTable("checkbocGridTable", graphene_edges + 1, 1 << 13, ImVec2(0, 0), 0.0)) {
+				if (ImGui::BeginTable("checkbocGridTable", graphene_vertices + 1, 1 << 13, ImVec2(0, 0), 0.0)) {
 					ImGui::TableNextRow();
 					ImGui::TableNextColumn();
-					for (int column = 0; column < graphene_edges; column++) {
+					for (int column = 0; column < graphene_vertices; column++) {
 						ImGui::TableNextColumn();
 						ImGui::Text(std::to_string(column).c_str());
 					}
-					for (int row = 0; row < graphene_edges; row++) {
+					for (int row = 0; row < graphene_vertices; row++) {
 						ImGui::TableNextRow();
 						ImGui::TableNextColumn();
 						ImGui::Text(std::to_string(row).c_str());
 
-						for (int column = 0; column < graphene_edges; column++) {
+						for (int column = 0; column < graphene_vertices; column++) {
 							ImGui::TableNextColumn();
 
 							bool check = graphene_graph[row][column];
+							bool prevCheck = check;
 							ImGui::Checkbox((std::string("##") + std::to_string(row) + std::string(",") + std::to_string(column)).c_str(), &check);
 							graphene_graph[row][column] = check;
 							graphene_graph[column][row] = check;
+
+							if (prevCheck != check)
+								check_update = true;
 						}
+
 					}
 					ImGui::EndTable();
 				}
 
 				ImGui::EndTabItem();
+
+
+				if (check_update) {
+					int tickCount = 0;
+					std::vector<std::pair<std::pair<int, int>, bool>> temp_graph;
+
+					for (int i = 0; i < graphene_vertices; i++) {
+						for (int j = 0; j < graphene_vertices; j++) {
+							if (graphene_graph[i][j]) {
+								if (i >= j) {
+									tickCount++;
+									temp_graph.push_back({ {i, j}, false });
+								}
+							}
+						}
+					}
+
+					graph.initialize(graphene_vertices, tickCount, temp_graph);
+				}
+
 			}
 
+			ImGui::EndTabBar();
 
 			ImGui::End();
 		}
@@ -252,14 +361,18 @@ int main() {
 
 			ImGui::Begin(u8"Graphene", 0, ImGuiWindowFlags_NoCollapse);
 
+			static float zoomLevel = 800.0f;
+			static float canvasMargin = 50.0f;
+
+			ImGui::SliderFloat("Zoom level", &zoomLevel, 50.0f, 2000.0f);
+			ImGui::SameLine();
+			ImGui::Checkbox("Normalized", &use_normalized);
+
 			static ImVector<ImVec2> points;
 			static ImVec2 scrolling(0.0f, 0.0f);
 			static bool opt_enable_grid = true;
 			static bool opt_enable_context_menu = true;
 			static bool adding_line = false;
-
-			ImGui::Text("Mouse Left: drag to add lines,\nMouse Right: drag to scroll, click for context menu.");
-			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 			// Typically you would use a BeginChild()/EndChild() pair to benefit from a clipping region + own scrolling.
 			// Here we demonstrate that this can be replaced by simple offsetting + custom drawing + PushClipRect/PopClipRect() calls.
@@ -292,8 +405,9 @@ int main() {
 			draw_list->PushClipRect(canvas_p0, canvas_p1, true);
 
 			// Draw border and background color
-			draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(0, 0, 0, 255));
-			draw_list->AddRectFilled(ImVec2(origin.x, origin.y), ImVec2(origin.x + 1000.0f, origin.y + 1000.0f), IM_COL32(50, 50, 50, 255));
+			draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(0, 0, 0, 255), 8.0f, 0);
+			draw_list->AddRectFilled(ImVec2(origin.x - canvasMargin, origin.y - canvasMargin),
+				ImVec2(origin.x + zoomLevel + canvasMargin, origin.y + zoomLevel + canvasMargin), IM_COL32(50, 50, 50, 255), 8.0f, 0);
 
 			// Pan (we use a zero mouse threshold when there's no context menu)
 			// You may decide to make that threshold dynamic based on whether the mouse is hovering something etc.
@@ -315,44 +429,87 @@ int main() {
 					adding_line = false;
 			}
 
-			// Context menu (under default mouse threshold)
-			ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
-			if (opt_enable_context_menu && ImGui::IsMouseReleased(ImGuiMouseButton_Right) && drag_delta.x == 0.0f && drag_delta.y == 0.0f)
-				ImGui::OpenPopupOnItemClick("context");
-			if (ImGui::BeginPopup("context")) {
-				if (adding_line)
-					points.resize(points.size() - 2);
-				adding_line = false;
-				if (ImGui::MenuItem("Remove one", NULL, false, points.Size > 0)) { points.resize(points.size() - 2); }
-				if (ImGui::MenuItem("Remove all", NULL, false, points.Size > 0)) { points.clear(); }
-				ImGui::EndPopup();
-			}
 
 			if (opt_enable_grid) {
-				const float GRID_STEP = 50.0f;
-				for (float x = fmodf(scrolling.x, GRID_STEP); x < canvas_sz.x; x += GRID_STEP) {
-					if (canvas_p0.x + x >= origin.x && canvas_p0.x + x <= origin.x + 1000.0f)
+				const float GRID_STEP = zoomLevel / 10.0f;
+				for (float x = fmodf(scrolling.x, GRID_STEP); x <= canvas_sz.x; x += GRID_STEP) {
+					if (canvas_p0.x + x >= origin.x && canvas_p0.x + x <= origin.x + zoomLevel)
 						draw_list->AddLine(ImVec2(canvas_p0.x + x, max(canvas_p0.y, origin.y)),
-							ImVec2(canvas_p0.x + x, min(canvas_p1.y, origin.y + 1000.0f)), IM_COL32(200, 200, 200, 40));
+							ImVec2(canvas_p0.x + x, min(canvas_p1.y, origin.y + zoomLevel)), IM_COL32(90, 90, 90, 255), 1.0f);
 				}
-				for (float y = fmodf(scrolling.y, GRID_STEP); y < canvas_sz.y; y += GRID_STEP) {
-					if (canvas_p0.y + y >= origin.y && canvas_p0.y + y <= origin.y + 1000.0f)
+				for (float y = fmodf(scrolling.y, GRID_STEP); y <= canvas_sz.y; y += GRID_STEP) {
+					if (canvas_p0.y + y >= origin.y && canvas_p0.y + y <= origin.y + zoomLevel)
 						draw_list->AddLine(ImVec2(max(canvas_p0.x, origin.x), canvas_p0.y + y),
-							ImVec2(min(canvas_p1.x, origin.x + 1000.0f), canvas_p0.y + y), IM_COL32(200, 200, 200, 40));
+							ImVec2(min(canvas_p1.x, origin.x + zoomLevel), canvas_p0.y + y), IM_COL32(90, 90, 90, 255), 1.0f);
+				}
+
+				draw_list->AddRect(ImVec2(origin.x, origin.y),
+					ImVec2(origin.x + zoomLevel, origin.y + zoomLevel), IM_COL32(90, 90, 90, 255), 5.0f, 0, 2.0f);
+			}
+
+			float x_max = -1000000000.0;
+			float x_min = 1000000000.0;
+			float y_max = -1000000000.0;
+			float y_min = 1000000000.0;
+
+			for (int i = 0; i < graph.totalVertex; i++) {
+				x_max = max(x_max, graph.verticies[i].coord.x);
+				x_min = min(x_min, graph.verticies[i].coord.x);
+				y_max = max(y_max, graph.verticies[i].coord.y);
+				y_min = min(y_min, graph.verticies[i].coord.y);
+			}
+
+
+			for (int i = 0; i < graph.totalEdge; i++) {
+				if (use_normalized) {
+					draw_list->AddLine(
+						ImVec2(origin.x + ((graph.allEdges[i].startingVertex->coord.x - x_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel),
+							origin.y + ((graph.allEdges[i].startingVertex->coord.y - y_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel)),
+						ImVec2(origin.x + ((graph.allEdges[i].endingVertex->coord.x - x_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel),
+							origin.y + ((graph.allEdges[i].endingVertex->coord.y - y_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel)),
+						IM_COL32(200, 200, 200, 255), 5.0f);
+				}
+				else {
+					draw_list->AddLine(
+						ImVec2(origin.x + (((graph.allEdges[i].startingVertex->coord.x + 2147483647.0f) / 4294967295.0f) * zoomLevel),
+							(((graph.allEdges[i].startingVertex->coord.y + 2147483647.0f) / 4294967295.0f) * zoomLevel)),
+						ImVec2((((graph.allEdges[i].endingVertex->coord.x + 2147483647.0f) / 4294967295.0f) * zoomLevel),
+							(((graph.allEdges[i].endingVertex->coord.y + 2147483647.0f) / 4294967295.0f) * zoomLevel)),
+						IM_COL32(200, 200, 200, 255), 5.0f);
 				}
 			}
-			for (int n = 0; n < points.Size; n += 2) {
-				draw_list->AddLine(ImVec2(origin.x + points[n].x, origin.y + points[n].y),
-					ImVec2(origin.x + points[n + 1].x, origin.y + points[n + 1].y), IM_COL32(200, 200, 200, 255), 5.0f);
-				draw_list->AddCircleFilled(ImVec2(origin.x + points[n].x, origin.y + points[n].y), 20.0f, IM_COL32(255, 211, 0, 255));
 
+			for (int i = 0; i < graph.totalVertex; i++) {
+				graph.verticies[i].normalized.x = (graph.verticies[i].coord.x - x_min) / max((x_max - x_min), (y_max - y_min));
+				graph.verticies[i].normalized.y = (graph.verticies[i].coord.y - y_min) / max((x_max - x_min), (y_max - y_min));
+
+				if (use_normalized) {
+					draw_list->AddCircleFilled(ImVec2(origin.x + ((graph.verticies[i].coord.x - x_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel),
+						origin.y + ((graph.verticies[i].coord.y - y_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel)), 20.0f, IM_COL32(255, 211, 0, 255));
+				}
+				else {
+					draw_list->AddCircleFilled(ImVec2(origin.x + (((graph.verticies[i].coord.x + 2147483647.0f) / 4294967295.0f) * zoomLevel),
+						origin.y + (((graph.verticies[i].coord.y + 2147483647.0f) / 4294967295.0f) * zoomLevel)), 20.0f, IM_COL32(255, 211, 0, 255));
+
+				}
 				ImGui::PushFont(vertexTextFont);
-				float font_size = ImGui::GetFontSize() * std::to_string(n / 2).size() / 2;
-				draw_list->AddText(vertexTextFont, 36.0f, ImVec2(origin.x + points[n].x - font_size + (font_size / 2), origin.y + points[n].y - 18.0f),
-					IM_COL32(15, 15, 15, 255), std::to_string(n / 2).c_str(), 0, 0.0f, 0);
-				ImGui::PopFont();
+				float font_size = ImGui::GetFontSize() * std::to_string(i).size() / 2;
 
+				if (use_normalized) {
+					draw_list->AddText(vertexTextFont, 36.0f,
+						ImVec2(origin.x + ((graph.verticies[i].coord.x - x_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel) - font_size + (font_size / 2),
+							origin.y + ((graph.verticies[i].coord.y - y_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel) - 18.0f),
+						IM_COL32(15, 15, 15, 255), std::to_string(i).c_str(), 0, 0.0f, 0);
+				}
+				else {
+					draw_list->AddText(vertexTextFont, 36.0f,
+						ImVec2(origin.x + (((graph.verticies[i].coord.x + 2147483647.0f) / 4294967295.0f) * zoomLevel) - font_size + (font_size / 2),
+							origin.y + (((graph.verticies[i].coord.y + 2147483647.0f) / 4294967295.0f) * zoomLevel) - 18.0f),
+						IM_COL32(15, 15, 15, 255), std::to_string(i).c_str(), 0, 0.0f, 0);
+				}
+				ImGui::PopFont();
 			}
+
 			draw_list->PopClipRect();
 
 			ImGui::End();
@@ -397,6 +554,9 @@ int main() {
 			ImGui::RenderPlatformWindowsDefault();
 			glfwMakeContextCurrent(backup_current_context);
 		}
+
+		ExceptionHandler eh;
+		eh.flushExceptionsToIOStream();
 
 		glfwSwapBuffers(window);
 	}

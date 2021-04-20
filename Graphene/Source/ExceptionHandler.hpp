@@ -5,6 +5,9 @@
 #include <windows.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "imgui/imgui.h"
+#include "imgui/backends/imgui_impl_opengl3.h"
+#include "imgui/backends/imgui_impl_glfw.h"
 
 #define ASSERT(x) if (!(x)) __debugbreak()
 
