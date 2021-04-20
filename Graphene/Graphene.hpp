@@ -1,7 +1,8 @@
 #pragma once
-#define PI 3.14159265
+#define PI 3.1415926
 
 #include <random>
+#include <map>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -26,16 +27,56 @@ public:
 			x = _x;
 			y = _y;
 		}
+
+		/********* Operator Definitions *********
+		*|	+ add
+		*|	- subtract
+		*|	* mul by number
+		*|	/ divide by number
+		*|	* dot
+		*|	^ cross
+		*****************************************/
+
+		NormCoord operator+(NormCoord a) {
+			return NormCoord(this->x + a.x, this->y + a.y);
+		}
+		NormCoord operator-(NormCoord a) {
+			return NormCoord(this->x - a.x, this->y - a.y);
+		}
+		NormCoord operator*(double a) {
+			return NormCoord(this->x * a, this->y * a);
+		}
+		NormCoord operator/(double a) {
+			return NormCoord(this->x / a, this->y / a);
+		}
+		double operator*(NormCoord a) {
+			return this->x * a.x + this->y * a.y;
+		}
+		double operator^(NormCoord a) {
+			return this->x * a.y - this->y * a.x;
+		}
 	};
 
 	struct Vertex {
+		int number = 0;
 		string name = "";
 		bool nameVisible = false;
 		string value = "";
 		bool valueVisible = false;
 		NormCoord coord = NormCoord(dis(gen), dis(gen));
 
-		Vertex() {
+		Vertex(int _num, string _name, bool _nameVisible, string _value, bool _valueVisible, NormCoord _coord) {
+			number = _num;
+			name = _name;
+			nameVisible = _nameVisible;
+			value = _value;
+			valueVisible = _valueVisible;
+			coord = _coord;
+		}
+
+		Vertex(int _num) {
+			number = _num;
+			name = to_string(number);
 		}
 	};
 
@@ -52,12 +93,18 @@ public:
 			startingVertex = _startingVertex;
 			endingVertex = _endingVertex;
 			directed = _directed;
-
 		}
 	};
 
+
+	int totalVertex, totalEdge;
 	vector<Vertex> verticies;
-	vector<Edge> edges;
+	vector<Edge> allEdges;
+	vector<vector<Vertex> > structure;
+
+
+	/***************************************************************************************************************/
+
 
 	// Handles all the graph rendering, scales automatically depending on the texture assigned.
 	class Renderer {
@@ -78,7 +125,7 @@ public:
 			graphElement = new Engine::Element(engine_ ,nullptr, "graphElement");
 			graphElement->getBody()->getBackgroundColor();
 			int edgeID = 0;
-			for (vector<Edge>::iterator edge = graphene->edges.begin(); edge != graphene->edges.end(); edge++) {
+			for (vector<Edge>::iterator edge = graphene->allEdges.begin(); edge != graphene->allEdges.end(); edge++) {
 				Engine::Element* edgeElement = new Engine::Element(engine_, graphElement, "edge" + to_string(edgeID));
 				edgeElement->getBody()->setLine(
 					{ (float)edge->startingVertex->coord.x, 0 }, { (float)edge->startingVertex->coord.y, 0 },
@@ -112,12 +159,77 @@ public:
 			resources = _graphene->resources;
 		}
 
-		void init() {
+		void initializeGraph(int _totalVertex, int _totalEdge, vector<pair<pair<int, int>, bool> >& inputEdges) {
+			graphene->totalVertex = _totalVertex;
+			graphene->totalEdge = _totalEdge;
+			
+			graphene->verticies.clear();
+			graphene->allEdges.clear(); 
+			graphene->structure.resize(graphene->totalVertex);
 
+			for (int i = 0; i < graphene->totalVertex; i++) {
+				graphene->verticies.emplace_back(Graphene::Vertex(i));
+			}
+
+			for (vector<pair<pair<int, int>, bool> >::iterator it = inputEdges.begin(); it != inputEdges.end(); it++) {
+				int start = it->first.first, end = it->first.second;
+				bool directed = it->second;
+				Edge edge = Graphene::Edge(&graphene->verticies[start], &graphene->verticies[end], directed);
+
+				graphene->allEdges.emplace_back(edge);
+				graphene->structure[start].emplace_back(graphene->verticies[end]);
+			}
 		}
 
-		void update() {
+		void printPos() {
+			cout << "----------------------------------\n";
+			for (int i = 0; i < graphene->totalVertex; i++) {
+				//
+			}
+		}
 
+		const double c1 = 2;
+		const double c2 = 1;
+		const double c3 = 1;
+		const double c4 = 0.1;
+
+		double distance(Vertex& u, Vertex& v) {
+			double dx = u.coord.x - v.coord.x;
+			double dy = u.coord.y - v.coord.y;
+			return sqrt(dx * dx + dy * dy);
+		}
+
+		NormCoord appealForce(Vertex& u, Vertex& v) {
+			double dis = distance(u, v);
+			if (dis == 0.0) return NormCoord(0, 0);
+			double coeff = c1 * log10(dis / c2);
+			return (v.coord - u.coord) * coeff;
+		}
+
+		NormCoord resistForce(Vertex& u, Vertex& v) {
+			double dis = distance(u, v);
+			if (dis == 0.0) return NormCoord(0, 0);
+			double coeff = -c3 / sqrt(dis);
+			return (v.coord - u.coord) * coeff;
+		}
+
+		void initializePos() {
+			for (int i = 0; i < (int)graphene->verticies.size(); i++) {
+				graphene->verticies[i].coord = NormCoord(dis(gen), dis(gen));
+			}
+		}
+
+		void updatePos() {
+			for (vector<Vertex>::iterator u = graphene->verticies.begin(); u != graphene->verticies.end(); u++) {
+				NormCoord resultForce(0, 0);
+				for (vector<Vertex>::iterator v = graphene->verticies.begin(); v != graphene->verticies.end(); v++) {
+					resultForce = resultForce + appealForce(*u, *v);
+				}
+				for (vector<Vertex>::iterator v = graphene->structure[u->number].begin(); v != graphene->structure[u->number].end(); v++) {
+					resultForce = resultForce + appealForce(*u, *v);
+				}
+				u->coord = u->coord + resultForce * c4;
+			}
 		}
 
 	};

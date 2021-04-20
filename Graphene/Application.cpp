@@ -1,5 +1,5 @@
 #include <iostream>
-#include <SFML/Graphics.hpp>
+#include "SFML/Graphics.hpp"
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 
@@ -52,18 +52,22 @@ int main() {
 	//Thread renderThread(&render, &engine);
 	//renderThread.launch();
 	
-	int v = 20;
-	for (int i = 0; i < v; i++) {
-		graphene->verticies.push_back(Graphene::Vertex());
-		graphene->verticies[i].name = to_string(i);
-	}
-	for (int i = 0; i < v; i++) {
-		for (int j = 0; j < v; j++) {
-			if (i != j) {
-				graphene->edges.push_back(Graphene::Edge(&graphene->verticies[i], &graphene->verticies[j], false));
-			}
+
+
+	/* Generate Graph  **********************************************************************/
+	int totalVertex = 4;
+	int totalEdge = (totalVertex) * (totalVertex - 1) / 2;
+
+	vector<pair<pair<int, int>, bool> > inputEdges;
+	for (int i = 0; i < totalVertex-1; i++) {
+		for (int j = i + 1; j < totalVertex; j++) {
+			inputEdges.emplace_back(make_pair(make_pair(i, j), false));
 		}
 	}
+
+	graphene->core->initializeGraph(totalVertex, totalEdge, inputEdges);
+	/****************************************************************************************/
+
 
 	Engine::Element* graphContainerMargin = new Engine::Element(engine, engine->getRootElement(), "graphContainerMargin", 
 		{ 0.5, 0 }, { 0.5, 0 }, { 0.0, 1 }, { 0.0, 1 }, 0.5, 0.5);
@@ -88,7 +92,7 @@ int main() {
 	//cout << "Main profiler - : " << mainProfilerClock.getElapsedTime().asMicroseconds() << "\n";
 	mainProfilerClock.restart();
 
-	graphene->core->init();
+	graphene->core->initializePos();
 
 	while (window.isOpen()) {
 
@@ -109,13 +113,16 @@ int main() {
 		//cout << "Main profiler - poll events: " << mainProfilerClock.getElapsedTime().asMicroseconds() << "\n";
 		mainProfilerClock.restart();
 
-		graphene->verticies[0].coord.x = (sin(clock.getElapsedTime().asMilliseconds() / (float)920) / 2) + 0.5;
-		graphene->verticies[0].coord.y = (cos(clock.getElapsedTime().asMilliseconds() / (float)920) / 2) + 0.5;
-		graphene->verticies[1].coord.x = (0.6 * sin(-clock.getElapsedTime().asMilliseconds() / (float)1760) / 2) + 0.5;
-		graphene->verticies[1].coord.y = (0.6 * cos(-clock.getElapsedTime().asMilliseconds() / (float)1760) / 2) + 0.5;
-		graphene->verticies[2].coord.x = (0.3 * sin(clock.getElapsedTime().asMilliseconds() / (float)370) / 2) + 0.5;
-		graphene->verticies[2].coord.y = (0.3 * cos(clock.getElapsedTime().asMilliseconds() / (float)370) / 2) + 0.5;
+		//graphene->verticies[0].coord.x = (sin(clock.getElapsedTime().asMilliseconds() / (float)920) / 2) + 0.5;
+		//graphene->verticies[0].coord.y = (cos(clock.getElapsedTime().asMilliseconds() / (float)920) / 2) + 0.5;
+		//graphene->verticies[1].coord.x = (0.6 * sin(-clock.getElapsedTime().asMilliseconds() / (float)1760) / 2) + 0.5;
+		//graphene->verticies[1].coord.y = (0.6 * cos(-clock.getElapsedTime().asMilliseconds() / (float)1760) / 2) + 0.5;
+		//graphene->verticies[2].coord.x = (0.3 * sin(clock.getElapsedTime().asMilliseconds() / (float)370) / 2) + 0.5;
+		//graphene->verticies[2].coord.y = (0.3 * cos(clock.getElapsedTime().asMilliseconds() / (float)370) / 2) + 0.5;
 		
+
+		graphene->core->updatePos();
+
 		//cout << "Main profiler - graphene movement test: " << mainProfilerClock.getElapsedTime().asMicroseconds() << "\n";
 		mainProfilerClock.restart();
 
