@@ -51,6 +51,9 @@
     <ClCompile Include="Source\imgui\addons\imguinodegrapheditor\imguinodegrapheditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\graphene\Core.hpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\ExceptionHandler.hpp">
@@ -89,10 +92,13 @@
     <ClInclude Include="Source\imgui\addons\imguivariouscontrols\imguivariouscontrols.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\graphene\Graphene.hpp">
+    <ClInclude Include="Source\graphene\Structures.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\imgui\addons\imguinodegrapheditor\imguinodegrapheditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\graphene\Graphene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

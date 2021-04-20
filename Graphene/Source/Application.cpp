@@ -11,6 +11,7 @@
 #include <GLFW/glfw3.h>
 #include "ExceptionHandler.hpp"
 #include "imgui/addons/imguinodegrapheditor/imguinodegrapheditor.h"
+#include "graphene/Graphene.h"
 
 
 static void glfw_error_callback(int error, const char* description) {
