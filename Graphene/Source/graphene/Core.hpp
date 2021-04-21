@@ -39,34 +39,36 @@ namespace Graphene {
 			std::cout << "----------------------------------\n";
 		}
 
-		const double m_c1 = 2;
-		const double m_c2 = 1;
-		const double m_c3 = 1;
-		const double m_c4 = 0.1;
+		float m_c1 = 2;
+		float m_c2 = 1;
+		float m_c3 = 1;
+		float m_c4 = 0.1;
 
-		double distance(Structure::Vertex* u, Structure::Vertex* v) {
-			double dx = u->coord.x - v->coord.x;
-			double dy = u->coord.y - v->coord.y;
+		bool not_adjacent_repel = true;
+
+		float distance(Structure::Vertex* u, Structure::Vertex* v) {
+			float dx = u->coord.x - v->coord.x;
+			float dy = u->coord.y - v->coord.y;
 			return sqrt(dx * dx + dy * dy);
 		}
 
-		double length(Structure::Vec2f a) {
+		float length(Structure::Vec2f a) {
 			return sqrt(a.x * a.x + a.y * a.y);
 		}
 
 		Structure::Vec2f attractForce(Structure::Vertex* u, Structure::Vertex* v) {
-			double dis = distance(u, v);
-			if (dis == 0.0) 
+			float dis = distance(u, v);
+			if (dis == 0.0)
 				return Structure::Vec2f(0, 0);
-			double coeff = m_c1 * log10(dis / m_c2);
+			float coeff = m_c1 * log(std::max(1.0f, dis / m_c2));
 			return (v->coord - u->coord) * coeff;
 		}
 
 		Structure::Vec2f repelForce(Structure::Vertex* u, Structure::Vertex* v) {
-			double dis = distance(u, v);
-			if (dis == 0.0) 
+			float dis = distance(u, v);
+			if (dis == 0.0)
 				return Structure::Vec2f(0, 0);
-			double coeff = -m_c3 / sqrt(dis);
+			float coeff = -m_c3 / dis / dis;
 			return (v->coord - u->coord) * coeff;
 		}
 
@@ -76,21 +78,28 @@ namespace Graphene {
 			}
 		}
 
+		bool isAdjacent(int u, int v) {
+			if (std::find(m_graph->adjList[u].begin(), m_graph->adjList[u].end(), m_graph->vertices[v]) != m_graph->adjList[u].end())
+				return true;
+			return false;
+		}
+
 		void updatePos() {
 			for (std::vector<Structure::Vertex*>::iterator u = m_graph->vertices.begin(); u != m_graph->vertices.end(); u++) {
 				Structure::Vec2f resultForce(0, 0);
 				for (std::vector<Structure::Vertex*>::iterator v = m_graph->vertices.begin(); v != m_graph->vertices.end(); v++) {
-					resultForce = resultForce + attractForce(*u, *v);
+					if (!isAdjacent((*u)->number, (*v)->number) || not_adjacent_repel)
+						resultForce = resultForce + repelForce(*u, *v);
 				}
 				for (std::vector<Structure::Vertex*>::iterator v = m_graph->adjList[(*u)->number].begin();
 					v != m_graph->adjList[(*u)->number].end(); v++) {
-					resultForce = resultForce + repelForce(*u, *v);
+					//resultForce = resultForce + attractForce(*u, *v);
 				}
-				(*u)->coord = (*u)->coord + resultForce * m_c4;
+				(*u)->coord = (*u)->coord + resultForce;
 			}
-			//for (vector<Vertex>::iterator u = graphene->vertices.begin(); u != graphene->vertices.end(); u++) {
-			//	u->coord.normalize();
-			//}
+			/*for (std::vector<Structure::Vertex*>::iterator u = m_graph->vertices.begin(); u != m_graph->vertices.end(); u++) {
+				(*u)->coord = (*u)->coord + (*u)->resultForce * m_c4;
+			}*/
 		}
 
 	};

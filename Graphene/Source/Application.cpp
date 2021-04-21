@@ -17,6 +17,17 @@
 #include "graphene/Graphene.h"
 
 
+static void HelpMarker(const char* desc) {
+	ImGui::TextDisabled("(?)");
+	if (ImGui::IsItemHovered()) {
+		ImGui::BeginTooltip();
+		ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+		ImGui::TextUnformatted(desc);
+		ImGui::PopTextWrapPos();
+		ImGui::EndTooltip();
+	}
+}
+
 static void glfw_error_callback(int error, const char* description) {
 	ERR("GLFW Error: " + std::to_string(error) + std::string(description));
 }
@@ -24,23 +35,23 @@ static void glfw_error_callback(int error, const char* description) {
 static void useStyle(bool dark) {
 	ImGuiStyle* style = &ImGui::GetStyle();
 
-		style->FrameRounding = 6.0f;
-		style->GrabRounding = 6.0f;
-		style->PopupRounding = 4.0f;
-		style->ChildRounding = 4.0f;
-		style->TabRounding = 6.0f;
-		style->WindowRounding = 8.0f;
+	style->FrameRounding = 6.0f;
+	style->GrabRounding = 6.0f;
+	style->PopupRounding = 4.0f;
+	style->ChildRounding = 4.0f;
+	style->TabRounding = 6.0f;
+	style->WindowRounding = 8.0f;
 
-		style->WindowPadding = { 8.0f, 8.0f };
-		style->FramePadding = { 8.0f, 4.0f };
-		style->ItemSpacing = { 8.0f, 8.0f };
-		style->FrameBorderSize = 0.0f;
+	style->WindowPadding = { 8.0f, 8.0f };
+	style->FramePadding = { 8.0f, 4.0f };
+	style->ItemSpacing = { 8.0f, 8.0f };
+	style->FrameBorderSize = 0.0f;
 
-		style->DisplaySafeAreaPadding.x = 8.0f;
-		style->DisplaySafeAreaPadding.y = 8.0f;
+	style->DisplaySafeAreaPadding.x = 8.0f;
+	style->DisplaySafeAreaPadding.y = 8.0f;
 
-		style->Colors[ImGuiCol_WindowBg].w = 1.0f;
-		ImVec4* colors = ImGui::GetStyle().Colors;
+	style->Colors[ImGuiCol_WindowBg].w = 1.0f;
+	ImVec4* colors = ImGui::GetStyle().Colors;
 
 	if (!dark) {
 		colors[ImGuiCol_Text] = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
@@ -232,6 +243,8 @@ int main() {
 	Graphene::Graph graph;
 	Graphene::Core core(graph);
 
+	static bool show_demo_window;
+	static bool graphene_live_update = true;
 
 	ImGui::CreateContext();
 
@@ -245,10 +258,6 @@ int main() {
 
 		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
-
-		static bool show_demo_window;
-		static bool graphene_live_update;
-
 		{
 			ImGui::Begin("Toolbar");
 
@@ -260,6 +269,23 @@ int main() {
 				core.updatePos();
 			}
 
+			ImGui::Checkbox("Repel on adjacent vertices", &core.not_adjacent_repel);
+
+			ImGui::SliderFloat("C1", &core.m_c1, 0, 10, "%f", 10);
+			ImGui::SameLine();
+			HelpMarker("Attraction force factor");
+
+			ImGui::SliderFloat("C2", &core.m_c2, 0, 10, "%f", 10);
+			ImGui::SameLine();
+			HelpMarker("Attraction log");
+
+			ImGui::SliderFloat("C3", &core.m_c3, 0, 10, "%f", 10);
+			ImGui::SameLine();
+			HelpMarker("Repel factor");
+
+			ImGui::SliderFloat("C4", &core.m_c4, 0, 1, "%f", 10);
+			ImGui::SameLine();
+			HelpMarker("Factor");
 		}
 
 		{
@@ -274,8 +300,8 @@ int main() {
 				ImGui::TableSetupColumn("Vertex #", ImGuiTableColumnFlags_NoHide); // Make the first column not hideable to match our use of TableSetupScrollFreeze()
 				ImGui::TableSetupColumn("PosX");
 				ImGui::TableSetupColumn("PosY");
-				ImGui::TableSetupColumn("NormX");
-				ImGui::TableSetupColumn("MormY");
+				ImGui::TableSetupColumn("ResultX");
+				ImGui::TableSetupColumn("ResultY");
 
 				ImGui::TableHeadersRow();
 				for (int vertex = 0; vertex < graph.vertexCount; vertex++) {
@@ -297,10 +323,10 @@ int main() {
 							ImGui::Text("%f", graph.vertices[vertex]->coord.y);
 							break;
 						case 3:
-							ImGui::Text("%f", graph.vertices[vertex]->normalized.x);
+							ImGui::Text("%f", graph.vertices[vertex]->resultForce.x);
 							break;
 						case 4:
-							ImGui::Text("%f", graph.vertices[vertex]->normalized.y);
+							ImGui::Text("%f", graph.vertices[vertex]->resultForce.y);
 							break;
 
 						}
@@ -585,7 +611,7 @@ int main() {
 			ImGui::Text(u8"Graphene pre-alpha");
 			ImGui::Checkbox(u8"顯示演示視窗", &show_demo_window);
 
-			static bool theme_dark = false;
+			static bool theme_dark = true;
 			ImGui::Checkbox(u8"深色模式", &theme_dark);
 			useStyle(theme_dark);
 
