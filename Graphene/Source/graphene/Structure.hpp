@@ -10,9 +10,9 @@ namespace Graphene {
 	namespace Structure {
 
 		struct Vec2f {
-			double x;
-			double y;
-			Vec2f(double _x, double _y) {
+			float x;
+			float y;
+			Vec2f(float _x, float _y) {
 				x = _x;
 				y = _y;
 			}
@@ -34,23 +34,23 @@ namespace Graphene {
 				return Vec2f(this->x - a.x, this->y - a.y);
 			}
 
-			Vec2f operator*(double a) {
+			Vec2f operator*(float a) {
 				return Vec2f(this->x * a, this->y * a);
 			}
 
-			Vec2f operator/(double a) {
+			Vec2f operator/(float a) {
 				return Vec2f(this->x / a, this->y / a);
 			}
 
-			double operator*(Vec2f a) {
+			float operator*(Vec2f a) {
 				return this->x * a.x + this->y * a.y;
 			}
 
-			double operator^(Vec2f a) {
+			float operator^(Vec2f a) {
 				return this->x * a.y - this->y * a.x;
 			}
 
-			double length() {
+			float length() {
 				return sqrt(this->x * this->x + this->y + this->y);
 			}
 
@@ -75,6 +75,7 @@ namespace Graphene {
 			std::string value = "";
 			bool valueVisible = false;
 			Vec2f coord = Vec2f(genRandom(), genRandom());
+			Vec2f resultForce = Vec2f(0, 0);
 			Vec2f normalized = Vec2f(genRandom(), genRandom());
 
 			Vertex(int _num, std::string _name, bool _nameVisible, std::string _value, bool _valueVisible, Vec2f _coord) {

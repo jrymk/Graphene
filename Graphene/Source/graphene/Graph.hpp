@@ -40,7 +40,10 @@ namespace Graphene {
 			this->vertexCount = vertexCount;
 			this->edgeCount = inputEdges.size();
 
+			for (auto it = vertices.begin(); it != vertices.end(); it++)
+				delete *it;
 			this->vertices.clear();
+
 			this->edges.clear();
 			this->adjList.resize(this->vertexCount);
 
