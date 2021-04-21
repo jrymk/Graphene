@@ -54,6 +54,9 @@
     <ClCompile Include="Source\graphene\Core.hpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\imgui\addons\imnodes\imnodes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\ExceptionHandler.hpp">
@@ -102,6 +105,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\graphene\Graph.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\imgui\addons\imnodes\imnodes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

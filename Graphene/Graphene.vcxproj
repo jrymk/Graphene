@@ -96,6 +96,7 @@
     <ClCompile Include="Source\graphene\Core.hpp" />
     <ClCompile Include="Source\imgui\addons\imguinodegrapheditor\imguinodegrapheditor.cpp" />
     <ClCompile Include="Source\imgui\addons\imguivariouscontrols\imguivariouscontrols.cpp" />
+    <ClCompile Include="Source\imgui\addons\imnodes\imnodes.cpp" />
     <ClCompile Include="Source\imgui\imgui.cpp" />
     <ClCompile Include="Source\imgui\imgui_demo.cpp" />
     <ClCompile Include="Source\imgui\imgui_draw.cpp" />
@@ -112,6 +113,7 @@
     <ClInclude Include="Source\graphene\Graph.hpp" />
     <ClInclude Include="Source\imgui\addons\imguinodegrapheditor\imguinodegrapheditor.h" />
     <ClInclude Include="Source\imgui\addons\imguivariouscontrols\imguivariouscontrols.h" />
+    <ClInclude Include="Source\imgui\addons\imnodes\imnodes.h" />
     <ClInclude Include="Source\imgui\imconfig.h" />
     <ClInclude Include="Source\imgui\imgui.h" />
     <ClInclude Include="Source\imgui\imgui_impl_glfw.h" />
