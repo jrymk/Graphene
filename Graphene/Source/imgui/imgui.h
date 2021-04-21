@@ -135,7 +135,7 @@ struct ImFontConfig;                // Configuration data when adding a font or 
 struct ImFontGlyph;                 // A single font glyph (code point + coordinates within in ImFontAtlas + offset)
 struct ImFontGlyphRangesBuilder;    // Helper to build glyph ranges from text/string data
 struct ImColor;                     // Helper functions to create a color that can be converted to either u32 or float4 (*OBSOLETE* please avoid using)
-struct ImGuiContext;                // Dear ImGui context (opaque structure, unless including imgui_internal.h)
+struct ImGuiContext;                // Dear ImGui context (opaque adjList, unless including imgui_internal.h)
 struct ImGuiIO;                     // Main configuration and I/O between your application and ImGui
 struct ImGuiInputTextCallbackData;  // Shared state of InputText() when using custom ImGuiInputTextCallback (rare/advanced use)
 struct ImGuiListClipper;            // Helper to manually clip large list of items
@@ -274,8 +274,8 @@ namespace ImGui
     IMGUI_API void          SetCurrentContext(ImGuiContext* ctx);
 
     // Main
-    IMGUI_API ImGuiIO&      GetIO();                                    // access the IO structure (mouse/keyboard/gamepad inputs, time, various configuration options/flags)
-    IMGUI_API ImGuiStyle&   GetStyle();                                 // access the Style structure (colors, sizes). Always use PushStyleCol(), PushStyleVar() to modify style mid-frame!
+    IMGUI_API ImGuiIO&      GetIO();                                    // access the IO adjList (mouse/keyboard/gamepad inputs, time, various configuration options/flags)
+    IMGUI_API ImGuiStyle&   GetStyle();                                 // access the Style adjList (colors, sizes). Always use PushStyleCol(), PushStyleVar() to modify style mid-frame!
     IMGUI_API void          NewFrame();                                 // start a new Dear ImGui frame, you can submit any command from this point until Render()/EndFrame().
     IMGUI_API void          EndFrame();                                 // ends the Dear ImGui frame. automatically called by Render(). If you don't need to render data (skipping rendering) you may call EndFrame() without Render()... but you'll have wasted CPU already! If you don't need to render, better to not create any windows and not call NewFrame() at all!
     IMGUI_API void          Render();                                   // ends the Dear ImGui frame, finalize the draw data. You can then get call GetDrawData().
@@ -285,7 +285,7 @@ namespace ImGui
     IMGUI_API void          ShowDemoWindow(bool* p_open = NULL);        // create Demo window. demonstrate most ImGui features. call this to learn about the library! try to make it always available in your application!
     IMGUI_API void          ShowMetricsWindow(bool* p_open = NULL);     // create Metrics/Debugger window. display Dear ImGui internals: windows, draw commands, various internal state, etc.
     IMGUI_API void          ShowAboutWindow(bool* p_open = NULL);       // create About window. display Dear ImGui version, credits and build/system information.
-    IMGUI_API void          ShowStyleEditor(ImGuiStyle* ref = NULL);    // add style editor block (not a window). you can pass in a reference ImGuiStyle structure to compare to, revert to and save to (else it uses the default style)
+    IMGUI_API void          ShowStyleEditor(ImGuiStyle* ref = NULL);    // add style editor block (not a window). you can pass in a reference ImGuiStyle adjList to compare to, revert to and save to (else it uses the default style)
     IMGUI_API bool          ShowStyleSelector(const char* label);       // add style selector block (not a window), essentially a combo listing the default styles.
     IMGUI_API void          ShowFontSelector(const char* label);        // add font selector block (not a window), essentially a combo listing the loaded fonts.
     IMGUI_API void          ShowUserGuide();                            // add basic help/info block (not a window): how to manipulate ImGui as a end-user (mouse/keyboard controls).
@@ -406,7 +406,7 @@ namespace ImGui
     IMGUI_API ImU32         GetColorU32(ImGuiCol idx, float alpha_mul = 1.0f);              // retrieve given style color with style alpha applied and optional extra alpha multiplier, packed as a 32-bit value suitable for ImDrawList
     IMGUI_API ImU32         GetColorU32(const ImVec4& col);                                 // retrieve given color with style alpha applied, packed as a 32-bit value suitable for ImDrawList
     IMGUI_API ImU32         GetColorU32(ImU32 col);                                         // retrieve given color with style alpha applied, packed as a 32-bit value suitable for ImDrawList
-    IMGUI_API const ImVec4& GetStyleColorVec4(ImGuiCol idx);                                // retrieve style color as stored in ImGuiStyle structure. use to feed back into PushStyleColor(), otherwise use GetColorU32() to get style color with style alpha baked in.
+    IMGUI_API const ImVec4& GetStyleColorVec4(ImGuiCol idx);                                // retrieve style color as stored in ImGuiStyle adjList. use to feed back into PushStyleColor(), otherwise use GetColorU32() to get style color with style alpha baked in.
 
     // Cursor / Layout
     // - By "cursor" we mean the current output position.
@@ -561,13 +561,13 @@ namespace ImGui
 
     // Widgets: Color Editor/Picker (tip: the ColorEdit* functions have a little color square that can be left-clicked to open a picker, and right-clicked to open an option menu.)
     // - Note that in C++ a 'float v[X]' function argument is the _same_ as 'float* v', the array syntax is just a way to document the number of elements that are expected to be accessible.
-    // - You can pass the address of a first float element out of a contiguous structure, e.g. &myvector.x
+    // - You can pass the address of a first float element out of a contiguous adjList, e.g. &myvector.x
     IMGUI_API bool          ColorEdit3(const char* label, float col[3], ImGuiColorEditFlags flags = 0);
     IMGUI_API bool          ColorEdit4(const char* label, float col[4], ImGuiColorEditFlags flags = 0);
     IMGUI_API bool          ColorPicker3(const char* label, float col[3], ImGuiColorEditFlags flags = 0);
     IMGUI_API bool          ColorPicker4(const char* label, float col[4], ImGuiColorEditFlags flags = 0, const float* ref_col = NULL);
     IMGUI_API bool          ColorButton(const char* desc_id, const ImVec4& col, ImGuiColorEditFlags flags = 0, ImVec2 size = ImVec2(0, 0)); // display a color square/button, hover for details, return true when pressed.
-    IMGUI_API void          SetColorEditOptions(ImGuiColorEditFlags flags);                     // initialize current options (generally on application startup) if you want to select a default format, picker type, etc. User will be able to change many settings, unless you pass the _NoOptions flag to your calls.
+    IMGUI_API void          SetColorEditOptions(ImGuiColorEditFlags flags);                     // importEdges current options (generally on application startup) if you want to select a default format, picker type, etc. User will be able to change many settings, unless you pass the _NoOptions flag to your calls.
 
     // Widgets: Trees
     // - TreeNode functions return true when the node is open, in which case you need to also call TreePop() when you are finished displaying the tree node contents.
@@ -917,7 +917,7 @@ namespace ImGui
     IMGUI_API void          MemFree(void* ptr);
 
     // (Optional) Platform/OS interface for multi-viewport support
-    // Read comments around the ImGuiPlatformIO structure for more details.
+    // Read comments around the ImGuiPlatformIO adjList for more details.
     // Note: You may use GetWindowViewport() to get the current viewport of the current window.
     IMGUI_API ImGuiPlatformIO&  GetPlatformIO();                                                // platform/renderer functions, for backend to setup + viewports list.
     IMGUI_API void              UpdatePlatformWindows();                                        // call in main loop. will call CreateWindow/ResizeWindow/etc. platform functions for each secondary viewport, and DestroyWindow for each inactive viewport.
@@ -1526,7 +1526,7 @@ enum ImGuiCol_
     ImGuiCol_COUNT
 };
 
-// Enumeration for PushStyleVar() / PopStyleVar() to temporarily modify the ImGuiStyle structure.
+// Enumeration for PushStyleVar() / PopStyleVar() to temporarily modify the ImGuiStyle adjList.
 // - The enum only refers to fields of ImGuiStyle which makes sense to be pushed/popped inside UI code.
 //   During initialization or between frames, feel free to just poke into ImGuiStyle directly.
 // - Tip: Use your programming IDE navigation facilities on the names in the _second column_ below to find the actual members and their description.
@@ -1535,7 +1535,7 @@ enum ImGuiCol_
 // - When changing this enum, you need to update the associated internal table GStyleVarInfo[] accordingly. This is where we link enum values to members offset/type.
 enum ImGuiStyleVar_
 {
-    // Enum name --------------------- // Member in ImGuiStyle structure (see ImGuiStyle for descriptions)
+    // Enum name --------------------- // Member in ImGuiStyle adjList (see ImGuiStyle for descriptions)
     ImGuiStyleVar_Alpha,               // float     Alpha
     ImGuiStyleVar_WindowPadding,       // ImVec2    WindowPadding
     ImGuiStyleVar_WindowRounding,      // float     WindowRounding
@@ -1825,7 +1825,7 @@ struct ImGuiStyle
 //-----------------------------------------------------------------------------
 // [SECTION] ImGuiIO
 //-----------------------------------------------------------------------------
-// Communicate most settings and inputs/outputs to Dear ImGui using this structure.
+// Communicate most settings and inputs/outputs to Dear ImGui using this adjList.
 // Access via ImGui::GetIO(). Read 'Programmer guide' section in .cpp file for general usage.
 //-----------------------------------------------------------------------------
 
@@ -2552,7 +2552,7 @@ struct ImDrawList
 
 // All draw data to render a Dear ImGui frame
 // (NB: the style and the naming convention here is a little inconsistent, we currently preserve them for backward compatibility purpose,
-// as this is one of the oldest structure exposed by the library! Basically, ImDrawList == CmdList)
+// as this is one of the oldest adjList exposed by the library! Basically, ImDrawList == CmdList)
 struct ImDrawData
 {
     bool            Valid;                  // Only valid after Render() is called and before the next NewFrame() is called.
@@ -2736,7 +2736,7 @@ struct ImFontAtlas
     //-------------------------------------------
 
     ImFontAtlasFlags            Flags;              // Build flags (see ImFontAtlasFlags_)
-    ImTextureID                 TexID;              // User data to refer to the texture once it has been uploaded to user's graphic systems. It is passed back to you during rendering via the ImDrawCmd structure.
+    ImTextureID                 TexID;              // User data to refer to the texture once it has been uploaded to user's graphic systems. It is passed back to you during rendering via the ImDrawCmd adjList.
     int                         TexDesiredWidth;    // Texture width desired by user before Build(). Must be a power-of-two. If have many glyphs your graphics API have texture size restrictions you may want to increase texture width to decrease height.
     int                         TexGlyphPadding;    // Padding between glyphs within texture in pixels. Defaults to 1. If your rendering method doesn't rely on bilinear filtering you may set this to 0.
     bool                        Locked;             // Marked as Locked by ImGui::NewFrame() so attempt to modify the atlas will assert.
@@ -2868,8 +2868,8 @@ struct ImGuiViewport
     // When our create your own backend for a custom engine, it is possible that both Renderer and Platform will be handled
     // by the same system and you may not need to use all the UserData/Handle fields.
     // The library never uses those fields, they are merely storage to facilitate backend implementation.
-    void*               RendererUserData;       // void* to hold custom data structure for the renderer (e.g. swap chain, framebuffers etc.). generally set by your Renderer_CreateWindow function.
-    void*               PlatformUserData;       // void* to hold custom data structure for the OS / platform (e.g. windowing info, render context). generally set by your Platform_CreateWindow function.
+    void*               RendererUserData;       // void* to hold custom data adjList for the renderer (e.g. swap chain, framebuffers etc.). generally set by your Renderer_CreateWindow function.
+    void*               PlatformUserData;       // void* to hold custom data adjList for the OS / platform (e.g. windowing info, render context). generally set by your Platform_CreateWindow function.
     void*               PlatformHandle;         // void* for FindViewportByPlatformHandle(). (e.g. suggested to use natural platform handle such as HWND, GLFWWindow*, SDL_Window*)
     void*               PlatformHandleRaw;      // void* to hold lower-level, platform-native window handle (e.g. the HWND) when using an abstraction layer like GLFW or SDL (where PlatformHandle would be a SDL_Window*)
     bool                PlatformRequestMove;    // Platform window requested move (e.g. window was moved by the OS / host window manager, authoritative position will be OS window position)

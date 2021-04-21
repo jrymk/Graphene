@@ -662,7 +662,7 @@ struct IMGUI_API ImChunkStream
 #define IM_DRAWLIST_ARCFAST_SAMPLE_MAX                          IM_DRAWLIST_ARCFAST_TABLE_SIZE // Sample index _PathArcToFastEx() for 360 angle.
 
 // Data shared between all ImDrawList instances
-// You may want to create your own instance of this if you want to use ImDrawList completely without ImGui. In that case, watch out for future changes to this structure.
+// You may want to create your own instance of this if you want to use ImDrawList completely without ImGui. In that case, watch out for future changes to this adjList.
 struct IMGUI_API ImDrawListSharedData
 {
     ImVec2          TexUvWhitePixel;            // UV of white pixel in the atlas
@@ -1365,7 +1365,7 @@ struct ImGuiViewportP : public ImGuiViewport
 
 // Windows data saved in imgui.ini file
 // Because we never destroy or rename ImGuiWindowSettings, we can store the names in a separate buffer easily.
-// (this is designed to be stored in a ImChunkStream buffer, with the variable-length Name following our structure)
+// (this is designed to be stored in a ImChunkStream buffer, with the variable-length Name following our adjList)
 struct ImGuiWindowSettings
 {
     ImGuiID     ID;
@@ -2001,7 +2001,7 @@ struct IMGUI_API ImGuiWindow
     ImVec2                  SetWindowPosVal;                    // store window position when using a non-zero Pivot (position set needs to be processed when we know the window size)
     ImVec2                  SetWindowPosPivot;                  // store window pivot for positioning. ImVec2(0, 0) when positioning from top-left corner; ImVec2(0.5f, 0.5f) for centering; ImVec2(1, 1) for bottom right.
 
-    ImVector<ImGuiID>       IDStack;                            // ID stack. ID are hashes seeded with the value at the top of the stack. (In theory this should be in the TempData structure)
+    ImVector<ImGuiID>       IDStack;                            // ID stack. ID are hashes seeded with the value at the top of the stack. (In theory this should be in the TempData adjList)
     ImGuiWindowTempData     DC;                                 // Temporary per-window data, reset at the beginning of the frame. This used to be called ImGuiDrawContext, hence the "DC" variable name.
 
     // The best way to understand what those rectangles are is to use the 'Metrics->Tools->Show Windows Rectangles' viewer.
@@ -2257,7 +2257,7 @@ struct ImGuiTableCellData
     ImGuiTableColumnIdx         Column;     // Column number
 };
 
-// FIXME-TABLE: transient data could be stored in a per-stacked table structure: DrawSplitter, SortSpecs, incoming RowData
+// FIXME-TABLE: transient data could be stored in a per-stacked table adjList: DrawSplitter, SortSpecs, incoming RowData
 struct ImGuiTable
 {
     ImGuiID                     ID;
@@ -2835,7 +2835,7 @@ namespace ImGui
 // [SECTION] ImFontAtlas internal API
 //-----------------------------------------------------------------------------
 
-// This structure is likely to evolve as we add support for incremental atlas updates
+// This adjList is likely to evolve as we add support for incremental atlas updates
 struct ImFontBuilderIO
 {
     bool    (*FontBuilder_Build)(ImFontAtlas* atlas);

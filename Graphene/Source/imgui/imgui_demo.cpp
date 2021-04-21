@@ -945,7 +945,7 @@ static void ShowDemoWindowWidgets() {
 
         // Below we are displaying the font texture because it is the only texture we have access to inside the demo!
         // Remember that ImTextureID is just storage for whatever you want it to be. It is essentially a value that
-        // will be passed to the rendering backend via the ImDrawCmd structure.
+        // will be passed to the rendering backend via the ImDrawCmd adjList.
         // If you use one of the default imgui_impl_XXXX.cpp rendering backend, they all have comments at the top
         // of their respective source file to specify what they expect to be stored in ImTextureID, for example:
         // - The imgui_impl_dx11.cpp renderer expect a 'ID3D11ShaderResourceView*' pointer
@@ -1499,8 +1499,8 @@ static void ShowDemoWindowWidgets() {
         ImGui::PlotLines("Frame Times", arr, IM_ARRAYSIZE(arr));
 
         // Fill an array of contiguous float values to plot
-        // Tip: If your float aren't contiguous but part of a structure, you can pass a pointer to your first float
-        // and the sizeof() of your structure in the "stride" parameter.
+        // Tip: If your float aren't contiguous but part of a adjList, you can pass a pointer to your first float
+        // and the sizeof() of your adjList in the "stride" parameter.
         static float values[90] = {};
         static int values_offset = 0;
         static double refresh_time = 0.0;
@@ -3203,8 +3203,8 @@ static void ShowDemoWindowPopups() {
     }
 }
 
-// Dummy data structure that we use for the Table demo.
-// (pre-C++11 doesn't allow us to instantiate ImVector<MyItem> template if this structure if defined inside the demo function)
+// Dummy data adjList that we use for the Table demo.
+// (pre-C++11 doesn't allow us to instantiate ImVector<MyItem> template if this adjList if defined inside the demo function)
 namespace {
     // We are passing our own identifier to TableSetupColumn() to facilitate identifying columns in the sorting code.
     // This identifier will be passed down into ImGuiTableSortSpec::ColumnUserID.
@@ -3370,7 +3370,7 @@ static void ShowDemoWindowTables() {
 
     // About Styling of tables
     // Most settings are configured on a per-table basis via the flags passed to BeginTable() and TableSetupColumns APIs.
-    // There are however a few settings that a shared and part of the ImGuiStyle structure:
+    // There are however a few settings that a shared and part of the ImGuiStyle adjList:
     //   style.CellPadding                          // Padding within each cell
     //   style.Colors[ImGuiCol_TableHeaderBg]       // Table header background
     //   style.Colors[ImGuiCol_TableBorderStrong]   // Table outer and header borders
@@ -5517,7 +5517,7 @@ static void NodeFont(ImFont * font) {
 }
 
 void ImGui::ShowStyleEditor(ImGuiStyle * ref) {
-    // You can pass in a reference ImGuiStyle structure to compare to, revert to and save to
+    // You can pass in a reference ImGuiStyle adjList to compare to, revert to and save to
     // (without a reference style pointer, we will use one compared locally as a reference)
     ImGuiStyle& style = ImGui::GetStyle();
     static ImGuiStyle ref_saved_style;
@@ -6009,7 +6009,7 @@ struct ExampleAppConsole {
                 continue;
 
             // Normally you would store more information in your item than just a string.
-            // (e.g. make Items[] an array of structure, store color/type etc.)
+            // (e.g. make Items[] an array of adjList, store color/type etc.)
             ImVec4 color;
             bool has_color = false;
             if (strstr(item, "[error]")) { color = ImVec4(1.0f, 0.4f, 0.4f, 1.0f); has_color = true; }
@@ -7048,7 +7048,7 @@ void ShowExampleAppDockSpace(bool* p_open) {
 // [SECTION] Example App: Documents Handling / ShowExampleAppDocuments()
 //-----------------------------------------------------------------------------
 
-// Simplified structure to mimic a Document model
+// Simplified adjList to mimic a Document model
 struct MyDocument {
     const char* Name;       // Document title
     bool        Open;       // Set when open (we keep an array of all available documents to simplify demo code!)

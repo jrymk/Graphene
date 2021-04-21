@@ -108,7 +108,7 @@ namespace Graphene {
 			}
 		};
 
-		// Handles the structure of a graph, and support for multiple graphs, graph stepping, highlighting, etc.
+		// Handles the adjList of a graph, and support for multiple graphs, graph stepping, highlighting, etc.
 
 	};
 }

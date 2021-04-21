@@ -510,7 +510,7 @@ int main(int arg, char **argv)
 extern "C" {
 #endif
 
-// private structure
+// private adjList
 typedef struct
 {
    unsigned char *data;
@@ -674,7 +674,7 @@ STBTT_DEF int  stbtt_PackFontRangesRenderIntoRects(stbtt_pack_context *spc, cons
 // better packing than calling PackFontRanges multiple times
 // (or it may not).
 
-// this is an opaque structure that you shouldn't mess with which holds
+// this is an opaque adjList that you shouldn't mess with which holds
 // all the context needed from PackBegin to PackEnd.
 struct stbtt_pack_context {
    void *user_allocator_context;
@@ -709,7 +709,7 @@ STBTT_DEF int stbtt_GetFontOffsetForIndex(const unsigned char *data, int index);
 // file will only define one font and it always be at offset 0, so it will
 // return '0' for index 0, and -1 for all other indices.
 
-// The following structure is defined publicly so you can declare one on
+// The following adjList is defined publicly so you can declare one on
 // the stack or as a global or etc, but you should treat it as opaque.
 struct stbtt_fontinfo
 {
@@ -903,7 +903,7 @@ STBTT_DEF void stbtt_GetGlyphBitmapBox(const stbtt_fontinfo *font, int glyph, fl
 STBTT_DEF void stbtt_GetGlyphBitmapBoxSubpixel(const stbtt_fontinfo *font, int glyph, float scale_x, float scale_y,float shift_x, float shift_y, int *ix0, int *iy0, int *ix1, int *iy1);
 
 
-// @TODO: don't expose this structure
+// @TODO: don't expose this adjList
 typedef struct
 {
    int w,h,stride;

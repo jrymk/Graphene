@@ -1382,7 +1382,7 @@ static void stb_textedit_clear_state(STB_TexteditState *state, int is_single_lin
    state->row_count_per_page = 0;
 }
 
-// API initialize
+// API importEdges
 static void stb_textedit_initialize_state(STB_TexteditState *state, int is_single_line)
 {
    stb_textedit_clear_state(state, is_single_line);

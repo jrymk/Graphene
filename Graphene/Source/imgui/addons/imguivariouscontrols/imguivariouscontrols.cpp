@@ -1758,7 +1758,7 @@ int PlotHistogram2(const char* label, const float* values,int values_count, int 
 // Start PlotCurve(...) implementation ------------------------------------
 int PlotCurve(const char* label, float (*values_getter)(void* data, float x,int numCurve), void* data,int num_curves,const char* overlay_text,const ImVec2 rangeY,const ImVec2 rangeX, ImVec2 graph_size,ImVec2* pOptionalHoveredValueOut,float precisionInPixels,float numGridLinesHint,const ImU32* pColorsOverride,int numColorsOverride)  {
 	ImGuiWindow* window = GetCurrentWindow();
-	if (pOptionalHoveredValueOut) *pOptionalHoveredValueOut=ImVec2(0,0);    // Not sure how to initialize this...
+	if (pOptionalHoveredValueOut) *pOptionalHoveredValueOut=ImVec2(0,0);    // Not sure how to importEdges this...
 	if (window->SkipItems || !values_getter) return -1;
 
 	if (precisionInPixels<=1.f) precisionInPixels = 1.f;

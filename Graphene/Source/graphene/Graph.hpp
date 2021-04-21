@@ -7,33 +7,53 @@ namespace Graphene {
 	class Graph {
 	public:
 
-		int totalVertex, totalEdge;
-		std::vector<Structure::Vertex> verticies;
-		std::vector<Structure::Edge> allEdges;
-		std::vector<std::vector<Structure::Vertex> > structure;
+		// total number of vertices and edges
+		int vertexCount, edgeCount;
+		// list of properties of all vertices, for instance their ids and positions
+		std::vector<Structure::Vertex*> vertices;
+		// list of properties of all edges, for instance their connection vertices and draw thickness
+		std::vector<Structure::Edge> edges;
+		// the adjacency list for the structure of the graph, nothing else
+		std::vector<std::vector<Structure::Vertex*>> adjList;
 
 		Graph() = default;
 
 
-		void initialize(int _totalVertex, int _totalEdge, std::vector<std::pair<std::pair<int, int>, bool> >& inputEdges) {
-			this->totalVertex = _totalVertex;
-			this->totalEdge = _totalEdge;
+		/*void importAdjList(std::vector<std::vector<int>>& inputList) {
+			this->vertexCount = inputList.size();
+			this->adjList.resize(vertexCount);
 
-			this->verticies.clear();
-			this->allEdges.clear();
-			this->structure.resize(this->totalVertex);
+			for (std::vector<std::vector<int>>::iterator va = inputList.begin(); va != inputList.end(); va++) {
+				for (std::vector<int>::iterator vb = va->begin(); vb != va->end(); vb++) {
+					int start = it->first.first, end = it->first.second;
+					bool directed = it->second;
+					Structure::Edge edge = Structure::Edge(&this->vertices[start], &this->vertices[end], directed);
 
-			for (int i = 0; i < this->totalVertex; i++) {
-				this->verticies.emplace_back(Structure::Vertex(i));
+					this->edges.emplace_back(edge);
+					this->adjList[start].emplace_back(this->vertices[end]);
+				}
+			}
+		}*/
+
+
+		void importEdges(int vertexCount, std::vector<std::pair<std::pair<int, int>, bool>>& inputEdges) {
+			this->vertexCount = vertexCount;
+			this->edgeCount = inputEdges.size();
+
+			this->vertices.clear();
+			this->edges.clear();
+			this->adjList.resize(this->vertexCount);
+
+			for (int i = 0; i < this->vertexCount; i++) {
+				this->vertices.emplace_back(new Structure::Vertex(i));
 			}
 
-			for (std::vector<std::pair<std::pair<int, int>, bool> >::iterator it = inputEdges.begin(); it != inputEdges.end(); it++) {
+			for (std::vector<std::pair<std::pair<int, int>, bool>>::iterator it = inputEdges.begin(); it != inputEdges.end(); it++) {
 				int start = it->first.first, end = it->first.second;
 				bool directed = it->second;
-				Structure::Edge edge = Structure::Edge(&this->verticies[start], &this->verticies[end], directed);
 
-				this->allEdges.emplace_back(edge);
-				this->structure[start].emplace_back(this->verticies[end]);
+				this->edges.emplace_back(Structure::Edge(this->vertices[start], this->vertices[end], directed));
+				this->adjList[start].emplace_back(this->vertices[end]);
 			}
 		}
 

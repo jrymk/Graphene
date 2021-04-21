@@ -3074,7 +3074,7 @@ void ImGui::TableDrawContextMenu(ImGuiTable* table)
 // [Main] 4: TableSettingsHandler_WriteAll()   When .ini file is dirty (which can come from other source), save TableSettings into .ini file.
 //-------------------------------------------------------------------------
 
-// Clear and initialize empty settings instance
+// Clear and importEdges empty settings instance
 static void TableSettingsInit(ImGuiTableSettings* settings, ImGuiID id, int columns_count, int columns_count_max)
 {
     IM_PLACEMENT_NEW(settings) ImGuiTableSettings();

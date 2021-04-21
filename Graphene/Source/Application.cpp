@@ -217,7 +217,7 @@ int main() {
 				ImGui::TableSetupColumn("MormY");
 
 				ImGui::TableHeadersRow();
-				for (int vertex = 0; vertex < graph.totalVertex; vertex++) {
+				for (int vertex = 0; vertex < graph.vertexCount; vertex++) {
 					ImGui::TableNextRow();
 
 					for (int column = 0; column < 5; column++) {
@@ -230,16 +230,16 @@ int main() {
 							ImGui::Text("%d", vertex);
 							break;
 						case 1:
-							ImGui::Text("%f", graph.verticies[vertex].coord.x);
+							ImGui::Text("%f", graph.vertices[vertex]->coord.x);
 							break;
 						case 2:
-							ImGui::Text("%f", graph.verticies[vertex].coord.y);
+							ImGui::Text("%f", graph.vertices[vertex]->coord.y);
 							break;
 						case 3:
-							ImGui::Text("%f", graph.verticies[vertex].normalized.x);
+							ImGui::Text("%f", graph.vertices[vertex]->normalized.x);
 							break;
 						case 4:
-							ImGui::Text("%f", graph.verticies[vertex].normalized.y);
+							ImGui::Text("%f", graph.vertices[vertex]->normalized.y);
 							break;
 
 						}
@@ -274,7 +274,7 @@ int main() {
 						ss >> a >> b;
 						temp_graph.push_back({ { a, b }, false });
 					}
-					graph.initialize(v, e, temp_graph);
+					graph.importEdges(v, temp_graph);
 				}
 
 				ImGui::InputTextMultiline("##source", text, IM_ARRAYSIZE(text), ImVec2(-FLT_MIN, -FLT_MIN), flags);
@@ -343,7 +343,7 @@ int main() {
 						}
 					}
 
-					graph.initialize(graphene_vertices, tickCount, temp_graph);
+					graph.importEdges(graphene_vertices, temp_graph);
 				}
 
 			}
@@ -452,44 +452,44 @@ int main() {
 			float y_max = -1000000000.0;
 			float y_min = 1000000000.0;
 
-			for (int i = 0; i < graph.totalVertex; i++) {
-				x_max = max(x_max, graph.verticies[i].coord.x);
-				x_min = min(x_min, graph.verticies[i].coord.x);
-				y_max = max(y_max, graph.verticies[i].coord.y);
-				y_min = min(y_min, graph.verticies[i].coord.y);
+			for (int i = 0; i < graph.vertexCount; i++) {
+				x_max = max(x_max, graph.vertices[i]->coord.x);
+				x_min = min(x_min, graph.vertices[i]->coord.x);
+				y_max = max(y_max, graph.vertices[i]->coord.y);
+				y_min = min(y_min, graph.vertices[i]->coord.y);
 			}
 
 
-			for (int i = 0; i < graph.totalEdge; i++) {
+			for (int i = 0; i < graph.edgeCount; i++) {
 				if (use_normalized) {
 					draw_list->AddLine(
-						ImVec2(origin.x + ((graph.allEdges[i].startingVertex->coord.x - x_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel),
-							origin.y + ((graph.allEdges[i].startingVertex->coord.y - y_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel)),
-						ImVec2(origin.x + ((graph.allEdges[i].endingVertex->coord.x - x_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel),
-							origin.y + ((graph.allEdges[i].endingVertex->coord.y - y_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel)),
+						ImVec2(origin.x + ((graph.edges[i].startingVertex->coord.x - x_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel),
+							origin.y + ((graph.edges[i].startingVertex->coord.y - y_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel)),
+						ImVec2(origin.x + ((graph.edges[i].endingVertex->coord.x - x_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel),
+							origin.y + ((graph.edges[i].endingVertex->coord.y - y_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel)),
 						IM_COL32(200, 200, 200, 255), 5.0f);
 				}
 				else {
 					draw_list->AddLine(
-						ImVec2(origin.x + (((graph.allEdges[i].startingVertex->coord.x + 2147483647.0f) / 4294967295.0f) * zoomLevel),
-							(((graph.allEdges[i].startingVertex->coord.y + 2147483647.0f) / 4294967295.0f) * zoomLevel)),
-						ImVec2((((graph.allEdges[i].endingVertex->coord.x + 2147483647.0f) / 4294967295.0f) * zoomLevel),
-							(((graph.allEdges[i].endingVertex->coord.y + 2147483647.0f) / 4294967295.0f) * zoomLevel)),
+						ImVec2(origin.x + (((graph.edges[i].startingVertex->coord.x + 2147483647.0f) / 4294967295.0f) * zoomLevel),
+							(((graph.edges[i].startingVertex->coord.y + 2147483647.0f) / 4294967295.0f) * zoomLevel)),
+						ImVec2((((graph.edges[i].endingVertex->coord.x + 2147483647.0f) / 4294967295.0f) * zoomLevel),
+							(((graph.edges[i].endingVertex->coord.y + 2147483647.0f) / 4294967295.0f) * zoomLevel)),
 						IM_COL32(200, 200, 200, 255), 5.0f);
 				}
 			}
 
-			for (int i = 0; i < graph.totalVertex; i++) {
-				graph.verticies[i].normalized.x = (graph.verticies[i].coord.x - x_min) / max((x_max - x_min), (y_max - y_min));
-				graph.verticies[i].normalized.y = (graph.verticies[i].coord.y - y_min) / max((x_max - x_min), (y_max - y_min));
+			for (int i = 0; i < graph.vertexCount; i++) {
+				graph.vertices[i]->normalized.x = (graph.vertices[i]->coord.x - x_min) / max((x_max - x_min), (y_max - y_min));
+				graph.vertices[i]->normalized.y = (graph.vertices[i]->coord.y - y_min) / max((x_max - x_min), (y_max - y_min));
 
 				if (use_normalized) {
-					draw_list->AddCircleFilled(ImVec2(origin.x + ((graph.verticies[i].coord.x - x_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel),
-						origin.y + ((graph.verticies[i].coord.y - y_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel)), 20.0f, IM_COL32(255, 211, 0, 255));
+					draw_list->AddCircleFilled(ImVec2(origin.x + ((graph.vertices[i]->coord.x - x_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel),
+						origin.y + ((graph.vertices[i]->coord.y - y_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel)), 20.0f, IM_COL32(255, 211, 0, 255));
 				}
 				else {
-					draw_list->AddCircleFilled(ImVec2(origin.x + (((graph.verticies[i].coord.x + 2147483647.0f) / 4294967295.0f) * zoomLevel),
-						origin.y + (((graph.verticies[i].coord.y + 2147483647.0f) / 4294967295.0f) * zoomLevel)), 20.0f, IM_COL32(255, 211, 0, 255));
+					draw_list->AddCircleFilled(ImVec2(origin.x + (((graph.vertices[i]->coord.x + 2147483647.0f) / 4294967295.0f) * zoomLevel),
+						origin.y + (((graph.vertices[i]->coord.y + 2147483647.0f) / 4294967295.0f) * zoomLevel)), 20.0f, IM_COL32(255, 211, 0, 255));
 
 				}
 				ImGui::PushFont(vertexTextFont);
@@ -497,14 +497,14 @@ int main() {
 
 				if (use_normalized) {
 					draw_list->AddText(vertexTextFont, 36.0f,
-						ImVec2(origin.x + ((graph.verticies[i].coord.x - x_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel) - font_size + (font_size / 2),
-							origin.y + ((graph.verticies[i].coord.y - y_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel) - 18.0f),
+						ImVec2(origin.x + ((graph.vertices[i]->coord.x - x_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel) - font_size + (font_size / 2),
+							origin.y + ((graph.vertices[i]->coord.y - y_min) / max((x_max - x_min), (y_max - y_min)) * zoomLevel) - 18.0f),
 						IM_COL32(15, 15, 15, 255), std::to_string(i).c_str(), 0, 0.0f, 0);
 				}
 				else {
 					draw_list->AddText(vertexTextFont, 36.0f,
-						ImVec2(origin.x + (((graph.verticies[i].coord.x + 2147483647.0f) / 4294967295.0f) * zoomLevel) - font_size + (font_size / 2),
-							origin.y + (((graph.verticies[i].coord.y + 2147483647.0f) / 4294967295.0f) * zoomLevel) - 18.0f),
+						ImVec2(origin.x + (((graph.vertices[i]->coord.x + 2147483647.0f) / 4294967295.0f) * zoomLevel) - font_size + (font_size / 2),
+							origin.y + (((graph.vertices[i]->coord.y + 2147483647.0f) / 4294967295.0f) * zoomLevel) - 18.0f),
 						IM_COL32(15, 15, 15, 255), std::to_string(i).c_str(), 0, 0.0f, 0);
 				}
 				ImGui::PopFont();
