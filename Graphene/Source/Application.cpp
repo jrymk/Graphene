@@ -451,8 +451,12 @@ int main() {
 
 			bool contextMenuEnabled = false;
 			static bool autoZoomPan = true;
-			static float zoomOffset = 0.5f;
+			static bool showGrid = true;
+			static float zoomOffset = 1.0f;
 
+
+			ImGui::Checkbox("Show grid", &showGrid);
+			ImGui::SameLine();
 			ImGui::Checkbox("Auto adjust view", &autoZoomPan);
 
 			ImVec2 sizeScreenCoord = ImGui::GetContentRegionAvail();
@@ -493,7 +497,8 @@ int main() {
 			centerWindowCoord.y + (canvasCenterContentCoord.y - Y_COORD) * canvasDisplaySize * zoomLevelRatio)*/
 
 			// zoom level control
-			zoomLevelRatio = max(powf(1.05, mouseWheelPosition), FLT_MIN);
+			zoomLevelRatio *= powf(1.05, ImGui::GetIO().MouseWheel);
+			zoomLevelRatio = max(zoomLevelRatio, FLT_MIN);
 
 			if (ImGui::IsItemHovered()) {
 				mouseWheelPosition += ImGui::GetIO().MouseWheel;
@@ -546,79 +551,93 @@ int main() {
 				, ImVec2(
 					centerWindowCoord.x - (canvasCenterContentCoord.x - 1.0f) * canvasDisplaySize * zoomLevelRatio,
 					centerWindowCoord.y + (canvasCenterContentCoord.y - 0.0f) * canvasDisplaySize * zoomLevelRatio)
-				, IM_COL32(20, 20, 20, 255), 6.0f * zoomLevelRatio, 0);
+				, IM_COL32(40, 40, 40, 255), 6.0f * zoomLevelRatio, 0);
 
 
-			float gridStep = zoomLevelRatio * canvasDisplaySize / 10.0f;
 
-			// vertical lines
-			for (float i = 0; i <= 200; i++) {
-				float x = centerWindowCoord.x - (canvasCenterContentCoord.x - (i - 100) / powf(10, (int)log10f(zoomLevelRatio) + 1)) * canvasDisplaySize * zoomLevelRatio;
-				draw_list->AddLine(ImVec2(x, centerWindowCoord.y - sizeScreenCoord.y / 2.0f),
-					ImVec2(x, centerWindowCoord.y + sizeScreenCoord.y / 2.0f),
-					IM_COL32(90, 90, 90, 80), 1.0f);
+			if (showGrid) {
+				float gridStep = zoomLevelRatio * canvasDisplaySize / 10.0f;
+
+				// vertical lines
+				for (float i = 0; i <= 200; i++) {
+					float x = centerWindowCoord.x - (canvasCenterContentCoord.x - (i - 100) / powf(10, (int)log10f(zoomLevelRatio) + 1)) * canvasDisplaySize * zoomLevelRatio;
+					draw_list->AddLine(ImVec2(x, centerWindowCoord.y - sizeScreenCoord.y / 2.0f),
+						ImVec2(x, centerWindowCoord.y + sizeScreenCoord.y / 2.0f),
+						IM_COL32(90, 90, 90, 80), 1.0f);
+				}
+				for (float i = 0; i <= 20; i++) {
+					float x = centerWindowCoord.x - (canvasCenterContentCoord.x - (i - 10) / powf(10, (int)log10f(zoomLevelRatio))) * canvasDisplaySize * zoomLevelRatio;
+					draw_list->AddLine(ImVec2(x, centerWindowCoord.y - sizeScreenCoord.y / 2.0f),
+						ImVec2(x, centerWindowCoord.y + sizeScreenCoord.y / 2.0f),
+						IM_COL32(90, 90, 90, 80), 2.0f);
+				}
+
+				// horizontal lines
+				for (float i = 0; i <= 200; i++) {
+					float y = centerWindowCoord.y + (canvasCenterContentCoord.y - (i - 100) / powf(10, (int)log10f(zoomLevelRatio) + 1)) * canvasDisplaySize * zoomLevelRatio;
+					draw_list->AddLine(ImVec2(centerWindowCoord.x - sizeScreenCoord.x / 2.0f, y),
+						ImVec2(centerWindowCoord.x + sizeScreenCoord.x / 2.0f, y),
+						IM_COL32(90, 90, 90, 80), 1.0f);
+				}
+				for (float i = 0; i <= 20; i++) {
+					float y = centerWindowCoord.y + (canvasCenterContentCoord.y - (i - 10) / powf(10, (int)log10f(zoomLevelRatio))) * canvasDisplaySize * zoomLevelRatio;
+					draw_list->AddLine(ImVec2(centerWindowCoord.x - sizeScreenCoord.x / 2.0f, y),
+						ImVec2(centerWindowCoord.x + sizeScreenCoord.x / 2.0f, y),
+						IM_COL32(90, 90, 90, 80), 2.0f);
+				}
+
+				// blue origin dot
+				draw_list->AddCircleFilled(contentOriginCenterDelta, 5.0f, IM_COL32(0, 211, 255, 255));
+
+
+				for (int i = 0; i < graph.edgeCount; i++) {
+					draw_list->AddLine(
+						ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.edges[i].startingVertex->coord.x) * canvasDisplaySize * zoomLevelRatio,
+							centerWindowCoord.y + (canvasCenterContentCoord.y - graph.edges[i].startingVertex->coord.y) * canvasDisplaySize * zoomLevelRatio),
+						ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.edges[i].endingVertex->coord.x) * canvasDisplaySize * zoomLevelRatio,
+							centerWindowCoord.y + (canvasCenterContentCoord.y - graph.edges[i].endingVertex->coord.y) * canvasDisplaySize * zoomLevelRatio),
+						IM_COL32(200, 200, 200, 255), 5.0f * powf(zoomLevelRatio, 0.1));
+				}
+
+				for (int i = 0; i < graph.vertexCount; i++) {
+					draw_list->AddCircleFilled(ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.vertices[i]->coord.x) * canvasDisplaySize * zoomLevelRatio,
+						centerWindowCoord.y + (canvasCenterContentCoord.y - graph.vertices[i]->coord.y) * canvasDisplaySize * zoomLevelRatio), 20.0f * powf(zoomLevelRatio, 0.1), IM_COL32(255, 211, 0, 255));
+
+					ImGui::PushFont(vertexTextFont);
+					float font_size = ImGui::GetFontSize() * powf(zoomLevelRatio, 0.1) * std::to_string(i).size() / 2;
+
+					draw_list->AddText(vertexTextFont, 36.0f * powf(zoomLevelRatio, 0.1),
+						ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.vertices[i]->coord.x) * canvasDisplaySize * (zoomLevelRatio)-font_size + (font_size / 2),
+							centerWindowCoord.y + (canvasCenterContentCoord.y - graph.vertices[i]->coord.y) * canvasDisplaySize * zoomLevelRatio - 18.0f * powf(zoomLevelRatio, 0.1)),
+						IM_COL32(15, 15, 15, 255), std::to_string(i).c_str(), 0, 0.0f, 0);
+
+					ImGui::PopFont();
+				}
+
+
+				if (zoomLevelRatio <= 1.0f) {
+					draw_list->AddText(ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - powf(10, (int)log10f(1.0f / zoomLevelRatio))) * canvasDisplaySize * zoomLevelRatio,
+						centerWindowCoord.y + (canvasCenterContentCoord.y - 0.0f) * canvasDisplaySize * zoomLevelRatio), IM_COL32(255, 255, 255, 200), ("X: " + std::to_string((int)powf(10, (int)log10f(1.0f / zoomLevelRatio)))).c_str(), 0);
+				}
+
+				if (zoomLevelRatio <= 0.1f) {
+					draw_list->AddText(ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - powf(10, (int)log10f(1.0f / zoomLevelRatio) - 1)) * canvasDisplaySize * zoomLevelRatio,
+						centerWindowCoord.y + (canvasCenterContentCoord.y - 0.0f) * canvasDisplaySize * zoomLevelRatio), IM_COL32(255, 255, 255, 200), ("X: " + std::to_string((int)powf(10, (int)log10f(1.0f / zoomLevelRatio) - 1))).c_str(), 0);
+				}
+
+				if (zoomLevelRatio <= 1.0f) {
+					draw_list->AddText(ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - 0.0f) * canvasDisplaySize * zoomLevelRatio,
+						centerWindowCoord.y + (canvasCenterContentCoord.y - powf(10, (int)log10f(1.0f / zoomLevelRatio))) * canvasDisplaySize * zoomLevelRatio),
+						IM_COL32(255, 255, 255, 200), ("Y: " + std::to_string((int)powf(10, (int)log10f(1.0f / zoomLevelRatio)))).c_str(), 0);
+				}
+
+				if (zoomLevelRatio <= 0.1f) {
+					draw_list->AddText(ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - 0.0f) * canvasDisplaySize * zoomLevelRatio,
+						centerWindowCoord.y + (canvasCenterContentCoord.y - powf(10, (int)log10f(1.0f / zoomLevelRatio) - 1)) * canvasDisplaySize * zoomLevelRatio),
+						IM_COL32(255, 255, 255, 200), ("Y: " + std::to_string((int)powf(10, (int)log10f(1.0f / zoomLevelRatio) - 1))).c_str(), 0);
+				}
+
 			}
-
-			// horizontal lines
-			for (float i = 0; i <= 200; i++) {
-				float y = centerWindowCoord.y + (canvasCenterContentCoord.y - (i - 100) / powf(10, (int)log10f(zoomLevelRatio) + 1)) * canvasDisplaySize * zoomLevelRatio;
-				draw_list->AddLine(ImVec2(centerWindowCoord.x - sizeScreenCoord.x / 2.0f, y),
-					ImVec2(centerWindowCoord.x + sizeScreenCoord.x / 2.0f, y),
-					IM_COL32(90, 90, 90, 80), 1.0f);
-			}
-
-			// blue origin dot
-			draw_list->AddCircleFilled(contentOriginCenterDelta, 5.0f, IM_COL32(0, 211, 255, 255));
-
-
-			for (int i = 0; i < graph.edgeCount; i++) {
-				draw_list->AddLine(
-					ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.edges[i].startingVertex->coord.x) * canvasDisplaySize * zoomLevelRatio,
-						centerWindowCoord.y + (canvasCenterContentCoord.y - graph.edges[i].startingVertex->coord.y) * canvasDisplaySize * zoomLevelRatio),
-					ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.edges[i].endingVertex->coord.x) * canvasDisplaySize * zoomLevelRatio,
-						centerWindowCoord.y + (canvasCenterContentCoord.y - graph.edges[i].endingVertex->coord.y) * canvasDisplaySize * zoomLevelRatio),
-					IM_COL32(200, 200, 200, 255), 5.0f);
-			}
-
-			for (int i = 0; i < graph.vertexCount; i++) {
-				draw_list->AddCircleFilled(ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.vertices[i]->coord.x) * canvasDisplaySize * zoomLevelRatio,
-					centerWindowCoord.y + (canvasCenterContentCoord.y - graph.vertices[i]->coord.y) * canvasDisplaySize * zoomLevelRatio), 20.0f * powf(zoomLevelRatio, 0.1), IM_COL32(255, 211, 0, 255));
-
-				ImGui::PushFont(vertexTextFont);
-				float font_size = ImGui::GetFontSize() * powf(zoomLevelRatio, 0.1) * std::to_string(i).size() / 2;
-
-				draw_list->AddText(vertexTextFont, 36.0f * powf(zoomLevelRatio, 0.1),
-					ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.vertices[i]->coord.x) * canvasDisplaySize * (zoomLevelRatio)-font_size + (font_size / 2),
-						centerWindowCoord.y + (canvasCenterContentCoord.y - graph.vertices[i]->coord.y) * canvasDisplaySize * zoomLevelRatio - 18.0f * powf(zoomLevelRatio, 0.1)),
-					IM_COL32(15, 15, 15, 255), std::to_string(i).c_str(), 0, 0.0f, 0);
-
-				ImGui::PopFont();
-			}
-
-
-			if (zoomLevelRatio <= 1.0f) {
-				draw_list->AddText(ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - powf(10, (int)log10f(1.0f / zoomLevelRatio))) * canvasDisplaySize * zoomLevelRatio,
-					centerWindowCoord.y + (canvasCenterContentCoord.y - 0.0f) * canvasDisplaySize * zoomLevelRatio), IM_COL32(255, 255, 255, 200), ("X: " + std::to_string((int)powf(10, (int)log10f(1.0f / zoomLevelRatio)))).c_str(), 0);
-			}
-
-			if (zoomLevelRatio <= 0.1f) {
-				draw_list->AddText(ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - powf(10, (int)log10f(1.0f / zoomLevelRatio) - 1)) * canvasDisplaySize * zoomLevelRatio,
-					centerWindowCoord.y + (canvasCenterContentCoord.y - 0.0f) * canvasDisplaySize * zoomLevelRatio), IM_COL32(255, 255, 255, 200), ("X: " + std::to_string((int)powf(10, (int)log10f(1.0f / zoomLevelRatio) - 1))).c_str(), 0);
-			}
-
-			if (zoomLevelRatio <= 1.0f) {
-				draw_list->AddText(ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - 0.0f) * canvasDisplaySize * zoomLevelRatio,
-					centerWindowCoord.y + (canvasCenterContentCoord.y - powf(10, (int)log10f(1.0f / zoomLevelRatio))) * canvasDisplaySize * zoomLevelRatio), 
-					IM_COL32(255, 255, 255, 200), ("Y: " + std::to_string((int)powf(10, (int)log10f(1.0f / zoomLevelRatio)))).c_str(), 0);
-			}
-
-			if (zoomLevelRatio <= 0.1f) {
-				draw_list->AddText(ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - 0.0f) * canvasDisplaySize * zoomLevelRatio,
-					centerWindowCoord.y + (canvasCenterContentCoord.y - powf(10, (int)log10f(1.0f / zoomLevelRatio) - 1)) * canvasDisplaySize * zoomLevelRatio),
-					IM_COL32(255, 255, 255, 200), ("Y: " + std::to_string((int)powf(10, (int)log10f(1.0f / zoomLevelRatio) - 1))).c_str(), 0);
-			}
-
-
 
 			draw_list->PopClipRect();
 
