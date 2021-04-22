@@ -60,7 +60,7 @@ namespace Graphene {
 			float dis = distance(u, v);
 			if (dis == 0.0)
 				return Structure::Vec2f(0, 0);
-			float coeff = m_c1 * log(std::max(1.0f, dis / m_c2));
+			float coeff = m_c1 * log10f(std::max(1.0f, dis / m_c2));
 			return (v->coord - u->coord) * coeff;
 		}
 

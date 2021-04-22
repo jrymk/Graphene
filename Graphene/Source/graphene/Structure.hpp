@@ -44,25 +44,25 @@ namespace Graphene {
 				this->y -= a.y;
 			}
 
-			Vec2f operator*(double a) {
+			Vec2f operator*(float a) {
 				return Vec2f(this->x * a, this->y * a);
 			}
 
-			void operator*=(double a) {
+			void operator*=(float a) {
 				this->x *= a;
 				this->y *= a;
 			}
 
-			Vec2f operator/(double a) {
+			Vec2f operator/(float a) {
 				return Vec2f(this->x / a, this->y / a);
 			}
 
-			void operator/=(double a) {
+			void operator/=(float a) {
 				this->x /= a;
 				this->y /= a;
 			}
 
-			double operator*(Vec2f a) {
+			float operator*(Vec2f a) {
 				return this->x * a.x + this->y * a.y;
 			}
 
