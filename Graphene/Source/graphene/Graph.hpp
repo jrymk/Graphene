@@ -50,7 +50,7 @@ namespace Graphene {
 			for (int i = 0; i < this->vertexCount; i++) {
 				this->vertices.emplace_back(new Structure::Vertex(i));
 			}
-
+	
 			for (std::vector<std::pair<std::pair<int, int>, bool>>::iterator it = inputEdges.begin(); it != inputEdges.end(); it++) {
 				int start = it->first.first, end = it->first.second;
 				bool directed = it->second;
