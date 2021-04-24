@@ -88,20 +88,20 @@ namespace Graphene {
 
 		void updatePos() {
 			for (std::vector<Structure::Vertex*>::iterator u = m_graph->vertices.begin(); u != m_graph->vertices.end(); u++) {
-				Structure::Vec2f resultForce(0, 0);
+				(*u)->resultForce = Structure::Vec2f(0, 0);
 				for (std::vector<Structure::Vertex*>::iterator v = m_graph->vertices.begin(); v != m_graph->vertices.end(); v++) {
 					if (!isAdjacent((*u)->number, (*v)->number) || not_adjacent_repel)
-						resultForce = resultForce + repelForce(*u, *v);
+						(*u)->resultForce = (*u)->resultForce + repelForce(*u, *v);
 				}
 				for (std::vector<Structure::Vertex*>::iterator v = m_graph->adjList[(*u)->number].begin();
 					v != m_graph->adjList[(*u)->number].end(); v++) {
-					//resultForce = resultForce + attractForce(*u, *v);
+					(*u)->resultForce = (*u)->resultForce + attractForce(*u, *v);
 				}
-				(*u)->coord = (*u)->coord + resultForce;
 			}
-			/*for (std::vector<Structure::Vertex*>::iterator u = m_graph->vertices.begin(); u != m_graph->vertices.end(); u++) {
-				(*u)->coord = (*u)->coord + (*u)->resultForce * m_c4;
-			}*/
+			for (std::vector<Structure::Vertex*>::iterator u = m_graph->vertices.begin(); u != m_graph->vertices.end(); u++) {
+				(*u)->coord.x = (*u)->coord.x + (*u)->resultForce.x * m_c4;
+				(*u)->coord.y = (*u)->coord.y + (*u)->resultForce.y * m_c4;
+			}
 		}
 
 	};

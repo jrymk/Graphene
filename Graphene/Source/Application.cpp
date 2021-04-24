@@ -188,7 +188,7 @@ int main() {
 		return 3;
 
 
-	glfwSwapInterval(1);
+	glfwSwapInterval(0);
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -248,6 +248,7 @@ int main() {
 
 	ImGui::CreateContext();
 
+
 	while (!glfwWindowShouldClose(window)) {
 
 		glfwPollEvents();
@@ -265,25 +266,31 @@ int main() {
 
 			ImGui::SameLine();
 
-			if (ImGui::Button("Update graph") || graphene_live_update) {
+			if (ImGui::Button("Update graph") || graphene_live_update)
 				core.updatePos();
+
+			if (ImGui::Button("Reset to default")) {
+				core.m_c1 = 2;
+				core.m_c2 = 1;
+				core.m_c3 = 1;
+				core.m_c4 = 0.1;
 			}
 
 			ImGui::Checkbox("Repel on adjacent vertices", &core.not_adjacent_repel);
 
-			ImGui::SliderFloat("C1", &core.m_c1, 0, 10, "%f", 10);
+			ImGui::SliderFloat("C1", &core.m_c1, 0.01f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
 			ImGui::SameLine();
 			HelpMarker("Attraction force factor");
 
-			ImGui::SliderFloat("C2", &core.m_c2, 0, 10, "%f", 10);
+			ImGui::SliderFloat("C2", &core.m_c2, 0.01f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
 			ImGui::SameLine();
 			HelpMarker("Attraction log");
 
-			ImGui::SliderFloat("C3", &core.m_c3, 0, 10, "%f", 10);
+			ImGui::SliderFloat("C3", &core.m_c3, 0.01f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
 			ImGui::SameLine();
 			HelpMarker("Repel factor");
 
-			ImGui::SliderFloat("C4", &core.m_c4, 0, 1, "%f", 10);
+			ImGui::SliderFloat("C4", &core.m_c4, 0.001f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
 			ImGui::SameLine();
 			HelpMarker("Factor");
 		}
@@ -489,9 +496,6 @@ int main() {
 			const bool is_hovered = ImGui::IsItemHovered(); // Hovered
 			const bool is_active = ImGui::IsItemActive();   // Mouse button held
 
-			ImVec2 contentOriginCenterDelta = ImVec2(centerWindowCoord.x - canvasCenterContentCoord.x * canvasDisplaySize * zoomLevelRatio,
-				centerWindowCoord.y + canvasCenterContentCoord.y * canvasDisplaySize * zoomLevelRatio);
-
 
 			/*ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - X_COORD) * canvasDisplaySize * zoomLevelRatio,
 			centerWindowCoord.y + (canvasCenterContentCoord.y - Y_COORD) * canvasDisplaySize * zoomLevelRatio)*/
@@ -539,7 +543,7 @@ int main() {
 				canvasCenterContentCoord.x = (x_max - x_min) / 2.0f + x_min;
 				canvasCenterContentCoord.y = (y_max - y_min) / 2.0f + y_min;
 
-				zoomLevelRatio = 1.0f / max(max(x_max - x_min, y_max - y_min), 0.000001f) * zoomOffset;
+				zoomLevelRatio = 1.0f / max(max(x_max - x_min, y_max - y_min), 0.1f) * zoomOffset;
 			}
 
 
@@ -551,7 +555,7 @@ int main() {
 				, ImVec2(
 					centerWindowCoord.x - (canvasCenterContentCoord.x - 1.0f) * canvasDisplaySize * zoomLevelRatio,
 					centerWindowCoord.y + (canvasCenterContentCoord.y - 0.0f) * canvasDisplaySize * zoomLevelRatio)
-				, IM_COL32(40, 40, 40, 255), 6.0f * zoomLevelRatio, 0);
+				, IM_COL32(40, 40, 40, 255), 0.0f);
 
 
 
@@ -585,6 +589,11 @@ int main() {
 						ImVec2(centerWindowCoord.x + sizeScreenCoord.x / 2.0f, y),
 						IM_COL32(90, 90, 90, 80), 2.0f);
 				}
+
+
+				ImVec2 contentOriginCenterDelta = ImVec2(centerWindowCoord.x - canvasCenterContentCoord.x * canvasDisplaySize * zoomLevelRatio,
+					centerWindowCoord.y + canvasCenterContentCoord.y * canvasDisplaySize * zoomLevelRatio);
+
 
 				// blue origin dot
 				draw_list->AddCircleFilled(contentOriginCenterDelta, 5.0f, IM_COL32(0, 211, 255, 255));
