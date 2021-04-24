@@ -477,6 +477,8 @@ int main() {
 			static ImVec2 canvasCenterContentCoord = ImVec2(0.5f, 0.5f);
 
 			static float zoomLevelRatio = 1.0f;
+			static bool useZoomTarget = false;
+			static float zoomLevelTarget = 1.0f;
 
 			if (autoZoomPan) {
 				ImGui::SameLine();
@@ -485,7 +487,8 @@ int main() {
 			else {
 				ImGui::SameLine();
 				if (ImGui::Button("Reset view")) {
-					zoomLevelRatio = 1.0f;
+					zoomLevelTarget = 1.0f;
+					useZoomTarget = true;
 					zoomOffset = 0.5f;
 					canvasCenterContentCoord = ImVec2(0.5f, 0.5f);
 				}
@@ -504,6 +507,13 @@ int main() {
 			// zoom level control
 			zoomLevelRatio *= powf(1.05, ImGui::GetIO().MouseWheel);
 			zoomLevelRatio = max(zoomLevelRatio, FLT_MIN);
+			if (useZoomTarget) {
+				zoomLevelRatio *= powf(zoomLevelTarget / zoomLevelRatio, 0.1);
+				if (zoomLevelTarget / zoomLevelRatio < 1.01f && zoomLevelTarget / zoomLevelRatio > 1.0f / 1.01f) {
+					useZoomTarget = false;
+					zoomLevelRatio = zoomLevelTarget;
+				}
+			}
 
 			if (ImGui::IsItemHovered()) {
 				mouseWheelPosition += ImGui::GetIO().MouseWheel;
@@ -543,10 +553,10 @@ int main() {
 			}
 
 			if (autoZoomPan) {
-				canvasCenterContentCoord.x = (x_max - x_min) / 2.0f + x_min;
-				canvasCenterContentCoord.y = (y_max - y_min) / 2.0f + y_min;
+				canvasCenterContentCoord.x += ((x_max - x_min) / 2.0f + x_min - canvasCenterContentCoord.x) * 0.3f;
+				canvasCenterContentCoord.y += ((y_max - y_min) / 2.0f + y_min - canvasCenterContentCoord.y) * 0.3f;
 
-				zoomLevelRatio = 1.0f / max(max(x_max - x_min, y_max - y_min), 0.1f) * zoomOffset;
+				zoomLevelRatio += (1.0f / max(max(x_max - x_min, y_max - y_min), 0.1f) * zoomOffset - zoomLevelRatio) * 0.3f;
 			}
 
 
