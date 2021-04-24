@@ -485,6 +485,7 @@ int main() {
 			else {
 				ImGui::SameLine();
 				if (ImGui::Button("Reset view")) {
+					zoomLevelRatio = 1.0f;
 					zoomOffset = 0.5f;
 					canvasCenterContentCoord = ImVec2(0.5f, 0.5f);
 				}
@@ -506,8 +507,10 @@ int main() {
 
 			if (ImGui::IsItemHovered()) {
 				mouseWheelPosition += ImGui::GetIO().MouseWheel;
-				canvasCenterContentCoord.x += (ImGui::GetIO().MousePos.x - centerWindowCoord.x) / canvasDisplaySize * (powf(1.05, ImGui::GetIO().MouseWheel) - 1.0f);
-				canvasCenterContentCoord.y -= (ImGui::GetIO().MousePos.y - centerWindowCoord.y) / canvasDisplaySize * (powf(1.05, ImGui::GetIO().MouseWheel) - 1.0f);
+				canvasCenterContentCoord.x += -(ImGui::GetIO().MousePos.x - centerWindowCoord.x + (centerWindowCoord.x - ImGui::GetIO().MousePos.x) *
+					(powf(1.05, ImGui::GetIO().MouseWheel))) / canvasDisplaySize / zoomLevelRatio;
+				canvasCenterContentCoord.y -= -(ImGui::GetIO().MousePos.y - centerWindowCoord.y + (centerWindowCoord.y - ImGui::GetIO().MousePos.y) *
+					(powf(1.05, ImGui::GetIO().MouseWheel))) / canvasDisplaySize / zoomLevelRatio;
 			}
 
 			// pan control
@@ -623,7 +626,7 @@ int main() {
 					ImGui::PopFont();
 				}
 
-
+				/*
 				if (zoomLevelRatio <= 1.0f) {
 					draw_list->AddText(ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - powf(10, (int)log10f(1.0f / zoomLevelRatio))) * canvasDisplaySize * zoomLevelRatio,
 						centerWindowCoord.y + (canvasCenterContentCoord.y - 0.0f) * canvasDisplaySize * zoomLevelRatio), IM_COL32(255, 255, 255, 200), ("X: " + std::to_string((int)powf(10, (int)log10f(1.0f / zoomLevelRatio)))).c_str(), 0);
@@ -645,6 +648,23 @@ int main() {
 						centerWindowCoord.y + (canvasCenterContentCoord.y - powf(10, (int)log10f(1.0f / zoomLevelRatio) - 1)) * canvasDisplaySize * zoomLevelRatio),
 						IM_COL32(255, 255, 255, 200), ("Y: " + std::to_string((int)powf(10, (int)log10f(1.0f / zoomLevelRatio) - 1))).c_str(), 0);
 				}
+				*/
+
+				draw_list->AddText(ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - powf(10, (int)log10f(1.0f / zoomLevelRatio))) * canvasDisplaySize * zoomLevelRatio,
+					centerWindowCoord.y + (canvasCenterContentCoord.y - 0.0f) * canvasDisplaySize * zoomLevelRatio), 
+					IM_COL32(255, 255, 255, 200), ("X: 1E" + std::to_string((int)log10f(1.0f / zoomLevelRatio))).c_str(), 0);
+
+				draw_list->AddText(ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - powf(10, (int)log10f(1.0f / zoomLevelRatio) - 1)) * canvasDisplaySize * zoomLevelRatio,
+					centerWindowCoord.y + (canvasCenterContentCoord.y - 0.0f) * canvasDisplaySize * zoomLevelRatio), 
+					IM_COL32(255, 255, 255, 200), ("X: 1E" + std::to_string((int)log10f(1.0f / zoomLevelRatio) - 1)).c_str(), 0);
+
+				draw_list->AddText(ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - 0.0f) * canvasDisplaySize * zoomLevelRatio,
+					centerWindowCoord.y + (canvasCenterContentCoord.y - powf(10, (int)log10f(1.0f / zoomLevelRatio))) * canvasDisplaySize * zoomLevelRatio),
+					IM_COL32(255, 255, 255, 200), ("Y: 1E" + std::to_string((int)log10f(1.0f / zoomLevelRatio))).c_str(), 0);
+
+				draw_list->AddText(ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - 0.0f) * canvasDisplaySize * zoomLevelRatio,
+					centerWindowCoord.y + (canvasCenterContentCoord.y - powf(10, (int)log10f(1.0f / zoomLevelRatio) - 1)) * canvasDisplaySize * zoomLevelRatio),
+					IM_COL32(255, 255, 255, 200), ("Y: 1E" + std::to_string((int)log10f(1.0f / zoomLevelRatio) - 1)).c_str(), 0);
 
 			}
 
