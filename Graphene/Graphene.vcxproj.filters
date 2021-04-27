@@ -21,9 +21,6 @@
     <ClCompile Include="..\Dependencies\glad\src\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\graphene\Core.hpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Dependencies\imgui\imgui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -45,11 +42,11 @@
     <ClCompile Include="..\Dependencies\imgui\imgui_demo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\graphene\Core.hpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\ExceptionHandler.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\imgui\imgui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -83,20 +80,23 @@
     <ClInclude Include="Source\imgui\addons\imguivariouscontrols\imguivariouscontrols.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\graphene\Structure.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\imgui\addons\imguinodegrapheditor\imguinodegrapheditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\graphene\Graphene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\graphene\Graph.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\imgui\addons\imnodes\imnodes.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ExceptionHandler.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\graphene\Graph.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\graphene\Structure.hpp">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
