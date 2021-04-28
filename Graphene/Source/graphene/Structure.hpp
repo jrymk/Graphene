@@ -80,7 +80,7 @@ namespace Graphene {
 		};
 
 
-		struct Vertex {
+		class Vertex {
 
 			float genRandom() {
 				std::random_device rd;
@@ -107,10 +107,32 @@ namespace Graphene {
 				coord = _coord;
 			}
 
+		public:
 			Vertex(int _num) {
 				number = _num;
 				name = std::to_string(number);
 			}
+
+			Vec2f getCoord() {
+				return coord;
+			}
+
+			void move(Vec2f v) {
+				resultForce += v;
+			}
+
+			void flushMove(float c) {
+				if (resultForce.length() * c > 1e-2) {
+					coord += resultForce * c;
+					std::cerr << getNumber() << " " << resultForce * c << std::endl;
+				}
+				resultForce = Vec2f(0, 0);
+			}
+
+			int getNumber() {
+				return number;
+			}
+			
 		};
 
 		struct Edge {

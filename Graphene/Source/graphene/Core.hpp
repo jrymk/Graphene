@@ -25,22 +25,6 @@ namespace Graphene {
 			m_graph = &graph;
 		}
 
-		static float genRandom() {
-			static std::random_device rd;
-			static std::mt19937 gen(rd());
-			static std::uniform_real_distribution<> dis(0.0, 1.0);
-			return dis(gen);
-		}
-
-		void printPos(int decimalPlaces) {
-			std::cout << std::fixed << std::setprecision(decimalPlaces);
-			std::cout << "----------------------------------\n";
-			for (int i = 0; i < m_graph->vertexCount; i++) {
-				std::cout << "Vertex[ " << i << " ] position\t" << m_graph->vertices[i]->coord << '\n';
-			}
-			std::cout << "----------------------------------\n";
-		}
-
 		float m_c1 = 2;
 		float m_c2 = 1;
 		float m_c3 = 1;
@@ -49,8 +33,8 @@ namespace Graphene {
 		bool not_adjacent_repel = true;
 
 		float distance(Structure::Vertex* u, Structure::Vertex* v) {
-			float dx = u->coord.x - v->coord.x;
-			float dy = u->coord.y - v->coord.y;
+			float dx = u->getCoord().x - v->getCoord().x;
+			float dy = u->getCoord().y - v->getCoord().y;
 			return sqrt(dx * dx + dy * dy);
 		}
 
@@ -63,7 +47,7 @@ namespace Graphene {
 			if (dis == 0.0)
 				return Structure::Vec2f(0, 0);
 			float coeff = m_c1 * log(dis / m_c2);
-			return (v->coord - u->coord) * coeff;
+			return (v->getCoord() - u->getCoord()) * coeff;
 		}
 
 		Structure::Vec2f repelForce(Structure::Vertex* u, Structure::Vertex* v) {
@@ -71,36 +55,26 @@ namespace Graphene {
 			if (dis == 0.0)
 				return Structure::Vec2f(0, 0);
 			float coeff = -m_c3 / dis / dis;
-			return (v->coord - u->coord) * coeff;
-		}
-
-		void initializePos() {
-			for (int i = 0; i < (int)m_graph->vertices.size(); i++) {
-				m_graph->vertices[i]->coord = Structure::Vec2f(genRandom(), genRandom());
-			}
-		}
-
-		bool isAdjacent(int u, int v) {
-			if (std::find(m_graph->adjList[u].begin(), m_graph->adjList[u].end(), m_graph->vertices[v]) != m_graph->adjList[u].end())
-				return true;
-			return false;
+			return (v->getCoord() - u->getCoord()) * coeff;
 		}
 
 		void updatePos() {
-			for (std::vector<Structure::Vertex*>::iterator u = m_graph->vertices.begin(); u != m_graph->vertices.end(); u++) {
-				(*u)->resultForce = Structure::Vec2f(0, 0);
-				for (std::vector<Structure::Vertex*>::iterator v = m_graph->vertices.begin(); v != m_graph->vertices.end(); v++) {
-					if (!isAdjacent((*u)->number, (*v)->number) || not_adjacent_repel)
-						(*u)->resultForce = (*u)->resultForce + repelForce(*u, *v);
+			for (auto u : m_graph->vertices) {
+				for(auto v : m_graph->vertices) {
+					if (!m_graph->isAdjacent(u->getNumber(), v->getNumber()) || not_adjacent_repel) {
+						//std::cerr << u->getNumber() << " " << v->getNumber() << " " << repelForce(u, v) << std::endl;
+						u->move(repelForce(u, v));
+					}
 				}
-				for (std::vector<Structure::Vertex*>::iterator v = m_graph->adjList[(*u)->number].begin();
-					v != m_graph->adjList[(*u)->number].end(); v++) {
-					(*u)->resultForce = (*u)->resultForce + attractForce(*u, *v);
+				for (auto v : m_graph->adjList[u->getNumber()]) {
+					//if(((*v)->number == 0 && (*u)->number == 1) || ((*v)->number == 1 && (*u)->number == 0))
+					//std::cerr << "a " << (*u)->number << " " << (*v)->number << " " << attractForce(*u, *v)
+							//<< " " << repelForce(*u, *v) << " " << distance(*u, *v) << std::endl;
+					u->move(attractForce(u, v));
 				}
 			}
-			for (std::vector<Structure::Vertex*>::iterator u = m_graph->vertices.begin(); u != m_graph->vertices.end(); u++) {
-				(*u)->coord.x = (*u)->coord.x + (*u)->resultForce.x * m_c4;
-				(*u)->coord.y = (*u)->coord.y + (*u)->resultForce.y * m_c4;
+			for (auto u : m_graph->vertices) {
+				u->flushMove(m_c4);
 			}
 		}
 

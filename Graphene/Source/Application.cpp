@@ -299,20 +299,18 @@ int main() {
 			static ImGuiTableFlags flags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_Hideable;
 
 			ImVec2 outer_size = ImVec2(0.0f, 0.0f);
-			if (ImGui::BeginTable("table_scrollx", 5, flags, outer_size)) {
+			if (ImGui::BeginTable("table_scrollx", 3, flags, outer_size)) {
 
 				ImGui::TableSetupScrollFreeze(1, 1);
 				ImGui::TableSetupColumn("Vertex #", ImGuiTableColumnFlags_NoHide); // Make the first column not hideable to match our use of TableSetupScrollFreeze()
 				ImGui::TableSetupColumn("PosX");
 				ImGui::TableSetupColumn("PosY");
-				ImGui::TableSetupColumn("ResultX");
-				ImGui::TableSetupColumn("ResultY");
 
 				ImGui::TableHeadersRow();
 				for (int vertex = 0; vertex < graph.vertexCount; vertex++) {
 					ImGui::TableNextRow();
 
-					for (int column = 0; column < 5; column++) {
+					for (int column = 0; column < 3; column++) {
 
 						if (!ImGui::TableSetColumnIndex(column) && column > 0)
 							continue;
@@ -322,16 +320,10 @@ int main() {
 							ImGui::Text("%d", vertex);
 							break;
 						case 1:
-							ImGui::Text("%f", graph.vertices[vertex]->coord.x);
+							ImGui::Text("%f", graph.vertices[vertex]->getCoord().x);
 							break;
 						case 2:
-							ImGui::Text("%f", graph.vertices[vertex]->coord.y);
-							break;
-						case 3:
-							ImGui::Text("%f", graph.vertices[vertex]->resultForce.x);
-							break;
-						case 4:
-							ImGui::Text("%f", graph.vertices[vertex]->resultForce.y);
+							ImGui::Text("%f", graph.vertices[vertex]->getCoord().y);
 							break;
 
 						}
@@ -556,10 +548,10 @@ int main() {
 			float y_min = 1000000000.0;
 
 			for (int i = 0; i < graph.vertexCount; i++) {
-				x_max = max(x_max, graph.vertices[i]->coord.x);
-				x_min = min(x_min, graph.vertices[i]->coord.x);
-				y_max = max(y_max, graph.vertices[i]->coord.y);
-				y_min = min(y_min, graph.vertices[i]->coord.y);
+				x_max = max(x_max, graph.vertices[i]->getCoord().x);
+				x_min = min(x_min, graph.vertices[i]->getCoord().x);
+				y_max = max(y_max, graph.vertices[i]->getCoord().y);
+				y_min = min(y_min, graph.vertices[i]->getCoord().y);
 			}
 
 			if (autoZoomPan) {
@@ -639,23 +631,23 @@ int main() {
 
 				for (int i = 0; i < graph.edgeCount; i++) {
 					drawList->AddLine(
-						ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.edges[i].startingVertex->coord.x) * canvasDisplaySize * zoomLevelRatio,
-							centerWindowCoord.y + (canvasCenterContentCoord.y - graph.edges[i].startingVertex->coord.y) * canvasDisplaySize * zoomLevelRatio),
-						ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.edges[i].endingVertex->coord.x) * canvasDisplaySize * zoomLevelRatio,
-							centerWindowCoord.y + (canvasCenterContentCoord.y - graph.edges[i].endingVertex->coord.y) * canvasDisplaySize * zoomLevelRatio),
+						ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.edges[i].startingVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
+							centerWindowCoord.y + (canvasCenterContentCoord.y - graph.edges[i].startingVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio),
+						ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.edges[i].endingVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
+							centerWindowCoord.y + (canvasCenterContentCoord.y - graph.edges[i].endingVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio),
 						IM_COL32(200, 200, 200, 255), 5.0f * powf(zoomLevelRatio, 0.1));
 				}
 
 				for (int i = 0; i < graph.vertexCount; i++) {
-					drawList->AddCircleFilled(ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.vertices[i]->coord.x) * canvasDisplaySize * zoomLevelRatio,
-						centerWindowCoord.y + (canvasCenterContentCoord.y - graph.vertices[i]->coord.y) * canvasDisplaySize * zoomLevelRatio), 20.0f * powf(zoomLevelRatio, 0.1), IM_COL32(255, 211, 0, 255));
+					drawList->AddCircleFilled(ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.vertices[i]->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
+						centerWindowCoord.y + (canvasCenterContentCoord.y - graph.vertices[i]->getCoord().y) * canvasDisplaySize * zoomLevelRatio), 20.0f * powf(zoomLevelRatio, 0.1), IM_COL32(255, 211, 0, 255));
 
 					ImGui::PushFont(vertexTextFont);
 					float font_size = ImGui::GetFontSize() * powf(zoomLevelRatio, 0.1) * std::to_string(i).size() / 2;
 
 					drawList->AddText(vertexTextFont, 36.0f * powf(zoomLevelRatio, 0.1),
-						ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.vertices[i]->coord.x) * canvasDisplaySize * (zoomLevelRatio)-font_size + (font_size / 2),
-							centerWindowCoord.y + (canvasCenterContentCoord.y - graph.vertices[i]->coord.y) * canvasDisplaySize * zoomLevelRatio - 18.0f * powf(zoomLevelRatio, 0.1)),
+						ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.vertices[i]->getCoord().x) * canvasDisplaySize * (zoomLevelRatio)-font_size + (font_size / 2),
+							centerWindowCoord.y + (canvasCenterContentCoord.y - graph.vertices[i]->getCoord().y) * canvasDisplaySize * zoomLevelRatio - 18.0f * powf(zoomLevelRatio, 0.1)),
 						IM_COL32(15, 15, 15, 255), std::to_string(i).c_str(), 0, 0.0f, 0);
 
 					ImGui::PopFont();

@@ -49,7 +49,6 @@ namespace Graphene {
 
 			for (int i = 0; i < this->vertexCount; i++) {
 				this->vertices.emplace_back(new Structure::Vertex(i));
-				this->vertices[this->vertices.size() - 1]->number = i;
 			}
 	
 			for (std::vector<std::pair<std::pair<int, int>, bool>>::iterator it = inputEdges.begin(); it != inputEdges.end(); it++) {
@@ -60,6 +59,12 @@ namespace Graphene {
 				this->adjList[start].emplace_back(this->vertices[end]);
 				this->adjList[end].emplace_back(this->vertices[start]);
 			}
+		}
+
+		bool isAdjacent(int u, int v) {
+			if (std::find(adjList[u].begin(), adjList[u].end(), vertices[v]) != adjList[u].end())
+				return true;
+			return false;
 		}
 
 
