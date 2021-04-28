@@ -58,6 +58,7 @@ namespace Graphene {
 
 				this->edges.emplace_back(Structure::Edge(this->vertices[start], this->vertices[end], directed));
 				this->adjList[start].emplace_back(this->vertices[end]);
+				this->adjList[end].emplace_back(this->vertices[start]);
 			}
 		}
 

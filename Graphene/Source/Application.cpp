@@ -427,10 +427,8 @@ int main() {
 					for (int i = 0; i < graphene_vertices; i++) {
 						for (int j = 0; j < graphene_vertices; j++) {
 							if (graphene_graph[i][j]) {
-								if (i >= j) {
-									tickCount++;
-									temp_graph.push_back({ {i, j}, false });
-								}
+								tickCount++;
+								temp_graph.push_back({ {i, j}, false });
 							}
 						}
 					}
