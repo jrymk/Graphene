@@ -10,11 +10,11 @@ namespace Graphene {
 		// total number of vertices and edges
 		int vertexCount, edgeCount;
 		// list of properties of all vertices, for instance their ids and positions
-		std::vector<Structure::Vertex*> vertices;
+		std::vector<Vertex*> vertices;
 		// list of properties of all edges, for instance their connection vertices and draw thickness
-		std::vector<Structure::Edge> edges;
+		std::vector<Edge> edges;
 		// the adjacency list for the structure of the graph, nothing else
-		std::vector<std::vector<Structure::Vertex*>> adjList;
+		std::vector<std::vector<Vertex*>> adjList;
 
 		Graph() = default;
 
@@ -27,7 +27,7 @@ namespace Graphene {
 				for (std::vector<int>::iterator vb = va->begin(); vb != va->end(); vb++) {
 					int start = it->first.first, end = it->first.second;
 					bool directed = it->second;
-					Structure::Edge edge = Structure::Edge(&this->vertices[start], &this->vertices[end], directed);
+					Edge edge = Edge(&this->vertices[start], &this->vertices[end], directed);
 
 					this->edges.emplace_back(edge);
 					this->adjList[start].emplace_back(this->vertices[end]);
@@ -48,14 +48,14 @@ namespace Graphene {
 			this->adjList.resize(this->vertexCount);
 
 			for (int i = 0; i < this->vertexCount; i++) {
-				this->vertices.emplace_back(new Structure::Vertex(i));
+				this->vertices.emplace_back(new Vertex(i));
 			}
 	
 			for (std::vector<std::pair<std::pair<int, int>, bool>>::iterator it = inputEdges.begin(); it != inputEdges.end(); it++) {
 				int start = it->first.first, end = it->first.second;
 				bool directed = it->second;
 
-				this->edges.emplace_back(Structure::Edge(this->vertices[start], this->vertices[end], directed));
+				this->edges.emplace_back(Edge(this->vertices[start], this->vertices[end], directed));
 				this->adjList[start].emplace_back(this->vertices[end]);
 				this->adjList[end].emplace_back(this->vertices[start]);
 			}
