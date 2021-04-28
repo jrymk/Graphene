@@ -13,9 +13,24 @@ namespace Gui {
 
 			static int v, e = 0, a, b;
 
-			ImGui::SliderInt("Vertices", &v, 0, 30, "%d", 0);
+			ImGui::SliderInt("Vertices", &v, 0, 50, "%d", 0);
 
-			if (ImGui::Button("Update")) {
+			bool pendingUpdate = false;
+
+			if (ImGui::Button("Wipe and reset")) {
+				for (int i = 0; i < core->getGraph()->vertices.size(); i++) {
+					delete core->getGraph()->vertices[i];
+				}
+				core->getGraph()->vertices.clear();
+				for (int i = 0; i < v; i++) {
+					Graphene::Vertex* vertex = new Graphene::Vertex(i);
+					core->getGraph()->vertices.emplace_back(vertex);
+				}
+
+				pendingUpdate = true;
+			}
+
+			if (ImGui::Button("Update") || pendingUpdate) {
 				std::stringstream ss;
 				ss << text;
 
@@ -37,7 +52,7 @@ namespace Gui {
 
 			if (v > core->getGraph()->vertexCount) {
 				for (int i = core->getGraph()->vertexCount; i < v; i++) {
-					Graphene::Vertex* vertex = new Graphene::Vertex(core->getGraph()->vertexCount);
+					Graphene::Vertex* vertex = new Graphene::Vertex(i);
 					core->getGraph()->vertices.emplace_back(vertex);
 				}
 			}
