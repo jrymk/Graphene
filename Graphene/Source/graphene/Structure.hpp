@@ -71,7 +71,12 @@ namespace Graphene {
 			}
 
 			float length() {
-				return sqrt(this->x * this->x + this->y + this->y);
+				return sqrt(this->x * this->x + this->y * this->y);
+			}
+
+			Vec2f normalize() {
+				if (length() <= 1e-9) return Vec2f(0, 0);
+				return Vec2f(*this) / length();
 			}
 
 			friend std::ostream& operator<<(std::ostream& os, const Vec2f& nd) {
@@ -122,10 +127,7 @@ namespace Graphene {
 			}
 
 			void flushMove(float c) {
-				if (resultForce.length() * c > 1e-2) {
-					coord += resultForce * c;
-					std::cerr << getNumber() << " " << resultForce * c << std::endl;
-				}
+				coord += resultForce * c;
 				resultForce = Vec2f(0, 0);
 			}
 
