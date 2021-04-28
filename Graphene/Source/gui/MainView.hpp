@@ -363,10 +363,12 @@ namespace Gui {
 
 
 
-				if (ImGui::IsItemHovered() && (hoverVertex != nullptr || isDraggingVertex || addingEdge))
-					ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-				else
-					ImGui::SetMouseCursor(ImGuiMouseCursor_Arrow);
+				if (ImGui::IsItemHovered()) {
+					if (hoverVertex != nullptr || isDraggingVertex || addingEdge)
+						ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+					else
+						ImGui::SetMouseCursor(ImGuiMouseCursor_Arrow);
+				}
 
 
 				for (int i = 0; i < graph->vertexCount; i++) {
