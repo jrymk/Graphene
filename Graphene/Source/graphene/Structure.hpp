@@ -130,6 +130,8 @@ namespace Graphene {
 
 			void flushMove(float c) {
 				coord += resultForce * c;
+				//std::cerr << getNumber() << " " << resultForce * c << std::endl;
+
 				resultForce = Vec2f(0, 0);
 			}
 

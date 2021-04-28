@@ -630,24 +630,6 @@ int main() {
 				static bool addingEdge = false;
 
 
-				for (int i = 0; i < graph.edgeCount; i++) {
-					drawList->AddLine(
-						ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.edges[i].startingVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
-							centerWindowCoord.y + (canvasCenterContentCoord.y - graph.edges[i].startingVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio),
-						ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.edges[i].endingVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
-							centerWindowCoord.y + (canvasCenterContentCoord.y - graph.edges[i].endingVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio),
-						IM_COL32(200, 200, 200, 255), 5.0f * powf(zoomLevelRatio, 0.1));
-				}
-
-				if (addingEdge) {
-					drawList->AddLine(
-						ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - edgeAddVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
-							centerWindowCoord.y + (canvasCenterContentCoord.y - edgeAddVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio),
-						ImVec2(ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y),
-						IM_COL32(200, 200, 200, 255), 5.0f * powf(zoomLevelRatio, 0.1));
-				}
-
-
 				for (int i = 0; i < graph.vertexCount; i++) {
 					ImVec2 vertexScreenCoord(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.vertices[i]->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
 						centerWindowCoord.y + (canvasCenterContentCoord.y - graph.vertices[i]->getCoord().y) * canvasDisplaySize * zoomLevelRatio);
@@ -658,6 +640,106 @@ int main() {
 							hoverVertex = graph.vertices[i];
 						}
 					}
+				}
+
+				for (int i = 0; i < graph.edgeCount; i++) {
+					drawList->AddLine(
+						ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.edges[i].startingVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
+							centerWindowCoord.y + (canvasCenterContentCoord.y - graph.edges[i].startingVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio),
+						ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.edges[i].endingVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
+							centerWindowCoord.y + (canvasCenterContentCoord.y - graph.edges[i].endingVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio),
+						IM_COL32(200, 200, 200, 255), 5.0f * powf(zoomLevelRatio, 0.1));
+				}
+
+				if (hoverVertex != nullptr) {
+					drawList->AddCircle(ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - hoverVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
+						centerWindowCoord.y + (canvasCenterContentCoord.y - hoverVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio)
+						, 20.0f * powf(zoomLevelRatio, 0.1) + 5.0f, IM_COL32(150, 150, 255, 100), 0, 5.0f * powf(zoomLevelRatio, 0.1));
+
+					if (!addingEdge && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+						addingEdge = true;
+						edgeAddVertex = hoverVertex;
+					}
+
+
+				}
+
+
+				bool deleteEdge = false;
+
+				if (hoverVertex != nullptr) {
+					for (std::vector<Graphene::Structure::Edge>::iterator e = graph.edges.begin(); e != graph.edges.end(); e++) {
+						if ((e->startingVertex == edgeAddVertex && e->endingVertex == hoverVertex) || (e->startingVertex == hoverVertex && e->endingVertex == edgeAddVertex)) {
+							deleteEdge = true;
+							break;
+						}
+					}
+				}
+
+				if (addingEdge && ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
+					addingEdge = false;
+
+					if (hoverVertex != nullptr) {
+						if (!deleteEdge) {
+							graph.edgeCount++;
+							graph.edges.emplace_back(edgeAddVertex, hoverVertex, false);
+							graph.adjList[edgeAddVertex->getNumber()].emplace_back(hoverVertex);
+							graph.adjList[hoverVertex->getNumber()].emplace_back(edgeAddVertex);
+
+						}
+
+
+						else {
+							for (std::vector<Graphene::Structure::Edge>::iterator e = graph.edges.begin(); e != graph.edges.end(); e++) {
+								if ((e->startingVertex == edgeAddVertex && e->endingVertex == hoverVertex) || (e->startingVertex == hoverVertex && e->endingVertex == edgeAddVertex)) {
+									graph.edgeCount--;
+									graph.edges.erase(e);
+									graph.adjList[edgeAddVertex->getNumber()].erase(
+										std::find(graph.adjList[edgeAddVertex->getNumber()].begin(), graph.adjList[edgeAddVertex->getNumber()].end(), hoverVertex)
+									);
+									graph.adjList[hoverVertex->getNumber()].erase(
+										std::find(graph.adjList[hoverVertex->getNumber()].begin(), graph.adjList[hoverVertex->getNumber()].end(), edgeAddVertex)
+									);
+									break;
+								}
+							}
+						}
+					}
+				}
+
+
+				if (addingEdge) {
+					if (deleteEdge) {
+						drawList->AddLine(
+							ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - edgeAddVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
+								centerWindowCoord.y + (canvasCenterContentCoord.y - edgeAddVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio),
+							ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - hoverVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
+								centerWindowCoord.y + (canvasCenterContentCoord.y - hoverVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio),
+							IM_COL32(200, 0, 0, 255), 5.0f * powf(zoomLevelRatio, 0.1));
+					}
+					else {
+						if (hoverVertex != nullptr) {
+							drawList->AddLine(
+								ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - edgeAddVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
+									centerWindowCoord.y + (canvasCenterContentCoord.y - edgeAddVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio),
+								ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - hoverVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
+									centerWindowCoord.y + (canvasCenterContentCoord.y - hoverVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio),
+								IM_COL32(0, 200, 0, 255), 5.0f * powf(zoomLevelRatio, 0.1));
+						}
+						else {
+							drawList->AddLine(
+								ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - edgeAddVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
+									centerWindowCoord.y + (canvasCenterContentCoord.y - edgeAddVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio),
+								ImVec2(ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y),
+								IM_COL32(0, 200, 0, 255), 5.0f * powf(zoomLevelRatio, 0.1));
+						}
+					}
+				}
+
+
+				for (int i = 0; i < graph.vertexCount; i++) {
+					ImVec2 vertexScreenCoord(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.vertices[i]->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
+						centerWindowCoord.y + (canvasCenterContentCoord.y - graph.vertices[i]->getCoord().y) * canvasDisplaySize * zoomLevelRatio);
 
 					drawList->AddCircleFilled(vertexScreenCoord, 20.0f * powf(zoomLevelRatio, 0.1), IM_COL32(255, 211, 0, 255));
 
@@ -672,25 +754,6 @@ int main() {
 					ImGui::PopFont();
 				}
 
-				if (hoverVertex != nullptr) {
-					drawList->AddCircle(ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - hoverVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
-						centerWindowCoord.y + (canvasCenterContentCoord.y - hoverVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio)
-						, 20.0f * powf(zoomLevelRatio, 0.1) + 5.0f, IM_COL32(150, 150, 255, 100), 0, 5.0f * powf(zoomLevelRatio, 0.1));
-
-					if (!addingEdge && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
-						addingEdge = true;
-						edgeAddVertex = hoverVertex;
-					}
-
-					if (addingEdge && ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
-						addingEdge = false;
-						graph.edgeCount++;
-						graph.edges.emplace_back(edgeAddVertex, hoverVertex, false);
-						graph.adjList[edgeAddVertex->getNumber()].emplace_back(hoverVertex);
-						graph.adjList[hoverVertex->getNumber()].emplace_back(edgeAddVertex);
-					}
-
-				}
 
 
 				{
