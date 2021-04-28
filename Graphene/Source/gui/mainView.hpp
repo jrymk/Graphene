@@ -79,6 +79,8 @@ namespace Gui {
 				// zoom level control
 				if (!autoZoomPan)
 					zoomLevelRatio *= powf(1.05, ImGui::GetIO().MouseWheel);
+				else
+					zoomOffset *= powf(1.05, ImGui::GetIO().MouseWheel);
 
 				zoomLevelRatio = max(zoomLevelRatio, FLT_MIN);
 
@@ -96,17 +98,6 @@ namespace Gui {
 				if (zoomLevelTarget / zoomLevelRatio < 1.01f && zoomLevelTarget / zoomLevelRatio > 1.0f / 1.01f) {
 					useZoomTarget = false;
 					zoomLevelRatio = zoomLevelTarget;
-				}
-			}
-
-
-			// pan control
-			const float mousePanThreshold = contextMenuEnabled ? -1.0f : 0.0f;
-
-			if (!autoZoomPan) {
-				if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mousePanThreshold)) {
-					centerMappedCoord.x += -ImGui::GetIO().MouseDelta.x / canvasDisplaySize / zoomLevelRatio;
-					centerMappedCoord.y -= -ImGui::GetIO().MouseDelta.y / canvasDisplaySize / zoomLevelRatio;
 				}
 			}
 
@@ -247,6 +238,43 @@ namespace Gui {
 
 				}
 
+				// pan control
+				const float mousePanThreshold = contextMenuEnabled ? -1.0f : 0.0f;
+
+				/*if (hoverVertex != nullptr && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mousePanThreshold)) {
+					hoverVertex->move(
+						Graphene::Vec2f(
+							ImGui::GetIO().MouseDelta.x / canvasDisplaySize / zoomLevelRatio,
+							-ImGui::GetIO().MouseDelta.y / canvasDisplaySize / zoomLevelRatio
+						)
+					);
+					hoverVertex->flushMove(1.0f);
+				}*/
+
+				static Graphene::Vertex* draggingVertex = nullptr;
+				static ImVec2 dragVertexDownPos;
+				static bool isDraggingVertex = false;
+
+				if (hoverVertex != nullptr && !isDraggingVertex && ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
+					dragVertexDownPos = ImGui::GetIO().MousePos;
+					isDraggingVertex = true;
+					draggingVertex = hoverVertex;
+				}
+
+				if (isDraggingVertex) {
+					draggingVertex->move(
+						Graphene::Vec2f(
+							(ImGui::GetIO().MousePos.x - dragVertexDownPos.x) / canvasDisplaySize / zoomLevelRatio,
+							-(ImGui::GetIO().MousePos.y - dragVertexDownPos.y) / canvasDisplaySize / zoomLevelRatio
+						)
+					);
+					draggingVertex->flushMove(1.0f);
+					dragVertexDownPos = ImGui::GetIO().MousePos;
+				}
+
+				if (isDraggingVertex && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+					isDraggingVertex = false;
+				}
 
 				bool deleteEdge = false;
 
@@ -258,6 +286,7 @@ namespace Gui {
 						}
 					}
 				}
+
 
 				if (addingEdge && ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
 					addingEdge = false;
@@ -322,6 +351,22 @@ namespace Gui {
 						}
 					}
 				}
+
+
+
+				if (!isDraggingVertex && !autoZoomPan) {
+					if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mousePanThreshold)) {
+						centerMappedCoord.x += -ImGui::GetIO().MouseDelta.x / canvasDisplaySize / zoomLevelRatio;
+						centerMappedCoord.y -= -ImGui::GetIO().MouseDelta.y / canvasDisplaySize / zoomLevelRatio;
+					}
+				}
+
+
+
+				if (ImGui::IsItemHovered() && (hoverVertex != nullptr || isDraggingVertex || addingEdge))
+					ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+				else
+					ImGui::SetMouseCursor(ImGuiMouseCursor_Arrow);
 
 
 				for (int i = 0; i < graph->vertexCount; i++) {
@@ -483,10 +528,11 @@ namespace Gui {
 			}
 
 			if (!autoZoomPan)
-				drawList->AddText(ImVec2(topLeftPixelCoord.x + 4.0f, bottomRightPixelCoord.y - 20.0f), IM_COL32(200, 200, 200, 200), "Pan: Hold right mouse button   Zoom: Scroll", 0);
+				drawList->AddText(ImVec2(topLeftPixelCoord.x + 4.0f, bottomRightPixelCoord.y - 36.0f), IM_COL32(200, 200, 200, 200), "Pan: Hold right mouse button   Zoom: Scroll", 0);
 			else
-				drawList->AddText(ImVec2(topLeftPixelCoord.x + 4.0f, bottomRightPixelCoord.y - 20.0f), IM_COL32(200, 200, 200, 200), "Auto adjust view enabled, manual pan and zoom is disabled", 0);
+				drawList->AddText(ImVec2(topLeftPixelCoord.x + 4.0f, bottomRightPixelCoord.y - 36.0f), IM_COL32(200, 200, 200, 200), "Auto adjust view enabled, manual pan and zoom is disabled", 0);
 
+			drawList->AddText(ImVec2(topLeftPixelCoord.x + 4.0f, bottomRightPixelCoord.y - 20.0f), IM_COL32(200, 200, 200, 200), "Drag from vertex to vertex with left mouse button to create/delete edge, drag vertex with right mouse button to nudge vertex position", 0);
 
 			drawList->PopClipRect();
 
