@@ -104,11 +104,18 @@
     <ClCompile Include="Source\graphene\Core.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\ExceptionHandler.hpp" />
-    <ClInclude Include="Source\graphene\Graphene.h" />
+    <ClInclude Include="Source\gui\AdjMatrixInput.hpp" />
+    <ClInclude Include="Source\gui\Input.hpp" />
+    <ClInclude Include="Source\gui\MainView.hpp" />
+    <ClInclude Include="Source\gui\RawInput.hpp" />
+    <ClInclude Include="Source\gui\Toolbar.hpp" />
+    <ClInclude Include="Source\utils\ExceptionHandler.hpp" />
+    <ClInclude Include="Source\graphene\Include.h" />
     <ClInclude Include="Source\graphene\Structure.hpp" />
     <ClInclude Include="Source\graphene\Graph.hpp" />
-    <ClInclude Include="Source\gui\mainView.hpp" />
+    <ClInclude Include="Source\gui\Include.h" />
+    <ClInclude Include="Source\gui\Window.hpp" />
+    <ClInclude Include="Source\gui\Themes.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
