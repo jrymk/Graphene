@@ -337,7 +337,6 @@ int main() {
 			ImGui::End();
 		}
 
-
 		{
 			ImGui::Begin("Input");
 
@@ -437,11 +436,8 @@ int main() {
 			ImGui::End();
 		}
 
-
 		if (show_demo_window)
 			ImGui::ShowDemoWindow(&show_demo_window);
-
-
 
 		{
 			ImGui::Begin(u8"Graph View", 0, ImGuiWindowFlags_NoCollapse);
@@ -629,6 +625,11 @@ int main() {
 				drawList->AddCircleFilled(contentOriginCenterDelta, 5.0f, IM_COL32(0, 211, 255, 255));
 
 
+				Graphene::Structure::Vertex* hoverVertex = nullptr;
+				static Graphene::Structure::Vertex* edgeAddVertex;
+				static bool addingEdge = false;
+
+
 				for (int i = 0; i < graph.edgeCount; i++) {
 					drawList->AddLine(
 						ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.edges[i].startingVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
@@ -638,9 +639,27 @@ int main() {
 						IM_COL32(200, 200, 200, 255), 5.0f * powf(zoomLevelRatio, 0.1));
 				}
 
+				if (addingEdge) {
+					drawList->AddLine(
+						ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - edgeAddVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
+							centerWindowCoord.y + (canvasCenterContentCoord.y - edgeAddVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio),
+						ImVec2(ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y),
+						IM_COL32(200, 200, 200, 255), 5.0f * powf(zoomLevelRatio, 0.1));
+				}
+
+
 				for (int i = 0; i < graph.vertexCount; i++) {
-					drawList->AddCircleFilled(ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.vertices[i]->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
-						centerWindowCoord.y + (canvasCenterContentCoord.y - graph.vertices[i]->getCoord().y) * canvasDisplaySize * zoomLevelRatio), 20.0f * powf(zoomLevelRatio, 0.1), IM_COL32(255, 211, 0, 255));
+					ImVec2 vertexScreenCoord(centerWindowCoord.x - (canvasCenterContentCoord.x - graph.vertices[i]->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
+						centerWindowCoord.y + (canvasCenterContentCoord.y - graph.vertices[i]->getCoord().y) * canvasDisplaySize * zoomLevelRatio);
+					float mouseVertexDistanceSquared = powf(ImGui::GetIO().MousePos.x - vertexScreenCoord.x, 2.0f) + powf(ImGui::GetIO().MousePos.y - vertexScreenCoord.y, 2.0f);
+
+					if (ImGui::IsItemHovered()) {
+						if (mouseVertexDistanceSquared < powf(30.0f * powf(zoomLevelRatio, 0.1), 2.0f)) {
+							hoverVertex = graph.vertices[i];
+						}
+					}
+
+					drawList->AddCircleFilled(vertexScreenCoord, 20.0f * powf(zoomLevelRatio, 0.1), IM_COL32(255, 211, 0, 255));
 
 					ImGui::PushFont(vertexTextFont);
 					float font_size = ImGui::GetFontSize() * powf(zoomLevelRatio, 0.1) * std::to_string(i).size() / 2;
@@ -653,6 +672,25 @@ int main() {
 					ImGui::PopFont();
 				}
 
+				if (hoverVertex != nullptr) {
+					drawList->AddCircle(ImVec2(centerWindowCoord.x - (canvasCenterContentCoord.x - hoverVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
+						centerWindowCoord.y + (canvasCenterContentCoord.y - hoverVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio)
+						, 20.0f * powf(zoomLevelRatio, 0.1) + 5.0f, IM_COL32(150, 150, 255, 100), 0, 5.0f * powf(zoomLevelRatio, 0.1));
+
+					if (!addingEdge && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+						addingEdge = true;
+						edgeAddVertex = hoverVertex;
+					}
+
+					if (addingEdge && ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
+						addingEdge = false;
+						graph.edgeCount++;
+						graph.edges.emplace_back(edgeAddVertex, hoverVertex, false);
+						graph.adjList[edgeAddVertex->getNumber()].emplace_back(hoverVertex);
+						graph.adjList[hoverVertex->getNumber()].emplace_back(edgeAddVertex);
+					}
+
+				}
 
 
 				{
@@ -794,14 +832,15 @@ int main() {
 
 			}
 
-			if (!autoZoomPan) 
+			if (!autoZoomPan)
 				drawList->AddText(ImVec2(topLeftWindowCoord.x + 4.0f, bottomRightWindowCoord.y - 20.0f), IM_COL32(200, 200, 200, 200), "Pan: Hold right mouse button   Zoom: Scroll", 0);
-			else 
+			else
 				drawList->AddText(ImVec2(topLeftWindowCoord.x + 4.0f, bottomRightWindowCoord.y - 20.0f), IM_COL32(200, 200, 200, 200), "Auto adjust view enabled, manual pan and zoom is disabled", 0);
 
 
 			drawList->PopClipRect();
 
+			ImGui::End();
 		}
 
 		ImGui::Render();

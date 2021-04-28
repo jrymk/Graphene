@@ -1,9 +1,11 @@
 #pragma once
+#define NOMINMAX
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <string>
 #include <vector>
 #include <random>
+#include <algorithm>
 
 namespace Graphene {
 
@@ -122,17 +124,16 @@ namespace Graphene {
 			}
 
 			void flushMove(float c) {
-				if (resultForce.length() * c > 1e-2) {
-					coord += resultForce * c;
-					std::cerr << getNumber() << " " << resultForce * c << std::endl;
-				}
+				coord += resultForce * c;
+				std::cerr << getNumber() << " " << resultForce * c << std::endl;
+
 				resultForce = Vec2f(0, 0);
 			}
 
 			int getNumber() {
 				return number;
 			}
-			
+
 		};
 
 		struct Edge {

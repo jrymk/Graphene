@@ -58,6 +58,9 @@ namespace Graphene {
 			return (v->getCoord() - u->getCoord()) * coeff;
 		}
 
+
+
+
 		void updatePos() {
 			for (auto u : m_graph->vertices) {
 				for(auto v : m_graph->vertices) {
