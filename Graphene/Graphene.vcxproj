@@ -107,6 +107,7 @@
     <ClInclude Include="Source\graphene\Graphene.h" />
     <ClInclude Include="Source\graphene\Structure.hpp" />
     <ClInclude Include="Source\graphene\Graph.hpp" />
+    <ClInclude Include="Source\gui\mainView.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

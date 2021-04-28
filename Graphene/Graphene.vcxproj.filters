@@ -59,5 +59,8 @@
     <ClInclude Include="Source\graphene\Structure.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\gui\mainView.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
