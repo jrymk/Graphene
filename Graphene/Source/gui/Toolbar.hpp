@@ -26,7 +26,7 @@ namespace Gui {
 			if (ImGui::Button("Update graph") || enableLiveUpdate)
 				core->updatePos();
 
-			if (ImGui::Button("Reset to default")) {
+			if (ImGui::Button("Reset constants to default")) {
 				core->m_c1 = 2;
 				core->m_c2 = 1;
 				core->m_c3 = 1;
