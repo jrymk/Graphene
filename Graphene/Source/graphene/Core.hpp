@@ -58,6 +58,9 @@ namespace Graphene {
 			return (v->getCoord() - u->getCoord()).normalize() * coeff;
 		}
 
+
+
+
 		void updatePos() {
 			std::cerr << "test" << std::endl;
 			Structure::Vec2f total(0, 0);

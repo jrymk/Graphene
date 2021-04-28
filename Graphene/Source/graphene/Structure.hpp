@@ -1,9 +1,11 @@
 #pragma once
+#define NOMINMAX
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <string>
 #include <vector>
 #include <random>
+#include <algorithm>
 
 namespace Graphene {
 
@@ -134,7 +136,7 @@ namespace Graphene {
 			int getNumber() {
 				return number;
 			}
-			
+
 		};
 
 		struct Edge {
