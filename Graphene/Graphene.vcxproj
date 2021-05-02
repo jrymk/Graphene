@@ -106,7 +106,7 @@
   <ItemGroup>
     <ClInclude Include="Source\gui\AdjMatrixInput.hpp" />
     <ClInclude Include="Source\gui\Input.hpp" />
-    <ClInclude Include="Source\gui\MainView.hpp" />
+    <ClInclude Include="Source\gui\temp.hpp" />
     <ClInclude Include="Source\gui\RawInput.hpp" />
     <ClInclude Include="Source\gui\Toolbar.hpp" />
     <ClInclude Include="Source\utils\ExceptionHandler.hpp" />

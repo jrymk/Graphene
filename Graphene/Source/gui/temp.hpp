@@ -131,7 +131,6 @@ namespace Gui {
 			}
 
 
-
 			// Draw 1*1 square
 			drawList->AddRectFilled(ImVec2(
 				centerPixelCoord.x - (centerMappedCoord.x - 0.0f) * canvasDisplaySize * zoomLevelRatio,
@@ -140,7 +139,6 @@ namespace Gui {
 					centerPixelCoord.x - (centerMappedCoord.x - 1.0f) * canvasDisplaySize * zoomLevelRatio,
 					centerPixelCoord.y + (centerMappedCoord.y - 0.0f) * canvasDisplaySize * zoomLevelRatio)
 				, IM_COL32(40, 40, 40, 255), 0.0f);
-
 
 
 			if (showGrid) {
