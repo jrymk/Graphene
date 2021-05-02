@@ -6,9 +6,9 @@
 #include <iostream>
 #include <fstream>
 
-#include "utils/exceptionHandler.hpp"
-#include "graphene/include.h"
-#include "gui/include.h"
+#include "utils/ExceptionHandler.hpp"
+#include "graphene/Include.h"
+#include "gui/Include.h"
 
 
 
@@ -26,7 +26,7 @@ int main() {
 
 		Gui::Toolbar::show(&core);
 		Gui::Input::show(&core);
-		Gui::MainView::show(&core, &graph);
+		Gui::GraphView::show(&core, &graph);
 		
 		Gui::render();
 

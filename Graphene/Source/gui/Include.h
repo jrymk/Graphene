@@ -1,12 +1,12 @@
 #pragma once
 
-#include "window.hpp"
-#include "toolbar.hpp"
-#include "mainView.hpp"
-#include "input.hpp"
-#include "rawInput.hpp"
-#include "adjMatrixInput.hpp"
-#include "themes.hpp"
+#include "Window.hpp"
+#include "Toolbar.hpp"
+#include "GraphView.hpp"
+#include "Input.hpp"
+#include "RawInput.hpp"
+#include "AdjMatrixInput.hpp"
+#include "Themes.hpp"
 
 
 namespace Gui {

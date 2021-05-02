@@ -1,7 +1,7 @@
 #pragma once
-#include "core.hpp"
-#include "graph.hpp"
-#include "structure.hpp"
+#include "Core.hpp"
+#include "Graph.hpp"
+#include "Structure.hpp"
 
 namespace Graphene {
 

@@ -80,7 +80,7 @@
     <ClInclude Include="Source\gui\AdjMatrixInput.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\gui\MainView.hpp">
+    <ClInclude Include="Source\gui\GraphView.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -5,10 +5,10 @@
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_glfw.h>
 #include <GLFW/glfw3.h>
-#include "include.h"
-#include "../utils/exceptionHandler.hpp"
-#include "../graphene/include.h"
-#include "themes.hpp"
+#include "Include.h"
+#include "../utils/ExceptionHandler.hpp"
+#include "../graphene/Include.h"
+#include "Themes.hpp"
 
 namespace Gui {
 
