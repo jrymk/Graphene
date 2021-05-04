@@ -17,8 +17,9 @@ namespace Gui {
 
 		void show(Graphene::Core* core) {
 
+			ImGui::SetNextWindowSizeConstraints(ImVec2(100, 100), ImVec2(FLT_MAX, FLT_MAX));
 			ImGui::Begin("Input");
-
+			
 			showRawInput(core);
 
 			/*if (ImGui::BeginTabItem("Adjacency Matrix")) {

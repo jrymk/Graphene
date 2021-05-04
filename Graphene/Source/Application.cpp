@@ -15,7 +15,7 @@
 int main() {
 
 	ASSERT(Gui::init());
-
+	
 	Graphene::Graph graph;
 	Graphene::Core core(graph);
 
