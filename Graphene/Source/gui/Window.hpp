@@ -92,9 +92,8 @@ namespace Gui {
 		ImGui::GetIO().Fonts->AddFontFromFileTTF("./msjh.ttf", 16.0f, &config, ImGui::GetIO().Fonts->GetGlyphRangesChineseFull());
 
 		// mono font for graph display
-		// TODO: remove it
-		vertexTextFont = ImGui::GetIO().Fonts->AddFontFromFileTTF("./JetBrainsMono-Regular.ttf", 36.0f, &config, ImGui::GetIO().Fonts->GetGlyphRangesDefault());
 		config.MergeMode = false;
+		vertexTextFont = ImGui::GetIO().Fonts->AddFontFromFileTTF("./Manrope-Regular.ttf", 54.0f, &config, ImGui::GetIO().Fonts->GetGlyphRangesDefault());
 
 		ImGui::CreateContext();
 

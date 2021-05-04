@@ -376,13 +376,24 @@ namespace Gui {
 					drawList->AddCircleFilled(vertexScreenCoord, 20.0f * powf(zoomLevelRatio, 0.1), IM_COL32(255, 211, 0, 255));
 
 					ImGui::PushFont(Gui::vertexTextFont);
-					float font_size = ImGui::GetFontSize() * powf(zoomLevelRatio, 0.1) * std::to_string(i).size() / 2;
+					ImGui::SetWindowFontScale((36.0f / 54.0f) * powf(zoomLevelRatio, 0.1));
+					ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(15, 15, 15, 255));
 
-					drawList->AddText(Gui::vertexTextFont, 36.0f * powf(zoomLevelRatio, 0.1),
-						ImVec2(centerPixelCoord.x - (centerMappedCoord.x - graph->vertices[i]->getCoord().x) * canvasDisplaySize * (zoomLevelRatio)-font_size + (font_size / 2),
-							centerPixelCoord.y + (centerMappedCoord.y - graph->vertices[i]->getCoord().y) * canvasDisplaySize * zoomLevelRatio - 18.0f * powf(zoomLevelRatio, 0.1)),
-						IM_COL32(15, 15, 15, 255), std::to_string(i).c_str(), 0, 0.0f, 0);
+					ImVec2 labelCenterPos(centerPixelCoord.x - (centerMappedCoord.x - graph->vertices[i]->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
+						centerPixelCoord.y + (centerMappedCoord.y - graph->vertices[i]->getCoord().y) * canvasDisplaySize * zoomLevelRatio);
+					ImVec2 labelMinPos(labelCenterPos.x - 50.0f, labelCenterPos.y - 50.0f);
+					ImVec2 labelMaxPos(labelCenterPos.x + 50.0f, labelCenterPos.y + 50.0f);
+					std::string tempStr(std::to_string(i));
+					char* label = new char[tempStr.length() + 1];
+					std::strcpy(label, tempStr.c_str());
+					ImVec2 labelSize = ImGui::CalcTextSize(label, NULL, true);
+					ImVec2 labelAlign(0.5f, 0.5f);
+					const ImRect bb(labelMinPos, labelMaxPos);
 
+					ImGui::RenderTextClipped(labelMinPos, labelMaxPos, label, 0, &labelSize, labelAlign, &bb);
+
+					ImGui::PopStyleColor(1);
+					ImGui::SetWindowFontScale(1.0f);
 					ImGui::PopFont();
 				}
 
