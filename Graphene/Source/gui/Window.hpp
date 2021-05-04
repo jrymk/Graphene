@@ -68,7 +68,8 @@ namespace Gui {
 
 		ImGui::StyleColorsLight();
 
-		setTheme(false);
+		setTheme(0);
+		
 
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
