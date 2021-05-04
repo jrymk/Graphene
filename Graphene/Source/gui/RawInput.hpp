@@ -17,6 +17,7 @@ namespace Gui {
 
 			bool pendingUpdate = false;
 
+
 			if (ImGui::Button("Wipe and reset")) {
 				for (int i = 0; i < core->getGraph()->vertices.size(); i++) {
 					delete core->getGraph()->vertices[i];
@@ -29,26 +30,6 @@ namespace Gui {
 
 				pendingUpdate = true;
 			}
-
-			if (ImGui::Button("Update") || pendingUpdate) {
-				std::stringstream ss;
-				ss << text;
-
-				core->getGraph()->edges.clear();
-				for (int i = 0; i < core->getGraph()->adjList.size(); i++)
-					core->getGraph()->adjList[i].clear();
-				core->getGraph()->edgeCount = 0;
-
-				while (ss >> a >> b) {
-					e++;
-					core->getGraph()->edgeCount++;
-					core->getGraph()->edges.emplace_back(core->getGraph()->vertices[a], core->getGraph()->vertices[b], false);
-					core->getGraph()->adjList[a].push_back(core->getGraph()->vertices[b]);
-					core->getGraph()->adjList[b].push_back(core->getGraph()->vertices[a]);
-				}
-
-			}
-			
 
 			if (v > core->getGraph()->vertexCount) {
 				for (int i = core->getGraph()->vertexCount; i < v; i++) {
@@ -67,6 +48,26 @@ namespace Gui {
 			core->getGraph()->adjList.resize(v);
 
 
+			if (ImGui::Button("Update") || pendingUpdate) {
+				std::stringstream ss;
+				ss << text;
+
+				core->getGraph()->edges.clear();
+				for (int i = 0; i < core->getGraph()->adjList.size(); i++)
+					core->getGraph()->adjList[i].clear();
+				core->getGraph()->edgeCount = 0;
+
+				while (ss >> a >> b) {
+					if (a < v && b < v) {
+						e++;
+						core->getGraph()->edgeCount++;
+						core->getGraph()->edges.emplace_back(core->getGraph()->vertices[a], core->getGraph()->vertices[b], false);
+						core->getGraph()->adjList[a].push_back(core->getGraph()->vertices[b]);
+						core->getGraph()->adjList[b].push_back(core->getGraph()->vertices[a]);
+					}
+				}
+			}
+			
 			if (core->pendingInputUpdate) {
 				std::stringstream ss;
 				ss << core->getGraph()->vertices.size() << " " << core->getGraph()->edges.size() << "\n";
@@ -82,8 +83,6 @@ namespace Gui {
 			}
 
 			prevEdgeSize = core->getGraph()->edges.size();
-
-			std::cerr << text << "\n";
 
 			ImGui::InputTextMultiline("##source", text, 65536, ImVec2(-FLT_MIN, -FLT_MIN), flags);
 

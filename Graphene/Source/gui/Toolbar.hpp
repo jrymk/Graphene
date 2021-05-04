@@ -17,6 +17,7 @@ namespace Gui {
 
 		void show(Graphene::Core* core) {
 
+			ImGui::SetNextWindowSizeConstraints(ImVec2(100, 100), ImVec2(FLT_MAX, FLT_MAX));
 			ImGui::Begin("Toolbar");
 
 			ImGui::Checkbox("Enable live update", &enableLiveUpdate);

@@ -39,6 +39,7 @@ namespace Gui {
 
 		void show(Graphene::Core* core, Graphene::Graph* graph) {
 
+			ImGui::SetNextWindowSizeConstraints(ImVec2(300, 350), ImVec2(FLT_MAX, FLT_MAX));
 			ImGui::Begin(u8"Graph View", 0, ImGuiWindowFlags_NoCollapse);
 
 			bool contextMenuEnabled = false;
@@ -50,7 +51,7 @@ namespace Gui {
 			topLeftPixelCoord = ImGui::GetCursorScreenPos();
 			centerPixelCoord = ImVec2(topLeftPixelCoord.x + sizePixelCoord.x / 2.0f, topLeftPixelCoord.y + sizePixelCoord.y / 2.0f);
 			bottomRightPixelCoord = ImVec2(topLeftPixelCoord.x + sizePixelCoord.x, topLeftPixelCoord.y + sizePixelCoord.y);
-			canvasDisplaySize = min(sizePixelCoord.x - canvasMargin.x * 2.0f, sizePixelCoord.y - canvasMargin.y * 2.0f);
+			canvasDisplaySize = max(min(sizePixelCoord.x - canvasMargin.x * 2.0f, sizePixelCoord.y - canvasMargin.y * 2.0f), FLT_MIN);
 
 
 			if (autoZoomPan) {
@@ -151,8 +152,12 @@ namespace Gui {
 					const float startingSnapGridCoord = centerSnapGridCoord - (int)(sizePixelCoord.x / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
 					const float endingSnapGridCoord = centerSnapGridCoord + (int)(sizePixelCoord.x / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
 
-					for (float x = startingSnapGridCoord; x <= endingSnapGridCoord; x += screenGridSpacing)
+					int lineDrawLimit = 500;
+					for (float x = startingSnapGridCoord; x <= endingSnapGridCoord; x += screenGridSpacing) {
 						drawList->AddLine(ImVec2(x, centerPixelCoord.y - sizePixelCoord.y / 2.0f), ImVec2(x, centerPixelCoord.y + sizePixelCoord.y / 2.0f), IM_COL32(90, 90, 90, 80), 1.0f);
+						if (!(--lineDrawLimit))
+							break;
+					}
 				}
 				{
 					// vertical lines (primary)
@@ -162,8 +167,12 @@ namespace Gui {
 					const float startingSnapGridCoord = centerSnapGridCoord - (int)(sizePixelCoord.x / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
 					const float endingSnapGridCoord = centerSnapGridCoord + (int)(sizePixelCoord.x / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
 
-					for (float x = startingSnapGridCoord; x <= endingSnapGridCoord; x += screenGridSpacing)
+					int lineDrawLimit = 500;
+					for (float x = startingSnapGridCoord; x <= endingSnapGridCoord; x += screenGridSpacing) {
 						drawList->AddLine(ImVec2(x, centerPixelCoord.y - sizePixelCoord.y / 2.0f), ImVec2(x, centerPixelCoord.y + sizePixelCoord.y / 2.0f), IM_COL32(90, 90, 90, 80), 2.0f);
+						if (!(--lineDrawLimit))
+							break;
+					}
 				}
 				{
 					// horizontal lines (secondary)
@@ -173,8 +182,12 @@ namespace Gui {
 					const float startingSnapGridCoord = centerSnapGridCoord - (int)(sizePixelCoord.y / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
 					const float endingSnapGridCoord = centerSnapGridCoord + (int)(sizePixelCoord.y / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
 
-					for (float y = startingSnapGridCoord; y <= endingSnapGridCoord; y += screenGridSpacing)
+					int lineDrawLimit = 500;
+					for (float y = startingSnapGridCoord; y <= endingSnapGridCoord; y += screenGridSpacing) {
 						drawList->AddLine(ImVec2(centerPixelCoord.x - sizePixelCoord.x / 2.0f, y), ImVec2(centerPixelCoord.x + sizePixelCoord.x / 2.0f, y), IM_COL32(90, 90, 90, 80), 1.0f);
+						if (!(--lineDrawLimit))
+							break;
+					}
 				}
 				{
 					// horizontal lines (primary)
@@ -184,8 +197,12 @@ namespace Gui {
 					const float startingSnapGridCoord = centerSnapGridCoord - (int)(sizePixelCoord.y / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
 					const float endingSnapGridCoord = centerSnapGridCoord + (int)(sizePixelCoord.y / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
 
-					for (float y = startingSnapGridCoord; y <= endingSnapGridCoord; y += screenGridSpacing)
+					int lineDrawLimit = 500;
+					for (float y = startingSnapGridCoord; y <= endingSnapGridCoord; y += screenGridSpacing) {
 						drawList->AddLine(ImVec2(centerPixelCoord.x - sizePixelCoord.x / 2.0f, y), ImVec2(centerPixelCoord.x + sizePixelCoord.x / 2.0f, y), IM_COL32(90, 90, 90, 80), 2.0f);
+						if (!(--lineDrawLimit))
+							break;
+					}
 				}
 
 
