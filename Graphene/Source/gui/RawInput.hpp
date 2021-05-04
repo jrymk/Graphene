@@ -13,12 +13,18 @@ namespace Gui {
 
 			static int v, e = 0, a, b;
 
-			ImGui::SliderInt("Vertices", &v, 0, 50, "%d", 0);
+			ImGui::SliderInt("Vertices (C/V)", &v, 0, 50, "%d", 0);
 
+			if (ImGui::IsKeyPressed('C', true) && v > 0)
+				v--;
+			if (ImGui::IsKeyPressed('V', true))
+				v++;
+
+			
 			bool pendingUpdate = false;
 
 
-			if (ImGui::Button("Wipe and reset")) {
+			if (ImGui::Button("Wipe and reset (R)") || ImGui::IsKeyPressed('R', false)) {
 				for (int i = 0; i < core->getGraph()->vertices.size(); i++) {
 					delete core->getGraph()->vertices[i];
 				}

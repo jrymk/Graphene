@@ -45,7 +45,10 @@ namespace Gui {
 			bool contextMenuEnabled = false;
 			ImGui::Checkbox("Show grid", &showGrid);
 			ImGui::SameLine();
-			ImGui::Checkbox("Auto adjust view", &autoZoomPan);
+			ImGui::Checkbox("Auto adjust view (A)", &autoZoomPan);
+
+			if (ImGui::IsKeyPressed('A', false))
+				autoZoomPan = !autoZoomPan;
 
 			sizePixelCoord = ImGui::GetContentRegionAvail();
 			topLeftPixelCoord = ImGui::GetCursorScreenPos();

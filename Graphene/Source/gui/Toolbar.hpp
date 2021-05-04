@@ -20,11 +20,14 @@ namespace Gui {
 			ImGui::SetNextWindowSizeConstraints(ImVec2(100, 100), ImVec2(FLT_MAX, FLT_MAX));
 			ImGui::Begin("Toolbar");
 
-			ImGui::Checkbox("Enable live update", &enableLiveUpdate);
+			ImGui::Checkbox("Enable live update (L)", &enableLiveUpdate);
+
+			if (ImGui::IsKeyPressed('L', false))
+				enableLiveUpdate = !enableLiveUpdate;
 
 			ImGui::SameLine();
 
-			if (ImGui::Button("Update graph") || enableLiveUpdate)
+			if (ImGui::Button("Update graph (U)") || enableLiveUpdate || ImGui::IsKeyPressed('U', true))
 				core->updatePos();
 
 			if (ImGui::Button("Reset constants to default")) {
