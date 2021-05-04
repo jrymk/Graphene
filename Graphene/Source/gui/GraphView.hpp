@@ -201,6 +201,7 @@ namespace Gui {
 				static Graphene::Vertex* edgeAddVertex;
 				static bool addingEdge = false;
 
+				float closestVertexDistance = FLT_MAX;
 
 				for (int i = 0; i < graph->vertexCount; i++) {
 					ImVec2 vertexScreenCoord(centerPixelCoord.x - (centerMappedCoord.x - graph->vertices[i]->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
@@ -208,8 +209,11 @@ namespace Gui {
 					float mouseVertexDistanceSquared = powf(ImGui::GetIO().MousePos.x - vertexScreenCoord.x, 2.0f) + powf(ImGui::GetIO().MousePos.y - vertexScreenCoord.y, 2.0f);
 
 					if (ImGui::IsItemHovered()) {
-						if (mouseVertexDistanceSquared < powf(30.0f * powf(zoomLevelRatio, 0.1), 2.0f)) {
-							hoverVertex = graph->vertices[i];
+						if (mouseVertexDistanceSquared <= powf(40.0f * powf(zoomLevelRatio, 0.1), 2.0f)) {
+							if (mouseVertexDistanceSquared <= closestVertexDistance) {
+								hoverVertex = graph->vertices[i];
+								closestVertexDistance = mouseVertexDistanceSquared;
+							}
 						}
 					}
 				}
@@ -223,18 +227,6 @@ namespace Gui {
 						IM_COL32(200, 200, 200, 255), 5.0f * powf(zoomLevelRatio, 0.1));
 				}
 
-				if (hoverVertex != nullptr) {
-					drawList->AddCircle(ImVec2(centerPixelCoord.x - (centerMappedCoord.x - hoverVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
-						centerPixelCoord.y + (centerMappedCoord.y - hoverVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio)
-						, 20.0f * powf(zoomLevelRatio, 0.1) + 5.0f, IM_COL32(150, 150, 255, 100), 0, 5.0f * powf(zoomLevelRatio, 0.1));
-
-					if (!addingEdge && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
-						addingEdge = true;
-						edgeAddVertex = hoverVertex;
-					}
-
-
-				}
 
 				// pan control
 				const float mousePanThreshold = contextMenuEnabled ? -1.0f : 0.0f;
@@ -397,6 +389,20 @@ namespace Gui {
 					ImGui::PopFont();
 				}
 
+
+
+				if (hoverVertex != nullptr) {
+					drawList->AddCircle(ImVec2(centerPixelCoord.x - (centerMappedCoord.x - hoverVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
+						centerPixelCoord.y + (centerMappedCoord.y - hoverVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio)
+						, 25.0f * powf(zoomLevelRatio, 0.1), IM_COL32(150, 150, 255, 100), 0, 5.0f * powf(zoomLevelRatio, 0.1));
+
+					if (!addingEdge && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+						addingEdge = true;
+						edgeAddVertex = hoverVertex;
+					}
+
+
+				}
 
 
 				{
