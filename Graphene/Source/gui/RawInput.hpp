@@ -76,7 +76,6 @@ namespace Gui {
 			
 			if (core->pendingInputUpdate) {
 				std::stringstream ss;
-				ss << core->getGraph()->vertices.size() << " " << core->getGraph()->edges.size() << "\n";
 				for (int i = 0; i < core->getGraph()->edges.size(); i++) {
 					ss << core->getGraph()->edges[i].startingVertex->getNumber() << " " <<
 						core->getGraph()->edges[i].endingVertex->getNumber() << "\n";
