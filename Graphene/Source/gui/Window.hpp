@@ -98,6 +98,7 @@ namespace Gui {
 
 		ImGui::CreateContext();
 
+		return 0;
 	}
 
 	

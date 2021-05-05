@@ -1,7 +1,5 @@
 #pragma once
-#define NOMINMAX
-#define _USE_MATH_DEFINES
-#include <math.h>
+#include <cmath>
 #include <string>
 #include <vector>
 #include <random>
@@ -84,13 +82,13 @@ namespace Graphene {
 		}
 	};
 
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_real_distribution<> dis(0.0, 1.0);
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(0.0, 1.0);
 
-	float genRandom() {
-		return dis(gen);
-	}
+    float genRandom() {
+        return dis(gen);
+    }
 
 	class Vertex {
 
@@ -99,33 +97,27 @@ namespace Graphene {
 		bool nameVisible = false;
 		std::string value = "";
 		bool valueVisible = false;
-		Vec2f coord;
-		Vec2f resultForce;
-		Vec2f normalized;
+		Vec2f coord = Vec2f(genRandom(), genRandom());
+		Vec2f resultForce = Vec2f(0, 0);
+		Vec2f normalized = Vec2f(genRandom(), genRandom());
 
-//		Vertex(int _num, std::string _name, bool _nameVisible, std::string _value, bool _valueVisible, Vec2f _coord):
-//				gen(rd()),
-//				dis(0.0, 1.0),
-//				coord(genRandom(), genRandom()),
-//				resultForce(0, 0),
-//				normalized(genRandom(), genRandom()){
-//			number = _num;
-//			name = _name;
-//			nameVisible = _nameVisible;
-//			value = _value;
-//			valueVisible = _valueVisible;
-//			coord = _coord;
-//		}
+		Vertex(int _num, std::string _name, bool _nameVisible, std::string _value, bool _valueVisible, Vec2f _coord) {
+			number = _num;
+			name = _name;
+			nameVisible = _nameVisible;
+			value = _value;
+			valueVisible = _valueVisible;
+			coord = _coord;
+		}
 
 	public:
-		Vertex(int _num):
-				coord(genRandom(), genRandom()),
-				resultForce(0, 0),
-				normalized(genRandom(), genRandom()) {
-			number = _num;
-			name = std::to_string(number);
-			std::cerr << number << " " << coord << std::endl;
-		}
+        Vertex(int _num):
+                coord(genRandom(), genRandom()),
+                resultForce(0, 0),
+                normalized(genRandom(), genRandom()) {
+            number = _num;
+            name = std::to_string(number);
+        }
 
 		Vec2f getCoord() {
 			return coord;
@@ -153,14 +145,9 @@ namespace Graphene {
 		bool nameVisible = false;
 		std::string value = "";
 		bool valueVisible = false;
-		Vertex* startingVertex = nullptr;
-		Vertex* endingVertex = nullptr;
-		bool directed = false;
 
-		Edge(Vertex* _startingVertex, Vertex* _endingVertex, bool _directed) {
-			startingVertex = _startingVertex;
-			endingVertex = _endingVertex;
-			directed = _directed;
+		Edge() {
+		
 		}
 	};
 

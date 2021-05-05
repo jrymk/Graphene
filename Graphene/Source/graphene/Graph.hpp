@@ -5,68 +5,85 @@
 namespace Graphene {
 
 	class Graph {
-	public:
-
-		// total number of vertices and edges
-		int vertexCount = 0, edgeCount = 0;
-		// list of properties of all vertices, for instance their ids and positions
-		std::vector<Vertex*> vertices;
-		// list of properties of all edges, for instance their connection vertices and draw thickness
-		std::vector<Edge> edges;
-		// the adjacency list for the structure of the graph, nothing else
-		std::vector<std::vector<Vertex*>> adjList;
+    public:
+		//                    u                              v        edge properties
+		std::vector<std::pair<Vertex*, std::vector<std::pair<Vertex*, Edge>>>> graph;
 
 		Graph() = default;
 
+		int getVertexCount() {
+			return graph.size();
+		}
 
-		/*void importAdjList(std::vector<std::vector<int>>& inputList) {
-			this->vertexCount = inputList.size();
-			this->adjList.resize(vertexCount);
+		Vertex* getVertexPtr(int index) {
+			return graph[index].first;
+		}
 
-			for (std::vector<std::vector<int>>::iterator va = inputList.begin(); va != inputList.end(); va++) {
-				for (std::vector<int>::iterator vb = va->begin(); vb != va->end(); vb++) {
-					int start = it->first.first, end = it->first.second;
-					bool directed = it->second;
-					Edge edge = Edge(&this->vertices[start], &this->vertices[end], directed);
+		void setVertexPtr(int index, Vertex* vertex) {
+			graph[index].first = vertex;
+		}
 
-					this->edges.emplace_back(edge);
-					this->adjList[start].emplace_back(this->vertices[end]);
-				}
+		// -1: delete from end
+		void deleteVertex(int id) {
+			if (id == -1)
+				id = getVertexCount() - 1;
+			delete getVertexPtr(id);
+			graph.erase(graph.begin() + id);
+        }
+
+		void resizeVertices(int count) {
+			for (int i = count; i < graph.size(); i++)
+                delete getVertexPtr(i);
+
+			while (graph.size() < count)
+				graph.emplace_back(new Vertex(graph.size()), std::vector<std::pair<Vertex*, Edge>>());
+			
+			graph.resize(count);
+		}
+
+		void resetVertices() {
+            for (int i = 0; i < getVertexCount(); i++) {
+                delete getVertexPtr(i);
+                setVertexPtr(i, new Graphene::Vertex(i));
+            }
+		}
+
+		void clearAllEdges() {
+            for (auto &v : graph)
+                v.second.clear();
+		}
+
+		void importEdges(int vertexCount, std::vector<std::pair<int, int>>& inputEdges) {
+			resizeVertices(vertexCount);
+
+			for (auto & inputEdge : inputEdges) {
+				int u = inputEdge.first, v = inputEdge.second;
+                graph[u].second.emplace_back(graph[v].first, Edge());
 			}
-		}*/
+		}
 
-
-		void importEdges(int vertexCount, std::vector<std::pair<std::pair<int, int>, bool>>& inputEdges) {
-			this->vertexCount = vertexCount;
-			this->edgeCount = inputEdges.size();
-
-			for (auto it = vertices.begin(); it != vertices.end(); it++)
-				delete *it;
-			this->vertices.clear();
-
-			this->edges.clear();
-			this->adjList.resize(this->vertexCount);
-
-			for (int i = 0; i < this->vertexCount; i++) {
-				this->vertices.emplace_back(new Vertex(i));
+		std::vector<std::pair<Vertex*, Edge>>::iterator findEdge(int u, int v) {
+			for (int n = 0; n < graph[u].second.size(); n++) {
+				if ((graph[u].second)[n].first == getVertexPtr(v))
+					return graph[u].second.begin() + n;
 			}
-	
-			for (std::vector<std::pair<std::pair<int, int>, bool>>::iterator it = inputEdges.begin(); it != inputEdges.end(); it++) {
-				int start = it->first.first, end = it->first.second;
-				bool directed = it->second;
+			return graph[u].second.end();
+		}
 
-				this->edges.emplace_back(Edge(this->vertices[start], this->vertices[end], directed));
-				this->adjList[start].emplace_back(this->vertices[end]);
-				this->adjList[end].emplace_back(this->vertices[start]);
-			}
+		void addEdge(int u, int v) {
+			if (u < getVertexCount() && v < getVertexCount())
+				graph[u].second.emplace_back(getVertexPtr(v), Edge());
+		}
+
+		void removeEdge(int u, int v) {
+            graph[u].second.erase(findEdge(u, v));
 		}
 
 		bool isAdjacent(int u, int v) {
-			if (std::find(adjList[u].begin(), adjList[u].end(), vertices[v]) != adjList[u].end())
+			if (findEdge(u, v) != graph[u].second.end())
 				return true;
 			return false;
 		}
-
 
 	};
 

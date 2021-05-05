@@ -1,22 +1,22 @@
 #pragma once
-#define NOMINMAX
-#define _USE_MATH_DEFINES
 #include <windows.h>
-#include <math.h>
+#include <cmath>
 #include <iostream>
 #include <random>
 #include <map>
 #include <iomanip>
 #include "Graph.hpp"
 #include "Structure.hpp"
+#include "GraphIter.hpp"
 
 namespace Graphene {
 
 	class Core {
 
-	public:
-
+	private:
 		Graph* m_graph;
+
+	public:
 
 		Core(Graph& graph) {
 			m_graph = &graph;
@@ -29,9 +29,10 @@ namespace Graphene {
 
 		bool pendingInputUpdate = false;
 
-		Graph* getGraph() {
+		Graph* boundGraph() {
 			return m_graph;
 		}
+
 
 		float distance(Vertex* u, Vertex* v) {
 			float dx = u->getCoord().x - v->getCoord().x;
@@ -59,24 +60,33 @@ namespace Graphene {
 			return (v->getCoord() - u->getCoord()).normalize() * coeff;
 		}
 
+
+
+
 		void updatePos() {
 
-			for (auto u : m_graph->vertices) {
-
-				for (auto v : m_graph->vertices) {
-					u->move(repelForce(u, v));
+			{
+				VertexIter uIt(boundGraph());
+				while (uIt.next()) {
+					VertexIter vIt(boundGraph());
+					while (vIt.next()) {
+                        uIt.v->move(repelForce(uIt.v, vIt.v));
+                        vIt.v->move(repelForce(vIt.v, uIt.v));
+                    }
 				}
-
-				for (auto v : m_graph->vertices) {
-					if (!m_graph->isAdjacent(u->getNumber(), v->getNumber())) continue;
-					float dis = distance(u, v);
-					u->move(attractForce(u, v));
-				}
-
 			}
-
-			for (auto u : m_graph->vertices) {
-				u->flushMove(m_c4);
+			{
+				EdgeIter it(boundGraph());
+				while (it.next()) {
+					float dis = distance(it.u, it.v);
+					it.u->move(attractForce(it.u, it.v));
+                    it.v->move(attractForce(it.v, it.u));
+				}
+			}
+			{
+				VertexIter it(boundGraph());
+				while (it.next())
+					it.v->flushMove(m_c4);
 			}
 
 		}

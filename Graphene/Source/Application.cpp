@@ -5,8 +5,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include <glad.h>
-#include <glfw3.h>
+
 #include "utils/ExceptionHandler.hpp"
 #include "graphene/Include.h"
 #include "gui/Include.h"
@@ -14,8 +13,9 @@
 
 
 int main() {
-    Gui::init();
 
+	Gui::init();
+	
 	Graphene::Graph graph;
 	Graphene::Core core(graph);
 
