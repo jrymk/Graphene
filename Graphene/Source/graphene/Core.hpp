@@ -33,7 +33,6 @@ namespace Graphene {
 			return m_graph;
 		}
 
-
 		float distance(Vertex* u, Vertex* v) {
 			float dx = u->getCoord().x - v->getCoord().x;
 			float dy = u->getCoord().y - v->getCoord().y;
@@ -60,26 +59,17 @@ namespace Graphene {
 			return (v->getCoord() - u->getCoord()).normalize() * coeff;
 		}
 
-
-
-
 		void updatePos() {
 
 			for (auto u : m_graph->vertices) {
 
 				for (auto v : m_graph->vertices) {
-
-					//std::cerr << "r " << u->getNumber() << " " << v->getNumber() << " " << repelForce(u, v) << std::endl;
-					//		<< distance(u, v) << " " << (v->getCoord() - u->getCoord()).normalize() << std::endl;
 					u->move(repelForce(u, v));
-
 				}
 
 				for (auto v : m_graph->vertices) {
 					if (!m_graph->isAdjacent(u->getNumber(), v->getNumber())) continue;
 					float dis = distance(u, v);
-					//std::cerr << "a " << u->getNumber() << " " << v->getNumber() << " " << attractForce(u, v) << std::endl;
-					//std::cerr << dis << " " << m_c1 << " " << m_c2 << " " << dis / m_c2 << " " << log(dis / m_c2) << std::endl;
 					u->move(attractForce(u, v));
 				}
 
