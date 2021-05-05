@@ -65,15 +65,13 @@ namespace Graphene {
 
 		void updatePos() {
 
-			Vec2f total(0, 0);
 			for (auto u : m_graph->vertices) {
 
 				for (auto v : m_graph->vertices) {
 
 					//std::cerr << "r " << u->getNumber() << " " << v->getNumber() << " " << repelForce(u, v) << std::endl;
 					//		<< distance(u, v) << " " << (v->getCoord() - u->getCoord()).normalize() << std::endl;
-					if (u->getNumber() != 0) u->move(repelForce(u, v));
-					else total += repelForce(u, v);
+					u->move(repelForce(u, v));
 
 				}
 
@@ -82,20 +80,13 @@ namespace Graphene {
 					float dis = distance(u, v);
 					//std::cerr << "a " << u->getNumber() << " " << v->getNumber() << " " << attractForce(u, v) << std::endl;
 					//std::cerr << dis << " " << m_c1 << " " << m_c2 << " " << dis / m_c2 << " " << log(dis / m_c2) << std::endl;
-					if (u->getNumber() != 0) u->move(attractForce(u, v));
-					else total += attractForce(u, v);
+					u->move(attractForce(u, v));
 				}
 
 			}
 
-			total *= -1;
-
 			for (auto u : m_graph->vertices) {
-
-				if (u->getNumber() == 0) continue;
-				u->move(total);
 				u->flushMove(m_c4);
-
 			}
 
 		}
