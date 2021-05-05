@@ -84,38 +84,47 @@ namespace Graphene {
 		}
 	};
 
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<> dis(0.0, 1.0);
+
+	float genRandom() {
+		return dis(gen);
+	}
 
 	class Vertex {
-
-		float genRandom() {
-			std::random_device rd;
-			std::mt19937 gen(rd());
-			std::uniform_real_distribution<> dis(0.0, 1.0);
-			return dis(gen);
-		}
 
 		int number = 0;
 		std::string name = "";
 		bool nameVisible = false;
 		std::string value = "";
 		bool valueVisible = false;
-		Vec2f coord = Vec2f(genRandom(), genRandom());
-		Vec2f resultForce = Vec2f(0, 0);
-		Vec2f normalized = Vec2f(genRandom(), genRandom());
+		Vec2f coord;
+		Vec2f resultForce;
+		Vec2f normalized;
 
-		Vertex(int _num, std::string _name, bool _nameVisible, std::string _value, bool _valueVisible, Vec2f _coord) {
-			number = _num;
-			name = _name;
-			nameVisible = _nameVisible;
-			value = _value;
-			valueVisible = _valueVisible;
-			coord = _coord;
-		}
+//		Vertex(int _num, std::string _name, bool _nameVisible, std::string _value, bool _valueVisible, Vec2f _coord):
+//				gen(rd()),
+//				dis(0.0, 1.0),
+//				coord(genRandom(), genRandom()),
+//				resultForce(0, 0),
+//				normalized(genRandom(), genRandom()){
+//			number = _num;
+//			name = _name;
+//			nameVisible = _nameVisible;
+//			value = _value;
+//			valueVisible = _valueVisible;
+//			coord = _coord;
+//		}
 
 	public:
-		Vertex(int _num) {
+		Vertex(int _num):
+				coord(genRandom(), genRandom()),
+				resultForce(0, 0),
+				normalized(genRandom(), genRandom()) {
 			number = _num;
 			name = std::to_string(number);
+			std::cerr << number << " " << coord << std::endl;
 		}
 
 		Vec2f getCoord() {

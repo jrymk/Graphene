@@ -9,8 +9,6 @@
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_glfw.h>
 
-#define ASSERT(x) if (!(x)) __debugbreak()
-
 #define GLCall(x) GLClearError(); x; ASSERT(GLLogCall(#x, __FILE__, __LINE__))
 
 #define GL(x) ExceptionHandler::gl(x, __FILE__, __LINE__)

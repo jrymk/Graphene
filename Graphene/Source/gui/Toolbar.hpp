@@ -54,6 +54,8 @@ namespace Gui {
 			Gui::HelpMarker("Force multiplier");
 
 			ImGui::Checkbox(u8"Show demo window", &showDemoWindow);
+
+			ImGui::End();
 		}
 
 	}

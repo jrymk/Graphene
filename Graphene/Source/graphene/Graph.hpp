@@ -8,7 +8,7 @@ namespace Graphene {
 	public:
 
 		// total number of vertices and edges
-		int vertexCount, edgeCount;
+		int vertexCount = 0, edgeCount = 0;
 		// list of properties of all vertices, for instance their ids and positions
 		std::vector<Vertex*> vertices;
 		// list of properties of all edges, for instance their connection vertices and draw thickness

@@ -9,6 +9,8 @@
 #include "../utils/ExceptionHandler.hpp"
 #include "../graphene/Include.h"
 #include "Themes.hpp"
+#include <cstring>
+#include <algorithm>
 
 namespace Gui {
 
@@ -54,7 +56,7 @@ namespace Gui {
 			topLeftPixelCoord = ImGui::GetCursorScreenPos();
 			centerPixelCoord = ImVec2(topLeftPixelCoord.x + sizePixelCoord.x / 2.0f, topLeftPixelCoord.y + sizePixelCoord.y / 2.0f);
 			bottomRightPixelCoord = ImVec2(topLeftPixelCoord.x + sizePixelCoord.x, topLeftPixelCoord.y + sizePixelCoord.y);
-			canvasDisplaySize = max(min(sizePixelCoord.x - canvasMargin.x * 2.0f, sizePixelCoord.y - canvasMargin.y * 2.0f), FLT_MIN);
+			canvasDisplaySize = std::max(std::min(sizePixelCoord.x - canvasMargin.x * 2.0f, sizePixelCoord.y - canvasMargin.y * 2.0f), FLT_MIN);
 
 
 			if (autoZoomPan) {
@@ -86,7 +88,7 @@ namespace Gui {
 				else
 					zoomOffset *= powf(1.05, ImGui::GetIO().MouseWheel);
 
-				zoomLevelRatio = max(zoomLevelRatio, FLT_MIN);
+				zoomLevelRatio = std::max(zoomLevelRatio, FLT_MIN);
 
 				if (!autoZoomPan) {
 					centerMappedCoord.x += -(ImGui::GetIO().MousePos.x - centerPixelCoord.x + (centerPixelCoord.x - ImGui::GetIO().MousePos.x) *
@@ -121,17 +123,17 @@ namespace Gui {
 			float y_min = 1000000000.0;
 
 			for (int i = 0; i < graph->vertexCount; i++) {
-				x_max = max(x_max, graph->vertices[i]->getCoord().x);
-				x_min = min(x_min, graph->vertices[i]->getCoord().x);
-				y_max = max(y_max, graph->vertices[i]->getCoord().y);
-				y_min = min(y_min, graph->vertices[i]->getCoord().y);
+				x_max = std::max(x_max, graph->vertices[i]->getCoord().x);
+				x_min = std::min(x_min, graph->vertices[i]->getCoord().x);
+				y_max = std::max(y_max, graph->vertices[i]->getCoord().y);
+				y_min = std::min(y_min, graph->vertices[i]->getCoord().y);
 			}
 
 			if (autoZoomPan) {
 				centerMappedCoord.x += ((x_max - x_min) / 2.0f + x_min - centerMappedCoord.x) * 0.3f;
 				centerMappedCoord.y += ((y_max - y_min) / 2.0f + y_min - centerMappedCoord.y) * 0.3f;
 
-				zoomLevelRatio += (1.0f / max(max(x_max - x_min, y_max - y_min), 0.1f) * zoomOffset - zoomLevelRatio) * 0.3f;
+				zoomLevelRatio += (1.0f / std::max(std::max(x_max - x_min, y_max - y_min), 0.1f) * zoomOffset - zoomLevelRatio) * 0.3f;
 			}
 
 
