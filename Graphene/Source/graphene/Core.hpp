@@ -29,6 +29,8 @@ namespace Graphene {
 
 		bool pendingInputUpdate = false;
 
+		Vertex* grabbingVertex = nullptr;
+
 		Graph* boundGraph() {
 			return m_graph;
 		}
@@ -85,8 +87,10 @@ namespace Graphene {
 			}
 			{
 				VertexIter it(boundGraph());
-				while (it.next())
-					it.v->flushMove(m_c4);
+				while (it.next()) {
+                    if (it.v != grabbingVertex)
+                        it.v->flushMove(m_c4);
+                }
 			}
 
 		}

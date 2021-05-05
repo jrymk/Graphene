@@ -128,11 +128,11 @@ namespace Gui {
 				y_min = std::min(y_min, it.v->getCoord().y);
 			}
 
-			if (autoZoomPan) {
-				centerMappedCoord.x += ((x_max - x_min) / 2.0f + x_min - centerMappedCoord.x) * 0.3f;
-				centerMappedCoord.y += ((y_max - y_min) / 2.0f + y_min - centerMappedCoord.y) * 0.3f;
+			if (autoZoomPan && core->grabbingVertex == nullptr) {
+				centerMappedCoord.x += ((x_max - x_min) / 2.0f + x_min - centerMappedCoord.x) * 0.2f;
+				centerMappedCoord.y += ((y_max - y_min) / 2.0f + y_min - centerMappedCoord.y) * 0.2f;
 
-				zoomLevelRatio += (1.0f / std::max(std::max(x_max - x_min, y_max - y_min), 0.1f) * zoomOffset - zoomLevelRatio) * 0.3f;
+				zoomLevelRatio += (1.0f / std::max(std::max(x_max - x_min, y_max - y_min), 0.1f) * zoomOffset - zoomLevelRatio) * 0.2f;
 			}
 
 			if (showGrid) {
@@ -270,6 +270,7 @@ namespace Gui {
 			}
 
 			if (isDraggingVertex) {
+			    draggingVertex->flushMove(0.0f);
 				draggingVertex->move(
 					Graphene::Vec2f(
 						(ImGui::GetIO().MousePos.x - dragVertexDownPos.x) / canvasDisplaySize / zoomLevelRatio,
@@ -283,6 +284,11 @@ namespace Gui {
 			if (isDraggingVertex && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
 				isDraggingVertex = false;
 			}
+
+			if (isDraggingVertex)
+			    core->grabbingVertex = draggingVertex;
+			else
+			    core->grabbingVertex = nullptr;
 
 			bool deleteEdge = false;
 
@@ -361,13 +367,15 @@ namespace Gui {
 			{
 				Graphene::VertexIter it(graph);
 				while (it.next()) {
+
 					ImVec2 vertexScreenCoord(centerPixelCoord.x - (centerMappedCoord.x - it.v->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
 						centerPixelCoord.y + (centerMappedCoord.y - it.v->getCoord().y) * canvasDisplaySize * zoomLevelRatio);
 
-					drawList->AddCircleFilled(vertexScreenCoord, 20.0f * powf(zoomLevelRatio, 0.1), IM_COL32(255, 211, 0, 255));
+					drawList->AddCircleFilled(vertexScreenCoord, 20.0f * powf(zoomLevelRatio, 0.1) * ((it.v == core->grabbingVertex) ? 1.1f : 1.0f),
+                               (it.v == core->grabbingVertex) ? IM_COL32(255, 221, 51, 255) : IM_COL32(255, 211, 0, 255));
 
 					ImGui::PushFont(Gui::vertexTextFont);
-					ImGui::SetWindowFontScale((36.0f / 54.0f) * powf(zoomLevelRatio, 0.1));
+					ImGui::SetWindowFontScale((36.0f / 54.0f) * powf(zoomLevelRatio, 0.1) * ((it.v == core->grabbingVertex) ? 1.1f: 1.0f));
 					ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(15, 15, 15, 255));
 
 					ImVec2 labelCenterPos(centerPixelCoord.x - (centerMappedCoord.x - it.v->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
@@ -386,6 +394,7 @@ namespace Gui {
 					ImGui::PopStyleColor(1);
 					ImGui::SetWindowFontScale(1.0f);
 					ImGui::PopFont();
+
 				}
 			}
 
