@@ -62,7 +62,14 @@ namespace Graphene {
 			return (v->getCoord() - u->getCoord()).normalize() * coeff;
 		}
 
-
+        Vec2f originAttractForce(Vertex* v){
+		    float dis = v->getCoord().length();
+		    if(dis == 0.0){
+		        return Vec2f(0, 0);
+		    }
+            float coeff = std::min(1.0f, dis);
+		    return (Vec2f(0, 0) - v->getCoord()).normalize() * coeff;
+		}
 
 
 		void updatePos() {
@@ -88,6 +95,7 @@ namespace Graphene {
 			{
 				VertexIter it(boundGraph());
 				while (it.next()) {
+				    it.v->move(originAttractForce(it.v));
                     if (it.v != grabbingVertex)
                         it.v->flushMove(m_c4);
                 }
