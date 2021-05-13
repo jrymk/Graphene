@@ -5,116 +5,78 @@
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_glfw.h>
 #include <GLFW/glfw3.h>
-#include "Include.h"
-#include "../utils/ExceptionHandler.hpp"
-#include "../graphene/Include.h"
-#include "Themes.hpp"
 
 namespace Gui {
-
 	namespace GraphView {
 
-		ImVec2 sizePixelCoord;
-		ImVec2 topLeftPixelCoord;
-		ImVec2 centerPixelCoord;
-		ImVec2 bottomRightPixelCoord;
-		ImVec2 canvasMargin = ImVec2(100.0f, 100.0f);
+		ImVec2 drawSize;
+		ImVec2 topLeftDrawCoord;
+		ImVec2 centerDrawCoord;
+		ImVec2 canvasMargin;
 		float canvasDisplaySize;
 
-		bool autoZoomPan = true;
-		bool showGrid = true;
-		float zoomOffset = 1.0f;
-		ImVec2 centerMappedCoord = ImVec2(0.5f, 0.5f);
+		ImVec2 centerMapped(0.5f, 0.5f);
+		float zoomLevel = 1.0f;
+		float zoomTarget = 1.0f;
 
-		float zoomLevelRatio = 1.0f;
-		bool useZoomTarget = false;
-		float zoomLevelTarget = 1.0f;
+		bool enableAutoAdjustView = true;
+		bool gridVisible = true;
 
+		bool isHovered = false;
 
-		ImVec2 getPixelCoord(Graphene::Vec2f mappedCoord) {
-			return { centerPixelCoord.x - (centerMappedCoord.x - mappedCoord.x) * canvasDisplaySize * zoomLevelRatio,
-				centerPixelCoord.y + (centerMappedCoord.y - mappedCoord.y) * canvasDisplaySize * zoomLevelRatio };
+		Graphene::Vertex* leftMouseDownVertex = nullptr;
+		Graphene::Vertex* rightMouseDownVertex = nullptr;
+		Graphene::Vertex* hoveredVertex = nullptr;
+
+		void canvasBegin() {
+			drawSize = ImGui::GetContentRegionAvail();
+			topLeftDrawCoord = ImGui::GetCursorScreenPos();
+			centerDrawCoord = ImVec2(
+					topLeftDrawCoord.x + drawSize.x / 2.0f,
+					topLeftDrawCoord.y + drawSize.y / 2.0f
+			);
+			canvasMargin = ImVec2(100.0f, 100.0f);
+			canvasDisplaySize = std::max(std::min(drawSize.x - canvasMargin.x * 2.0f, drawSize.y - canvasMargin.y * 2.0f), FLT_MIN);
+
+			ImDrawList* drawList = ImGui::GetWindowDrawList();
+			drawList->PushClipRect(
+					topLeftDrawCoord,
+					{topLeftDrawCoord.x + drawSize.x, topLeftDrawCoord.y + drawSize.y},
+					true
+			);
+			// Draw border and background color
+			drawList->AddRectFilled(
+					topLeftDrawCoord,
+					{topLeftDrawCoord.x + drawSize.x, topLeftDrawCoord.y + drawSize.y},
+					IM_COL32(0, 0, 0, 255), 6.0f, 0
+			);
+			// catch mouse interactions
+			ImGui::InvisibleButton("canvas", drawSize, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+
+			isHovered = ImGui::IsItemHovered();
 		}
 
+		void canvasEnd() {
+			if (!enableAutoAdjustView)
+				ImGui::GetWindowDrawList()->AddText(
+						ImVec2(topLeftDrawCoord.x + 4.0f, topLeftDrawCoord.y + drawSize.y - 36.0f),
+						IM_COL32(200, 200, 200, 200), "Pan: Hold right mouse button   Zoom: Scroll", 0
+				);
+			else
+				ImGui::GetWindowDrawList()->AddText(
+						ImVec2(topLeftDrawCoord.x + 4.0f, topLeftDrawCoord.y + drawSize.y - 36.0f),
+						IM_COL32(200, 200, 200, 200), "Auto adjust view enabled, manual pan and zoom is disabled", 0
+				);
 
-		void show(Graphene::Core* core, Graphene::Graph* graph) {
+			ImGui::GetWindowDrawList()->AddText(
+					ImVec2(topLeftDrawCoord.x + 4.0f, topLeftDrawCoord.y + drawSize.y - 20.0f),
+					IM_COL32(200, 200, 200, 200),
+					"Drag from vertex to vertex with left mouse button to create/delete edge, drag vertex with right mouse button to nudge vertex position", 0);
 
-			ImGui::SetNextWindowSizeConstraints(ImVec2(300, 350), ImVec2(FLT_MAX, FLT_MAX));
-			ImGui::Begin(u8"Graph View", 0, ImGuiWindowFlags_NoCollapse);
+			ImGui::End();
+		}
 
-			bool contextMenuEnabled = false;
-			ImGui::Checkbox("Show grid", &showGrid);
-			ImGui::SameLine();
-			ImGui::Checkbox("Auto adjust view (A)", &autoZoomPan);
-
-			if (ImGui::IsKeyPressed('A', false))
-				autoZoomPan = !autoZoomPan;
-
-			sizePixelCoord = ImGui::GetContentRegionAvail();
-			topLeftPixelCoord = ImGui::GetCursorScreenPos();
-			centerPixelCoord = ImVec2(topLeftPixelCoord.x + sizePixelCoord.x / 2.0f, topLeftPixelCoord.y + sizePixelCoord.y / 2.0f);
-			bottomRightPixelCoord = ImVec2(topLeftPixelCoord.x + sizePixelCoord.x, topLeftPixelCoord.y + sizePixelCoord.y);
-			canvasDisplaySize = std::max(std::min(sizePixelCoord.x - canvasMargin.x * 2.0f, sizePixelCoord.y - canvasMargin.y * 2.0f), FLT_MIN);
-
-
-			if (autoZoomPan) {
-				ImGui::SameLine();
-				ImGui::SliderFloat("Zoom multiplier", &zoomOffset, 0.0001f, 100.0f, 0, ImGuiSliderFlags_Logarithmic);
-			}
-
-			else {
-				ImGui::SameLine();
-				if (ImGui::Button("Reset view")) {
-					zoomLevelTarget = 1.0f;
-					useZoomTarget = true;
-					zoomOffset = 0.5f;
-					centerMappedCoord = ImVec2(0.5f, 0.5f);
-				}
-			}
-
-			// catch mouse interactions
-			ImGui::InvisibleButton("canvas", sizePixelCoord, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-			const bool is_hovered = ImGui::IsItemHovered(); // Hovered
-			const bool is_active = ImGui::IsItemActive();   // Mouse button held
-
-
-			if (ImGui::IsItemHovered()) {
-
-				// zoom level control
-				if (!autoZoomPan)
-					zoomLevelRatio *= powf(1.05, ImGui::GetIO().MouseWheel);
-				else
-					zoomOffset *= powf(1.05, ImGui::GetIO().MouseWheel);
-
-				zoomLevelRatio = std::max(zoomLevelRatio, FLT_MIN);
-
-				if (!autoZoomPan) {
-					centerMappedCoord.x += -(ImGui::GetIO().MousePos.x - centerPixelCoord.x + (centerPixelCoord.x - ImGui::GetIO().MousePos.x) *
-						(powf(1.05, ImGui::GetIO().MouseWheel))) / canvasDisplaySize / zoomLevelRatio;
-					centerMappedCoord.y -= -(ImGui::GetIO().MousePos.y - centerPixelCoord.y + (centerPixelCoord.y - ImGui::GetIO().MousePos.y) *
-						(powf(1.05, ImGui::GetIO().MouseWheel))) / canvasDisplaySize / zoomLevelRatio;
-				}
-			}
-
-			// zoom target: zoom will smoothly transition to target value
-			if (useZoomTarget) {
-				zoomLevelRatio *= powf(zoomLevelTarget / zoomLevelRatio, 0.1);
-				if (zoomLevelTarget / zoomLevelRatio < 1.01f && zoomLevelTarget / zoomLevelRatio > 1.0f / 1.01f) {
-					useZoomTarget = false;
-					zoomLevelRatio = zoomLevelTarget;
-				}
-			}
-
-
-			ImGuiIO& io = ImGui::GetIO();
-			ImDrawList* drawList = ImGui::GetWindowDrawList();
-
-			drawList->PushClipRect(topLeftPixelCoord, bottomRightPixelCoord, true);
-
-			// Draw border and background color
-			drawList->AddRectFilled(topLeftPixelCoord, bottomRightPixelCoord, IM_COL32(0, 0, 0, 255), 6.0f, 0);
-
-
+		void autoAdjustView(Graphene::Graph* graph) {
 			float x_max = -1000000000.0;
 			float x_min = 1000000000.0;
 			float y_max = -1000000000.0;
@@ -128,474 +90,337 @@ namespace Gui {
 				y_min = std::min(y_min, it.v->getCoord().y);
 			}
 
-			if (autoZoomPan && core->grabbingVertex == nullptr) {
-				centerMappedCoord.x += ((x_max - x_min) / 2.0f + x_min - centerMappedCoord.x) * 0.2f;
-				centerMappedCoord.y += ((y_max - y_min) / 2.0f + y_min - centerMappedCoord.y) * 0.2f;
+			//if (rightMouseDownVertex == nullptr) {
+			if (!ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
+				centerMapped.x += ((x_max - x_min) / 2.0f + x_min - centerMapped.x) * 0.2f;
+				centerMapped.y += ((y_max - y_min) / 2.0f + y_min - centerMapped.y) * 0.2f;
 
-				zoomLevelRatio += (1.0f / std::max(std::max(x_max - x_min, y_max - y_min), 0.1f) * zoomOffset - zoomLevelRatio) * 0.2f;
+				zoomTarget += (1.0f / std::max(std::max(x_max - x_min, y_max - y_min), 0.1f) - zoomLevel) * 0.2f;
 			}
+		}
 
-			if (showGrid) {
+		ImVec2 getDrawCoord(Graphene::Vec2f mappedCoord) {
+			return {centerDrawCoord.x - (centerMapped.x - mappedCoord.x) * canvasDisplaySize * zoomLevel,
+			        centerDrawCoord.y + (centerMapped.y - mappedCoord.y) * canvasDisplaySize * zoomLevel};
+		}
 
-                // Draw 1*1 square
-                drawList->AddRectFilled(ImVec2(
-                        centerPixelCoord.x - (centerMappedCoord.x - 0.0f) * canvasDisplaySize * zoomLevelRatio,
-                        centerPixelCoord.y + (centerMappedCoord.y - 1.0f) * canvasDisplaySize * zoomLevelRatio)
-                        , ImVec2(
-                                centerPixelCoord.x - (centerMappedCoord.x - 1.0f) * canvasDisplaySize * zoomLevelRatio,
-                                centerPixelCoord.y + (centerMappedCoord.y - 0.0f) * canvasDisplaySize * zoomLevelRatio)
-                        , IM_COL32(40, 40, 40, 255), 0.0f);
+		Graphene::Vec2f getMappedCoord(ImVec2 drawCoord) {
+			return {centerDrawCoord.x - (centerMapped.x - drawCoord.x) * canvasDisplaySize * zoomLevel,
+			        centerDrawCoord.y + (centerMapped.y - drawCoord.y) * canvasDisplaySize * zoomLevel};
+		}
 
-				{
-					// vertical lines (secondary)
-					const float contentGridSpacing = powf(10, -(int)log10f(zoomLevelRatio) - 1);
-					const float screenGridSpacing = contentGridSpacing * canvasDisplaySize * zoomLevelRatio;
-					const float centerSnapGridCoord = centerPixelCoord.x - (fmodf(centerMappedCoord.x, contentGridSpacing) * canvasDisplaySize * zoomLevelRatio);
-					const float startingSnapGridCoord = centerSnapGridCoord - (int)(sizePixelCoord.x / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
-					const float endingSnapGridCoord = centerSnapGridCoord + (int)(sizePixelCoord.x / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
+		void updateKeyboardShortcuts() {
+			// keyboard shortcut to toggle auto adjust view
+			if (ImGui::IsKeyPressed('A', false))
+				enableAutoAdjustView = !enableAutoAdjustView;
+		}
 
-					int lineDrawLimit = 500;
-					for (float x = startingSnapGridCoord; x <= endingSnapGridCoord; x += screenGridSpacing) {
-						drawList->AddLine(ImVec2(x, centerPixelCoord.y - sizePixelCoord.y / 2.0f), ImVec2(x, centerPixelCoord.y + sizePixelCoord.y / 2.0f), IM_COL32(90, 90, 90, 80), 1.0f);
-						if (!(--lineDrawLimit))
-							break;
-					}
-				}
-				{
-					// vertical lines (primary)
-					const float contentGridSpacing = powf(10, -(int)log10f(zoomLevelRatio));
-					const float screenGridSpacing = contentGridSpacing * canvasDisplaySize * zoomLevelRatio;
-					const float centerSnapGridCoord = centerPixelCoord.x - (fmodf(centerMappedCoord.x, contentGridSpacing) * canvasDisplaySize * zoomLevelRatio);
-					const float startingSnapGridCoord = centerSnapGridCoord - (int)(sizePixelCoord.x / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
-					const float endingSnapGridCoord = centerSnapGridCoord + (int)(sizePixelCoord.x / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
+		void updateHoveredVertex(Graphene::Core* core, Graphene::Graph* graph) {
+			hoveredVertex = nullptr;
 
-					int lineDrawLimit = 500;
-					for (float x = startingSnapGridCoord; x <= endingSnapGridCoord; x += screenGridSpacing) {
-						drawList->AddLine(ImVec2(x, centerPixelCoord.y - sizePixelCoord.y / 2.0f), ImVec2(x, centerPixelCoord.y + sizePixelCoord.y / 2.0f), IM_COL32(90, 90, 90, 80), 2.0f);
-						if (!(--lineDrawLimit))
-							break;
-					}
-				}
-				{
-					// horizontal lines (secondary)
-					const float contentGridSpacing = powf(10, -(int)log10f(zoomLevelRatio) - 1);
-					const float screenGridSpacing = contentGridSpacing * canvasDisplaySize * zoomLevelRatio;
-					const float centerSnapGridCoord = centerPixelCoord.y + (fmodf(centerMappedCoord.y, contentGridSpacing) * canvasDisplaySize * zoomLevelRatio);
-					const float startingSnapGridCoord = centerSnapGridCoord - (int)(sizePixelCoord.y / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
-					const float endingSnapGridCoord = centerSnapGridCoord + (int)(sizePixelCoord.y / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
+			float closestVertexDistance = FLT_MAX;
 
-					int lineDrawLimit = 500;
-					for (float y = startingSnapGridCoord; y <= endingSnapGridCoord; y += screenGridSpacing) {
-						drawList->AddLine(ImVec2(centerPixelCoord.x - sizePixelCoord.x / 2.0f, y), ImVec2(centerPixelCoord.x + sizePixelCoord.x / 2.0f, y), IM_COL32(90, 90, 90, 80), 1.0f);
-						if (!(--lineDrawLimit))
-							break;
-					}
-				}
-				{
-					// horizontal lines (primary)
-					const float contentGridSpacing = powf(10, -(int)log10f(zoomLevelRatio));
-					const float screenGridSpacing = contentGridSpacing * canvasDisplaySize * zoomLevelRatio;
-					const float centerSnapGridCoord = centerPixelCoord.y + (fmodf(centerMappedCoord.y, contentGridSpacing) * canvasDisplaySize * zoomLevelRatio);
-					const float startingSnapGridCoord = centerSnapGridCoord - (int)(sizePixelCoord.y / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
-					const float endingSnapGridCoord = centerSnapGridCoord + (int)(sizePixelCoord.y / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
+			Graphene::VertexIter it(graph);
 
-					int lineDrawLimit = 500;
-					for (float y = startingSnapGridCoord; y <= endingSnapGridCoord; y += screenGridSpacing) {
-						drawList->AddLine(ImVec2(centerPixelCoord.x - sizePixelCoord.x / 2.0f, y), ImVec2(centerPixelCoord.x + sizePixelCoord.x / 2.0f, y), IM_COL32(90, 90, 90, 80), 2.0f);
-						if (!(--lineDrawLimit))
-							break;
-					}
-				}
+			while (it.next()) {
+				float mouseVertexDistanceSquared =
+						powf(ImGui::GetIO().MousePos.x - getDrawCoord(it.v->getCoord()).x, 2.0f) +
+						powf(ImGui::GetIO().MousePos.y - getDrawCoord(it.v->getCoord()).y, 2.0f);
 
-
-				ImVec2 contentOriginCenterDelta = ImVec2(centerPixelCoord.x - centerMappedCoord.x * canvasDisplaySize * zoomLevelRatio,
-					centerPixelCoord.y + centerMappedCoord.y * canvasDisplaySize * zoomLevelRatio);
-
-
-				// blue origin dot
-				drawList->AddCircleFilled(contentOriginCenterDelta, 5.0f, IM_COL32(0, 211, 255, 255));
-
-			}
-
-			// mouse hovered vertex finding
-			Graphene::Vertex* hoverVertex = nullptr;
-			static Graphene::Vertex* edgeAddVertex;
-			static bool addingEdge = false;
-			{
-				float closestVertexDistance = FLT_MAX;
-
-				Graphene::VertexIter it(graph);
-
-				while (it.next()) {
-					ImVec2 vertexScreenCoord(centerPixelCoord.x - (centerMappedCoord.x - it.v->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
-						centerPixelCoord.y + (centerMappedCoord.y - it.v->getCoord().y) * canvasDisplaySize * zoomLevelRatio);
-					float mouseVertexDistanceSquared = powf(ImGui::GetIO().MousePos.x - vertexScreenCoord.x, 2.0f) + powf(ImGui::GetIO().MousePos.y - vertexScreenCoord.y, 2.0f);
-
-					if (ImGui::IsItemHovered()) {
-						if (mouseVertexDistanceSquared <= powf(40.0f * powf(zoomLevelRatio, 0.1), 2.0f)) {
-							if (mouseVertexDistanceSquared <= closestVertexDistance) {
-								hoverVertex = it.v;
-								closestVertexDistance = mouseVertexDistanceSquared;
-							}
+				if (ImGui::IsItemHovered()) {
+					if (mouseVertexDistanceSquared <= powf(40.0f * powf(zoomTarget, 0.1), 2.0f)) {
+						if (mouseVertexDistanceSquared <= closestVertexDistance) {
+							hoveredVertex = it.v;
+							closestVertexDistance = mouseVertexDistanceSquared;
 						}
 					}
 				}
 			}
 
-			{
-				// edge drawing
-				Graphene::EdgeIter it(graph);
-				while (it.next()) {
-					drawList->AddLine(
-						ImVec2(centerPixelCoord.x - (centerMappedCoord.x - it.u->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
-							centerPixelCoord.y + (centerMappedCoord.y - it.u->getCoord().y) * canvasDisplaySize * zoomLevelRatio),
-						ImVec2(centerPixelCoord.x - (centerMappedCoord.x - it.v->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
-							centerPixelCoord.y + (centerMappedCoord.y - it.v->getCoord().y) * canvasDisplaySize * zoomLevelRatio),
-						IM_COL32(200, 200, 200, 255), 5.0f * powf(zoomLevelRatio, 0.1));
-				}
+
+			if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && hoveredVertex != nullptr) {
+				leftMouseDownVertex = hoveredVertex;
 			}
 
-
-			// pan control
-			const float mousePanThreshold = contextMenuEnabled ? -1.0f : 0.0f;
-
-			static Graphene::Vertex* draggingVertex = nullptr;
-			static ImVec2 dragVertexDownPos;
-			static bool isDraggingVertex = false;
-
-			if (hoverVertex != nullptr && !isDraggingVertex && ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
-				dragVertexDownPos = ImGui::GetIO().MousePos;
-				isDraggingVertex = true;
-				draggingVertex = hoverVertex;
-			}
-
-			if (isDraggingVertex) {
-			    draggingVertex->flushMove(0.0f);
-				draggingVertex->move(
-					Graphene::Vec2f(
-						(ImGui::GetIO().MousePos.x - dragVertexDownPos.x) / canvasDisplaySize / zoomLevelRatio,
-						-(ImGui::GetIO().MousePos.y - dragVertexDownPos.y) / canvasDisplaySize / zoomLevelRatio
-					)
-				);
-				draggingVertex->flushMove(1.0f);
-				dragVertexDownPos = ImGui::GetIO().MousePos;
-			}
-
-			if (isDraggingVertex && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
-				isDraggingVertex = false;
-			}
-
-			if (isDraggingVertex)
-			    core->grabbingVertex = draggingVertex;
-			else
-			    core->grabbingVertex = nullptr;
-
-			bool deleteEdge = false;
-
-			if (hoverVertex != nullptr) {
-
-				Graphene::EdgeIter it(graph);
-				while (it.next()) {
-					if ((it.u == edgeAddVertex && it.v == hoverVertex) || (it.u == hoverVertex && it.v == edgeAddVertex)) {
-						deleteEdge = true;
-						break;
-					}
-				}
-			}
-
-
-			if (addingEdge && ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
-				addingEdge = false;
-
-				if (hoverVertex != nullptr) {
-					if (!deleteEdge)
-						graph->addEdge(edgeAddVertex->getNumber(), hoverVertex->getNumber());
-
+			if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
+				if (leftMouseDownVertex != nullptr && hoveredVertex != nullptr) {
+					if (graph->isAdjacent(leftMouseDownVertex->getNumber(), hoveredVertex->getNumber()))
+						graph->removeEdge(leftMouseDownVertex->getNumber(), hoveredVertex->getNumber());
+					else if (graph->isAdjacent(hoveredVertex->getNumber(), leftMouseDownVertex->getNumber()))
+						graph->removeEdge(hoveredVertex->getNumber(), leftMouseDownVertex->getNumber());
 					else
-						graph->removeEdge(edgeAddVertex->getNumber(), hoverVertex->getNumber());
-
+						graph->addEdge(leftMouseDownVertex->getNumber(), hoveredVertex->getNumber());
 					core->pendingInputUpdate = true;
 				}
+
+				leftMouseDownVertex = nullptr;
 			}
 
-			if (addingEdge) {
-				if (deleteEdge) {
-					drawList->AddLine(
-						ImVec2(centerPixelCoord.x - (centerMappedCoord.x - edgeAddVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
-							centerPixelCoord.y + (centerMappedCoord.y - edgeAddVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio),
-						ImVec2(centerPixelCoord.x - (centerMappedCoord.x - hoverVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
-							centerPixelCoord.y + (centerMappedCoord.y - hoverVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio),
-						IM_COL32(200, 0, 0, 255), 5.0f * powf(zoomLevelRatio, 0.1));
-				}
-				else {
-					if (hoverVertex != nullptr) {
-						drawList->AddLine(
-							ImVec2(centerPixelCoord.x - (centerMappedCoord.x - edgeAddVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
-								centerPixelCoord.y + (centerMappedCoord.y - edgeAddVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio),
-							ImVec2(centerPixelCoord.x - (centerMappedCoord.x - hoverVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
-								centerPixelCoord.y + (centerMappedCoord.y - hoverVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio),
-							IM_COL32(0, 200, 0, 255), 5.0f * powf(zoomLevelRatio, 0.1));
-					}
-					else {
-						drawList->AddLine(
-							ImVec2(centerPixelCoord.x - (centerMappedCoord.x - edgeAddVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
-								centerPixelCoord.y + (centerMappedCoord.y - edgeAddVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio),
-							ImVec2(ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y),
-							IM_COL32(0, 200, 0, 255), 5.0f * powf(zoomLevelRatio, 0.1));
+			if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && hoveredVertex != nullptr) {
+				rightMouseDownVertex = hoveredVertex;
+				rightMouseDownVertex->pauseMove = true;
+			}
+
+			if (ImGui::IsMouseReleased(ImGuiMouseButton_Right) && rightMouseDownVertex != nullptr) {
+				rightMouseDownVertex->pauseMove = false;
+				rightMouseDownVertex = nullptr;
+			}
+		}
+
+		void updateCamera() {
+			if (isHovered)
+				zoomTarget *= powf(1.05, ImGui::GetIO().MouseWheel);
+
+			if (isHovered) {
+				if (rightMouseDownVertex == nullptr) {
+					if (ImGui::IsMouseDragging(ImGuiMouseButton_Right, 0.0f)) {
+						centerMapped.x += -ImGui::GetIO().MouseDelta.x / canvasDisplaySize / zoomLevel;
+						centerMapped.y -= -ImGui::GetIO().MouseDelta.y / canvasDisplaySize / zoomLevel;
 					}
 				}
+
+				centerMapped.x +=
+						-(ImGui::GetIO().MousePos.x - centerDrawCoord.x
+						  + (centerDrawCoord.x - ImGui::GetIO().MousePos.x)
+						    * (powf(1.05, ImGui::GetIO().MouseWheel))) / canvasDisplaySize / zoomLevel;
+				centerMapped.y +=
+						(ImGui::GetIO().MousePos.y - centerDrawCoord.y
+						 + (centerDrawCoord.y - ImGui::GetIO().MousePos.y)
+						   * (powf(1.05, ImGui::GetIO().MouseWheel))) / canvasDisplaySize / zoomLevel;
 			}
 
+			// smoothy transition zoom level
+			zoomLevel *= powf(zoomTarget / zoomLevel, 0.1f);
+			zoomLevel = std::max(zoomTarget, FLT_MIN);
+		}
 
-
-			if (!isDraggingVertex && !autoZoomPan) {
-				if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mousePanThreshold)) {
-					centerMappedCoord.x += -ImGui::GetIO().MouseDelta.x / canvasDisplaySize / zoomLevelRatio;
-					centerMappedCoord.y -= -ImGui::GetIO().MouseDelta.y / canvasDisplaySize / zoomLevelRatio;
-				}
-			}
-
-
-
-			if (ImGui::IsItemHovered()) {
-				if (hoverVertex != nullptr || isDraggingVertex || addingEdge)
+		void updateMouseCursor() {
+			if (isHovered) {
+				if (hoveredVertex != nullptr || leftMouseDownVertex != nullptr || rightMouseDownVertex != nullptr)
 					ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 				else
 					ImGui::SetMouseCursor(ImGuiMouseCursor_Arrow);
 			}
-
-			{
-				Graphene::VertexIter it(graph);
-				while (it.next()) {
-
-					ImVec2 vertexScreenCoord(centerPixelCoord.x - (centerMappedCoord.x - it.v->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
-						centerPixelCoord.y + (centerMappedCoord.y - it.v->getCoord().y) * canvasDisplaySize * zoomLevelRatio);
-
-					drawList->AddCircleFilled(vertexScreenCoord, 20.0f * powf(zoomLevelRatio, 0.1) * ((it.v == core->grabbingVertex) ? 1.1f : 1.0f),
-                               (it.v == core->grabbingVertex) ? IM_COL32(255, 221, 51, 255) : IM_COL32(255, 211, 0, 255));
-
-					ImGui::PushFont(Gui::vertexTextFont);
-					ImGui::SetWindowFontScale((36.0f / 54.0f) * powf(zoomLevelRatio, 0.1) * ((it.v == core->grabbingVertex) ? 1.1f: 1.0f));
-					ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(15, 15, 15, 255));
-
-					ImVec2 labelCenterPos(centerPixelCoord.x - (centerMappedCoord.x - it.v->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
-						centerPixelCoord.y + (centerMappedCoord.y - it.v->getCoord().y) * canvasDisplaySize * zoomLevelRatio);
-					ImVec2 labelMinPos(labelCenterPos.x - 50.0f, labelCenterPos.y - 50.0f);
-					ImVec2 labelMaxPos(labelCenterPos.x + 50.0f, labelCenterPos.y + 50.0f);
-					std::string tempStr(std::to_string(it.v->getNumber()));
-					char* label = new char[tempStr.length() + 1];
-					strcpy(label, tempStr.c_str());
-					ImVec2 labelSize = ImGui::CalcTextSize(label, NULL, true);
-					ImVec2 labelAlign(0.5f, 0.5f);
-					const ImRect bb(labelMinPos, labelMaxPos);
-
-					ImGui::RenderTextClipped(labelMinPos, labelMaxPos, label, 0, &labelSize, labelAlign, &bb);
-
-					ImGui::PopStyleColor(1);
-					ImGui::SetWindowFontScale(1.0f);
-					ImGui::PopFont();
-
-				}
-			}
-
-
-			if (hoverVertex != nullptr) {
-				drawList->AddCircle(ImVec2(centerPixelCoord.x - (centerMappedCoord.x - hoverVertex->getCoord().x) * canvasDisplaySize * zoomLevelRatio,
-					centerPixelCoord.y + (centerMappedCoord.y - hoverVertex->getCoord().y) * canvasDisplaySize * zoomLevelRatio)
-					, 25.0f * powf(zoomLevelRatio, 0.1), IM_COL32(150, 150, 255, 100), 0, 5.0f * powf(zoomLevelRatio, 0.1));
-
-				if (!addingEdge && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
-					addingEdge = true;
-					edgeAddVertex = hoverVertex;
-				}
-
-			}
-
-            if (showGrid) {
-                {
-                    // x positive 10x
-                    ImVec2 gridCoordLabelMinPos(centerPixelCoord.x -
-                                                (centerMappedCoord.x - powf(10, (int) log10f(1.0f / zoomLevelRatio))) *
-                                                canvasDisplaySize * zoomLevelRatio + 2.0f,
-                                                centerPixelCoord.y +
-                                                (centerMappedCoord.y - 0.0f) * canvasDisplaySize * zoomLevelRatio);
-                    ImVec2 gridCoordLabelMaxPos(gridCoordLabelMinPos.x + 50.0f, gridCoordLabelMinPos.y + 30.0f);
-                    std::string tempStr("X: 1E" + std::to_string((int) log10f(1.0f / zoomLevelRatio)));
-                    char *label = new char[tempStr.length() + 1];
-                    strcpy(label, tempStr.c_str());
-                    ImVec2 labelSize = ImGui::CalcTextSize(label, NULL, true);
-                    ImVec2 labelAlign(0.0f, 0.0f);
-                    const ImRect bb(gridCoordLabelMinPos, gridCoordLabelMaxPos);
-
-                    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 255, 200));
-                    ImGui::RenderTextClipped(gridCoordLabelMinPos, gridCoordLabelMaxPos, label, 0, &labelSize,
-                                             labelAlign, &bb);
-                    ImGui::PopStyleColor(1);
-                }
-
-                {
-                    // x negative 10x
-                    ImVec2 gridCoordLabelMinPos(centerPixelCoord.x -
-                                                (centerMappedCoord.x + powf(10, (int) log10f(1.0f / zoomLevelRatio))) *
-                                                canvasDisplaySize * zoomLevelRatio - 52.0f,
-                                                centerPixelCoord.y +
-                                                (centerMappedCoord.y - 0.0f) * canvasDisplaySize * zoomLevelRatio);
-                    ImVec2 gridCoordLabelMaxPos(gridCoordLabelMinPos.x + 50.0f, gridCoordLabelMinPos.y + 30.0f);
-                    std::string tempStr("X: -1E" + std::to_string((int) log10f(1.0f / zoomLevelRatio)));
-                    char *label = new char[tempStr.length() + 1];
-                    strcpy(label, tempStr.c_str());
-                    ImVec2 labelSize = ImGui::CalcTextSize(label, NULL, true);
-                    ImVec2 labelAlign(1.0f, 0.0f);
-                    const ImRect bb(gridCoordLabelMinPos, gridCoordLabelMaxPos);
-
-                    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 255, 200));
-                    ImGui::RenderTextClipped(gridCoordLabelMinPos, gridCoordLabelMaxPos, label, 0, &labelSize,
-                                             labelAlign, &bb);
-                    ImGui::PopStyleColor(1);
-                }
-
-                if (fmodf(log10f(1.0f / zoomLevelRatio), 1.0f) <= 0.5f) {
-                    // x positive 1x
-                    ImVec2 gridCoordLabelMinPos(centerPixelCoord.x - (centerMappedCoord.x - powf(10, (int) log10f(
-                            1.0f / zoomLevelRatio) - 1)) * canvasDisplaySize * zoomLevelRatio + 2.0f,
-                                                centerPixelCoord.y +
-                                                (centerMappedCoord.y - 0.0f) * canvasDisplaySize * zoomLevelRatio);
-                    ImVec2 gridCoordLabelMaxPos(gridCoordLabelMinPos.x + 50.0f, gridCoordLabelMinPos.y + 30.0f);
-                    std::string tempStr("X: 1E" + std::to_string((int) log10f(1.0f / zoomLevelRatio) - 1));
-                    char *label = new char[tempStr.length() + 1];
-                    strcpy(label, tempStr.c_str());
-                    ImVec2 labelSize = ImGui::CalcTextSize(label, NULL, true);
-                    ImVec2 labelAlign(0.0f, 0.0f);
-                    const ImRect bb(gridCoordLabelMinPos, gridCoordLabelMaxPos);
-
-                    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 255, 200));
-                    ImGui::RenderTextClipped(gridCoordLabelMinPos, gridCoordLabelMaxPos, label, 0, &labelSize,
-                                             labelAlign, &bb);
-                    ImGui::PopStyleColor(1);
-                }
-
-                if (fmodf(log10f(1.0f / zoomLevelRatio), 1.0f) <= 0.5f) {
-                    // x negative 1x
-                    ImVec2 gridCoordLabelMinPos(centerPixelCoord.x - (centerMappedCoord.x + powf(10, (int) log10f(
-                            1.0f / zoomLevelRatio) - 1)) * canvasDisplaySize * zoomLevelRatio - 52.0f,
-                                                centerPixelCoord.y +
-                                                (centerMappedCoord.y - 0.0f) * canvasDisplaySize * zoomLevelRatio);
-                    ImVec2 gridCoordLabelMaxPos(gridCoordLabelMinPos.x + 50.0f, gridCoordLabelMinPos.y + 30.0f);
-                    std::string tempStr("X: -1E" + std::to_string((int) log10f(1.0f / zoomLevelRatio) - 1));
-                    char *label = new char[tempStr.length() + 1];
-                    strcpy(label, tempStr.c_str());
-                    ImVec2 labelSize = ImGui::CalcTextSize(label, NULL, true);
-                    ImVec2 labelAlign(1.0f, 0.0f);
-                    const ImRect bb(gridCoordLabelMinPos, gridCoordLabelMaxPos);
-
-                    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 255, 200));
-                    ImGui::RenderTextClipped(gridCoordLabelMinPos, gridCoordLabelMaxPos, label, 0, &labelSize,
-                                             labelAlign, &bb);
-                    ImGui::PopStyleColor(1);
-                }
-
-                {
-                    // y positive 10x
-                    ImVec2 gridCoordLabelMinPos(
-                            centerPixelCoord.x - (centerMappedCoord.x - 0.0f) * canvasDisplaySize * zoomLevelRatio -
-                            50.0f,
-                            centerPixelCoord.y +
-                            (centerMappedCoord.y - powf(10, (int) log10f(1.0f / zoomLevelRatio))) * canvasDisplaySize *
-                            zoomLevelRatio - 32.0f);
-                    ImVec2 gridCoordLabelMaxPos(gridCoordLabelMinPos.x + 50.0f, gridCoordLabelMinPos.y + 30.0f);
-                    std::string tempStr("Y: 1E" + std::to_string((int) log10f(1.0f / zoomLevelRatio)));
-                    char *label = new char[tempStr.length() + 1];
-                    strcpy(label, tempStr.c_str());
-                    ImVec2 labelSize = ImGui::CalcTextSize(label, NULL, true);
-                    ImVec2 labelAlign(1.0f, 1.0f);
-                    const ImRect bb(gridCoordLabelMinPos, gridCoordLabelMaxPos);
-
-                    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 255, 200));
-                    ImGui::RenderTextClipped(gridCoordLabelMinPos, gridCoordLabelMaxPos, label, 0, &labelSize,
-                                             labelAlign, &bb);
-                    ImGui::PopStyleColor(1);
-                }
-
-                {
-                    // y negative 10x
-                    ImVec2 gridCoordLabelMinPos(
-                            centerPixelCoord.x - (centerMappedCoord.x - 0.0f) * canvasDisplaySize * zoomLevelRatio -
-                            50.0f,
-                            centerPixelCoord.y +
-                            (centerMappedCoord.y + powf(10, (int) log10f(1.0f / zoomLevelRatio))) * canvasDisplaySize *
-                            zoomLevelRatio + 2.0f);
-                    ImVec2 gridCoordLabelMaxPos(gridCoordLabelMinPos.x + 50.0f, gridCoordLabelMinPos.y + 30.0f);
-                    std::string tempStr("Y: -1E" + std::to_string((int) log10f(1.0f / zoomLevelRatio)));
-                    char *label = new char[tempStr.length() + 1];
-                    strcpy(label, tempStr.c_str());
-                    ImVec2 labelSize = ImGui::CalcTextSize(label, NULL, true);
-                    ImVec2 labelAlign(1.0f, 0.0f);
-                    const ImRect bb(gridCoordLabelMinPos, gridCoordLabelMaxPos);
-
-                    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 255, 200));
-                    ImGui::RenderTextClipped(gridCoordLabelMinPos, gridCoordLabelMaxPos, label, 0, &labelSize,
-                                             labelAlign, &bb);
-                    ImGui::PopStyleColor(1);
-                }
-
-                if (fmodf(log10f(1.0f / zoomLevelRatio), 1.0f) <= 0.5f) {
-                    // y positive 1x
-                    ImVec2 gridCoordLabelMinPos(
-                            centerPixelCoord.x - (centerMappedCoord.x - 0.0f) * canvasDisplaySize * zoomLevelRatio -
-                            50.0f,
-                            centerPixelCoord.y +
-                            (centerMappedCoord.y - powf(10, (int) log10f(1.0f / zoomLevelRatio) - 1)) *
-                            canvasDisplaySize * zoomLevelRatio - 32.0f);
-                    ImVec2 gridCoordLabelMaxPos(gridCoordLabelMinPos.x + 50.0f, gridCoordLabelMinPos.y + 30.0f);
-                    std::string tempStr("Y: 1E" + std::to_string((int) log10f(1.0f / zoomLevelRatio) - 1));
-                    char *label = new char[tempStr.length() + 1];
-                    strcpy(label, tempStr.c_str());
-                    ImVec2 labelSize = ImGui::CalcTextSize(label, NULL, true);
-                    ImVec2 labelAlign(1.0f, 1.0f);
-                    const ImRect bb(gridCoordLabelMinPos, gridCoordLabelMaxPos);
-
-                    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 255, 200));
-                    ImGui::RenderTextClipped(gridCoordLabelMinPos, gridCoordLabelMaxPos, label, 0, &labelSize,
-                                             labelAlign, &bb);
-                    ImGui::PopStyleColor(1);
-                }
-
-                if (fmodf(log10f(1.0f / zoomLevelRatio), 1.0f) <= 0.5f) {
-                    // y negative 1x
-                    ImVec2 gridCoordLabelMinPos(
-                            centerPixelCoord.x - (centerMappedCoord.x - 0.0f) * canvasDisplaySize * zoomLevelRatio -
-                            50.0f,
-                            centerPixelCoord.y +
-                            (centerMappedCoord.y + powf(10, (int) log10f(1.0f / zoomLevelRatio) - 1)) *
-                            canvasDisplaySize * zoomLevelRatio + 2.0f);
-                    ImVec2 gridCoordLabelMaxPos(gridCoordLabelMinPos.x + 50.0f, gridCoordLabelMinPos.y + 30.0f);
-                    std::string tempStr("Y: -1E" + std::to_string((int) log10f(1.0f / zoomLevelRatio) - 1));
-                    char *label = new char[tempStr.length() + 1];
-                    strcpy(label, tempStr.c_str());
-                    ImVec2 labelSize = ImGui::CalcTextSize(label, NULL, true);
-                    ImVec2 labelAlign(1.0f, 0.0f);
-                    const ImRect bb(gridCoordLabelMinPos, gridCoordLabelMaxPos);
-
-                    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 255, 200));
-                    ImGui::RenderTextClipped(gridCoordLabelMinPos, gridCoordLabelMaxPos, label, 0, &labelSize,
-                                             labelAlign, &bb);
-                    ImGui::PopStyleColor(1);
-                }
-            }
-
-			if (!autoZoomPan)
-				drawList->AddText(ImVec2(topLeftPixelCoord.x + 4.0f, bottomRightPixelCoord.y - 36.0f), IM_COL32(200, 200, 200, 200), "Pan: Hold right mouse button   Zoom: Scroll", 0);
-			else
-				drawList->AddText(ImVec2(topLeftPixelCoord.x + 4.0f, bottomRightPixelCoord.y - 36.0f), IM_COL32(200, 200, 200, 200), "Auto adjust view enabled, manual pan and zoom is disabled", 0);
-
-			drawList->AddText(ImVec2(topLeftPixelCoord.x + 4.0f, bottomRightPixelCoord.y - 20.0f), IM_COL32(200, 200, 200, 200), "Drag from vertex to vertex with left mouse button to create/delete edge, drag vertex with right mouse button to nudge vertex position", 0);
-
-			drawList->PopClipRect();
-
-			ImGui::End();
-
 		}
 
-	}
+		void drawGrid() {
+			// TODO: Fix this monstrosity
 
+			ImDrawList* drawList = ImGui::GetWindowDrawList();
+			// Draw context 1*1 square
+			drawList->AddRectFilled(
+					ImVec2(
+							centerDrawCoord.x - (centerMapped.x - 0.0f) * canvasDisplaySize * zoomLevel,
+							centerDrawCoord.y + (centerMapped.y - 1.0f) * canvasDisplaySize * zoomLevel
+					),
+					ImVec2(
+							centerDrawCoord.x - (centerMapped.x - 1.0f) * canvasDisplaySize * zoomLevel,
+							centerDrawCoord.y + (centerMapped.y - 0.0f) * canvasDisplaySize * zoomLevel
+					),
+					IM_COL32(40, 40, 40, 255), 0.0f
+			);
+
+			{
+				// vertical lines (secondary)
+				const float contextGridSpacing = powf(10, -(int) log10f(zoomLevel) - 1);
+				const float screenGridSpacing = contextGridSpacing * canvasDisplaySize * zoomLevel;
+				const float centerSnapGridCoord =
+						centerDrawCoord.x - (fmodf(centerMapped.x, contextGridSpacing) * canvasDisplaySize * zoomLevel);
+				const float startingSnapGridCoord = centerSnapGridCoord - (int) (drawSize.x / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
+				const float endingSnapGridCoord = centerSnapGridCoord + (int) (drawSize.x / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
+
+				int lineDrawLimit = 500;
+				for (float x = startingSnapGridCoord; x <= endingSnapGridCoord; x += screenGridSpacing) {
+					drawList->AddLine(ImVec2(x, centerDrawCoord.y - drawSize.y / 2.0f), ImVec2(x, centerDrawCoord.y + drawSize.y / 2.0f),
+					                  IM_COL32(90, 90, 90, 80), 1.0f);
+					if (!(--lineDrawLimit))
+						break;
+				}
+			}
+			{
+				// vertical lines (primary)
+				const float contextGridSpacing = powf(10, -(int) log10f(zoomLevel));
+				const float screenGridSpacing = contextGridSpacing * canvasDisplaySize * zoomLevel;
+				const float centerSnapGridCoord =
+						centerDrawCoord.x - (fmodf(centerMapped.x, contextGridSpacing) * canvasDisplaySize * zoomLevel);
+				const float startingSnapGridCoord = centerSnapGridCoord - (int) (drawSize.x / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
+				const float endingSnapGridCoord = centerSnapGridCoord + (int) (drawSize.x / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
+
+				int lineDrawLimit = 500;
+				for (float x = startingSnapGridCoord; x <= endingSnapGridCoord; x += screenGridSpacing) {
+					drawList->AddLine(ImVec2(x, centerDrawCoord.y - drawSize.y / 2.0f), ImVec2(x, centerDrawCoord.y + drawSize.y / 2.0f),
+					                  IM_COL32(90, 90, 90, 80), 2.0f);
+					if (!(--lineDrawLimit))
+						break;
+				}
+			}
+			{
+				// horizontal lines (secondary)
+				const float contextGridSpacing = powf(10, -(int) log10f(zoomLevel) - 1);
+				const float screenGridSpacing = contextGridSpacing * canvasDisplaySize * zoomLevel;
+				const float centerSnapGridCoord =
+						centerDrawCoord.y + (fmodf(centerMapped.y, contextGridSpacing) * canvasDisplaySize * zoomLevel);
+				const float startingSnapGridCoord = centerSnapGridCoord - (int) (drawSize.y / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
+				const float endingSnapGridCoord = centerSnapGridCoord + (int) (drawSize.y / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
+
+				int lineDrawLimit = 500;
+				for (float y = startingSnapGridCoord; y <= endingSnapGridCoord; y += screenGridSpacing) {
+					drawList->AddLine(ImVec2(centerDrawCoord.x - drawSize.x / 2.0f, y), ImVec2(centerDrawCoord.x + drawSize.x / 2.0f, y),
+					                  IM_COL32(90, 90, 90, 80), 1.0f);
+					if (!(--lineDrawLimit))
+						break;
+				}
+			}
+			{
+				// horizontal lines (primary)
+				const float contextGridSpacing = powf(10, -(int) log10f(zoomLevel));
+				const float screenGridSpacing = contextGridSpacing * canvasDisplaySize * zoomLevel;
+				const float centerSnapGridCoord =
+						centerDrawCoord.y + (fmodf(centerMapped.y, contextGridSpacing) * canvasDisplaySize * zoomLevel);
+				const float startingSnapGridCoord = centerSnapGridCoord - (int) (drawSize.y / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
+				const float endingSnapGridCoord = centerSnapGridCoord + (int) (drawSize.y / screenGridSpacing / 2.0f + 2.0f) * screenGridSpacing;
+
+				int lineDrawLimit = 500;
+				for (float y = startingSnapGridCoord; y <= endingSnapGridCoord; y += screenGridSpacing) {
+					drawList->AddLine(ImVec2(centerDrawCoord.x - drawSize.x / 2.0f, y), ImVec2(centerDrawCoord.x + drawSize.x / 2.0f, y),
+					                  IM_COL32(90, 90, 90, 80), 2.0f);
+					if (!(--lineDrawLimit))
+						break;
+				}
+			}
+
+
+			ImVec2 contextOriginCenterDelta = ImVec2(centerDrawCoord.x - centerMapped.x * canvasDisplaySize * zoomLevel,
+			                                         centerDrawCoord.y + centerMapped.y * canvasDisplaySize * zoomLevel);
+
+			// blue origin dot
+			drawList->AddCircleFilled(contextOriginCenterDelta, 5.0f, IM_COL32(0, 211, 255, 255));
+		}
+
+		void drawEdges(Graphene::Graph* graph) {
+			// edge drawing
+			Graphene::EdgeIter it(graph);
+			while (it.next()) {
+				ImGui::GetWindowDrawList()->AddLine(
+						ImVec2(centerDrawCoord.x - (centerMapped.x - it.u->getCoord().x) * canvasDisplaySize * zoomLevel,
+						       centerDrawCoord.y + (centerMapped.y - it.u->getCoord().y) * canvasDisplaySize * zoomLevel),
+						ImVec2(centerDrawCoord.x - (centerMapped.x - it.v->getCoord().x) * canvasDisplaySize * zoomLevel,
+						       centerDrawCoord.y + (centerMapped.y - it.v->getCoord().y) * canvasDisplaySize * zoomLevel),
+						IM_COL32(200, 200, 200, 255), 5.0f * powf(zoomLevel, 0.1));
+			}
+
+			if (leftMouseDownVertex != nullptr) {
+				if (hoveredVertex != nullptr) {
+					if (graph->isAdjacent(leftMouseDownVertex->getNumber(), hoveredVertex->getNumber()) ||
+					    graph->isAdjacent(hoveredVertex->getNumber(), leftMouseDownVertex->getNumber())) {
+						// disconnecting vertices
+						ImGui::GetWindowDrawList()->AddLine(
+								getDrawCoord(leftMouseDownVertex->getCoord()),
+								getDrawCoord(hoveredVertex->getCoord()),
+								IM_COL32(200, 0, 0, 120), 10.0f * powf(zoomLevel, 0.1));
+					} else {
+						// connecting vertices
+						ImGui::GetWindowDrawList()->AddLine(
+								getDrawCoord(leftMouseDownVertex->getCoord()),
+								getDrawCoord(hoveredVertex->getCoord()),
+								IM_COL32(0, 255, 0, 120), 5.0f * powf(zoomLevel, 0.1));
+					}
+				} else {
+					ImGui::GetWindowDrawList()->AddLine(
+							getDrawCoord(leftMouseDownVertex->getCoord()),
+							ImGui::GetIO().MousePos,
+							IM_COL32(0, 255, 0, 60), 5.0f * powf(zoomLevel, 0.1));
+				}
+			}
+		}
+
+		void drawVertices(Graphene::Graph* graph) {
+			Graphene::VertexIter it(graph);
+			while (it.next()) {
+
+				ImVec2 vertexScreenCoord(centerDrawCoord.x - (centerMapped.x - it.v->getCoord().x) * canvasDisplaySize * zoomLevel,
+				                         centerDrawCoord.y + (centerMapped.y - it.v->getCoord().y) * canvasDisplaySize * zoomLevel);
+
+				ImGui::GetWindowDrawList()->AddCircleFilled(vertexScreenCoord, 20.0f * powf(zoomLevel, 0.1) * ((it.v == rightMouseDownVertex) ? 1.1f : 1.0f),
+				                                            (it.v == rightMouseDownVertex) ? IM_COL32(255, 221, 51, 255) : IM_COL32(255, 211, 0, 255));
+
+				ImGui::PushFont(Gui::vertexTextFont);
+				ImGui::SetWindowFontScale((36.0f / 54.0f) * powf(zoomLevel, 0.1) * ((it.v == rightMouseDownVertex) ? 1.1f : 1.0f));
+				ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(15, 15, 15, 255));
+
+				ImVec2 labelCenterPos(centerDrawCoord.x - (centerMapped.x - it.v->getCoord().x) * canvasDisplaySize * zoomLevel,
+				                      centerDrawCoord.y + (centerMapped.y - it.v->getCoord().y) * canvasDisplaySize * zoomLevel);
+				ImVec2 labelMinPos(labelCenterPos.x - 50.0f, labelCenterPos.y - 50.0f);
+				ImVec2 labelMaxPos(labelCenterPos.x + 50.0f, labelCenterPos.y + 50.0f);
+				std::string tempStr(std::to_string(it.v->getNumber()));
+				char* label = new char[tempStr.length() + 1];
+				strcpy(label, tempStr.c_str());
+				ImVec2 labelSize = ImGui::CalcTextSize(label, NULL, true);
+				ImVec2 labelAlign(0.5f, 0.5f);
+				const ImRect bb(labelMinPos, labelMaxPos);
+
+				ImGui::RenderTextClipped(labelMinPos, labelMaxPos, label, 0, &labelSize, labelAlign, &bb);
+
+				ImGui::PopStyleColor(1);
+				ImGui::SetWindowFontScale(1.0f);
+				ImGui::PopFont();
+			}
+
+			if (hoveredVertex != nullptr) {
+				ImGui::GetWindowDrawList()->AddCircle(
+						ImVec2(centerDrawCoord.x - (centerMapped.x - hoveredVertex->getCoord().x) * canvasDisplaySize * zoomLevel,
+						       centerDrawCoord.y + (centerMapped.y - hoveredVertex->getCoord().y) * canvasDisplaySize * zoomLevel
+						),
+						25.0f * powf(zoomLevel, 0.1), IM_COL32(150, 150, 255, 100), 0, 5.0f * powf(zoomLevel, 0.1));
+			}
+		}
+
+		void show(Graphene::Core* core, Graphene::Graph* graph) {
+
+			ImGui::SetNextWindowSizeConstraints(ImVec2(300, 350), ImVec2(FLT_MAX, FLT_MAX));
+			ImGui::Begin(u8"Graph View", 0, ImGuiWindowFlags_NoCollapse);
+
+			ImGui::Checkbox("Show grid", &gridVisible);
+			ImGui::SameLine();
+			ImGui::Checkbox("Auto adjust view (A)", &enableAutoAdjustView);
+
+			if (!enableAutoAdjustView) {
+				ImGui::SameLine();
+				if (ImGui::Button("Reset view")) {
+					zoomTarget = 1.0f;
+					centerMapped = ImVec2(0.5f, 0.5f);
+				}
+			}
+
+			canvasBegin();
+
+			if (enableAutoAdjustView)
+				autoAdjustView(graph);
+			updateKeyboardShortcuts();
+
+			updateHoveredVertex(core, graph);
+			if (rightMouseDownVertex != nullptr) {
+				rightMouseDownVertex->flushMove(0.0f);
+				rightMouseDownVertex->move(
+						Graphene::Vec2f(
+								ImGui::GetIO().MouseDelta.x / canvasDisplaySize / zoomLevel,
+								-ImGui::GetIO().MouseDelta.y / canvasDisplaySize / zoomLevel
+						)
+				);
+				rightMouseDownVertex->flushMove(1.0f);
+			}
+
+			updateCamera();
+			updateMouseCursor();
+
+			drawGrid();
+
+			drawEdges(graph);
+			drawVertices(graph);
+
+			ImGui::GetWindowDrawList()->PopClipRect();
+
+			canvasEnd();
+		}
+	}
 }
