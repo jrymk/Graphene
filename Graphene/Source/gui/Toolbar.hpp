@@ -14,6 +14,7 @@ namespace Gui {
 	namespace Toolbar {
 
 		bool enableLiveUpdate = true;
+		bool updateGraph = false;
 
 		void show(Graphene::Core* core) {
 
@@ -27,29 +28,30 @@ namespace Gui {
 
 			ImGui::SameLine();
 
+			updateGraph = false;
 			if (ImGui::Button("Update graph (U)") || enableLiveUpdate || ImGui::IsKeyPressed('U', true))
-				core->updatePos();
+				updateGraph = true;
 
 			if (ImGui::Button("Reset constants to default")) {
-				core->m_c1 = 2;
-				core->m_c2 = 1;
-				core->m_c3 = 1;
-				core->m_c4 = 0.1;
+				core->c1 = 2;
+				core->c2 = 1;
+				core->c3 = 1;
+				core->c4 = 0.1;
 			}
 
-			ImGui::SliderFloat("C1", &core->m_c1, 0.01f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
+			ImGui::SliderFloat("C1", &core->c1, 0.01f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
 			ImGui::SameLine();
 			Gui::HelpMarker("[C1] * log(d / C2)");
 
-			ImGui::SliderFloat("C2", &core->m_c2, 0.01f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
+			ImGui::SliderFloat("C2", &core->c2, 0.01f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
 			ImGui::SameLine();
 			Gui::HelpMarker("C1 * log(d / [C2])");
 
-			ImGui::SliderFloat("C3", &core->m_c3, 0.01f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
+			ImGui::SliderFloat("C3", &core->c3, 0.01f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
 			ImGui::SameLine();
 			Gui::HelpMarker("[C3] / (d^2)");
 
-			ImGui::SliderFloat("C4", &core->m_c4, 0.001f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
+			ImGui::SliderFloat("C4", &core->c4, 0.001f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
 			ImGui::SameLine();
 			Gui::HelpMarker("Force multiplier");
 
