@@ -30,6 +30,9 @@ int main() {
 		
 		Gui::render();
 
+		if (Gui::Toolbar::updateGraph)
+			core.updatePos();
+
 	}
 
 	Gui::cleanup();
