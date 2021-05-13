@@ -3,6 +3,15 @@
 
 namespace Graphene {
 
+	/* Utilities to iterate through graph
+	 *
+	 * Usage:
+	 * VertexIter it(&graph);
+	 * while (it.next()) {
+	 *     it.v ...
+	 * }
+	 */
+
 	class VertexIter {
 	private:
 		Graph* graph;
