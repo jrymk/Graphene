@@ -2,18 +2,19 @@
 
 #include "Window.hpp"
 #include "Toolbar.hpp"
-#include "GraphView.hpp"
 #include "Input.hpp"
 #include "RawInput.hpp"
 #include "AdjMatrixInput.hpp"
 #include "Themes.hpp"
-
+#include "DebugWindow.hpp"
+#include "GraphView.hpp"
 
 namespace Gui {
 
 	Graphene::Core* core;
 
 	ImVec4 clearColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
 
 
 }
