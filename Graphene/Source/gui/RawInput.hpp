@@ -24,7 +24,10 @@ namespace Gui {
                 pendingUpdate = true;
 			}
 
-			core->boundGraph()->resizeVertices(vertexCount);
+			if (core->boundGraph()->getVertexCount() != vertexCount) {
+				core->boundGraph()->resizeVertices(vertexCount);
+				pendingUpdate = true;
+			}
 
 			if (ImGui::Button("Update") || pendingUpdate) {
 				std::stringstream ss;
