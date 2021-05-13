@@ -92,6 +92,10 @@ namespace Graphene {
 
 	class Vertex {
 
+    public:
+		bool pauseMove = false;
+
+    private:
 		int number = 0;
 		std::string name = "";
 		bool nameVisible = false;
