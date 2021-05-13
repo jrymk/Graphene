@@ -9,6 +9,7 @@
 #include "../utils/ExceptionHandler.hpp"
 #include "../graphene/Include.h"
 #include "Themes.hpp"
+#include "imgui_spectrum.h"
 
 namespace Gui {
 
@@ -45,7 +46,7 @@ namespace Gui {
 
 		glfwMakeContextCurrent(window);
 
-		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+		if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
 			return 3;
 
 		// disable vsync
@@ -65,11 +66,8 @@ namespace Gui {
 		ImGui::GetIO().ConfigViewportsNoDefaultParent = true;
 		ImGui::GetIO().ConfigWindowsMoveFromTitleBarOnly = true;
 
-
-		ImGui::StyleColorsLight();
-
-		setTheme(0);
-		
+		ImGui::Spectrum::StyleColorsSpectrum();
+		setTheme();
 
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -85,6 +83,7 @@ namespace Gui {
 		config.OversampleH = 2;
 		config.OversampleV = 1;
 		config.MergeMode = false;
+
 		// default font for Latin characters (default: Manrope)
 		ImGui::GetIO().Fonts->AddFontFromFileTTF("./Manrope-Regular.ttf", 16.0f, &config, ImGui::GetIO().Fonts->GetGlyphRangesDefault());
 
@@ -101,7 +100,7 @@ namespace Gui {
 		return 0;
 	}
 
-	
+
 	bool shouldClose() {
 		return glfwWindowShouldClose(window);
 	}
