@@ -6,7 +6,8 @@ namespace Graphene {
 
 	class Graph {
     public:
-		//                    u                              v        edge properties
+		// this data structure only stores one edge per vertex pair, for consistency in graph rendering
+		//                    u                              v        edge properties, including count
 		std::vector<std::pair<Vertex*, std::vector<std::pair<Vertex*, Edge>>>> graph;
 
 		Graph() = default;
@@ -70,19 +71,42 @@ namespace Graphene {
 			return graph[u].second.end();
 		}
 
-		void addEdge(int u, int v) {
-			if (u < getVertexCount() && v < getVertexCount())
-				graph[u].second.emplace_back(getVertexPtr(v), Edge());
-		}
-
 		void removeEdge(int u, int v) {
             graph[u].second.erase(findEdge(u, v));
+			graph[v].second.erase(findEdge(v, u));
 		}
 
 		bool isAdjacent(int u, int v) {
-			if (findEdge(u, v) != graph[u].second.end())
+			if (findEdge(u, v) != graph[u].second.end() || findEdge(v, u) != graph[v].second.end())
 				return true;
 			return false;
+		}
+
+		void addEdge(int u, int v) {
+			if (u < getVertexCount() && v < getVertexCount() && !isAdjacent(u, v)) {
+				graph[u].second.emplace_back(getVertexPtr(v), Edge());
+				graph[v].second.emplace_back(getVertexPtr(u), Edge());
+			}
+		}
+
+		void evalConnectedComponent_dfs(int vertex, int component) {
+			getVertexPtr(vertex)->connectedComponent = component;
+			for (auto & i : graph[vertex].second) {
+				if (i.first->connectedComponent == -1)
+					evalConnectedComponent_dfs(i.first->getNumber(), component);
+			}
+		}
+
+		void evalConnectedComponent() {
+			for (int i = 0; i < getVertexCount(); i++)
+				graph[i].first->connectedComponent = -1;
+			int component = 0;
+			for (int i = 0; i < getVertexCount(); i++) {
+				if (graph[i].first->connectedComponent == -1) {
+					evalConnectedComponent_dfs(i, component);
+					component++;
+				}
+			}
 		}
 
 	};

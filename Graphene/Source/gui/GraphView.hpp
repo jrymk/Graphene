@@ -5,9 +5,12 @@
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_glfw.h>
 #include <GLFW/glfw3.h>
+#include "../utils/ProfilerUtils.hpp"
 
 namespace Gui {
 	namespace GraphView {
+
+		Utils::FramerateCounter framerateCounter;
 
 		ImVec2 drawSize;
 		ImVec2 topLeftDrawCoord;
@@ -150,6 +153,9 @@ namespace Gui {
 						graph->removeEdge(hoveredVertex->getNumber(), leftMouseDownVertex->getNumber());
 					else
 						graph->addEdge(leftMouseDownVertex->getNumber(), hoveredVertex->getNumber());
+
+					core->boundGraph()->evalConnectedComponent();
+
 					core->pendingInputUpdate = true;
 				}
 
@@ -341,8 +347,16 @@ namespace Gui {
 				ImVec2 vertexScreenCoord(centerDrawCoord.x - (centerMapped.x - it.v->getCoord().x) * canvasDisplaySize * zoomLevel,
 				                         centerDrawCoord.y + (centerMapped.y - it.v->getCoord().y) * canvasDisplaySize * zoomLevel);
 
-				ImGui::GetWindowDrawList()->AddCircleFilled(vertexScreenCoord, 20.0f * powf(zoomLevel, 0.1) * ((it.v == rightMouseDownVertex) ? 1.1f : 1.0f),
-				                                            (it.v == rightMouseDownVertex) ? IM_COL32(255, 221, 51, 255) : IM_COL32(255, 211, 0, 255));
+				//ImGui::GetWindowDrawList()->AddCircleFilled(vertexScreenCoord, 20.0f * powf(zoomLevel, 0.1) * ((it.v == rightMouseDownVertex) ? 1.1f : 1.0f),
+				//                                            (it.v == rightMouseDownVertex) ? IM_COL32(255, 221, 51, 255) : IM_COL32(255, 211, 0, 255));
+				ImVec4 vertexFillCol(0.0f, 0.0f, 0.0f, 1.0f);
+				ImVec4 vertexFillColHover(0.0f, 0.0f, 0.0f, 1.0f);
+				ImGui::ColorConvertHSVtoRGB(it.v->connectedComponent / 8.0f, 0.9f, 0.8f, vertexFillCol.x, vertexFillCol.y, vertexFillCol.z);
+				ImGui::ColorConvertHSVtoRGB(it.v->connectedComponent / 8.0f, 0.9f, 0.88f, vertexFillColHover.x, vertexFillColHover.y, vertexFillColHover.z);
+
+				ImGui::GetWindowDrawList()->AddCircleFilled(
+						vertexScreenCoord, 20.0f * powf(zoomLevel, 0.1) * ((it.v == rightMouseDownVertex) ? 1.1f : 1.0f),
+						(it.v == rightMouseDownVertex) ? ImGui::ColorConvertFloat4ToU32(vertexFillColHover) : ImGui::ColorConvertFloat4ToU32(vertexFillCol));
 
 				ImGui::PushFont(Gui::vertexTextFont);
 				ImGui::SetWindowFontScale((36.0f / 54.0f) * powf(zoomLevel, 0.1) * ((it.v == rightMouseDownVertex) ? 1.1f : 1.0f));
@@ -417,6 +431,36 @@ namespace Gui {
 
 			drawEdges(graph);
 			drawVertices(graph);
+
+			framerateCounter.frameCount();
+
+			ImGui::GetWindowDrawList()->AddText(
+					ImVec2(topLeftDrawCoord.x + 5.0f, topLeftDrawCoord.y + 5.0f),
+					ImGui::ColorConvertFloat4ToU32(ImVec4(0.59, 0.80, 0.81, 1.0f)),
+					"Framerate", 0
+			);
+			ImGui::PushFont(Gui::framerateTextFont);
+			ImGui::GetWindowDrawList()->AddText(
+					ImVec2(topLeftDrawCoord.x + 5.0f, topLeftDrawCoord.y + 15.0f),
+					ImGui::ColorConvertFloat4ToU32(ImVec4(0.59, 0.80, 0.81, 1.0f)),
+					std::to_string(framerateCounter.getFramerate()).c_str(), 0
+			);
+			ImGui::PopFont();
+
+			ImGui::GetWindowDrawList()->AddText(
+					ImVec2(topLeftDrawCoord.x + 5.0f, topLeftDrawCoord.y + 40.0f),
+					ImGui::ColorConvertFloat4ToU32(ImVec4(0.81, 0.72, 0.59, 1.0f)),
+					"Graph update rate", 0
+			);
+			ImGui::PushFont(Gui::framerateTextFont);
+			ImGui::GetWindowDrawList()->AddText(
+					ImVec2(topLeftDrawCoord.x + 5.0f, topLeftDrawCoord.y + 50.0f),
+					ImGui::ColorConvertFloat4ToU32(ImVec4(0.81, 0.72, 0.59, 1.0f)),
+					std::to_string(core->updateRateCounter.getFramerate()).c_str(), 0
+			);
+			ImGui::PopFont();
+
+
 
 			ImGui::GetWindowDrawList()->PopClipRect();
 

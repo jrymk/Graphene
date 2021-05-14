@@ -38,6 +38,7 @@ namespace Gui {
 					if (u < core->boundGraph()->getVertexCount() && v < core->boundGraph()->getVertexCount())
 						core->boundGraph()->addEdge(u, v);
 				}
+				core->boundGraph()->evalConnectedComponent();
 			}
 
 			// add or delete edge operation happened

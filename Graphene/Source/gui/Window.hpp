@@ -11,10 +11,19 @@
 #include "Themes.hpp"
 #include "imgui_spectrum.h"
 
+
+// use dedicated graphics card by default
+extern "C" {
+	__declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
+	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
+
+
 namespace Gui {
 
 	GLFWwindow* window;
 	ImFont* vertexTextFont;
+	ImFont* framerateTextFont;
 	bool showDemoWindow = false;
 
 	static void HelpMarker(const char* desc) {
@@ -94,6 +103,9 @@ namespace Gui {
 		// mono font for graph display
 		config.MergeMode = false;
 		vertexTextFont = ImGui::GetIO().Fonts->AddFontFromFileTTF("./Manrope-Regular.ttf", 54.0f, &config, ImGui::GetIO().Fonts->GetGlyphRangesDefault());
+		// and framerate display/graph update rate display
+		framerateTextFont = ImGui::GetIO().Fonts->AddFontFromFileTTF("./Manrope-Regular.ttf", 30.0f, &config, ImGui::GetIO()
+				.Fonts->GetGlyphRangesDefault());
 
 		ImGui::CreateContext();
 

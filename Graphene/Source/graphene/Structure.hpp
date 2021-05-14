@@ -93,7 +93,9 @@ namespace Graphene {
 	class Vertex {
 
     public:
+    	// TODO: fix up permissions
 		bool pauseMove = false;
+		int connectedComponent = 0;
 
     private:
 		int number = 0;
@@ -154,7 +156,5 @@ namespace Graphene {
 		
 		}
 	};
-
-	// Handles the adjList of a graph, and support for multiple graphs, graph stepping, highlighting, etc.
 
 }
