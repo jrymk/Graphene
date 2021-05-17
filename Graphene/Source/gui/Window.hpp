@@ -94,7 +94,7 @@ namespace Gui {
 		config.MergeMode = false;
 
 		// default font for Latin characters (default: Manrope)
-		ImGui::GetIO().Fonts->AddFontFromFileTTF("./Manrope-Regular.ttf", 16.0f, &config, ImGui::GetIO().Fonts->GetGlyphRangesDefault());
+		ImGui::GetIO().Fonts->AddFontFromFileTTF("./Barlow-Medium.ttf", 16.0f, &config, ImGui::GetIO().Fonts->GetGlyphRangesDefault());
 
 		config.MergeMode = true;
 		// fallback font for Chinese characters (default: Microsoft JhengHei UI Regular)
@@ -102,9 +102,9 @@ namespace Gui {
 
 		// mono font for graph display
 		config.MergeMode = false;
-		vertexTextFont = ImGui::GetIO().Fonts->AddFontFromFileTTF("./Manrope-Regular.ttf", 54.0f, &config, ImGui::GetIO().Fonts->GetGlyphRangesDefault());
+		vertexTextFont = ImGui::GetIO().Fonts->AddFontFromFileTTF("./Barlow-Regular.ttf", 54.0f, &config, ImGui::GetIO().Fonts->GetGlyphRangesDefault());
 		// and framerate display/graph update rate display
-		framerateTextFont = ImGui::GetIO().Fonts->AddFontFromFileTTF("./Manrope-Regular.ttf", 30.0f, &config, ImGui::GetIO()
+		framerateTextFont = ImGui::GetIO().Fonts->AddFontFromFileTTF("./Barlow-Medium.ttf", 30.0f, &config, ImGui::GetIO()
 				.Fonts->GetGlyphRangesDefault());
 
 		ImGui::CreateContext();

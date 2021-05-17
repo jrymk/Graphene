@@ -42,7 +42,7 @@ namespace Utils {
 	public:
 		FramerateCounter() = default;
 
-		void frameCount() {
+		void countFrame() {
 			if (m_timer.getMicroseconds() >= 100000000) m_timer.restart();
 			rollingData.emplace(m_timer.getMicroseconds());
 
@@ -55,6 +55,20 @@ namespace Utils {
 			}
 
 		}
+
+		void updateWithoutCount() {
+			if (m_timer.getMicroseconds() >= 100000000) m_timer.restart();
+
+			while (!rollingData.empty()) {
+				long long frontData = rollingData.front();
+				if (frontData >= 99000000) frontData -= 100000000;
+				if (!(m_timer.getMicroseconds() - 1000000 <= frontData && m_timer.getMicroseconds() >= frontData))
+					rollingData.pop();
+				else { break; }
+			}
+
+		}
+
 
 		int getFramerate() {
 			return rollingData.size();

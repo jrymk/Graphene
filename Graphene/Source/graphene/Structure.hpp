@@ -140,6 +140,10 @@ namespace Graphene {
 			resultForce = Vec2f(0, 0);
 		}
 
+		void directMove(Vec2f v) {
+			coord += v;
+		}
+
 		int getNumber() {
 			return number;
 		}

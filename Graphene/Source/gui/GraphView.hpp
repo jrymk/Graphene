@@ -22,6 +22,7 @@ namespace Gui {
 		float zoomLevel = 1.0f;
 		float zoomTarget = 1.0f;
 
+		bool enableRender = true;
 		bool enableAutoAdjustView = true;
 		bool gridVisible = true;
 
@@ -351,8 +352,8 @@ namespace Gui {
 				//                                            (it.v == rightMouseDownVertex) ? IM_COL32(255, 221, 51, 255) : IM_COL32(255, 211, 0, 255));
 				ImVec4 vertexFillCol(0.0f, 0.0f, 0.0f, 1.0f);
 				ImVec4 vertexFillColHover(0.0f, 0.0f, 0.0f, 1.0f);
-				ImGui::ColorConvertHSVtoRGB(it.v->connectedComponent / 8.0f, 0.9f, 0.8f, vertexFillCol.x, vertexFillCol.y, vertexFillCol.z);
-				ImGui::ColorConvertHSVtoRGB(it.v->connectedComponent / 8.0f, 0.9f, 0.88f, vertexFillColHover.x, vertexFillColHover.y, vertexFillColHover.z);
+				ImGui::ColorConvertHSVtoRGB(it.v->connectedComponent / 7.14159f, 0.9f, 0.8f, vertexFillCol.x, vertexFillCol.y, vertexFillCol.z);
+				ImGui::ColorConvertHSVtoRGB(it.v->connectedComponent / 7.14159f, 0.9f, 0.88f, vertexFillColHover.x, vertexFillColHover.y, vertexFillColHover.z);
 
 				ImGui::GetWindowDrawList()->AddCircleFilled(
 						vertexScreenCoord, 20.0f * powf(zoomLevel, 0.1) * ((it.v == rightMouseDownVertex) ? 1.1f : 1.0f),
@@ -394,6 +395,8 @@ namespace Gui {
 			ImGui::SetNextWindowSizeConstraints(ImVec2(300, 350), ImVec2(FLT_MAX, FLT_MAX));
 			ImGui::Begin(u8"Graph View", 0, ImGuiWindowFlags_NoCollapse);
 
+			ImGui::Checkbox("Enable render", &enableRender);
+			ImGui::SameLine();
 			ImGui::Checkbox("Show grid", &gridVisible);
 			ImGui::SameLine();
 			ImGui::Checkbox("Auto adjust view (A)", &enableAutoAdjustView);
@@ -414,53 +417,76 @@ namespace Gui {
 
 			updateHoveredVertex(core, graph);
 			if (rightMouseDownVertex != nullptr) {
-				rightMouseDownVertex->flushMove(0.0f);
-				rightMouseDownVertex->move(
+				rightMouseDownVertex->directMove(
 						Graphene::Vec2f(
 								ImGui::GetIO().MouseDelta.x / canvasDisplaySize / zoomLevel,
 								-ImGui::GetIO().MouseDelta.y / canvasDisplaySize / zoomLevel
 						)
 				);
-				rightMouseDownVertex->flushMove(1.0f);
+				rightMouseDownVertex->flushMove(0.0f);
 			}
 
-			updateCamera();
-			updateMouseCursor();
+			if (enableRender) {
+				updateCamera();
+				updateMouseCursor();
 
-			drawGrid();
+				drawGrid();
 
-			drawEdges(graph);
-			drawVertices(graph);
+				drawEdges(graph);
+				drawVertices(graph);
+			}
+			else {
+				ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(200, 100, 100, 255));
+				ImGui::PushFont(Gui::framerateTextFont);
+				std::string tempStr("Rendering is disabled");
+				char* label = new char[tempStr.length() + 1];
+				strcpy(label, tempStr.c_str());
+				ImVec2 labelSize = ImGui::CalcTextSize(label, NULL, true);
+				ImVec2 labelAlign(0.5f, 0.5f);
+				const ImRect bb(topLeftDrawCoord, {topLeftDrawCoord.x + drawSize.x, topLeftDrawCoord.y + drawSize.y});
 
-			framerateCounter.frameCount();
+				ImGui::RenderTextClipped(bb.Min, bb.Max, label, 0, &labelSize, labelAlign, &bb);
+				ImGui::PopStyleColor(1);
+				ImGui::PopFont();
+			}
 
-			ImGui::GetWindowDrawList()->AddText(
-					ImVec2(topLeftDrawCoord.x + 5.0f, topLeftDrawCoord.y + 5.0f),
-					ImGui::ColorConvertFloat4ToU32(ImVec4(0.59, 0.80, 0.81, 1.0f)),
-					"Framerate", 0
-			);
-			ImGui::PushFont(Gui::framerateTextFont);
-			ImGui::GetWindowDrawList()->AddText(
-					ImVec2(topLeftDrawCoord.x + 5.0f, topLeftDrawCoord.y + 15.0f),
-					ImGui::ColorConvertFloat4ToU32(ImVec4(0.59, 0.80, 0.81, 1.0f)),
-					std::to_string(framerateCounter.getFramerate()).c_str(), 0
-			);
-			ImGui::PopFont();
+			framerateCounter.countFrame();
 
-			ImGui::GetWindowDrawList()->AddText(
-					ImVec2(topLeftDrawCoord.x + 5.0f, topLeftDrawCoord.y + 40.0f),
-					ImGui::ColorConvertFloat4ToU32(ImVec4(0.81, 0.72, 0.59, 1.0f)),
-					"Graph update rate", 0
-			);
-			ImGui::PushFont(Gui::framerateTextFont);
-			ImGui::GetWindowDrawList()->AddText(
-					ImVec2(topLeftDrawCoord.x + 5.0f, topLeftDrawCoord.y + 50.0f),
-					ImGui::ColorConvertFloat4ToU32(ImVec4(0.81, 0.72, 0.59, 1.0f)),
-					std::to_string(core->updateRateCounter.getFramerate()).c_str(), 0
-			);
-			ImGui::PopFont();
+			//if (enableRender) {
+				ImGui::GetWindowDrawList()->AddText(
+						ImVec2(topLeftDrawCoord.x + 5.0f, topLeftDrawCoord.y + 5.0f),
+						ImGui::ColorConvertFloat4ToU32(ImVec4(0.59, 0.80, 0.81, 1.0f)),
+						"Framerate", 0
+				);
+				ImGui::PushFont(Gui::framerateTextFont);
+				ImGui::GetWindowDrawList()->AddText(
+						ImVec2(topLeftDrawCoord.x + 5.0f, topLeftDrawCoord.y + 15.0f),
+						ImGui::ColorConvertFloat4ToU32(ImVec4(0.59, 0.80, 0.81, 1.0f)),
+						std::to_string(framerateCounter.getFramerate()).c_str(), 0
+				);
+				ImGui::PopFont();
 
+				ImGui::GetWindowDrawList()->AddText(
+						ImVec2(topLeftDrawCoord.x + 5.0f, topLeftDrawCoord.y + 40.0f),
+						ImGui::ColorConvertFloat4ToU32(ImVec4(0.81, 0.72, 0.59, 1.0f)),
+						"Graph update rate", 0
+				);
+				ImGui::PushFont(Gui::framerateTextFont);
+				ImGui::GetWindowDrawList()->AddText(
+						ImVec2(topLeftDrawCoord.x + 5.0f, topLeftDrawCoord.y + 50.0f),
+						ImGui::ColorConvertFloat4ToU32(ImVec4(0.81, 0.72, 0.59, 1.0f)),
+						std::to_string(core->updateRateCounter.getFramerate()).c_str(), 0
+				);
+				ImGui::PopFont();
+				if (core->updateRateCounter.getFramerate() <= 5) {
+					ImGui::GetWindowDrawList()->AddText(
+							ImVec2(topLeftDrawCoord.x + 25.0f, topLeftDrawCoord.y + 58.0f),
+							ImGui::ColorConvertFloat4ToU32(ImVec4(0.81, 0.72, 0.59, 1.0f)),
+							(std::to_string((int)(core->updatePosProgress * 100.0f)) + "%").c_str(), 0
+					);
+				}
 
+			//}
 
 			ImGui::GetWindowDrawList()->PopClipRect();
 

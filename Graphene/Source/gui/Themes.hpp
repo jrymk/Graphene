@@ -27,6 +27,11 @@ namespace Gui {
 		style->Colors[ImGuiCol_WindowBg].w = 1.0f;
 		ImVec4* colors = ImGui::GetStyle().Colors;
 
+		colors[ImGuiCol_SliderGrabHovered] = ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE400);
+		colors[ImGuiCol_SliderGrabActive] = ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE700);
+		colors[ImGuiCol_SliderBg] = ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::GRAY500);
+		colors[ImGuiCol_SliderBgHovered] = ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::GRAY600);
+		colors[ImGuiCol_SliderBgActive] = ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::GRAY600);
 		colors[ImGuiCol_TextDisabled] = ImVec4(0.55f, 0.55f, 0.55f, 1.0f);
 		colors[ImGuiCol_Button] = ImVec4(0.97f, 0.97f, 0.97f, 0.00f);
 		colors[ImGuiCol_ButtonHovered] = ImVec4(0.0f, 0.0f, 0.0f, 0.20f);

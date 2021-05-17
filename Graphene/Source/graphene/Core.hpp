@@ -1,4 +1,5 @@
 #pragma once
+
 #include <windows.h>
 #include <cmath>
 #include <iostream>
@@ -22,6 +23,7 @@ namespace Graphene {
 		std::mutex mutex;
 
 		// graph update rate
+		double updatePosProgress = 0.0f;
 		Utils::FramerateCounter updateRateCounter;
 
 		// binds a graph to a core
@@ -83,6 +85,8 @@ namespace Graphene {
 		void updatePos() {
 
 			{
+				long long totalOperations = boundGraph()->getVertexCount() * boundGraph()->getVertexCount();
+				long long ops = 0;
 				VertexIter uIt(boundGraph());
 				while (uIt.next()) {
 					VertexIter vIt(boundGraph());
@@ -91,6 +95,8 @@ namespace Graphene {
 							uIt.v->move(repelForce(uIt.v, vIt.v));
 							vIt.v->move(repelForce(vIt.v, uIt.v));
 						}
+						ops++;
+						updatePosProgress = (float) ops / (float) totalOperations;
 					}
 				}
 
@@ -120,7 +126,7 @@ namespace Graphene {
 					}
 				}
 
-				updateRateCounter.frameCount();
+				updateRateCounter.countFrame();
 			}
 
 		};

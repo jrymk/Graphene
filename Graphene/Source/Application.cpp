@@ -17,9 +17,9 @@ void updateGraphLoop(Graphene::Core &core, bool &update, bool &end) {
 	while (!end) {
 		if (update) {
 			auto prevTime = std::chrono::high_resolution_clock::now();
-			core.mutex.lock();
+			//core.mutex.lock();
 			core.updatePos();
-			core.mutex.unlock();
+			//core.mutex.unlock();
 			auto currTime = std::chrono::high_resolution_clock::now();
 			std::chrono::duration<float> floatSecs = currTime - prevTime;
 			std::chrono::microseconds micros = std::chrono::duration_cast<std::chrono::milliseconds>(floatSecs);
@@ -45,20 +45,16 @@ int main() {
 
 		Gui::initFrame();
 
-		core.mutex.lock();
+		//core.mutex.lock();
 		Gui::Toolbar::show(&core);
 		Gui::Input::show(&core);
 		Gui::GraphView::show(&core, &graph);
 
 		Gui::render();
-		core.mutex.unlock();
+		//core.mutex.unlock();
 
 		updateGraphAsync = Gui::Toolbar::updateGraph;
-
-		auto currTime = std::chrono::high_resolution_clock::now();
-		std::chrono::duration<float> floatSecs = currTime - prevTime;
-		std::chrono::microseconds micros = std::chrono::duration_cast<std::chrono::milliseconds>(floatSecs);
-		//std::cout << "Render frame time: " << micros.count() << "us\n";
+		//core.updateRateCounter.countFrame();
 	}
 
 	endBackgroundUpdateLoop = true;
