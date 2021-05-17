@@ -1,4 +1,0 @@
-[submodule ".\\Dependencies\\imgui"]
-	path = .\\Dependencies\\imgui
-	url = https://github.com/ocornut/imgui
-	branch = docking
