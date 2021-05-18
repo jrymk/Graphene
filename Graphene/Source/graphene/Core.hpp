@@ -1,4 +1,5 @@
 #pragma once
+
 #include <windows.h>
 #include <cmath>
 #include <iostream>
@@ -8,6 +9,7 @@
 #include "Graph.hpp"
 #include "Structure.hpp"
 #include "GraphIter.hpp"
+#include "../utils/ProfilerUtils.hpp"
 
 namespace Graphene {
 
@@ -17,6 +19,12 @@ namespace Graphene {
 		Graph* m_graph;
 
 	public:
+		// mutex lock for core object
+		std::mutex mutex;
+
+		// graph update rate
+		double updatePosProgress = 0.0f;
+		Utils::FramerateCounter updateRateCounter;
 
 		// binds a graph to a core
 		explicit Core(Graph &graph) {
@@ -77,42 +85,52 @@ namespace Graphene {
 		void updatePos() {
 
 			{
+				long long totalOperations = boundGraph()->getVertexCount() * boundGraph()->getVertexCount();
+				long long ops = 0;
 				VertexIter uIt(boundGraph());
 				while (uIt.next()) {
 					VertexIter vIt(boundGraph());
 					while (vIt.next()) {
-						uIt.v->move(repelForce(uIt.v, vIt.v));
-						vIt.v->move(repelForce(vIt.v, uIt.v));
+						if (uIt.v->connectedComponent == vIt.v->connectedComponent) {
+							uIt.v->move(repelForce(uIt.v, vIt.v));
+							vIt.v->move(repelForce(vIt.v, uIt.v));
+						}
+						ops++;
+						updatePosProgress = (float) ops / (float) totalOperations;
 					}
 				}
-			}
 
-			{
-				EdgeIter it(boundGraph());
-				while (it.next()) {
-					it.u->move(attractForce(it.u, it.v));
-					it.v->move(attractForce(it.v, it.u));
+				{
+					EdgeIter it(boundGraph());
+					while (it.next()) {
+						if (it.u->getNumber() >= it.v->getNumber()) {
+							it.u->move(attractForce(it.u, it.v));
+							it.v->move(attractForce(it.v, it.u));
+						}
+					}
 				}
-			}
 
-			{
-				VertexIter it(boundGraph());
-				while (it.next()) {
-					// TODO: Janky solution to connected components uncontrolled
-					it.v->move(originAttractForce(it.v));
+				{
+					VertexIter it(boundGraph());
+					while (it.next()) {
+						// TODO: Janky solution to connected components uncontrolled
+						//it.v->move(originAttractForce(it.v));
+					}
 				}
-			}
 
-			{
-				VertexIter it(boundGraph());
-				while (it.next()) {
-					if (!it.v->pauseMove)
-						it.v->flushMove(c4);
+				{
+					VertexIter it(boundGraph());
+					while (it.next()) {
+						if (!it.v->pauseMove)
+							it.v->flushMove(c4);
+					}
 				}
+
+				updateRateCounter.countFrame();
 			}
 
-		}
+		};
 
 	};
 
-};
+}
