@@ -6,6 +6,7 @@
 #include <random>
 #include <map>
 #include <iomanip>
+#include <unordered_map>
 #include "Graph.hpp"
 #include "Structure.hpp"
 #include "GraphIter.hpp"
@@ -13,124 +14,96 @@
 
 namespace Graphene {
 
-	class Core {
+    class Core {
+    private:
 
-	private:
-		Graph* m_graph;
+    public:
+        // graph update rate
+        Utils::FramerateCounter updateRateCounter;
 
-	public:
-		// mutex lock for core object
-		std::mutex mutex;
+        Graph* graph;
 
-		// graph update rate
-		double updatePosProgress = 0.0f;
-		Utils::FramerateCounter updateRateCounter;
+        // binds a graph to a core
+        explicit Core(Graph &g) {
+            graph = &g;
+        }
 
-		// binds a graph to a core
-		explicit Core(Graph &graph) {
-			m_graph = &graph;
-		}
+        // force calculation constants
+        float c1 = 2;
+        float c2 = 1;
+        float c3 = 1;
+        float c4 = 0.1;
 
-		// force calculation constants
-		float c1 = 2;
-		float c2 = 1;
-		float c3 = 1;
-		float c4 = 0.1;
+        // graph updated via visual tool
+        bool pendingInputUpdate = false;
 
-		// graph updated via visual tool
-		bool pendingInputUpdate = false;
+        float distance(Vertex* u, Vertex* v) {
+            float dx = u->getCoord().x - v->getCoord().x;
+            float dy = u->getCoord().y - v->getCoord().y;
+            return sqrt(dx * dx + dy * dy);
+        }
 
+        float length(Vec2f a) {
+            return sqrt(a.x * a.x + a.y * a.y);
+        }
 
-		Graph* boundGraph() {
-			return m_graph;
-		}
+        Vec2f attractForce(Vertex* u, Vertex* v) {
+            float dis = distance(u, v);
+            if (dis == 0.0f)
+                return Vec2f(0, 0);
+            float coeff = c1 * log(dis / c2);
+            return (v->getCoord() - u->getCoord()).normalize() * coeff;
+        }
 
+        Vec2f repelForce(Vertex* u, Vertex* v) {
+            float dis = distance(u, v);
+            if (dis == 0.0)
+                return Vec2f(0, 0);
+            float coeff = -c3 / dis / dis;
+            return (v->getCoord() - u->getCoord()).normalize() * coeff;
+        }
 
-		float distance(Vertex* u, Vertex* v) {
-			float dx = u->getCoord().x - v->getCoord().x;
-			float dy = u->getCoord().y - v->getCoord().y;
-			return sqrt(dx * dx + dy * dy);
-		}
+        Vec2f originAttractForce(Vertex* v) {
+            float dis = v->getCoord().length();
+            if (dis == 0.0) {
+                return Vec2f(0, 0);
+            }
+            float coeff = std::min(1.0f, dis);
+            return (Vec2f(0, 0) - v->getCoord()).normalize() * coeff;
+        }
 
-		float length(Vec2f a) {
-			return sqrt(a.x * a.x + a.y * a.y);
-		}
+        void updatePos() {
+            graph->updateConnectedComponent();
+            for (auto &component : graph->components) {
+                {
+                    ComponentVertexIter uIt(component);
+                    while (uIt.next()) {
+                        ComponentVertexIter vIt(component);
+                        while (vIt.next()) {
+                            uIt.v->move(repelForce(uIt.v, vIt.v));
+                            vIt.v->move(repelForce(vIt.v, uIt.v));
+                        }
+                    }
 
-		Vec2f attractForce(Vertex* u, Vertex* v) {
-			float dis = distance(u, v);
-			if (dis == 0.0f)
-				return Vec2f(0, 0);
-			float coeff = c1 * log(dis / c2);
-			return (v->getCoord() - u->getCoord()).normalize() * coeff;
-		}
+                    {
+                        ComponentEdgeIter it(component);
+                        while (it.next())
+                            it.u->move(attractForce(it.u, it.v));
+                    }
 
-		Vec2f repelForce(Vertex* u, Vertex* v) {
-			float dis = distance(u, v);
-			if (dis == 0.0)
-				return Vec2f(0, 0);
-			float coeff = -c3 / dis / dis;
-			return (v->getCoord() - u->getCoord()).normalize() * coeff;
-		}
+                    {
+                        ComponentVertexIter it(component);
+                        while (it.next()) {
+                            if (!it.v->pauseMove)
+                                it.v->flushMove(c4);
+                        }
+                    }
 
-		Vec2f originAttractForce(Vertex* v) {
-			float dis = v->getCoord().length();
-			if (dis == 0.0) {
-				return Vec2f(0, 0);
-			}
-			float coeff = std::min(1.0f, dis);
-			return (Vec2f(0, 0) - v->getCoord()).normalize() * coeff;
-		}
+                    updateRateCounter.countFrame();
+                }
+            }
+        };
 
-
-		void updatePos() {
-
-			{
-				long long totalOperations = boundGraph()->getVertexCount() * boundGraph()->getVertexCount();
-				long long ops = 0;
-				VertexIter uIt(boundGraph());
-				while (uIt.next()) {
-					VertexIter vIt(boundGraph());
-					while (vIt.next()) {
-						if (uIt.v->connectedComponent == vIt.v->connectedComponent) {
-							uIt.v->move(repelForce(uIt.v, vIt.v));
-							vIt.v->move(repelForce(vIt.v, uIt.v));
-						}
-						ops++;
-						updatePosProgress = (float) ops / (float) totalOperations;
-					}
-				}
-
-				{
-					EdgeIter it(boundGraph());
-					while (it.next()) {
-						if (it.u->getNumber() >= it.v->getNumber()) {
-							it.u->move(attractForce(it.u, it.v));
-							it.v->move(attractForce(it.v, it.u));
-						}
-					}
-				}
-
-				{
-					VertexIter it(boundGraph());
-					while (it.next()) {
-						// TODO: Janky solution to connected components uncontrolled
-						//it.v->move(originAttractForce(it.v));
-					}
-				}
-
-				{
-					VertexIter it(boundGraph());
-					while (it.next()) {
-						if (!it.v->pauseMove)
-							it.v->flushMove(c4);
-					}
-				}
-
-				updateRateCounter.countFrame();
-			}
-
-		};
-
-	};
+    };
 
 }
