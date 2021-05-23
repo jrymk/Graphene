@@ -246,7 +246,7 @@ namespace Gui {
 
             ImDrawList* drawList = ImGui::GetWindowDrawList();
             // Draw context 1*1 square
-            drawList->AddRectFilled(
+            /*drawList->AddRectFilled(
                     ImVec2(
                             centerDrawCoord.x - (centerMapped.x - 0.0f) * canvasDisplaySize * zoomLevel,
                             centerDrawCoord.y + (centerMapped.y - 1.0f) * canvasDisplaySize * zoomLevel
@@ -256,7 +256,7 @@ namespace Gui {
                             centerDrawCoord.y + (centerMapped.y - 0.0f) * canvasDisplaySize * zoomLevel
                     ),
                     IM_COL32(40, 40, 40, 255), 0.0f
-            );
+            );*/
 
             {
                 // vertical lines (secondary)
@@ -345,7 +345,7 @@ namespace Gui {
                                                      centerMapped.y * canvasDisplaySize * zoomLevel);
 
             // blue origin dot
-            drawList->AddCircleFilled(contextOriginCenterDelta, 5.0f, IM_COL32(0, 211, 255, 255));
+            //drawList->AddCircleFilled(contextOriginCenterDelta, 5.0f, IM_COL32(0, 211, 255, 255));
         }
 
         void drawComponents(Graphene::Graph* graph) {
@@ -544,7 +544,8 @@ namespace Gui {
                 updateCamera();
                 updateMouseCursor();
 
-                drawGrid();
+                if (gridVisible)
+                    drawGrid();
 
                 drawComponents(graph);
                 drawEdges(graph);
