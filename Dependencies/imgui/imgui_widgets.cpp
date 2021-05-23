@@ -2900,7 +2900,7 @@ bool ImGui::SliderScalar(const char* label, ImGuiDataType data_type, void* p_dat
 	const ImVec2 label_size = CalcTextSize(label, NULL, true);
 	const ImRect total_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + 14.0f + style.FramePadding.y * 2.0f));
 	const ImRect frame_bb({total_bb.Min.x, total_bb.Min.y + label_size.y + style.ItemInnerSpacing.y}, total_bb.Max);
-	const ImRect item_bb(total_bb.Min, {total_bb.Min.x + std::max(20.0f, label_size.x), total_bb.Max.y});
+	const ImRect item_bb(total_bb.Min, {total_bb.Min.x + std::max(20.0f, label_size.x + 10.0f), total_bb.Max.y});
 
 	const bool temp_input_allowed = (flags & ImGuiSliderFlags_NoInput) == 0;
 	ItemSize(item_bb, style.FramePadding.y);

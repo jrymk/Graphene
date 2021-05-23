@@ -20,32 +20,33 @@ namespace Gui {
 
 			bool pendingUpdate = false;
 			if (ImGui::Button("Wipe and reset (R)") || ImGui::IsKeyPressed('R', false)) {
-				core->boundGraph()->resetVertices();
+				core->graph->resetVertices();
                 pendingUpdate = true;
 			}
 
-			if (core->boundGraph()->getVertexCount() != vertexCount) {
-				core->boundGraph()->resizeVertices(vertexCount);
+			if (core->graph->getVertexCount() != vertexCount) {
+				core->graph->resizeVertices(vertexCount);
 				pendingUpdate = true;
 			}
 
-			if (ImGui::Button("Update") || pendingUpdate) {
+			/*if (ImGui::Button("Update") || pendingUpdate) {
 				std::stringstream ss;
 				ss << text;
-				core->boundGraph()->clearAllEdges();
+				core->graph->clearAllEdges();
 				int u, v;
 				while (ss >> u >> v) {
-					if (u < core->boundGraph()->getVertexCount() && v < core->boundGraph()->getVertexCount())
-						core->boundGraph()->addEdge(u, v);
+					if (u < core->graph->getVertexCount() && v < core->graph->getVertexCount())
+						core->graph->newEdge(u, v);
 				}
-				core->boundGraph()->evalConnectedComponent();
-			}
+				core->graph->evalConnectedComponent();
+
+			}*/
 
 			// add or delete edge operation happened
 			if (core->pendingInputUpdate) {
 				std::stringstream ss;
 
-				Graphene::EdgeIter it(core->boundGraph());
+				Graphene::EdgeIter it(core->graph);
 				while (it.next())
 					ss << it.u->getNumber() << " " << it.v->getNumber() << "\n";
 

@@ -133,9 +133,9 @@ It's mostly a bunch of personal notes, probably incomplete. Feel free to query i
 !- color: the color conversion helpers/types are a mess and needs sorting out.
  - color: (api breaking) ImGui::ColorConvertXXX functions should be loose ImColorConvertXX to match imgui_internals.h
 
- - plot: full featured plot/adjList api w/ scrolling, zooming etc. all bell & whistle. why not!
+ - plot: full featured plot/graph api w/ scrolling, zooming etc. all bell & whistle. why not!
  - plot: PlotLines() should use the polygon-stroke facilities, less vertices (currently issues with averaging normals)
- - plot: make it easier for user to draw extra stuff into the adjList (e.g: draw basis, highlight certain points, 2d plots, multiple plots)
+ - plot: make it easier for user to draw extra stuff into the graph (e.g: draw basis, highlight certain points, 2d plots, multiple plots)
  - plot: "smooth" automatic scale over time, user give an input 0.0(full user scale) 1.0(full derived from value)
  - plot: option/feature: draw the zero line
  - plot: option/feature: draw grid, vertical markers
@@ -303,7 +303,7 @@ It's mostly a bunch of personal notes, probably incomplete. Feel free to query i
  - drag and drop: (#143) "both an in-process pointer and a promise to generate a serialized version, for whether the drag ends inside or outside the same process"
  - drag and drop: feedback when hovering a region blocked by modal (mouse cursor "NO"?)
 
- - node/adjList editors (#306) (also see https://github.com/ocornut/imgui/wiki#node-editors)
+ - node/graph editors (#306) (also see https://github.com/ocornut/imgui/wiki#node-editors)
  - pie menus patterns (#434)
  - markup: simple markup language for color change? (#902)
 

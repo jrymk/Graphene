@@ -11,13 +11,13 @@
 #include "Themes.hpp"
 #include "imgui_spectrum.h"
 
-
+/*
 // use dedicated graphics card by default
 extern "C" {
 	__declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
 	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 }
-
+*/
 
 namespace Gui {
 
@@ -47,7 +47,7 @@ namespace Gui {
 		if (!glfwInit())
 			return 1;
 
-		glfwWindowHint(GLFW_MAXIMIZED, true);
+		glfwWindowHint(GLFW_MAXIMIZED, false);
 
 		window = glfwCreateWindow(1280, 720, u8"Graphene α", NULL, NULL);
 		if (window == NULL)

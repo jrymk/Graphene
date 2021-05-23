@@ -3109,7 +3109,7 @@ Other Changes:
 - Allowing NewFrame() with DeltaTime==0.0f to not assert.
 - Fixed IsMouseDragging(). (#260)
 - Fixed PlotLines(), PlotHistogram() using incorrect hovering test so they would show their tooltip even when there is
-  a popup between mouse and the adjList.
+  a popup between mouse and the graph.
 - Fixed window padding being reported incorrectly for child windows with borders when parent have no borders.
 - Fixed a bug with TextUnformatted() clipping of long text blob when clipping y1 line sits on the first line of text. (#257)
 - Fixed text baseline alignment of small button (no padding) after regular buttons.

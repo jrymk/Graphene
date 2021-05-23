@@ -1,114 +1,159 @@
 #pragma once
+
 #include <vector>
+#include <unordered_set>
+#include <unordered_map>
 #include "Structure.hpp"
 
 namespace Graphene {
 
-	class Graph {
+    class Graph {
     public:
-		// this data structure only stores one edge per vertex pair, for consistency in graph rendering
-		//                    u                              v        edge properties, including count
-		std::vector<std::pair<Vertex*, std::vector<std::pair<Vertex*, Edge>>>> graph;
+        //                      u                           v        edge properties
+        std::unordered_map<Vertex*, std::unordered_multimap<Vertex*, std::unordered_set<Edge*>>> graph;
+        // keep v removed if no edges
 
-		Graph() = default;
+        std::unordered_set<ConnectedComponent*> components;
 
-		int getVertexCount() {
-			return graph.size();
-		}
+        Graph() = default;
 
-		Vertex* getVertexPtr(int index) {
-			return graph[index].first;
-		}
+        Vertex* debugVertexHighlight = nullptr;
 
-		void setVertexPtr(int index, Vertex* vertex) {
-			graph[index].first = vertex;
-		}
-
-		// -1: delete from end
-		void deleteVertex(int id) {
-			if (id == -1)
-				id = getVertexCount() - 1;
-			delete getVertexPtr(id);
-			graph.erase(graph.begin() + id);
+        ConnectedComponent* newConnectedComponent(Vertex* root) {
+            auto c = new ConnectedComponent(root);
+            c->adjList.insert({root, std::unordered_set<Vertex*>()});
+            components.insert(c);
+            root->component = c;
+            return c;
         }
 
-		void resizeVertices(int count) {
-			for (int i = count; i < graph.size(); i++)
-                delete getVertexPtr(i);
-
-			while (graph.size() < count)
-				graph.emplace_back(new Vertex(graph.size()), std::vector<std::pair<Vertex*, Edge>>());
-			
-			graph.resize(count);
-		}
-
-		void resetVertices() {
-            for (int i = 0; i < getVertexCount(); i++) {
-                delete getVertexPtr(i);
-                setVertexPtr(i, new Graphene::Vertex(i));
+        void updateConnectedComponent() {
+            std::unordered_map<Vertex*, std::unordered_set<Vertex*>> adjList;
+            std::unordered_map<Vertex*, bool> visited;
+            for (auto &vIt : graph) {
+                visited.insert({vIt.first, false});
+                adjList.insert({vIt.first, std::unordered_set<Vertex*>()});
             }
-		}
+            for (auto &uIt : graph) {
+                for (auto &vIt : uIt.second) {
+                    adjList.find(uIt.first)->second.insert(vIt.first);
+                    adjList.find(vIt.first)->second.insert(uIt.first);
+                }
+            }
+            for (auto &it : components)
+                it->updateConnectedComponent(adjList, visited);
 
-		void clearAllEdges() {
-            for (auto &v : graph)
-                v.second.clear();
-		}
+            for (auto &it : visited) {
+                if (!it.second) {
+                    auto c = newConnectedComponent(it.first);
+                    c->updateConnectedComponent(adjList, visited);
+                }
+            }
 
-		void importEdges(int vertexCount, std::vector<std::pair<int, int>>& inputEdges) {
-			resizeVertices(vertexCount);
+            for (auto &it : components) {
+                if (!it->isValidComponent())
+                    deleteConnectedComponent(it, true);
+            }
+        }
 
-			for (auto & inputEdge : inputEdges) {
-				int u = inputEdge.first, v = inputEdge.second;
-                graph[u].second.emplace_back(graph[v].first, Edge());
-			}
-		}
+        void deleteConnectedComponent(ConnectedComponent* component, bool deleteContent) {
+            for (auto &it : component->adjList) {
+                if (deleteContent) {
+                    graph.erase(it.first);
+                    for (auto &uIt : graph) {
+                        for (auto vIt = uIt.second.begin(); vIt != uIt.second.end(); vIt++) {
+                            if (vIt->first == it.first)
+                                uIt.second.erase(vIt);
+                        }
+                    }
+                } else
+                    newConnectedComponent(it.first);
+            }
+            //updateConnectedComponent();
+            components.erase(component);
+            delete component;
+        }
 
-		std::vector<std::pair<Vertex*, Edge>>::iterator findEdge(int u, int v) {
-			for (int n = 0; n < graph[u].second.size(); n++) {
-				if ((graph[u].second)[n].first == getVertexPtr(v))
-					return graph[u].second.begin() + n;
-			}
-			return graph[u].second.end();
-		}
+        unsigned int getVertexCount() const {
+            return graph.size();
+        }
 
-		void removeEdge(int u, int v) {
-            graph[u].second.erase(findEdge(u, v));
-			graph[v].second.erase(findEdge(v, u));
-		}
+        Vertex* newVertex() {
+            auto v = new Vertex(0);
+            //std::cerr << "new vertex: " << v->UUID << "\n";
+            graph.insert({v, std::unordered_multimap<Vertex*, std::unordered_set<Edge*>>()});
+            newConnectedComponent(v);
+            updateConnectedComponent();
+            return v;
+        }
 
-		bool isAdjacent(int u, int v) {
-			if (findEdge(u, v) != graph[u].second.end() || findEdge(v, u) != graph[v].second.end())
-				return true;
-			return false;
-		}
+        void deleteEdge(Vertex* u, Vertex* v) {
+            graph.find(u)->second.erase(v);
+            graph.find(v)->second.erase(u);
+            //updateConnectedComponent();
+        }
 
-		void addEdge(int u, int v) {
-			if (u < getVertexCount() && v < getVertexCount() && !isAdjacent(u, v)) {
-				graph[u].second.emplace_back(getVertexPtr(v), Edge());
-				graph[v].second.emplace_back(getVertexPtr(u), Edge());
-			}
-		}
+        void deleteVertex(Vertex* v) {
+            if (v->component->getRootVertex() == v) {
+                if (v->component->adjList.size() == 1) { // v is the only vertex in the component: delete the component (it should not have adjacent edges too)
+                    components.erase(v->component);
+                    delete v->component;
+                } else { // transfer component ownership to random remaining vertex
+                    for (auto &it : v->component->adjList) {
+                        deleteEdge(it.first, v);
+                        deleteEdge(v, it.first);
+                    }
+                    v->component->adjList.erase(v);
+                    if (v == v->component->getRootVertex())
+                        v->component->setRootVertex(v->component->adjList.begin()->first);
+                }
+            }
+            graph.erase(v);
+            for (auto &uIt : graph) {
+                for (auto vIt = uIt.second.begin(); vIt != uIt.second.end(); vIt++) {
+                    if (vIt->first == v)
+                        uIt.second.erase(vIt);
+                }
+            }
+            updateConnectedComponent();
+        }
 
-		void evalConnectedComponent_dfs(int vertex, int component) {
-			getVertexPtr(vertex)->connectedComponent = component;
-			for (auto & i : graph[vertex].second) {
-				if (i.first->connectedComponent == -1)
-					evalConnectedComponent_dfs(i.first->getNumber(), component);
-			}
-		}
+        void resizeVertices(int count) {
+            updateConnectedComponent();
+            while (graph.size() > count)
+                deleteVertex(graph.begin()->first);
+            while (graph.size() < count)
+                newVertex();
+        }
 
-		void evalConnectedComponent() {
-			for (int i = 0; i < getVertexCount(); i++)
-				graph[i].first->connectedComponent = -1;
-			int component = 0;
-			for (int i = 0; i < getVertexCount(); i++) {
-				if (graph[i].first->connectedComponent == -1) {
-					evalConnectedComponent_dfs(i, component);
-					component++;
-				}
-			}
-		}
+        void resetVertices() {
+            for (int i = 0; i < getVertexCount(); i++)
+                deleteVertex(graph.begin()->first);
+            for (int i = 0; i < getVertexCount(); i++)
+                newVertex();
+        }
 
-	};
+        void clearAllEdges() {
+            for (auto &uIt : graph)
+                uIt.second.clear();
+            updateConnectedComponent();
+        }
+
+        bool isAdjacent(Vertex* u, Vertex* v) {
+            if (graph.find(u)->second.find(v) != graph.find(u)->second.end())
+                return true;
+            return false;
+        }
+
+        Edge* newEdge(Vertex* u, Vertex* v) {
+            auto e = new Edge();
+            if (graph.find(u)->second.find(v) == graph.find(u)->second.end())
+                graph.find(u)->second.insert({v, std::unordered_set<Edge*>()});
+            graph.find(u)->second.find(v)->second.insert(new Edge());
+            updateConnectedComponent();
+            return e;
+        }
+
+    };
 
 };

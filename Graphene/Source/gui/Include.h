@@ -7,6 +7,7 @@
 #include "AdjMatrixInput.hpp"
 #include "Themes.hpp"
 #include "DebugWindow.hpp"
+#include "LogWindow.hpp"
 #include "GraphView.hpp"
 
 namespace Gui {
