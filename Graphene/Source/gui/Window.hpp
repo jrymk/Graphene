@@ -47,7 +47,7 @@ namespace Gui {
 		if (!glfwInit())
 			return 1;
 
-		glfwWindowHint(GLFW_MAXIMIZED, true);
+		glfwWindowHint(GLFW_MAXIMIZED, false);
 
 		window = glfwCreateWindow(1280, 720, u8"Graphene α", NULL, NULL);
 		if (window == NULL)

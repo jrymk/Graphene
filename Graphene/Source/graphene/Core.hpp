@@ -73,34 +73,49 @@ namespace Graphene {
         }
 
         void updatePos() {
-            graph->updateConnectedComponent();
+            //NOTE: You can not run graph->updateConnectedComponent() here as this thread is different from everything else
             for (auto &component : graph->components) {
-                {
-                    ComponentVertexIter uIt(component);
-                    while (uIt.next()) {
-                        ComponentVertexIter vIt(component);
-                        while (vIt.next()) {
-                            uIt.v->move(repelForce(uIt.v, vIt.v));
-                            vIt.v->move(repelForce(vIt.v, uIt.v));
-                        }
+                ComponentVertexIter uIt(component);
+                while (uIt.next()) {
+                    ComponentVertexIter vIt(component);
+                    while (vIt.next()) {
+                        uIt.v->move(repelForce(uIt.v, vIt.v));
+                        vIt.v->move(repelForce(vIt.v, uIt.v));
                     }
-
-                    {
-                        ComponentEdgeIter it(component);
-                        while (it.next())
-                            it.u->move(attractForce(it.u, it.v));
-                    }
-
-                    {
-                        ComponentVertexIter it(component);
-                        while (it.next()) {
-                            if (!it.v->pauseMove)
-                                it.v->flushMove(c4);
-                        }
-                    }
-
-                    updateRateCounter.countFrame();
                 }
+
+                {
+                    ComponentEdgeIter it(component);
+                    while (it.next())
+                        it.u->move(attractForce(it.u, it.v));
+                }
+
+                {
+                    ComponentVertexIter it(component);
+                    while (it.next()) {
+                        if (!it.v->pauseMove)
+                            it.v->flushMove(c4);
+                    }
+                }
+
+                {
+                    bool first = true;
+                    ComponentVertexIter it(component);
+                    while (it.next()) {
+                        if (first) {
+                            first = false;
+                            component->bbBack = {it.v->getCoord(), it.v->getCoord()};
+                        } else {
+                            component->bbBack = {{std::min(it.v->getCoord().x, component->bbBack.first.x),
+                                                     std::min(it.v->getCoord().y, component->bbBack.first.y)},
+                                             {std::max(it.v->getCoord().x, component->bbBack.second.x),
+                                                     std::max(it.v->getCoord().y, component->bbBack.second.y)}};
+                        }
+                    }
+                    component->bb = component->bbBack;
+                }
+
+                updateRateCounter.countFrame();
             }
         };
 

@@ -21,42 +21,57 @@ namespace Gui {
 
             graph->debugVertexHighlight = nullptr;
 
-            ImGui::Text("Adjacency List");
-            for (auto &uIt : graph->graph) {
-                ImGui::SetNextItemOpen(true);
-                if (ImGui::TreeNode((uIt.first->UUID).c_str())) {
-                    if (ImGui::IsItemHovered())
-                        graph->debugVertexHighlight = uIt.first;
-                    for (auto &vIt : uIt.second) {
-                        ImGui::Text(vIt.first->UUID.c_str());
-                        if (ImGui::IsItemHovered())
-                            graph->debugVertexHighlight = vIt.first;
+            if (ImGui::Button("Force update components"))
+                graph->updateConnectedComponent();
+
+            ImGui::Text(("Components (" + std::to_string(graph->graph.size()) + ")").c_str());
+            if (graph->graph.empty()) {
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.25f, 0.25f, 1.0f));
+                ImGui::Text("Nothing to show here");
+                ImGui::PopStyleColor(1);
+            } else {
+                for (auto &cIt : graph->components) {
+                    ImGui::SetNextItemOpen(true);
+                    ImGui::PushStyleColor(ImGuiCol_Text, cIt->color);
+                    if (ImGui::TreeNode(("Component: " + cIt->getUUID()).c_str())) {
+                        for (auto &uIt : cIt->adjList) {
+                            ImGui::SetNextItemOpen(true);
+                            if (ImGui::TreeNode(("Vertex: " + uIt.first->UUID).c_str())) {
+                                if (ImGui::IsItemHovered())
+                                    graph->debugVertexHighlight = uIt.first;
+                                for (auto &vIt : uIt.second) {
+                                    ImGui::Text(vIt->UUID.c_str());
+                                    if (ImGui::IsItemHovered())
+                                        graph->debugVertexHighlight = vIt;
+                                }
+                                ImGui::TreePop();
+                            }
+                        }
+                        ImGui::TreePop();
                     }
-                    ImGui::TreePop();
+                    ImGui::PopStyleColor(1);
                 }
             }
 
-            ImGui::Text("Components");
-            for (auto &cIt : graph->components) {
-                ImGui::SetNextItemOpen(true);
-                ImGui::PushStyleColor(ImGuiCol_Text, cIt->color);
-                if (ImGui::TreeNode(("Component: " + cIt->UUID).c_str())) {
-                    for (auto &uIt : cIt->adjList) {
-                        ImGui::SetNextItemOpen(true);
-                        if (ImGui::TreeNode(("Vertex: " + uIt.first->UUID).c_str())) {
-                            if (ImGui::IsItemHovered())
-                                graph->debugVertexHighlight = uIt.first;
-                            for (auto &vIt : uIt.second) {
-                                ImGui::Text(vIt->UUID.c_str());
-                                if (ImGui::IsItemHovered())
-                                    graph->debugVertexHighlight = vIt;
-                            }
-                            ImGui::TreePop();
-                        }
-                    }
-                    ImGui::TreePop();
-                }
+            ImGui::Text("Adjacency List");
+            if (graph->graph.empty()) {
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.25f, 0.25f, 1.0f));
+                ImGui::Text("Nothing to show here");
                 ImGui::PopStyleColor(1);
+            } else {
+                for (auto &uIt : graph->graph) {
+                    ImGui::SetNextItemOpen(true);
+                    if (ImGui::TreeNode((uIt.first->UUID).c_str())) {
+                        if (ImGui::IsItemHovered())
+                            graph->debugVertexHighlight = uIt.first;
+                        for (auto &vIt : uIt.second) {
+                            ImGui::Text(vIt.first->UUID.c_str());
+                            if (ImGui::IsItemHovered())
+                                graph->debugVertexHighlight = vIt.first;
+                        }
+                        ImGui::TreePop();
+                    }
+                }
             }
 
             ImGui::End();

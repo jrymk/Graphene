@@ -40,7 +40,7 @@ int main() {
         Gui::Toolbar::show(&core);
         Gui::Input::show(&core);
         Gui::GraphView::show(&core, &graph);
-        //Gui::DebugWindow::show(&graph);
+        Gui::DebugWindow::show(&graph);
         //Gui::LogWindow::show();
 
         Gui::render();

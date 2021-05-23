@@ -3,6 +3,7 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <time.h>
 #include <random>
 #include <algorithm>
 #include "imgui.h"
@@ -91,8 +92,13 @@ namespace Graphene {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<> dis(0.0, 1.0);
+    bool launch = true;
 
     float genRandom() {
+        if (launch) {
+            launch = false;
+            gen.seed(time(nullptr));
+        }
         return dis(gen);
     }
 
@@ -141,7 +147,7 @@ namespace Graphene {
 
         void flushMove(float c) {
             coord += resultForce * c;
-            //std::cerr << getNumber() << " " << resultForce * c << std::endl;
+            ////std::cerr << getNumber() << " " << resultForce * c << std::endl;
 
             resultForce = Vec2f(0, 0);
         }
@@ -171,11 +177,43 @@ namespace Graphene {
     };
 
     class ConnectedComponent {
-    public:
+    private:
         bool validComponent = false;
         Vertex* root;
         Vec2f position = Vec2f(0.0f, 0.0f);
         std::string UUID;
+
+    public:
+        std::pair<Vec2f, Vec2f> bb = {{0.0f, 0.0f}, {0.0f, 0.0f}};
+        std::pair<Vec2f, Vec2f> bbBack = {{0.0f, 0.0f}, {0.0f, 0.0f}};
+
+        bool isValidComponent() {
+            return validComponent;
+        }
+
+        Vertex* getRootVertex() {
+            return root;
+        }
+
+        void setRootVertex(Vertex* v) {
+            root = v;
+        }
+
+        Vec2f getPosition() {
+            return position;
+        }
+
+        void setPosition(Vec2f p) {
+            position = p;
+        }
+
+        void changePosition(Vec2f p) {
+            position += p;
+        }
+
+        std::string getUUID() {
+            return UUID;
+        }
 
         ImVec4 color = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -203,11 +241,13 @@ namespace Graphene {
         void updateConnectedComponent(
                 std::unordered_map<Vertex*, std::unordered_set<Vertex*>>& graph,
                 std::unordered_map<Vertex*, bool>& visited) {
-            validComponent = !visited.find(root)->second;
+            validComponent = !(visited.find(root)->second);
+            //std::cerr << "valid: " << validComponent << "\n";
             if (!validComponent) {
                 adjList.clear();
                 return;
             }
+            adjList.clear();
             updateConnectedComponent(graph, visited, root);
             for (auto & uIt : adjList) {
                 for (auto & vIt : (graph.find(uIt.first)->second)) {

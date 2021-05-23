@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include "Graph.hpp"
 
 namespace Graphene {
@@ -42,7 +43,7 @@ namespace Graphene {
         std::unordered_map<Vertex*, std::unordered_set<Vertex*>>::iterator vIt;
 
     public:
-        ComponentVertexIter(ConnectedComponent* c) {
+        explicit ComponentVertexIter(ConnectedComponent* c) {
             component = c;
             vIt = c->adjList.begin();
         }
@@ -122,7 +123,8 @@ namespace Graphene {
     class ComponentEdgeIter {
     private:
         ConnectedComponent* component;
-        std::queue<std::pair<Vertex*, Vertex*>> edges;
+        std::set<std::pair<Vertex*, Vertex*>> edges;
+        std::set<std::pair<Vertex*, Vertex*>>::iterator it;
 
     public:
         explicit ComponentEdgeIter(ConnectedComponent* c) {
@@ -130,19 +132,21 @@ namespace Graphene {
 
             for (auto &uIt : component->adjList) {
                 for (auto vIt = uIt.second.begin(); vIt != uIt.second.end(); vIt++)
-                        edges.push({uIt.first, *vIt});
+                    edges.insert({uIt.first, *vIt});
             }
+
+            it = edges.begin();
         }
 
         Vertex* u = nullptr;
         Vertex* v = nullptr;
 
         bool next() {
-            if (edges.empty()) return false;
+            if (it == edges.end()) return false;
             else {
-                u = edges.front().first;
-                v = edges.front().first;
-                edges.pop();
+                u = it->first;
+                v = it->second;
+                it++;
                 return true;
             }
         }

@@ -348,6 +348,36 @@ namespace Gui {
             drawList->AddCircleFilled(contextOriginCenterDelta, 5.0f, IM_COL32(0, 211, 255, 255));
         }
 
+        void drawComponents(Graphene::Graph* graph) {
+            for (auto &c : graph->components) {
+                ImVec4 col(0.0f, 0.0f, 0.0f, 0.28f);
+                ImVec4 colHsv(0.0f, 0.0f, 0.0f, 0.0f);
+                ImGui::ColorConvertRGBtoHSV(c->color.x, c->color.y, c->color.z, colHsv.x, colHsv.y, colHsv.z);
+                colHsv.y = colHsv.y * 0.5f;
+                ImGui::ColorConvertHSVtoRGB(colHsv.x, colHsv.y, colHsv.z, col.x, col.y, col.z);
+                ImGui::GetWindowDrawList()->AddRectFilled(
+                        {getDrawCoord(c->bb.first).x - 50.0f * powf(zoomLevel, 0.1),
+                         getDrawCoord(c->bb.second).y - 50.0f * powf(zoomLevel, 0.1)},
+                        {getDrawCoord(c->bb.second).x + 50.0f * powf(zoomLevel, 0.1),
+                         getDrawCoord(c->bb.first).y + 50.0f * powf(zoomLevel, 0.1)},
+                        ImGui::ColorConvertFloat4ToU32(col),
+                        12.0f,
+                        0
+                );
+
+                /*colHsv.z = 1.0f - (1.0f - colHsv.z) * 0.5f;
+                ImGui::ColorConvertHSVtoRGB(colHsv.x, colHsv.y, colHsv.z, col.x, col.y, col.z);
+                col.w = 1.0f;
+                ImGui::GetWindowDrawList()->AddText(
+                        {getDrawCoord(c->bb.first).x - 50.0f * powf(zoomLevel, 0.1) + 4.0f,
+                         getDrawCoord(c->bb.second).y - 50.0f * powf(zoomLevel, 0.1) - 18.0f},
+                        ImGui::ColorConvertFloat4ToU32(col),
+                        c->getUUID().c_str(),
+                        nullptr
+                );*/
+            }
+        }
+
         void drawEdges(Graphene::Graph* graph) {
             // edge drawing
             Graphene::EdgeIter it(graph);
@@ -427,7 +457,7 @@ namespace Gui {
                     ImGui::SetWindowFontScale(1.0f);
                     ImGui::PopFont();
 
-                    if (it.v == component->root) {
+                    /*if (it.v == component->getRootVertex()) {
                         ImGui::SetWindowFontScale(0.75f);
                         ImGui::GetWindowDrawList()->AddCircle(
                                 vertexScreenCoord,
@@ -440,7 +470,7 @@ namespace Gui {
                                 centerDrawCoord.y + (centerMapped.y - it.v->getCoord().y) * canvasDisplaySize * zoomLevel + 35.0f * powf(zoomLevel, 0.1));
                         ImVec2 labelMinPos(labelCenterPos.x - 100.0f, labelCenterPos.y - 50.0f);
                         ImVec2 labelMaxPos(labelCenterPos.x + 100.0f, labelCenterPos.y + 50.0f);
-                        std::string tempStr(component->UUID);
+                        std::string tempStr(component->getUUID());
                         char* label = new char[tempStr.length() + 1];
                         strcpy(label, tempStr.c_str());
                         ImVec2 labelSize = ImGui::CalcTextSize(label, NULL, true);
@@ -449,15 +479,13 @@ namespace Gui {
                         ImGui::RenderTextClipped(labelMinPos, labelMaxPos, label, 0, &labelSize, labelAlign, &bb);
                         ImGui::PopStyleColor(1);
                         ImGui::SetWindowFontScale(1.0f);
-                    }
+                    }*/
 
                     if (it.v == graph->debugVertexHighlight) {
-                        ImVec4 col(0.0f, 0.0f, 0.0f, 0.4f);
-                        ImGui::ColorConvertHSVtoRGB((animTimer->getMilliseconds() % 2000) / 2000.0f, 1.0f, 1.0f, col.x, col.y, col.z);
                         ImGui::GetWindowDrawList()->AddCircleFilled(
                                 vertexScreenCoord,
-                                36.0f * powf(zoomLevel, 0.1),
-                                ImGui::ColorConvertFloat4ToU32(col)
+                                20.0f * powf(zoomLevel, 0.1) + 12.0f,
+                                ImGui::ColorConvertFloat4ToU32(ImVec4(1.0f, 1.0f, 1.0f, 0.4f))
                         );
                     }
                 }
@@ -495,7 +523,7 @@ namespace Gui {
 
             canvasBegin();
 
-            graph->updateConnectedComponent();
+            //graph->updateConnectedComponent();
 
             if (enableAutoAdjustView)
                 autoAdjustView(graph);
@@ -518,6 +546,7 @@ namespace Gui {
 
                 drawGrid();
 
+                drawComponents(graph);
                 drawEdges(graph);
                 drawVertices(graph);
             } else {
