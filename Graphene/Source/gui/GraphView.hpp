@@ -11,7 +11,7 @@ namespace Gui {
     namespace GraphView {
 
         Utils::FramerateCounter framerateCounter;
-        Utils::Timer* animTimer = new Utils::Timer();
+        Utils::Timer* animationTimer = new Utils::Timer();
 
         ImVec2 drawSize;
         ImVec2 topLeftDrawCoord;
@@ -362,6 +362,15 @@ namespace Gui {
                          getDrawCoord(c->bb.first).y + 50.0f * powf(zoomLevel, 0.1)},
                         ImGui::ColorConvertFloat4ToU32(col),
                         12.0f,
+                        0
+                );
+
+                //std::cerr << c->center.x << ", " << c->center.y << "; " << c->radius << "\n";
+
+                ImGui::GetWindowDrawList()->AddCircleFilled(
+                        getDrawCoord(c->center),
+                        c->radius * canvasDisplaySize * zoomLevel,
+                        ImGui::ColorConvertFloat4ToU32(col),
                         0
                 );
 

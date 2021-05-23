@@ -11,6 +11,7 @@
 #include "Structure.hpp"
 #include "GraphIter.hpp"
 #include "../utils/ProfilerUtils.hpp"
+#include "../utils/SmallestEnclosingCircle.hpp"
 
 namespace Graphene {
 
@@ -99,20 +100,27 @@ namespace Graphene {
                 }
 
                 {
+                    Utils::SmallestEnclosingCircle sec;
                     bool first = true;
                     ComponentVertexIter it(component);
                     while (it.next()) {
+                        sec.addPoint(it.v->getCoord());
+
                         if (first) {
                             first = false;
                             component->bbBack = {it.v->getCoord(), it.v->getCoord()};
                         } else {
                             component->bbBack = {{std::min(it.v->getCoord().x, component->bbBack.first.x),
-                                                     std::min(it.v->getCoord().y, component->bbBack.first.y)},
-                                             {std::max(it.v->getCoord().x, component->bbBack.second.x),
-                                                     std::max(it.v->getCoord().y, component->bbBack.second.y)}};
+                                                         std::min(it.v->getCoord().y, component->bbBack.first.y)},
+                                                 {std::max(it.v->getCoord().x, component->bbBack.second.x),
+                                                         std::max(it.v->getCoord().y, component->bbBack.second.y)}};
                         }
                     }
                     component->bb = component->bbBack;
+
+                    sec.eval();
+                    component->center = sec.center;
+                    component->radius = sec.radius;
                 }
 
                 updateRateCounter.countFrame();

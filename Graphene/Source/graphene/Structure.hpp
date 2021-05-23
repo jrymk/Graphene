@@ -184,6 +184,8 @@ namespace Graphene {
         std::string UUID;
 
     public:
+        Vec2f center = Vec2f(0.0f, 0.0f);
+        float radius = 0.0f;
         std::pair<Vec2f, Vec2f> bb = {{0.0f, 0.0f}, {0.0f, 0.0f}};
         std::pair<Vec2f, Vec2f> bbBack = {{0.0f, 0.0f}, {0.0f, 0.0f}};
 
