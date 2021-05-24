@@ -86,5 +86,7 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(Dependencies/glfw-3.3.4)
+set(CMAKE_EXE_LINKER_FLAGS " -static")
 target_link_libraries(Graphene glfw)
+target_link_libraries(Graphene -static-libgcc -static-libstdc++)
 
