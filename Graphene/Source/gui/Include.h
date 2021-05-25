@@ -8,7 +8,7 @@
 #include "Themes.hpp"
 #include "DebugWindow.hpp"
 #include "LogWindow.hpp"
-#include "GraphView.hpp"
+#include "GraphView/GraphView.hpp"
 
 namespace Gui {
 

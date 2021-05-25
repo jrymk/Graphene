@@ -57,6 +57,14 @@ namespace Graphene {
         }
 
         void deleteConnectedComponent(ConnectedComponent* component, bool deleteContent) {
+            if (!deleteContent) { // erase all edges
+                for (auto &uIt : component->adjList) {
+                    for (auto &vIt : component->adjList) {
+                        graph.find(uIt.first)->second.erase(vIt.first);
+                        uIt.second.erase(vIt.first);
+                    }
+                }
+            }
             for (auto &it : component->adjList) {
                 if (deleteContent) {
                     graph.erase(it.first);
@@ -83,14 +91,13 @@ namespace Graphene {
             //std::cerr << "new vertex: " << v->UUID << "\n";
             graph.insert({v, std::unordered_multimap<Vertex*, std::unordered_set<Edge*>>()});
             newConnectedComponent(v);
-            updateConnectedComponent();
             return v;
         }
 
         void deleteEdge(Vertex* u, Vertex* v) {
             graph.find(u)->second.erase(v);
             graph.find(v)->second.erase(u);
-            //updateConnectedComponent();
+            updateConnectedComponent();
         }
 
         void deleteVertex(Vertex* v) {

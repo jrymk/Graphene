@@ -110,10 +110,10 @@ namespace Graphene {
         int connectedComponent = 0;
         ConnectedComponent* component;
         std::string UUID;
+        char name[1024] = "";
 
     private:
         int number = 0;
-        std::string name = "";
         bool nameVisible = false;
         std::string value = "";
         bool valueVisible = false;
@@ -121,19 +121,9 @@ namespace Graphene {
         Vec2f resultForce = Vec2f(0, 0);
         Vec2f normalized = Vec2f(genRandom(), genRandom());
 
-        Vertex(int _num, std::string _name, bool _nameVisible, std::string _value, bool _valueVisible, Vec2f _coord) {
-            number = _num;
-            name = _name;
-            nameVisible = _nameVisible;
-            value = _value;
-            valueVisible = _valueVisible;
-            coord = _coord;
-        }
-
     public:
         Vertex(int _num) {
             number = _num;
-            name = std::to_string(number);
             UUID = Utils::UUIDGen::generate_uuid_v4();
         }
 

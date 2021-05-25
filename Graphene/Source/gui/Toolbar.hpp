@@ -23,13 +23,10 @@ namespace Gui {
 
 			ImGui::Checkbox("Enable live update (L)", &enableLiveUpdate);
 
-			if (ImGui::IsKeyPressed('L', false))
-				enableLiveUpdate = !enableLiveUpdate;
-
 			ImGui::SameLine();
 
 			updateGraph = false;
-			if (ImGui::Button("Update graph (U)") || enableLiveUpdate || ImGui::IsKeyPressed('U', true))
+			if (ImGui::Button("Update graph") || enableLiveUpdate)
 				updateGraph = true;
 
 			if (ImGui::Button("Reset constants to default")) {
