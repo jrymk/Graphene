@@ -21,9 +21,27 @@ namespace Gui {
             bool isHovered = false;
 
             ImVec2 centerContext(0.0f, 0.0f);
-            float zoomLevel = 1.0f;
-            float zoomTarget = 1.0f;
+            double zoomLevel = 1.0f;
+            double zoomTarget = 1.0f;
+        }
+        namespace Controls {
+            bool enableRender = true;
+            bool enableAutoAdjustView = true;
+            bool gridVisible = true;
+
+            bool contextMenuOpen = false;
+            bool forceOpenContextMenu = false;
+
+            ::Graphene::Vertex* leftMouseSelectionVertex = nullptr;
+            ::Graphene::Vertex* leftMouseDownVertex = nullptr;
+            ImVec2 leftMouseDownPos;
+            ::Graphene::Vertex* rightMouseSelectionVertex = nullptr;
+            ::Graphene::Vertex* rightMouseDownVertex = nullptr;
+            ImVec2 rightMouseDownPos;
+            ::Graphene::Vertex* hoveredVertex = nullptr;
+            ::Graphene::ConnectedComponent* hoveredComponent = nullptr;
         }
 
+        Utils::Timer* animationTimer = new Utils::Timer();
     }
 }

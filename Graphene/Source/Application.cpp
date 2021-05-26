@@ -36,17 +36,14 @@ int main() {
         auto prevTime = std::chrono::high_resolution_clock::now();
 
         Gui::initFrame();
-
         Gui::Toolbar::show(&core);
         Gui::Input::show(&core);
         Gui::GraphView::show(&core, &graph);
         Gui::DebugWindow::show(&graph);
         //Gui::LogWindow::show();
-
         Gui::render();
 
         updateGraphAsync = Gui::Toolbar::updateGraph;
-        //core.updateRateCounter.countFrame();
     }
 
     endBackgroundUpdateLoop = true;

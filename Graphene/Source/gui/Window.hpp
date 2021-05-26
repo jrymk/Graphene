@@ -74,6 +74,7 @@ namespace Gui {
 		ImGui::GetIO().ConfigViewportsNoDecoration = true;
 		ImGui::GetIO().ConfigViewportsNoDefaultParent = true;
 		ImGui::GetIO().ConfigWindowsMoveFromTitleBarOnly = true;
+        //ImGui::GetIO().MouseDrawCursor = true;
 
 		ImGui::Spectrum::StyleColorsSpectrum();
 		setTheme();
