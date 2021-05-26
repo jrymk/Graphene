@@ -16,8 +16,11 @@ namespace Graphene {
     private:
         bool validComponent = false;
         Vertex* root;
-        Vec2f position = Vec2f(0.0f, 0.0f);
         std::string UUID;
+
+        Vec2f centroid = Vec2f(0.0f, 0.0f);
+        Vec2f force = Vec2f(0.0f, 0.0f);
+        double torque = 0.0;
 
     public:
         Vec2f center = Vec2f(0.0f, 0.0f);
@@ -37,32 +40,51 @@ namespace Graphene {
             root = v;
         }
 
-        Vec2f getPosition() {
-            return position;
-        }
-
-        void setPosition(Vec2f p) {
-            position = p;
-        }
-
-        void changePosition(Vec2f p) {
-            position += p;
-        }
-
         std::string getUUID() {
             return UUID;
+        }
+
+        void updateCentroid() {
+            centroid = Vec2f(0.0f, 0.0f);
+            for (auto &it : adjList) {
+                auto vertex = it.first;
+                centroid += vertex->getCoord();
+            }
+            centroid /= adjList.size();
+        }
+
+        void move(Vertex* v, Vec2f f) {
+            Vec2f x = centroid;
+            if(v != nullptr) v->getCoord() - centroid;
+            force += f;
+            torque += x * f;
+        }
+
+        void flushMove() {
+            double theta = torque * Constants::c5;
+            for (auto& it : adjList){
+                auto vertex = it.first;
+//                std::cerr << theta << " " << vertex->getCoord() << " ";
+                Vec2f x = vertex->getCoord() - centroid;
+                x = x.rotate(theta);
+                vertex->setCoord(centroid + x);
+//                std::cerr << vertex->getCoord() << "\n";
+                vertex->directMove(force * Constants::c4);
+            }
+            torque = 0.0;
+            force = Vec2f(0.0f, 0.0f);
         }
 
         ImVec4 color = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
 
         std::unordered_map<Vertex*, std::unordered_set<Vertex*>> adjList;
-        BlockCutTree* blockCutTree;
+
+        BlockCutTree* blockCutTree = new BlockCutTree();
 
         explicit ConnectedComponent(Vertex* v) {
             root = v;
             ImGui::ColorConvertHSVtoRGB(genRandom() * 360.0f, 0.9f, 0.8f, color.x, color.y, color.z);
             UUID = Utils::UUIDGen::generate_uuid_v4();
-            blockCutTree = new BlockCutTree();
         }
 
         void updateConnectedComponent(

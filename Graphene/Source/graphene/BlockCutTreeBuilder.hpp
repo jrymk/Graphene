@@ -25,7 +25,6 @@ namespace Graphene {
          * in the constructor. Should be called again after every update.
          */
         void build() {
-            //std::cerr << "build began\n";
             delete component->blockCutTree;
             component->blockCutTree = new BlockCutTree();
             visited.clear();
@@ -43,7 +42,6 @@ namespace Graphene {
 //            std::cerr << "root " << root->UUID << "\n";
             countChildren(root);
             dfs(root, root);
-            //std::cerr << "build ended\n";
         }
 
     private:

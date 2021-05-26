@@ -133,7 +133,7 @@ namespace Graphene {
                         uIt.second.erase(vIt);
                 }
             }
-            //delete v;
+            delete v;
             updateConnectedComponent();
             //LOG_DEBUG("finished delete vertex");
         }

@@ -75,7 +75,11 @@ namespace Graphene {
         }
 
         void updatePosInConnectedComponent(ConnectedComponent* component) {
-            graph->mutex.lock();
+            std::cerr << "ok\n";
+            BlockCutTreeBuilder builder(component);
+            builder.build();
+            std::cerr << "ok\n";
+
             ComponentVertexIter uIt(component);
             while (uIt.next()) {
                 ComponentVertexIter vIt(component);
@@ -98,6 +102,9 @@ namespace Graphene {
                         it.v->flushMove(Constants::c4);
                 }
             }
+
+            std::cerr << "ok2\n";
+
         }
 
         void updatePosBetweenConnectedComponent() {
