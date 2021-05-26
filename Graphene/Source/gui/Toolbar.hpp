@@ -30,25 +30,25 @@ namespace Gui {
 				updateGraph = true;
 
 			if (ImGui::Button("Reset constants to default")) {
-				core->c1 = 2;
-				core->c2 = 1;
-				core->c3 = 1;
-				core->c4 = 0.1;
+				Constants::c1 = 2;
+				Constants::c2 = 1;
+				Constants::c3 = 1;
+				Constants::c4 = 0.1;
 			}
 
-			ImGui::SliderFloat("C1 (Vertex repel factor)", &core->c1, 0.01f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
+			ImGui::SliderFloat("C1 (Vertex repel factor)", &Constants::c1, 0.01f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
 			ImGui::SameLine();
 			Gui::HelpMarker("[C1] * log(d / C2)");
 
-			ImGui::SliderFloat("C2 (Vertex repel exponent)", &core->c2, 0.01f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
+			ImGui::SliderFloat("C2 (Vertex repel exponent)", &Constants::c2, 0.01f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
 			ImGui::SameLine();
 			Gui::HelpMarker("C1 * log(d / [C2])");
 
-			ImGui::SliderFloat("C3 (Edge minimum length)", &core->c3, 0.01f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
+			ImGui::SliderFloat("C3 (Edge minimum length)", &Constants::c3, 0.01f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
 			ImGui::SameLine();
 			Gui::HelpMarker("[C3] / (d^2)");
 
-			ImGui::SliderFloat("C4 (Force multiplier)", &core->c4, 0.001f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
+			ImGui::SliderFloat("C4 (Force multiplier)", &Constants::c4, 0.001f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
 			ImGui::SameLine();
 			Gui::HelpMarker("Force multiplier");
 

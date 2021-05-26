@@ -28,9 +28,10 @@ int main() {
     Graphene::Core core(graph);
 
     bool updateGraphAsync = true;
-    bool endBackgroundUpdateLoop = false;
-    std::thread backgroundUpdateThread(updateGraphLoop, std::ref(core), std::ref(updateGraphAsync), std::ref(endBackgroundUpdateLoop));
-    backgroundUpdateThread.detach();
+    // Multi-threading is temporarily disabled because it leads to crash
+//    bool endBackgroundUpdateLoop = false;
+//    std::thread backgroundUpdateThread(updateGraphLoop, std::ref(core), std::ref(updateGraphAsync), std::ref(endBackgroundUpdateLoop));
+//    backgroundUpdateThread.detach();
 
     while (!Gui::shouldClose()) {
         auto prevTime = std::chrono::high_resolution_clock::now();
@@ -44,9 +45,10 @@ int main() {
         Gui::render();
 
         updateGraphAsync = Gui::Toolbar::updateGraph;
+        if(updateGraphAsync) core.updatePos();
     }
 
-    endBackgroundUpdateLoop = true;
+//    endBackgroundUpdateLoop = true;
 
     Gui::cleanup();
 }

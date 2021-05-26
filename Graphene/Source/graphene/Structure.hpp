@@ -8,84 +8,12 @@
 #include <algorithm>
 #include "imgui.h"
 #include "../utils/UUIDGen.hpp"
+#include "Constants.hpp"
+#include "Vector.hpp"
 
 namespace Graphene {
 
-    struct Vec2f {
-        float x;
-        float y;
-
-        Vec2f(float _x, float _y) {
-            x = _x;
-            y = _y;
-        }
-
-        /********* Operator Definitions *********
-        *|	+ add
-        *|	- subtract
-        *|	* mul by number
-        *|	/ divide by number
-        *|	* dot
-        *|	^ cross
-        *****************************************/
-
-        Vec2f operator+(Vec2f a) {
-            return Vec2f(this->x + a.x, this->y + a.y);
-        }
-
-        void operator+=(Vec2f a) {
-            this->x += a.x;
-            this->y += a.y;
-        }
-
-        Vec2f operator-(Vec2f a) {
-            return Vec2f(this->x - a.x, this->y - a.y);
-        }
-
-        void operator-=(Vec2f a) {
-            this->x -= a.x;
-            this->y -= a.y;
-        }
-
-        Vec2f operator*(float a) {
-            return Vec2f(this->x * a, this->y * a);
-        }
-
-        void operator*=(float a) {
-            this->x *= a;
-            this->y *= a;
-        }
-
-        Vec2f operator/(float a) {
-            return Vec2f(this->x / a, this->y / a);
-        }
-
-        void operator/=(float a) {
-            this->x /= a;
-            this->y /= a;
-        }
-
-        float operator*(Vec2f a) {
-            return this->x * a.x + this->y * a.y;
-        }
-
-        float operator^(Vec2f a) {
-            return this->x * a.y - this->y * a.x;
-        }
-
-        float length() {
-            return sqrt(this->x * this->x + this->y * this->y);
-        }
-
-        Vec2f normalize() {
-            if (length() <= 1e-9) return Vec2f(0, 0);
-            return Vec2f(*this) / length();
-        }
-
-        friend std::ostream &operator<<(std::ostream &os, const Vec2f &nd) {
-            return std::cout << "(" << nd.x << ", " << nd.y << ")";
-        }
-    };
+    class ConnectedComponent;
 
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -100,17 +28,15 @@ namespace Graphene {
         return dis(gen);
     }
 
-    struct ConnectedComponent;
-
     class Vertex {
 
     public:
         // TODO: fix up permissions
         bool pauseMove = false;
         int connectedComponent = 0;
+        ConnectedComponent* component;
         std::string UUID;
         char name[1024] = "";
-        ConnectedComponent* component = nullptr;
 
     private:
         int number = 0;
@@ -125,6 +51,10 @@ namespace Graphene {
         Vertex(int _num) {
             number = _num;
             UUID = Utils::UUIDGen::generate_uuid_v4();
+        }
+
+        void setCoord(Vec2f newCoord) {
+            coord = newCoord;
         }
 
         Vec2f getCoord() {
@@ -164,6 +94,113 @@ namespace Graphene {
         Edge() {
 
         }
+    };
+
+    class ConnectedComponent {
+    private:
+        bool validComponent = false;
+        Vertex* root;
+        std::string UUID;
+
+        Vec2f centroid = Vec2f(0.0f, 0.0f);
+        Vec2f force = Vec2f(0.0f, 0.0f);
+        double toque = 0.0;
+
+    public:
+        Vec2f center = Vec2f(0.0f, 0.0f);
+        double radius = 0.0f;
+        std::pair<Vec2f, Vec2f> bb = {{0.0f, 0.0f}, {0.0f, 0.0f}};
+        std::pair<Vec2f, Vec2f> bbBack = {{0.0f, 0.0f}, {0.0f, 0.0f}};
+
+        bool isValidComponent() {
+            return validComponent;
+        }
+
+        Vertex* getRootVertex() {
+            return root;
+        }
+
+        void setRootVertex(Vertex* v) {
+            root = v;
+        }
+
+        std::string getUUID() {
+            return UUID;
+        }
+
+        void updateCentroid() {
+            centroid = Vec2f(0.0f, 0.0f);
+            for (auto &it : adjList) {
+                auto vertex = it.first;
+                centroid += vertex->getCoord();
+            }
+            centroid /= adjList.size();
+        }
+
+        void move(Vertex* v, Vec2f f) {
+            Vec2f x = centroid;
+            if(v != nullptr) v->getCoord() - centroid;
+            force += f;
+            toque += x * f;
+        }
+
+        void flushMove() {
+            double theta = toque * Constants::c5;
+            for (auto& it : adjList){
+                auto vertex = it.first;
+//                std::cerr << theta << " " << vertex->getCoord() << " ";
+                Vec2f x = vertex->getCoord() - centroid;
+                x = x.rotate(theta);
+                vertex->setCoord(centroid + x);
+//                std::cerr << vertex->getCoord() << "\n";
+                vertex->directMove(force * Constants::c4);
+            }
+            toque = 0.0;
+            force = Vec2f(0.0f, 0.0f);
+        }
+
+        ImVec4 color = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
+
+        std::unordered_map<Vertex*, std::unordered_set<Vertex*>> adjList;
+
+        explicit ConnectedComponent(Vertex* v) {
+            root = v;
+            ImGui::ColorConvertHSVtoRGB(genRandom() * 360.0f, 0.9f, 0.8f, color.x, color.y, color.z);
+            UUID = Utils::UUIDGen::generate_uuid_v4();
+        }
+
+        void updateConnectedComponent(
+                std::unordered_map<Vertex*, std::unordered_set<Vertex*>>& graph,
+                std::unordered_map<Vertex*, bool>& visited,
+                Vertex* v) {
+            v->component = this;
+            visited.find(v)->second = true;
+            adjList.insert({v, std::unordered_set<Vertex*>()});
+            for (auto & it : (graph.find(v)->second)) {
+                if (!visited.find(it)->second)
+                    updateConnectedComponent(graph, visited, it);
+            }
+        }
+
+        void updateConnectedComponent(
+                std::unordered_map<Vertex*, std::unordered_set<Vertex*>>& graph,
+                std::unordered_map<Vertex*, bool>& visited) {
+            validComponent = !(visited.find(root)->second);
+            //std::cerr << "valid: " << validComponent << "\n";
+            if (!validComponent) {
+                adjList.clear();
+                return;
+            }
+            adjList.clear();
+            updateConnectedComponent(graph, visited, root);
+            for (auto & uIt : adjList) {
+                for (auto & vIt : (graph.find(uIt.first)->second)) {
+                    adjList.find(uIt.first)->second.insert(vIt);
+                    adjList.find(vIt)->second.insert(uIt.first);
+                }
+            }
+        }
+
     };
 
 }
