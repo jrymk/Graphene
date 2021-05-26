@@ -7,11 +7,16 @@
 #include <map>
 #include <iomanip>
 #include <unordered_map>
+#include <mutex>
 #include "Graph.hpp"
 #include "Structure.hpp"
 #include "GraphIter.hpp"
 #include "../utils/ProfilerUtils.hpp"
+#include "../utils/Log.hpp"
 #include "../utils/SmallestEnclosingCircle.hpp"
+#include "ConnectedComponent.hpp"
+#include "BlockCutTree.hpp"
+#include "BlockCutTreeBuilder.hpp"
 
 namespace Graphene {
 
@@ -74,8 +79,12 @@ namespace Graphene {
         }
 
         void updatePos() {
+            graph->mutex.lock();
             //NOTE: You can not run graph->updateConnectedComponent() here as this thread is different from everything else
             for (auto &component : graph->components) {
+                BlockCutTreeBuilder builder(component);
+                builder.build();
+
                 ComponentVertexIter uIt(component);
                 while (uIt.next()) {
                     ComponentVertexIter vIt(component);
@@ -122,10 +131,10 @@ namespace Graphene {
                     component->center = sec.center;
                     component->radius = sec.radius;
                 }
-
-                updateRateCounter.countFrame();
             }
-        };
+            updateRateCounter.countFrame();
+            graph->mutex.unlock();
+        }
 
     };
 

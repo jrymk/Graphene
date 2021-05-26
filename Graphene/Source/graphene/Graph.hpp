@@ -4,6 +4,8 @@
 #include <unordered_set>
 #include <unordered_map>
 #include "Structure.hpp"
+#include "ConnectedComponent.hpp"
+#include "../utils/Log.hpp"
 
 namespace Graphene {
 
@@ -14,6 +16,8 @@ namespace Graphene {
         // keep v removed if no edges
 
         std::unordered_set<ConnectedComponent*> components;
+
+        std::mutex mutex;
 
         Graph() = default;
 
@@ -28,6 +32,13 @@ namespace Graphene {
         }
 
         void updateConnectedComponent() {
+            mutex.lock();
+
+            for (auto &it : components) {
+                if (it == nullptr)
+                    std::cerr << "empty component\n";
+            }
+
             std::unordered_map<Vertex*, std::unordered_set<Vertex*>> adjList;
             std::unordered_map<Vertex*, bool> visited;
             for (auto &vIt : graph) {
@@ -43,6 +54,11 @@ namespace Graphene {
             for (auto &it : components)
                 it->updateConnectedComponent(adjList, visited);
 
+            for (auto &it : components) {
+                if (!it->isValidComponent())
+                    deleteConnectedComponent(it, true);
+            }
+
             for (auto &it : visited) {
                 if (!it.second) {
                     auto c = newConnectedComponent(it.first);
@@ -50,10 +66,7 @@ namespace Graphene {
                 }
             }
 
-            for (auto &it : components) {
-                if (!it->isValidComponent())
-                    deleteConnectedComponent(it, true);
-            }
+            mutex.unlock();
         }
 
         void deleteConnectedComponent(ConnectedComponent* component, bool deleteContent) {
@@ -77,7 +90,6 @@ namespace Graphene {
                 } else
                     newConnectedComponent(it.first);
             }
-            //updateConnectedComponent();
             components.erase(component);
             delete component;
         }
@@ -88,7 +100,6 @@ namespace Graphene {
 
         Vertex* newVertex() {
             auto v = new Vertex(0);
-            //std::cerr << "new vertex: " << v->UUID << "\n";
             graph.insert({v, std::unordered_multimap<Vertex*, std::unordered_set<Edge*>>()});
             newConnectedComponent(v);
             return v;
@@ -122,7 +133,9 @@ namespace Graphene {
                         uIt.second.erase(vIt);
                 }
             }
+            //delete v;
             updateConnectedComponent();
+            //LOG_DEBUG("finished delete vertex");
         }
 
         void resizeVertices(int count) {
@@ -158,6 +171,7 @@ namespace Graphene {
                 graph.find(u)->second.insert({v, std::unordered_set<Edge*>()});
             graph.find(u)->second.find(v)->second.insert(new Edge());
             updateConnectedComponent();
+            //LOG_DEBUG("new edge " + u->UUID + " > " + v->UUID);
             return e;
         }
 

@@ -1,13 +1,12 @@
 #pragma once
 
-#include <queue>
 #include <vector>
 
-#define LOG_FATAL(x) Utils::Log::addLogEntry(x, __FILE__, __LINE__, Utils::Log::LogItem::Severity::FATAL)
 #define LOG_ERROR(x) Utils::Log::addLogEntry(x, __FILE__, __LINE__, Utils::Log::LogItem::Severity::ERR)
 #define LOG_WARNING(x) Utils::Log::addLogEntry(x, __FILE__, __LINE__, Utils::Log::LogItem::Severity::WARNING)
-#define LOG_OK(x) Utils::Log::addLogEntry(x, __FILE__, __LINE__, Utils::Log::LogItem::Severity::OK)
-#define LOG_LOG(x) Utils::Log::addLogEntry(x, __FILE__, __LINE__, Utils::Log::LogItem::Severity::LOG)
+#define LOG_INFO(x) Utils::Log::addLogEntry(x, __FILE__, __LINE__, Utils::Log::LogItem::Severity::INFO)
+#define LOG_DEBUG(x) Utils::Log::addLogEntry(x, __FILE__, __LINE__, Utils::Log::LogItem::Severity::DEBUG)
+#define LOG_VERBOSE(x) Utils::Log::addLogEntry(x, __FILE__, __LINE__, Utils::Log::LogItem::Severity::VERBOSE)
 
 namespace Utils {
     namespace Log {
@@ -16,12 +15,13 @@ namespace Utils {
             std::string message;
             std::string file;
             int line;
+
             enum class Severity {
-                FATAL,
                 ERR,
                 WARNING,
-                OK,
-                LOG
+                INFO,
+                DEBUG,
+                VERBOSE
             };
             Severity severity;
 
