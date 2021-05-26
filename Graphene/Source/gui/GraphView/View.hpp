@@ -14,11 +14,11 @@ namespace Gui {
     namespace GraphView {
         namespace View {
 
-            float mapToContext(float l) {
+            double mapToContext(float l) {
                 return l / canvasFrameSize / zoomLevel;
             }
 
-            float mapToCanvas(float l) {
+            float mapToCanvas(double l) {
                 return l * canvasFrameSize * zoomLevel;
             }
 
@@ -27,9 +27,14 @@ namespace Gui {
                         canvasOrigin.y + (centerContext.y - c.y) * canvasFrameSize * zoomLevel};
             }*/
 
+            ImVec2 mapToCanvas(double x, double y) {
+                return {canvasOrigin.x - float(centerContext.x - x) * canvasFrameSize * float(zoomLevel),
+                        canvasOrigin.y + float(centerContext.y - y) * canvasFrameSize * float(zoomLevel)};
+            }
+
             ImVec2 mapToCanvas(::Graphene::Vec2f c) {
-                return {canvasOrigin.x - (centerContext.x - c.x) * canvasFrameSize * zoomLevel,
-                        canvasOrigin.y + (centerContext.y - c.y) * canvasFrameSize * zoomLevel};
+                return {canvasOrigin.x - float(centerContext.x - c.x) * canvasFrameSize * float(zoomLevel),
+                        canvasOrigin.y + float(centerContext.y - c.y) * canvasFrameSize * float(zoomLevel)};
             }
 
             void canvasBegin() {
@@ -59,7 +64,7 @@ namespace Gui {
                 // Catch mouse interactions
                 ImGui::InvisibleButton("canvas", canvasSize,
                                        ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-                isHovered = ImGui::IsItemFocused();
+                isHovered = ImGui::IsItemHovered();
             }
 
             void canvasEnd() {
@@ -67,6 +72,63 @@ namespace Gui {
 
                 ImGui::GetWindowDrawList()->PopClipRect();
                 ImGui::End();
+            }
+
+            void autoAdjustView() {
+                float x_max = -1000000000.0;
+                float x_min = 1000000000.0;
+                float y_max = -1000000000.0;
+                float y_min = 1000000000.0;
+
+                ::Graphene::VertexIter it(Graphene::graph);
+                while (it.next()) {
+                    x_max = std::max(x_max, it.v->getCoord().x);
+                    x_min = std::min(x_min, it.v->getCoord().x);
+                    y_max = std::max(y_max, it.v->getCoord().y);
+                    y_min = std::min(y_min, it.v->getCoord().y);
+                }
+
+                //if (rightMouseDownVertex == nullptr) {
+                if (!ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
+                    View::centerContext.x += ((x_max - x_min) / 2.0f + x_min - View::centerContext.x) * 0.2f;
+                    View::centerContext.y += ((y_max - y_min) / 2.0f + y_min - View::centerContext.y) * 0.2f;
+
+                    View::zoomTarget += (1.0f / std::max(std::max(x_max - x_min, y_max - y_min), 0.1f) - View::zoomLevel) * 0.2f;
+                }
+            }
+
+            void updateCamera() {
+                if (isHovered) {
+                    View::zoomTarget *= powf(1.05, ImGui::GetIO().MouseWheel);
+
+                    if (Controls::rightMouseDownVertex == nullptr) {
+                        if (!Controls::contextMenuOpen && ImGui::IsMouseDragging(ImGuiMouseButton_Right, 0.0f)) {
+                            View::centerContext.x += -ImGui::GetIO().MouseDelta.x / View::canvasFrameSize / View::zoomLevel;
+                            View::centerContext.y -= -ImGui::GetIO().MouseDelta.y / View::canvasFrameSize / View::zoomLevel;
+                        }
+                    }
+                    View::centerContext.x +=
+                            -(ImGui::GetIO().MousePos.x - View::canvasOrigin.x
+                              + (View::canvasOrigin.x - ImGui::GetIO().MousePos.x)
+                                * (powf(1.05, ImGui::GetIO().MouseWheel))) / View::canvasFrameSize / View::zoomLevel;
+                    View::centerContext.y +=
+                            (ImGui::GetIO().MousePos.y - View::canvasOrigin.y
+                             + (View::canvasOrigin.y - ImGui::GetIO().MousePos.y)
+                               * (powf(1.05, ImGui::GetIO().MouseWheel))) / View::canvasFrameSize / View::zoomLevel;
+                }
+
+                // smoothy transition zoom level
+                View::zoomLevel *= powf(View::zoomTarget / View::zoomLevel, 0.1f);
+                View::zoomLevel = std::max(View::zoomTarget, DBL_MIN);
+            }
+
+            void updateMouseCursor() {
+                if (View::isHovered) {
+                    if (Controls::hoveredVertex != nullptr || Controls::leftMouseDownVertex != nullptr || Controls::rightMouseDownVertex != nullptr)
+                        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+                    else
+                        ImGui::SetMouseCursor(ImGuiMouseCursor_Arrow);
+                }
             }
 
         }

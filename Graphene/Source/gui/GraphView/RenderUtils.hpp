@@ -12,28 +12,33 @@
 namespace Gui {
     namespace GraphView {
         namespace RenderUtils {
-/*
-            void drawGridLines(bool vertical, float snap, float spacing, float begin, float end, ImColor col, float thickness) {
-                const float centerSnapGridCoord =
-                        centerDrawCoord.x - (fmodf(centerMapped.x, contextGridSpacing) * canvasDisplaySize * zoomLevel);
-                const float startingSnapGridCoord =
-                        centerSnapGridCoord - (int) (drawSize.x / spacing / 2.0f + 2.0f) * spacing;
-                const float endingSnapGridCoord =
-                        centerSnapGridCoord + (int) (drawSize.x / spacing / 2.0f + 2.0f) * spacing;
 
+            void drawGridLines(bool vertical, double origin, double spacing,
+                               float perpBegin, float perpEnd, float parBegin, float parEnd, ImColor col, float thickness) {
+                const float canvas = vertical ? View::canvasOrigin.x : View::canvasOrigin.y;
+                const double snapGrid = origin + round((canvas - origin) / spacing) * spacing;
                 int lineDrawLimit = 500;
-                for (int x = 0; startingSnapGridCoord + x * spacing <= endingSnapGridCoord; x++) {
-                    ImGui::GetWindowDrawList()->AddLine(
-                            ImVec2(startingSnapGridCoord + x * spacing, begin),
-                            ImVec2(startingSnapGridCoord + x * spacing, end),
-                            col,
-                            thickness
-                    );
+                for (int i = int(perpBegin / spacing);
+                     i <= int(perpEnd / spacing); i++) {
+                    if (vertical) {
+                        ImGui::GetWindowDrawList()->AddLine(
+                                ImVec2(float(snapGrid + i * spacing), View::canvasOrigin.y + parBegin),
+                                ImVec2(float(snapGrid + i * spacing), View::canvasOrigin.y + parEnd),
+                                col,
+                                thickness
+                        );
+                    } else {
+                        ImGui::GetWindowDrawList()->AddLine(
+                                ImVec2(View::canvasOrigin.x + parBegin, float(snapGrid + i * spacing)),
+                                ImVec2(View::canvasOrigin.x + parEnd, float(snapGrid + i * spacing)),
+                                col,
+                                thickness
+                        );
+                    }
                     if (!(--lineDrawLimit))
                         break;
                 }
             }
-*/
 
 
         }
