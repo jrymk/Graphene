@@ -12,6 +12,7 @@
 #include "GraphIter.hpp"
 #include "../utils/ProfilerUtils.hpp"
 #include "../utils/SmallestEnclosingCircle.hpp"
+#include "Constants.hpp"
 
 namespace Graphene {
 
@@ -22,7 +23,7 @@ namespace Graphene {
         // graph update rate
         Utils::FramerateCounter updateRateCounter;
 
-        Graph* graph;
+        Graph *graph;
 
         // binds a graph to a core
         explicit Core(Graph &g) {
@@ -30,15 +31,12 @@ namespace Graphene {
         }
 
         // force calculation constants
-        float c1 = 2;
-        float c2 = 1;
-        float c3 = 1;
-        float c4 = 0.1;
+
 
         // graph updated via visual tool
         bool pendingInputUpdate = false;
 
-        float distance(Vertex* u, Vertex* v) {
+        float distance(Vertex *u, Vertex *v) {
             float dx = u->getCoord().x - v->getCoord().x;
             float dy = u->getCoord().y - v->getCoord().y;
             return sqrt(dx * dx + dy * dy);
@@ -48,56 +46,91 @@ namespace Graphene {
             return sqrt(a.x * a.x + a.y * a.y);
         }
 
-        Vec2f attractForce(Vertex* u, Vertex* v) {
+        Vec2f attractForce(Vertex *u, Vertex *v) {
             float dis = distance(u, v);
             if (dis == 0.0f)
                 return Vec2f(0, 0);
-            float coeff = c1 * log(dis / c2);
+            float coeff = Constants::c1 * log(dis / Constants::c2);
             return (v->getCoord() - u->getCoord()).normalize() * coeff;
         }
 
-        Vec2f repelForce(Vertex* u, Vertex* v) {
+        Vec2f repelForce(Vertex *u, Vertex *v) {
             float dis = distance(u, v);
             if (dis == 0.0)
                 return Vec2f(0, 0);
-            float coeff = -c3 / dis / dis;
+            float coeff = -Constants::c3 / dis / dis;
             return (v->getCoord() - u->getCoord()).normalize() * coeff;
         }
 
-        Vec2f originAttractForce(Vertex* v) {
+        Vec2f originAttractForce(Vertex *v) {
             float dis = v->getCoord().length();
             if (dis == 0.0) {
                 return Vec2f(0, 0);
             }
-            float coeff = std::min(1.0f, dis);
+            float coeff = std::min(Constants::c6, dis);
             return (Vec2f(0, 0) - v->getCoord()).normalize() * coeff;
+        }
+
+        void updatePosInConnectedComponent(ConnectedComponent *component) {
+            ComponentVertexIter uIt(component);
+            while (uIt.next()) {
+                ComponentVertexIter vIt(component);
+                while (vIt.next()) {
+                    uIt.v->move(repelForce(uIt.v, vIt.v));
+                    vIt.v->move(repelForce(vIt.v, uIt.v));
+                }
+            }
+
+            {
+                ComponentEdgeIter it(component);
+                while (it.next())
+                    it.u->move(attractForce(it.u, it.v));
+            }
+
+            {
+                ComponentVertexIter it(component);
+                while (it.next()) {
+                    if (!it.v->pauseMove)
+                        it.v->flushMove(Constants::c4);
+                }
+            }
+        }
+
+        void updatePosBetweenConnectedComponent() {
+
+            for (auto component : graph->components) {
+                component->updateCentroid();
+            }
+
+            VertexIter uIt(graph);
+            while (uIt.next()) {
+                Vertex *u = uIt.v;
+                VertexIter vIt(graph);
+                while (vIt.next()) {
+                    Vertex *v = vIt.v;
+                    if (u->component == v->component) continue;
+
+                    Vec2f f = repelForce(u, v);
+                    u->component->move(u, f);
+                }
+                u->component->move(nullptr, originAttractForce(u));
+            }
+
+            for (auto component : graph->components) {
+                component->flushMove();
+            }
+
         }
 
         void updatePos() {
             //NOTE: You can not run graph->updateConnectedComponent() here as this thread is different from everything else
             for (auto &component : graph->components) {
-                ComponentVertexIter uIt(component);
-                while (uIt.next()) {
-                    ComponentVertexIter vIt(component);
-                    while (vIt.next()) {
-                        uIt.v->move(repelForce(uIt.v, vIt.v));
-                        vIt.v->move(repelForce(vIt.v, uIt.v));
-                    }
-                }
+                updatePosInConnectedComponent(component);
+            }
 
-                {
-                    ComponentEdgeIter it(component);
-                    while (it.next())
-                        it.u->move(attractForce(it.u, it.v));
-                }
+            updatePosBetweenConnectedComponent();
 
-                {
-                    ComponentVertexIter it(component);
-                    while (it.next()) {
-                        if (!it.v->pauseMove)
-                            it.v->flushMove(c4);
-                    }
-                }
+            for (auto &component : graph->components) {
 
                 {
                     Utils::SmallestEnclosingCircle sec;

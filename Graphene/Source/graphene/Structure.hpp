@@ -8,86 +8,12 @@
 #include <algorithm>
 #include "imgui.h"
 #include "../utils/UUIDGen.hpp"
+#include "Constants.hpp"
+#include "Vector.hpp"
 
 namespace Graphene {
 
     class ConnectedComponent;
-
-    struct Vec2f {
-        float x;
-        float y;
-
-        Vec2f(float _x, float _y) {
-            x = _x;
-            y = _y;
-        }
-
-        /********* Operator Definitions *********
-        *|	+ add
-        *|	- subtract
-        *|	* mul by number
-        *|	/ divide by number
-        *|	* dot
-        *|	^ cross
-        *****************************************/
-
-        Vec2f operator+(Vec2f a) {
-            return Vec2f(this->x + a.x, this->y + a.y);
-        }
-
-        void operator+=(Vec2f a) {
-            this->x += a.x;
-            this->y += a.y;
-        }
-
-        Vec2f operator-(Vec2f a) {
-            return Vec2f(this->x - a.x, this->y - a.y);
-        }
-
-        void operator-=(Vec2f a) {
-            this->x -= a.x;
-            this->y -= a.y;
-        }
-
-        Vec2f operator*(float a) {
-            return Vec2f(this->x * a, this->y * a);
-        }
-
-        void operator*=(float a) {
-            this->x *= a;
-            this->y *= a;
-        }
-
-        Vec2f operator/(float a) {
-            return Vec2f(this->x / a, this->y / a);
-        }
-
-        void operator/=(float a) {
-            this->x /= a;
-            this->y /= a;
-        }
-
-        float operator*(Vec2f a) {
-            return this->x * a.x + this->y * a.y;
-        }
-
-        float operator^(Vec2f a) {
-            return this->x * a.y - this->y * a.x;
-        }
-
-        float length() {
-            return sqrt(this->x * this->x + this->y * this->y);
-        }
-
-        Vec2f normalize() {
-            if (length() <= 1e-9) return Vec2f(0, 0);
-            return Vec2f(*this) / length();
-        }
-
-        friend std::ostream &operator<<(std::ostream &os, const Vec2f &nd) {
-            return std::cout << "(" << nd.x << ", " << nd.y << ")";
-        }
-    };
 
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -125,6 +51,10 @@ namespace Graphene {
         Vertex(int _num) {
             number = _num;
             UUID = Utils::UUIDGen::generate_uuid_v4();
+        }
+
+        void setCoord(Vec2f newCoord) {
+            coord = newCoord;
         }
 
         Vec2f getCoord() {
@@ -170,8 +100,11 @@ namespace Graphene {
     private:
         bool validComponent = false;
         Vertex* root;
-        Vec2f position = Vec2f(0.0f, 0.0f);
         std::string UUID;
+
+        Vec2f centroid = Vec2f(0.0f, 0.0f);
+        Vec2f force = Vec2f(0.0f, 0.0f);
+        double toque = 0.0;
 
     public:
         Vec2f center = Vec2f(0.0f, 0.0f);
@@ -191,20 +124,39 @@ namespace Graphene {
             root = v;
         }
 
-        Vec2f getPosition() {
-            return position;
-        }
-
-        void setPosition(Vec2f p) {
-            position = p;
-        }
-
-        void changePosition(Vec2f p) {
-            position += p;
-        }
-
         std::string getUUID() {
             return UUID;
+        }
+
+        void updateCentroid() {
+            centroid = Vec2f(0.0f, 0.0f);
+            for (auto &it : adjList) {
+                auto vertex = it.first;
+                centroid += vertex->getCoord();
+            }
+            centroid /= adjList.size();
+        }
+
+        void move(Vertex* v, Vec2f f) {
+            Vec2f x = centroid;
+            if(v != nullptr) v->getCoord() - centroid;
+            force += f;
+            toque += x * f;
+        }
+
+        void flushMove() {
+            double theta = toque * Constants::c5;
+            for (auto& it : adjList){
+                auto vertex = it.first;
+//                std::cerr << theta << " " << vertex->getCoord() << " ";
+                Vec2f x = vertex->getCoord() - centroid;
+                x = x.rotate(theta);
+                vertex->setCoord(centroid + x);
+//                std::cerr << vertex->getCoord() << "\n";
+                vertex->directMove(force * Constants::c4);
+            }
+            toque = 0.0;
+            force = Vec2f(0.0f, 0.0f);
         }
 
         ImVec4 color = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
