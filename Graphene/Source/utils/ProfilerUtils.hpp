@@ -44,7 +44,7 @@ namespace Utils {
 
 		void countFrame() {
 			if (m_timer.getMicroseconds() >= 100000000) m_timer.restart();
-			rollingData.emplace(m_timer.getMicroseconds());
+			rollingData.push(m_timer.getMicroseconds());
 
 			while (!rollingData.empty()) {
 				long long frontData = rollingData.front();
