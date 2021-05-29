@@ -17,7 +17,7 @@ namespace Gui {
             ImVec2 canvasCursor;
             ImVec2 canvasOrigin;
             ImVec2 canvasMargin;
-            float canvasFrameSize;
+            double canvasFrameSize;
             bool isHovered = false;
 
             ImVec2 centerContext(0.0f, 0.0f);

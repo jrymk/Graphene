@@ -33,9 +33,6 @@ namespace Graphene {
             graph = &g;
         }
 
-        // force calculation constants
-
-
         // graph updated via visual tool
         bool pendingInputUpdate = false;
 
@@ -50,7 +47,7 @@ namespace Graphene {
         }
 
         Vec2f attractForce(Vertex* u, Vertex* v) {
-            float dis = distance(u, v);
+            double dis = Vec2f::distance(u->getCoord(), v->getCoord());
             if (dis == 0.0f)
                 return Vec2f(0, 0);
             float coeff = Constants::c1 * log(dis / Constants::c2);
@@ -75,10 +72,8 @@ namespace Graphene {
         }
 
         void updatePosInConnectedComponent(ConnectedComponent* component) {
-            std::cerr << "ok\n";
             BlockCutTreeBuilder builder(component);
             builder.build();
-            std::cerr << "ok\n";
 
             ComponentVertexIter uIt(component);
             while (uIt.next()) {
@@ -102,9 +97,6 @@ namespace Graphene {
                         it.v->flushMove(Constants::c4);
                 }
             }
-
-            std::cerr << "ok2\n";
-
         }
 
         void updatePosBetweenConnectedComponent() {
@@ -134,7 +126,7 @@ namespace Graphene {
         }
 
         void updatePos() {
-            graph->mutex.lock();
+            //graph->mutex.lock();
             //NOTE: You can not run graph->updateConnectedComponent() here as this thread is different from everything else
             for (auto &component : graph->components) {
                 updatePosInConnectedComponent(component);
@@ -169,7 +161,7 @@ namespace Graphene {
                 }
             }
             updateRateCounter.countFrame();
-            graph->mutex.unlock();
+            //graph->mutex.unlock();
         }
 
     };

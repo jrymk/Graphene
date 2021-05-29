@@ -3,10 +3,10 @@
 namespace Graphene {
 
     struct Vec2f {
-        float x;
-        float y;
+        double x;
+        double y;
 
-        Vec2f(float _x, float _y) {
+        Vec2f(double _x, double _y) {
             x = _x;
             y = _y;
         }
@@ -20,8 +20,8 @@ namespace Graphene {
         *|	^ cross
         *****************************************/
 
-        Vec2f operator+(Vec2f a) {
-            return Vec2f(this->x + a.x, this->y + a.y);
+        Vec2f operator+(Vec2f a) const {
+            return {this->x + a.x, this->y + a.y};
         }
 
         void operator+=(Vec2f a) {
@@ -29,8 +29,8 @@ namespace Graphene {
             this->y += a.y;
         }
 
-        Vec2f operator-(Vec2f a) {
-            return Vec2f(this->x - a.x, this->y - a.y);
+        Vec2f operator-(Vec2f a) const {
+            return {this->x - a.x, this->y - a.y};
         }
 
         void operator-=(Vec2f a) {
@@ -38,44 +38,52 @@ namespace Graphene {
             this->y -= a.y;
         }
 
-        Vec2f operator*(float a) {
-            return Vec2f(this->x * a, this->y * a);
+        Vec2f operator*(double a) const {
+            return {this->x * a, this->y * a};
         }
 
-        void operator*=(float a) {
+        void operator*=(double a) {
             this->x *= a;
             this->y *= a;
         }
 
-        Vec2f operator/(float a) {
-            return Vec2f(this->x / a, this->y / a);
+        Vec2f operator/(double a) const {
+            return {this->x / a, this->y / a};
         }
 
-        void operator/=(float a) {
+        void operator/=(double a) {
             this->x /= a;
             this->y /= a;
         }
 
-        float operator*(Vec2f a) {
+        double operator*(Vec2f a) const {
             return this->x * a.x + this->y * a.y;
         }
 
-        float operator^(Vec2f a) {
+        double operator^(Vec2f a) const {
             return this->x * a.y - this->y * a.x;
         }
 
-        float length() {
+        double length() const {
             return sqrt(this->x * this->x + this->y * this->y);
         }
 
-        Vec2f rotate(double theta) {
+        static double length(const Vec2f &a) {
+            return sqrt(a.x * a.x + a.y * a.y);
+        }
+
+        static double distance(const Vec2f &a, const Vec2f &b) {
+            return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+        }
+
+        Vec2f rotate(double theta) const {
             double cosTheta = cos(theta);
             double sinTheta = sin(theta);
-            return Vec2f(x * cosTheta + y * sinTheta, x * (-sinTheta) + y * cosTheta);
+            return {x * cosTheta + y * sinTheta, x * (-sinTheta) + y * cosTheta};
         }
 
         Vec2f normalize() {
-            if (length() <= 1e-9) return Vec2f(0, 0);
+            if (length() <= 1e-9) return {0, 0};
             return Vec2f(*this) / length();
         }
 

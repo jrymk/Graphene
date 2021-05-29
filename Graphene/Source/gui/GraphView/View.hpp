@@ -14,11 +14,11 @@ namespace Gui {
     namespace GraphView {
         namespace View {
 
-            double mapToContext(float l) {
+            double mapToContext(double l) {
                 return l / canvasFrameSize / zoomLevel;
             }
 
-            float mapToCanvas(double l) {
+            double mapToCanvas(double l) {
                 return l * canvasFrameSize * zoomLevel;
             }
 
@@ -28,13 +28,13 @@ namespace Gui {
             }*/
 
             ImVec2 mapToCanvas(double x, double y) {
-                return {canvasOrigin.x - float(centerContext.x - x) * canvasFrameSize * float(zoomLevel),
-                        canvasOrigin.y + float(centerContext.y - y) * canvasFrameSize * float(zoomLevel)};
+                return {float(canvasOrigin.x - (centerContext.x - x) * canvasFrameSize * zoomLevel),
+                        float(canvasOrigin.y + (centerContext.y - y) * canvasFrameSize * zoomLevel)};
             }
 
             ImVec2 mapToCanvas(::Graphene::Vec2f c) {
-                return {canvasOrigin.x - float(centerContext.x - c.x) * canvasFrameSize * float(zoomLevel),
-                        canvasOrigin.y + float(centerContext.y - c.y) * canvasFrameSize * float(zoomLevel)};
+                return {float(canvasOrigin.x - (centerContext.x - c.x) * canvasFrameSize * zoomLevel),
+                        float(canvasOrigin.y + (centerContext.y - c.y) * canvasFrameSize * zoomLevel)};
             }
 
             void canvasBegin() {
@@ -75,10 +75,10 @@ namespace Gui {
             }
 
             void autoAdjustView() {
-                float x_max = -1000000000.0;
-                float x_min = 1000000000.0;
-                float y_max = -1000000000.0;
-                float y_min = 1000000000.0;
+                double x_max = -1000000000.0;
+                double x_min = 1000000000.0;
+                double y_max = -1000000000.0;
+                double y_min = 1000000000.0;
 
                 ::Graphene::VertexIter it(Graphene::graph);
                 while (it.next()) {
@@ -90,10 +90,10 @@ namespace Gui {
 
                 //if (rightMouseDownVertex == nullptr) {
                 if (!ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
-                    View::centerContext.x += ((x_max - x_min) / 2.0f + x_min - View::centerContext.x) * 0.2f;
-                    View::centerContext.y += ((y_max - y_min) / 2.0f + y_min - View::centerContext.y) * 0.2f;
+                    View::centerContext.x += ((x_max - x_min) / 2.0f + x_min - View::centerContext.x) * 0.2;
+                    View::centerContext.y += ((y_max - y_min) / 2.0f + y_min - View::centerContext.y) * 0.2;
 
-                    View::zoomTarget += (1.0f / std::max(std::max(x_max - x_min, y_max - y_min), 0.1f) - View::zoomLevel) * 0.2f;
+                    View::zoomTarget += (1.0f / std::max(std::max(x_max - x_min, y_max - y_min), 0.1) - View::zoomLevel) * 0.2;
                 }
             }
 
@@ -118,7 +118,7 @@ namespace Gui {
                 }
 
                 // smoothy transition zoom level
-                View::zoomLevel *= powf(View::zoomTarget / View::zoomLevel, 0.1f);
+                View::zoomLevel *= powf(View::zoomTarget / View::zoomLevel, 0.1);
                 View::zoomLevel = std::max(View::zoomTarget, DBL_MIN);
             }
 
