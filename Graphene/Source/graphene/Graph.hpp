@@ -65,17 +65,14 @@ namespace Graphene {
                 std::cerr << "end update component " << it->getUUID() << "\n";
             }
 
-            std::stack<ConnectedComponent*> componentRemoveStack;
-            for (auto component : components) {
-                if (!component->isValidComponent()) {
-                    std::cerr << "delete invalid component " << component->getUUID() << "\n";
-                    componentRemoveStack.push(component);
-                } else
-                    std::cerr << "valid component " << component->getUUID() << "\n";
-            }
-            while (!componentRemoveStack.empty()) {
-                deleteConnectedComponent(componentRemoveStack.top(), true);
-                componentRemoveStack.pop();
+            for (auto component = components.begin(); component != components.end();) {
+                if (!(*component)->isValidComponent()) {
+                    std::cerr << "delete invalid component " << (*component)->getUUID() << "\n";
+                    component = deleteConnectedComponent((*component), true);
+                } else {
+                    std::cerr << "valid component " << (*component)->getUUID() << "\n";
+                    component++;
+                }
             }
 
             for (auto &it : visited) {
@@ -96,7 +93,7 @@ namespace Graphene {
             }
         }
 
-        void deleteConnectedComponent(ConnectedComponent* component, bool deleteContent) {
+        std::unordered_set<ConnectedComponent*>::iterator deleteConnectedComponent(ConnectedComponent* component, bool deleteContent) {
             if (!deleteContent) { // erase all edges
                 for (auto &uIt : component->adjList) {
                     for (auto &vIt : component->adjList) {
@@ -117,8 +114,11 @@ namespace Graphene {
                 } else
                     newConnectedComponent(it.first);
             }
-            components.erase(component);
-            delete component;
+            auto range = components.equal_range(component);
+            for (auto it = range.first; it != range.second; it++)
+                delete *it;
+            auto eraseIt = components.erase(range.first, range.second);
+            return eraseIt;
         }
 
         unsigned int getVertexCount() const {
