@@ -28,6 +28,8 @@ namespace Graphene {
         std::pair<Vec2f, Vec2f> bb = {{0.0f, 0.0f}, {0.0f, 0.0f}};
         std::pair<Vec2f, Vec2f> bbBack = {{0.0f, 0.0f}, {0.0f, 0.0f}};
 
+        bool pendingBlockCutTreeRebuild = true;
+
         bool isValidComponent() {
             return validComponent;
         }

@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include "Structure.hpp"
 #include "ConnectedComponent.hpp"
+#include "BlockCutTreeBuilder.hpp"
 #include "../utils/Log.hpp"
 
 namespace Graphene {
@@ -66,6 +67,14 @@ namespace Graphene {
                 }
             }
 
+            for (auto &it : components) {
+                if (it->pendingBlockCutTreeRebuild) { // Please, only rebuild when necessary
+                    BlockCutTreeBuilder builder(it);
+                    builder.build();
+                    it->pendingBlockCutTreeRebuild = false;
+                }
+            }
+
             mutex.unlock();
         }
 
@@ -109,6 +118,8 @@ namespace Graphene {
             graph.find(u)->second.erase(v);
             graph.find(v)->second.erase(u);
             updateConnectedComponent();
+            u->component->pendingBlockCutTreeRebuild = true;
+            v->component->pendingBlockCutTreeRebuild = true;
         }
 
         void deleteVertex(Vertex* v) {
@@ -172,6 +183,7 @@ namespace Graphene {
             graph.find(u)->second.find(v)->second.insert(new Edge());
             updateConnectedComponent();
             //LOG_DEBUG("new edge " + u->UUID + " > " + v->UUID);
+            u->component->pendingBlockCutTreeRebuild = true;
             return e;
         }
 

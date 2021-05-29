@@ -71,10 +71,7 @@ namespace Graphene {
             return (Vec2f(0, 0) - v->getCoord()).normalize() * coeff;
         }
 
-        void updatePosInConnectedComponent(ConnectedComponent* component) {
-            BlockCutTreeBuilder builder(component);
-            builder.build();
-
+        void updatePosWithinComponent(ConnectedComponent* component) {
             ComponentVertexIter uIt(component);
             while (uIt.next()) {
                 ComponentVertexIter vIt(component);
@@ -99,7 +96,7 @@ namespace Graphene {
             }
         }
 
-        void updatePosBetweenConnectedComponent() {
+        void updatePosBetweenComponents() {
 
             for (auto component : graph->components) {
                 component->updateCentroid();
@@ -129,10 +126,10 @@ namespace Graphene {
             //graph->mutex.lock();
             //NOTE: You can not run graph->updateConnectedComponent() here as this thread is different from everything else
             for (auto &component : graph->components) {
-                updatePosInConnectedComponent(component);
+                updatePosWithinComponent(component);
             }
 
-            updatePosBetweenConnectedComponent();
+            updatePosBetweenComponents();
 
             for (auto &component : graph->components) {
 
