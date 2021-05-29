@@ -14,31 +14,31 @@ namespace Gui {
             //ImGui::SliderInt("Vertices (C/V)", &vertexCount, 0, 50, "%d", 0);
 
             //if (ImGui::IsKeyPressed('C', true) && vertexCount > 0)
-                //core->graph->deleteVertex(core->graph.)
+                //core->getGraphObj()->deleteVertex(core->getGraphObj().)
             /*if (ImGui::IsKeyPressed('V', true))
-                core->graph->newVertex();*/
+                core->getGraphObj()->newVertex();*/
 
             bool pendingUpdate = false;
             /*if (ImGui::Button("Wipe and reset (R)") || ImGui::IsKeyPressed('R', false)) {
-                core->graph->resetVertices();
+                core->getGraphObj()->resetVertices();
                 pendingUpdate = true;
             }*/
 
-            /*if (core->graph->getVertexCount() != vertexCount) {
-                core->graph->resizeVertices(vertexCount);
+            /*if (core->getGraphObj()->getVertexCount() != vertexCount) {
+                core->getGraphObj()->resizeVertices(vertexCount);
                 pendingUpdate = true;
             }*/
 
             /*if (ImGui::Button("Update") || pendingUpdate) {
                 std::stringstream ss;
                 ss << text;
-                core->graph->clearAllEdges();
+                core->getGraphObj()->clearAllEdges();
                 int u, v;
                 while (ss >> u >> v) {
-                    if (u < core->graph->getVertexCount() && v < core->graph->getVertexCount())
-                        core->graph->newEdge(u, v);
+                    if (u < core->getGraphObj()->getVertexCount() && v < core->getGraphObj()->getVertexCount())
+                        core->getGraphObj()->newEdge(u, v);
                 }
-                core->graph->evalConnectedComponent();
+                core->getGraphObj()->evalConnectedComponent();
 
             }*/
 
@@ -46,7 +46,7 @@ namespace Gui {
             if (core->pendingInputUpdate) {
                 std::stringstream ss;
 
-                Graphene::EdgeIter it(core->graph);
+                Graphene::EdgeIter it(core->getGraphObj());
                 while (it.next())
                     ss << it.u->getNumber() << " " << it.v->getNumber() << "\n";
 

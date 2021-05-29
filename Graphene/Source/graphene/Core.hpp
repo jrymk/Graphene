@@ -21,16 +21,27 @@ namespace Graphene {
 
     class Core {
     private:
+        Graph* graph = new Graph();
 
     public:
         // graph update rate
         Utils::FramerateCounter updateRateCounter;
 
-        Graph* graph;
+        Graph* getGraphObj() {
+            return graph;
+        }
+
+        std::unordered_map<Vertex*, std::unordered_multimap<Vertex*, std::unordered_set<Edge*>>>& getGraph() {
+            return graph->graph;
+        }
+
+        std::unordered_set<ConnectedComponent*> getComponents() {
+            return graph->components;
+        }
 
         // binds a graph to a core
-        explicit Core(Graph &g) {
-            graph = &g;
+        explicit Core() {
+
         }
 
         // graph updated via visual tool

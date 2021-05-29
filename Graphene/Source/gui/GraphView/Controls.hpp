@@ -18,14 +18,14 @@ namespace Gui {
 
                 float closestVertexDistance = FLT_MAX;
 
-                ::Graphene::VertexIter it(Graphene::graph);
+                ::Graphene::VertexIter it(Graphene::core->getGraphObj());
 
                 while (it.next()) {
                     float mouseVertexDistanceSquared =
                             powf(ImGui::GetIO().MousePos.x - View::mapToCanvas(it.v->getCoord()).x, 2.0f) +
                             powf(ImGui::GetIO().MousePos.y - View::mapToCanvas(it.v->getCoord()).y, 2.0f);
 
-                    if (mouseVertexDistanceSquared <= powf(40.0f * powf(View::zoomTarget, 0.1), 2.0f)) {
+                    if (mouseVertexDistanceSquared <= pow(40.0 * pow(View::zoomTarget, 0.1), 2.0)) {
                         if (mouseVertexDistanceSquared <= closestVertexDistance) {
                             hoveredVertex = it.v;
                             closestVertexDistance = mouseVertexDistanceSquared;
@@ -38,14 +38,14 @@ namespace Gui {
             void updateHoveredComponent() {
                 hoveredComponent = nullptr;
 
-                for (auto c : Graphene::graph->components) {
+                for (auto c : Graphene::core->getComponents()) {
                     float mouseComponentDistanceSq =
                             powf(ImGui::GetIO().MousePos.x - View::mapToCanvas(c->center).x, 2.0f) +
                             powf(ImGui::GetIO().MousePos.y - View::mapToCanvas(c->center).y, 2.0f);
 
                     //if (ImGui::IsItemHovered()) {
                     if (mouseComponentDistanceSq <=
-                        powf(c->radius * View::canvasFrameSize * View::zoomLevel + 50.0f * powf(View::zoomLevel, 0.1), 2.0f)) {
+                        pow(c->radius * View::canvasFrameSize * View::zoomLevel + 50.0 * pow(View::zoomLevel, 0.1), 2.0)) {
                         hoveredComponent = c;
                     }
                     //}
@@ -68,12 +68,12 @@ namespace Gui {
                     }
 
                     if (leftMouseDownVertex != nullptr && hoveredVertex != nullptr) {
-                        if (Graphene::graph->isAdjacent(leftMouseDownVertex, hoveredVertex))
-                            Graphene::graph->deleteEdge(leftMouseDownVertex, hoveredVertex);
-                        else if (Graphene::graph->isAdjacent(hoveredVertex, leftMouseDownVertex))
-                            Graphene::graph->deleteEdge(hoveredVertex, leftMouseDownVertex);
+                        if (Graphene::core->getGraphObj()->isAdjacent(leftMouseDownVertex, hoveredVertex))
+                            Graphene::core->getGraphObj()->deleteEdge(leftMouseDownVertex, hoveredVertex);
+                        else if (Graphene::core->getGraphObj()->isAdjacent(hoveredVertex, leftMouseDownVertex))
+                            Graphene::core->getGraphObj()->deleteEdge(hoveredVertex, leftMouseDownVertex);
                         else
-                            Graphene::graph->newEdge(leftMouseDownVertex, hoveredVertex);
+                            Graphene::core->getGraphObj()->newEdge(leftMouseDownVertex, hoveredVertex);
 
                         Graphene::core->pendingInputUpdate = true;
                     }

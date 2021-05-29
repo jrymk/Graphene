@@ -21,12 +21,11 @@ namespace Gui {
             if (ImGui::IsKeyPressed('A', false))
                 Controls::enableAutoAdjustView = !Controls::enableAutoAdjustView;
             if (ImGui::IsKeyPressed('V', true))
-                Graphene::graph->newVertex();
+                Graphene::core->getGraphObj()->newVertex();
         }
 
-        void show(::Graphene::Core* core, ::Graphene::Graph* graph) {
+        void show(::Graphene::Core* core) {
             Graphene::core = core;
-            Graphene::graph = graph;
 
             ImGui::SetNextWindowSizeConstraints(ImVec2(300, 350), ImVec2(FLT_MAX, FLT_MAX));
             ImGui::Begin(u8"Graph View", 0, ImGuiWindowFlags_NoCollapse);
@@ -47,7 +46,7 @@ namespace Gui {
 
             View::canvasBegin();
 
-            //Graphene::graph->updateConnectedComponent(); // continuously running this command is not a good idea
+            //Graphene::core->getGraphObj()->updateConnectedComponent(); // continuously running this command is not a good idea
 
             if (Controls::enableAutoAdjustView)
                 View::autoAdjustView();

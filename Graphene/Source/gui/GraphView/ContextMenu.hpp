@@ -22,7 +22,7 @@ namespace Gui {
                         if (Controls::hoveredVertex != nullptr) {
                             ImGui::Text(("Vertex: " + Controls::hoveredVertex->UUID).c_str());
                             if (ImGui::Button("Delete")) {
-                                Graphene::graph->deleteVertex(Controls::hoveredVertex);
+                                Graphene::core->getGraphObj()->deleteVertex(Controls::hoveredVertex);
                                 Controls::contextMenuOpen = false;
                             }
                             ImGui::InputText("Vertex name", Controls::hoveredVertex->name, 1024, 0, 0, 0);
@@ -31,11 +31,11 @@ namespace Gui {
                         } else if (Controls::hoveredComponent != nullptr) {
                             ImGui::Text(("Component: " + Controls::hoveredComponent->getUUID()).c_str());
                             if (ImGui::Button("Disassemble")) {
-                                Graphene::graph->deleteConnectedComponent(Controls::hoveredComponent, false);
+                                Graphene::core->getGraphObj()->deleteConnectedComponent(Controls::hoveredComponent, false);
                                 Controls::contextMenuOpen = false;
                             }
                             if (ImGui::Button("Delete")) {
-                                Graphene::graph->deleteConnectedComponent(Controls::hoveredComponent, true);
+                                Graphene::core->getGraphObj()->deleteConnectedComponent(Controls::hoveredComponent, true);
                                 Controls::contextMenuOpen = false;
                             }
                             ImGui::ColorPicker3("Color", &Controls::hoveredComponent->color.x, ImGuiColorEditFlags_HSV);

@@ -8,7 +8,6 @@ namespace Gui {
     namespace GraphView {
         namespace Graphene {
             ::Graphene::Core* core;
-            ::Graphene::Graph* graph;
         }
         namespace View {
             Utils::FramerateCounter framerateCounter;

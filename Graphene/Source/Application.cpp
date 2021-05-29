@@ -24,8 +24,7 @@ int main() {
 
     Gui::init();
 
-    Graphene::Graph graph;
-    Graphene::Core core(graph);
+    Graphene::Core core;
 
     bool updateGraphAsync = true;
     // Multi-threading is temporarily disabled because it leads to crash
@@ -39,8 +38,8 @@ int main() {
         Gui::initFrame();
         Gui::Toolbar::show(&core);
         Gui::Input::show(&core);
-        Gui::GraphView::show(&core, &graph);
-        Gui::DebugWindow::show(&graph);
+        Gui::GraphView::show(&core);
+        Gui::DebugWindow::show(&core);
         //Gui::LogWindow::show();
         Gui::render();
 
