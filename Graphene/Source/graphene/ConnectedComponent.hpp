@@ -30,7 +30,7 @@ namespace Graphene {
 
         bool pendingBlockCutTreeRebuild = true;
 
-        bool isValidComponent() {
+        bool isValidComponent() const {
             return validComponent;
         }
 

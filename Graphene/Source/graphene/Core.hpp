@@ -6,6 +6,7 @@
 #include <random>
 #include <map>
 #include <iomanip>
+#include <mutex>
 #include <unordered_map>
 #include "Graph.hpp"
 #include "Structure.hpp"
@@ -43,6 +44,8 @@ namespace Graphene {
         explicit Core() {
 
         }
+
+        std::mutex mutex;
 
         // graph updated via visual tool
         bool pendingInputUpdate = false;
