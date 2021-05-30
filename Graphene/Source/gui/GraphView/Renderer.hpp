@@ -86,7 +86,7 @@ namespace Gui {
                             0,
                             5.0f
                     );*/
-                    ImVec4 col(0.0f, 0.0f, 0.0f, 0.28f);
+                    /*ImVec4 col(0.0f, 0.0f, 0.0f, 0.28f);
                     ImVec4 colHsv(0.0f, 0.0f, 0.0f, 0.0f);
                     ImGui::ColorConvertRGBtoHSV(Controls::hoveredComponent->color.x, Controls::hoveredComponent->color.y, Controls::hoveredComponent->color.z,
                                                 colHsv.x, colHsv.y, colHsv.z);
@@ -98,7 +98,7 @@ namespace Gui {
                             float(Controls::hoveredComponent->radius * View::canvasFrameSize * View::zoomLevel + 50.0 * pow(View::zoomLevel, 0.1)),
                             ImGui::ColorConvertFloat4ToU32(col),
                             0
-                    );
+                    );*/
                 }
             }
 

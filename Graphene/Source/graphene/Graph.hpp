@@ -35,7 +35,7 @@ namespace Graphene {
 
         void updateConnectedComponent() {
             static int updates = 0;
-            std::cerr << "updates: " << ++updates << "\n";
+            //std::cerr << "updates: " << ++updates << "\n";
 
             for (auto &it : components) {
                 if (it == nullptr)
@@ -55,30 +55,30 @@ namespace Graphene {
                 for (auto &vIt : uIt.second) {
                     adjList.find(uIt.first)->second.insert(vIt.first);
                     adjList.find(vIt.first)->second.insert(uIt.first);
-                    std::cerr << uIt.first->UUID << " <-> " << vIt.first->UUID << "\n";
+                    //std::cerr << uIt.first->UUID << " <-> " << vIt.first->UUID << "\n";
                 }
             }
 
             for (auto &it : components) {
-                std::cerr << "begin update component " << it->getUUID() << "\n";
+                //std::cerr << "begin update component " << it->getUUID() << "\n";
                 it->updateConnectedComponent(adjList, visited);
-                std::cerr << "end update component " << it->getUUID() << "\n";
+                //std::cerr << "end update component " << it->getUUID() << "\n";
             }
 
             for (auto component = components.begin(); component != components.end();) {
                 if (!(*component)->isValidComponent()) {
-                    std::cerr << "delete invalid component " << (*component)->getUUID() << "\n";
+                    //std::cerr << "delete invalid component " << (*component)->getUUID() << "\n";
                     component = deleteConnectedComponent((*component), true);
                 } else {
-                    std::cerr << "valid component " << (*component)->getUUID() << "\n";
+                    //std::cerr << "valid component " << (*component)->getUUID() << "\n";
                     component++;
                 }
             }
 
             for (auto &it : visited) {
-                std::cerr << it.first->UUID << " is " << it.second << " visited" << "\n";
+                //std::cerr << it.first->UUID << " is " << it.second << " visited" << "\n";
                 if (!it.second) {
-                    std::cerr << "new component for vertex above" << "\n";
+                    //std::cerr << "new component for vertex above" << "\n";
                     auto c = newConnectedComponent(it.first);
                     c->updateConnectedComponent(adjList, visited);
                 }
@@ -135,7 +135,7 @@ namespace Graphene {
         void deleteEdge(Vertex* u, Vertex* v) {
             graph.find(u)->second.erase(v);
             graph.find(v)->second.erase(u);
-            std::cerr << "update called from deleteEdge\n";
+            //std::cerr << "update called from deleteEdge\n";
             updateConnectedComponent();
             u->component->pendingBlockCutTreeRebuild = true;
             v->component->pendingBlockCutTreeRebuild = true;
@@ -164,13 +164,13 @@ namespace Graphene {
                 }
             }
             delete v;
-            std::cerr << "update called from deleteVertex\n";
+            //std::cerr << "update called from deleteVertex\n";
             updateConnectedComponent();
             //LOG_DEBUG("finished delete vertex");
         }
 
         void resizeVertices(int count) {
-            std::cerr << "update called from resizeVertices\n";
+            //std::cerr << "update called from resizeVertices\n";
             updateConnectedComponent();
             while (graph.size() > count)
                 deleteVertex(graph.begin()->first);
@@ -188,7 +188,7 @@ namespace Graphene {
         void clearAllEdges() {
             for (auto &uIt : graph)
                 uIt.second.clear();
-            std::cerr << "update called from clearAllEdges\n";
+            //std::cerr << "update called from clearAllEdges\n";
             updateConnectedComponent();
         }
 
@@ -203,7 +203,7 @@ namespace Graphene {
             if (graph.find(u)->second.find(v) == graph.find(u)->second.end())
                 graph.find(u)->second.insert({v, std::unordered_set<Edge*>()});
             graph.find(u)->second.find(v)->second.insert(new Edge());
-            std::cerr << "update called from newEdge\n";
+            //std::cerr << "update called from newEdge\n";
             updateConnectedComponent();
             //LOG_DEBUG("new edge " + u->UUID + " > " + v->UUID);
             u->component->pendingBlockCutTreeRebuild = true;
