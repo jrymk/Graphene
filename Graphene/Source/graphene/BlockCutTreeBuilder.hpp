@@ -7,6 +7,8 @@
 #include "Structure.hpp"
 #include "BlockCutTree.hpp"
 #include "ConnectedComponent.hpp"
+#include "../utils/ProfilerUtils.hpp"
+#include "../utils/Log.hpp"
 
 namespace Graphene {
     class BlockCutTreeBuilder {
@@ -25,6 +27,9 @@ namespace Graphene {
          * in the constructor. Should be called again after every update.
          */
         void build() {
+            Utils::Timer timer;
+            LOG_INFO("building block cut tree for component " + component->getUUID());
+
             delete component->blockCutTree;
             component->blockCutTree = new BlockCutTree();
             visited.clear();
@@ -35,13 +40,15 @@ namespace Graphene {
             timeStamp = 0;
             while (!vertexStack.empty()) vertexStack.pop();
             if (component->adjList.empty()) {
-                //std::cerr << "build ended\n";
+                LOG_DEBUG("block cut tree built (took " + std::to_string(timer.getMicroseconds()) + "us)");
                 return;
             }
             auto root = component->getRootVertex();
 //            std::cerr << "root " << root->UUID << "\n";
             countChildren(root);
             dfs(root, root);
+
+            LOG_DEBUG("block cut tree built (took " + std::to_string(timer.getMicroseconds()) + "us)");
         }
 
     private:

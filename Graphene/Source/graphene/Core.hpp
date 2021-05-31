@@ -8,10 +8,12 @@
 #include <iomanip>
 #include <mutex>
 #include <unordered_map>
+
 #include "Graph.hpp"
 #include "Structure.hpp"
 #include "GraphIter.hpp"
 #include "../utils/ProfilerUtils.hpp"
+#include "../utils/Log.hpp"
 #include "../utils/SmallestEnclosingCircle.hpp"
 #include "Constants.hpp"
 #include "ConnectedComponent.hpp"
@@ -137,6 +139,7 @@ namespace Graphene {
         }
 
         void updatePos() {
+            Utils::Timer timer;
             //graph->mutex.lock();
             //NOTE: You can not run graph->updateConnectedComponent() here as this thread is different from everything else
             for (auto &component : graph->components) {
@@ -173,6 +176,7 @@ namespace Graphene {
             }
             updateRateCounter.countFrame();
             //graph->mutex.unlock();
+            //LOG_VERBOSE("positions updated (took " + std::to_string(timer.getMicroseconds()) + "us)");
         }
 
     };

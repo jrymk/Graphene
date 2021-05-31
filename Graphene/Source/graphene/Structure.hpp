@@ -50,7 +50,7 @@ namespace Graphene {
     public:
         Vertex(int _num) {
             number = _num;
-            UUID = Utils::UUIDGen::generate_uuid_v4();
+            UUID = Utils::UUIDGen::generate_64();
         }
 
         void setCoord(Vec2f newCoord) {

@@ -40,7 +40,7 @@ int main() {
         Gui::Input::show(&core);
         Gui::GraphView::show(&core);
         Gui::DebugWindow::show(&core);
-        //Gui::LogWindow::show();
+        Gui::LogWindow::show();
         Gui::render();
 
         updateGraphAsync = Gui::Toolbar::updateGraph;
