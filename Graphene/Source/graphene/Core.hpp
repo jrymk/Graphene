@@ -6,11 +6,14 @@
 #include <random>
 #include <map>
 #include <iomanip>
+#include <mutex>
 #include <unordered_map>
+
 #include "Graph.hpp"
 #include "Structure.hpp"
 #include "GraphIter.hpp"
 #include "../utils/ProfilerUtils.hpp"
+#include "../utils/Log.hpp"
 #include "../utils/SmallestEnclosingCircle.hpp"
 #include "Constants.hpp"
 #include "ConnectedComponent.hpp"
@@ -21,17 +24,30 @@ namespace Graphene {
 
     class Core {
     private:
+        Graph* graph = new Graph();
 
     public:
         // graph update rate
         Utils::FramerateCounter updateRateCounter;
 
-        Graph* graph;
+        Graph* getGraphObj() {
+            return graph;
+        }
+
+        std::unordered_map<Vertex*, std::unordered_multimap<Vertex*, std::unordered_set<Edge*>>>& getGraph() {
+            return graph->graph;
+        }
+
+        std::unordered_set<ConnectedComponent*> getComponents() {
+            return graph->components;
+        }
 
         // binds a graph to a core
-        explicit Core(Graph &g) {
-            graph = &g;
+        explicit Core() {
+
         }
+
+        std::mutex mutex;
 
         // graph updated via visual tool
         bool pendingInputUpdate = false;
@@ -71,10 +87,7 @@ namespace Graphene {
             return (Vec2f(0, 0) - v->getCoord()).normalize() * coeff;
         }
 
-        void updatePosInConnectedComponent(ConnectedComponent* component) {
-            BlockCutTreeBuilder builder(component);
-            builder.build();
-
+        void updatePosWithinComponent(ConnectedComponent* component) {
             ComponentVertexIter uIt(component);
             while (uIt.next()) {
                 ComponentVertexIter vIt(component);
@@ -99,7 +112,7 @@ namespace Graphene {
             }
         }
 
-        void updatePosBetweenConnectedComponent() {
+        void updatePosBetweenComponents() {
 
             for (auto component : graph->components) {
                 component->updateCentroid();
@@ -126,13 +139,14 @@ namespace Graphene {
         }
 
         void updatePos() {
+            Utils::Timer timer;
             //graph->mutex.lock();
             //NOTE: You can not run graph->updateConnectedComponent() here as this thread is different from everything else
             for (auto &component : graph->components) {
-                updatePosInConnectedComponent(component);
+                updatePosWithinComponent(component);
             }
 
-            updatePosBetweenConnectedComponent();
+            updatePosBetweenComponents();
 
             for (auto &component : graph->components) {
 
@@ -162,6 +176,7 @@ namespace Graphene {
             }
             updateRateCounter.countFrame();
             //graph->mutex.unlock();
+            //LOG_VERBOSE("positions updated (took " + std::to_string(timer.getMicroseconds()) + "us)");
         }
 
     };

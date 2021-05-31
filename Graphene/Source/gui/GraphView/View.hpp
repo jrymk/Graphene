@@ -80,7 +80,7 @@ namespace Gui {
                 double y_max = -1000000000.0;
                 double y_min = 1000000000.0;
 
-                ::Graphene::VertexIter it(Graphene::graph);
+                ::Graphene::VertexIter it(Graphene::core->getGraphObj());
                 while (it.next()) {
                     x_max = std::max(x_max, it.v->getCoord().x);
                     x_min = std::min(x_min, it.v->getCoord().x);

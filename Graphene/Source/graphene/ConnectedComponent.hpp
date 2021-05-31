@@ -8,6 +8,7 @@
 #include <algorithm>
 #include "imgui.h"
 #include "../utils/UUIDGen.hpp"
+#include "../utils/Log.hpp"
 #include "BlockCutTree.hpp"
 
 namespace Graphene {
@@ -28,7 +29,10 @@ namespace Graphene {
         std::pair<Vec2f, Vec2f> bb = {{0.0f, 0.0f}, {0.0f, 0.0f}};
         std::pair<Vec2f, Vec2f> bbBack = {{0.0f, 0.0f}, {0.0f, 0.0f}};
 
-        bool isValidComponent() {
+        // a new baby needs a block cut tree too
+        bool pendingBlockCutTreeRebuild = true;
+
+        bool isValidComponent() const {
             return validComponent;
         }
 
@@ -84,7 +88,7 @@ namespace Graphene {
         explicit ConnectedComponent(Vertex* v) {
             root = v;
             ImGui::ColorConvertHSVtoRGB(genRandom() * 360.0f, 0.9f, 0.8f, color.x, color.y, color.z);
-            UUID = Utils::UUIDGen::generate_uuid_v4();
+            UUID = Utils::UUIDGen::generate_64();
         }
 
         void updateConnectedComponent(
@@ -103,9 +107,11 @@ namespace Graphene {
         void updateConnectedComponent(
                 std::unordered_map<Vertex*, std::unordered_set<Vertex*>>& graph,
                 std::unordered_map<Vertex*, bool>& visited) {
+            LOG_VERBOSE("updating component " + this->UUID);
             validComponent = !(visited.find(root)->second);
-            //std::cerr << "valid: " << validComponent << "\n";
+
             if (!validComponent) {
+                LOG_DEBUG("component root already covered by another component");
                 adjList.clear();
                 return;
             }
