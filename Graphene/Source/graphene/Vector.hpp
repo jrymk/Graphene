@@ -87,6 +87,16 @@ namespace Graphene {
             return Vec2f(*this) / length();
         }
 
+        bool operator<(const Vec2f& a) const {
+            if (this->x == a.x) return this->y < a.y;
+            return this->x < a.x;
+        }
+
+        bool operator<=(const Vec2f& a) const {
+            if (this->x == a.x) return this->y <= a.y;
+            return this->x < a.x;
+        }
+
         friend std::ostream &operator<<(std::ostream &os, const Vec2f &nd) {
             return os << "(" << nd.x << ", " << nd.y << ")";
         }
