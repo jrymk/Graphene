@@ -14,6 +14,6 @@ namespace Constants {
     float c4 = 0.1;
 
     float c5 = 0.1;
-    float c6 = 0.8;
+    float c6 = 0.001;
 
 }

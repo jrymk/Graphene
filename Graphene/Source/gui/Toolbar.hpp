@@ -35,7 +35,7 @@ namespace Gui {
 				Constants::c3 = 1;
                 Constants::c4 = 0.1;
                 Constants::c5 = 0.1;
-                Constants::c6 = 0.8;
+                Constants::c6 = 0.001;
 			}
 
 			ImGui::SliderFloat("C1 (Vertex repel factor)", &Constants::c1, 0.01f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
@@ -58,7 +58,7 @@ namespace Gui {
             ImGui::SameLine();
             Gui::HelpMarker("?");
 
-            ImGui::SliderFloat("C6 (Max coeff)", &Constants::c6, 0.001f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
+            ImGui::SliderFloat("C6 (Max coeff)", &Constants::c6, 0.00001f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
             ImGui::SameLine();
             Gui::HelpMarker("?");
 
