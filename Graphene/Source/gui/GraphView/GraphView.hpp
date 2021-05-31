@@ -12,6 +12,7 @@
 #include "Renderer.hpp"
 #include "ContextMenu.hpp"
 #include "Controls.hpp"
+#include "ConvexHull.hpp"
 
 namespace Gui {
     namespace GraphView {

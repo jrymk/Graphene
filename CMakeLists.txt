@@ -64,6 +64,8 @@ include_directories(Graphene/Source/graphene)
 include_directories(Graphene/Source/gui)
 include_directories(Graphene/Source/utils)
 
+
+
 find_package(OpenGL REQUIRED)
 include_directories( ${OPENGL_INCLUDE_DIRS} )
 
