@@ -39,16 +39,26 @@ namespace Gui {
                 hoveredComponent = nullptr;
 
                 for (auto c : Graphene::core->getComponents()) {
-                    float mouseComponentDistanceSq =
-                            powf(ImGui::GetIO().MousePos.x - View::mapToCanvas(c->center).x, 2.0f) +
-                            powf(ImGui::GetIO().MousePos.y - View::mapToCanvas(c->center).y, 2.0f);
+                    ::Gui::ConvexHull compConvexHull;
+                    for (auto &v : c->adjList) {
+                        for (double angle = 0; angle < 2 * M_PI; angle += M_PI / 8.0f) {
+                            compConvexHull.newPoint(
+                                    {
+                                            v.first->getCoord().x + View::mapToContext(float(20.0 * pow(View::zoomLevel, 0.1) + 30.0f) * cos(angle)),
+                                            v.first->getCoord().y + View::mapToContext(float(20.0 * pow(View::zoomLevel, 0.1) + 30.0f) * sin(angle))
+                                    }
+                            );
+                        }
+                    }
+                    compConvexHull.build();
 
-                    //if (ImGui::IsItemHovered()) {
-                    if (mouseComponentDistanceSq <=
-                        pow(c->radius * View::canvasFrameSize * View::zoomLevel + 50.0 * pow(View::zoomLevel, 0.1), 2.0)) {
+                    std::vector<ImVec2> poly;
+                    for (auto &p : compConvexHull.output)
+                        poly.emplace_back(View::mapToCanvas(p));
+
+                    if (Gui::isInsidePoly(poly, ImGui::GetIO().MousePos)) {
                         hoveredComponent = c;
                     }
-                    //}
                 }
 
             }

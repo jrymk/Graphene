@@ -12,7 +12,7 @@
 #include "Renderer.hpp"
 #include "ContextMenu.hpp"
 #include "Controls.hpp"
-#include "ConvexHull.hpp"
+#include "RenderUtils/ConvexHull.hpp"
 
 namespace Gui {
     namespace GraphView {
@@ -58,7 +58,7 @@ namespace Gui {
                 Controls::updateHoveredVertex();
                 if (Controls::leftMouseSelectionVertex != nullptr) {
                     Controls::leftMouseSelectionVertex->directMove(
-                            ::Graphene::Vec2f(
+                            Vec2f(
                                     ImGui::GetIO().MouseDelta.x / View::canvasFrameSize / View::zoomLevel,
                                     -ImGui::GetIO().MouseDelta.y / View::canvasFrameSize / View::zoomLevel
                             )

@@ -6,19 +6,20 @@
 #include <backends/imgui_impl_glfw.h>
 #include <GLFW/glfw3.h>
 #include <vector>
-#include "../graphene/Structure.hpp"
+#include "Structure.hpp"
 
 
 namespace Gui {
     class ConvexHull {
+        std::vector<Vec2f> points;
+        std::vector<Vec2f> sortedPoints;
 
-        std::vector<Graphene::Vec2f> points;
-        std::vector<Graphene::Vec2f> sortedPoints;
-        std::vector<Graphene::Vec2f> output;
+    public:
+        std::vector<Vec2f> output;
 
         ConvexHull() = default;
 
-        void newPoint(Graphene::Vec2f p) {
+        void newPoint(Vec2f p) {
             points.emplace_back(p);
         }
 
@@ -36,8 +37,8 @@ namespace Gui {
 
                 for (auto& point : sortedPoints) {
                     while ((int)output.size() - sz >= 2) {
-                        Graphene::Vec2f back = output.back();
-                        Graphene::Vec2f preBack = output[(int)output.size()-2];
+                        Vec2f back = output.back();
+                        Vec2f preBack = output[(int)output.size()-2];
                         double cross = (back - preBack) ^ (point - preBack);
 
                         if (cross < 0 || (!containOnEdge && abs(cross) <= eps)) {

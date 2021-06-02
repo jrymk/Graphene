@@ -32,7 +32,7 @@ namespace Gui {
                         float(canvasOrigin.y + (centerContext.y - y) * canvasFrameSize * zoomLevel)};
             }
 
-            ImVec2 mapToCanvas(::Graphene::Vec2f c) {
+            ImVec2 mapToCanvas(Vec2f c) {
                 return {float(canvasOrigin.x - (centerContext.x - c.x) * canvasFrameSize * zoomLevel),
                         float(canvasOrigin.y + (centerContext.y - c.y) * canvasFrameSize * zoomLevel)};
             }

@@ -5,7 +5,6 @@
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_glfw.h>
 #include <GLFW/glfw3.h>
-#include "Include.h"
 #include "../utils/ExceptionHandler.hpp"
 #include "../graphene/Include.h"
 #include "Themes.hpp"
@@ -47,7 +46,8 @@ namespace Gui {
 		if (!glfwInit())
 			return 1;
 
-		glfwWindowHint(GLFW_MAXIMIZED, false);
+        glfwWindowHint(GLFW_MAXIMIZED, false);
+        glfwWindowHint(GLFW_SAMPLES, 4);
 
 		window = glfwCreateWindow(1280, 720, u8"Graphene α", NULL, NULL);
 		if (window == NULL)
