@@ -1,22 +1,46 @@
 #pragma once
 
-#include <imgui.h>
-#include <imgui_internal.h>
-#include <backends/imgui_impl_opengl3.h>
-#include <backends/imgui_impl_glfw.h>
-#include <GLFW/glfw3.h>
-#include "../../utils/ProfilerUtils.hpp"
-
+#include <cmath>
+#include "../Window.hpp"
 #include "Common.hpp"
 #include "../../graphene/BlockCutTree.hpp"
-#include "RenderUtils.hpp"
+#include "RenderUtils/ConvexHull.hpp"
+#include "RenderUtils/AlignedText.hpp"
+#include "RenderUtils/DrawPolygon.hpp"
 
 namespace Gui {
     namespace GraphView {
         namespace Renderer {
 
+            void drawGridLines(bool vertical, double origin, double spacing,
+                               float perpBegin, float perpEnd, float parBegin, float parEnd, ImColor col, float thickness) {
+                const float canvas = vertical ? View::canvasOrigin.x : View::canvasOrigin.y;
+                const double snapGrid = origin + round((canvas - origin) / spacing) * spacing;
+                int lineDrawLimit = 500;
+                for (int i = int(perpBegin / spacing);
+                     i <= int(perpEnd / spacing); i++) {
+                    if (vertical) {
+                        ImGui::GetWindowDrawList()->AddLine(
+                                ImVec2(float(snapGrid + i * spacing), View::canvasOrigin.y + parBegin),
+                                ImVec2(float(snapGrid + i * spacing), View::canvasOrigin.y + parEnd),
+                                col,
+                                thickness
+                        );
+                    } else {
+                        ImGui::GetWindowDrawList()->AddLine(
+                                ImVec2(View::canvasOrigin.x + parBegin, float(snapGrid + i * spacing)),
+                                ImVec2(View::canvasOrigin.x + parEnd, float(snapGrid + i * spacing)),
+                                col,
+                                thickness
+                        );
+                    }
+                    if (!(--lineDrawLimit))
+                        break;
+                }
+            }
+
             void drawGrid() {
-                RenderUtils::drawGridLines(
+                drawGridLines(
                         true,
                         View::mapToCanvas(0.0, 0.0).x,
                         View::mapToCanvas(pow(10, -(int) ceil(log10(View::zoomLevel)))),
@@ -27,7 +51,7 @@ namespace Gui {
                         IM_COL32(90, 90, 90, 80),
                         2.0
                 );
-                RenderUtils::drawGridLines(
+                drawGridLines(
                         true,
                         View::mapToCanvas(0.0, 0.0).x,
                         View::mapToCanvas(pow(10, -(int) ceil(log10(View::zoomLevel)) - 1)),
@@ -38,7 +62,7 @@ namespace Gui {
                         IM_COL32(90, 90, 90, 80),
                         1.0
                 );
-                RenderUtils::drawGridLines(
+                drawGridLines(
                         false,
                         View::mapToCanvas(0.0, 0.0).y,
                         View::mapToCanvas(pow(10, -(int) ceil(log10(View::zoomLevel)))),
@@ -49,7 +73,7 @@ namespace Gui {
                         IM_COL32(90, 90, 90, 80),
                         2.0
                 );
-                RenderUtils::drawGridLines(
+                drawGridLines(
                         false,
                         View::mapToCanvas(0.0, 0.0).y,
                         View::mapToCanvas(pow(10, -(int) ceil(log10(View::zoomLevel)) - 1)),
@@ -64,19 +88,55 @@ namespace Gui {
 
             void drawComponents() {
                 for (auto &c : Graphene::core->getGraphObj()->components) {
-                    /*ImVec4 col(0.0f, 0.0f, 0.0f, 0.28f);
-                    ImVec4 colHsv(0.0f, 0.0f, 0.0f, 0.0f);
-                    ImGui::ColorConvertRGBtoHSV(c->color.x, c->color.y, c->color.z, colHsv.x, colHsv.y, colHsv.z);
-                    colHsv.y = colHsv.y * 0.5f;
-                    ImGui::ColorConvertHSVtoRGB(colHsv.x, colHsv.y, colHsv.z, col.x, col.y, col.z);*/
 
-                    // draw component bounding circle
-                    /*ImGui::GetWindowDrawList()->AddCircleFilled(
-                            View::mapToCanvas(c->center),
-                            float(c->radius * View::canvasFrameSize * View::zoomLevel + 50.0 * pow(View::zoomLevel, 0.1)),
-                            ImGui::ColorConvertFloat4ToU32(col),
-                            0
-                    );*/
+                    ::Gui::ConvexHull compConvexHull;
+                    for (auto &v : c->adjList) {
+                        for (double angle = 0; angle < 2 * M_PI; angle += M_PI / 8.0f) {
+                            compConvexHull.newPoint(
+                                    {
+                                            v.first->getCoord().x + View::mapToContext(float(20.0 * pow(View::zoomLevel, 0.1) + 30.0f) * cos(angle)),
+                                            v.first->getCoord().y + View::mapToContext(float(20.0 * pow(View::zoomLevel, 0.1) + 30.0f) * sin(angle))
+                                    }
+                            );
+                        }
+                    }
+                    compConvexHull.build();
+
+                    std::vector<ImVec2> poly;
+                    for (auto &p : compConvexHull.output)
+                        poly.emplace_back(View::mapToCanvas(p));
+
+                    Gui::drawPolygon(poly, IM_COL32(100, 100, 100, 100));
+
+                    int bccId = 0;
+                    for (auto &bcc : c->blockCutTree->mapping) {
+                        ::Gui::ConvexHull convexHull;
+
+                        ImVec4 col(0.0f, 0.0f, 0.0f, 0.30f);
+                        ImVec4 colHsv(float(float(bccId) / c->blockCutTree->mapping.size()), 0.5f,  1.0f, 0.0f);
+                        ImGui::ColorConvertHSVtoRGB(colHsv.x, colHsv.y, colHsv.z, col.x, col.y, col.z);
+
+                        for (auto &v : bcc.second) {
+                            for (double angle = 0; angle < 2 * M_PI; angle += M_PI / 8.0f) {
+                                convexHull.newPoint(
+                                        {
+                                                v->getCoord().x + View::mapToContext(float(20.0 * pow(View::zoomLevel, 0.1) + 15.0f) * cos(angle)),
+                                                v->getCoord().y + View::mapToContext(float(20.0 * pow(View::zoomLevel, 0.1) + 15.0f) * sin(angle))
+                                        }
+                                );
+                            }
+                        }
+                        convexHull.build();
+
+                        std::vector<ImVec2> poly;
+                        for (auto &p : convexHull.output)
+                            poly.emplace_back(View::mapToCanvas(p));
+
+                        Gui::drawPolygon(poly, ImGui::ColorConvertFloat4ToU32(col));
+
+                        bccId++;
+                    }
+
                 }
 
                 if (Controls::hoveredComponent && !Controls::hoveredVertex && !Controls::leftMouseDownVertex && !Controls::rightMouseDownVertex) {
@@ -154,39 +214,15 @@ namespace Gui {
                                 ImGui::ColorConvertFloat4ToU32(component->color)
                         );
 
-                        // draw bcc indicator
-                        if (component->blockCutTree->bcc.find(it.v) != component->blockCutTree->bcc.end()) {
-                            ImGui::GetWindowDrawList()->AddText(
-                                    {vertexScreenCoord.x, vertexScreenCoord.y - 16.0f},
-                                    IM_COL32(255, 255, 255, 255),
-                                    std::string(((component->blockCutTree->bcc.find(it.v)->second->type == ::Graphene::ARTICULATION)? "ARTICULATION" : "BLOCK")).c_str(),
-                                    nullptr);
-                            ImGui::GetWindowDrawList()->AddText(
-                                    vertexScreenCoord,
-                                    IM_COL32(255, 255, 255, 255),
-                                    component->blockCutTree->bcc.find(it.v)->second->UUID.c_str(),
-                                    nullptr);
-                        }
-
-                        ImGui::PushFont(Gui::vertexTextFont);
-                        ImGui::SetWindowFontScale(
-                                float((36.0 / 54.0) * pow(View::zoomLevel, 0.1) * ((it.v == Controls::rightMouseDownVertex) ? 1.1 : 1.0)));
-                        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(15, 15, 15, 255));
-
-                        ImVec2 labelCenterPos(
-                                float(View::canvasOrigin.x - (View::centerContext.x - it.v->getCoord().x) * View::canvasFrameSize * View::zoomLevel),
-                                float(View::canvasOrigin.y + (View::centerContext.y - it.v->getCoord().y) * View::canvasFrameSize * View::zoomLevel));
-                        ImVec2 labelMinPos(labelCenterPos.x - 100.0f, labelCenterPos.y - 100.0f);
-                        ImVec2 labelMaxPos(labelCenterPos.x + 100.0f, labelCenterPos.y + 100.0f);
-                        char* label = it.v->name;
-                        ImVec2 labelSize = ImGui::CalcTextSize(label, nullptr, true);
-                        ImVec2 labelAlign(0.5f, 0.5f);
-                        const ImRect bb(labelMinPos, labelMaxPos);
-                        ImGui::RenderTextClipped(labelMinPos, labelMaxPos, label, nullptr, &labelSize, labelAlign, &bb);
-
-                        ImGui::PopStyleColor(1);
-                        ImGui::SetWindowFontScale(1.0f);
-                        ImGui::PopFont();
+                        ::Gui::AlignedText(
+                                View::mapToCanvas(it.v->getCoord()),
+                                {0.5f, 0.5f},
+                                {200.0f, 100.0f},
+                                it.v->name,
+                                Gui::vertexTextFont,
+                                float((36.0 / 54.0) * pow(View::zoomLevel, 0.1) * ((it.v == Controls::rightMouseDownVertex) ? 1.1 : 1.0)),
+                                IM_COL32(15, 15, 15, 255)
+                        );
 
                         if (it.v == Graphene::core->getGraphObj()->debugVertexHighlight) {
                             ImGui::GetWindowDrawList()->AddCircleFilled(
