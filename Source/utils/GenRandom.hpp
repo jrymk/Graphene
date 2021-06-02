@@ -3,7 +3,7 @@
 #include <sstream>
 
 namespace Utils {
-    namespace UUIDGen {
+    namespace UID {
 
         std::random_device rd;
         std::mt19937 gen(rd());

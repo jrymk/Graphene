@@ -23,7 +23,6 @@ namespace Graphene {
 
         std::unordered_set<ConnectedComponent*> components;
 
-
         Vertex* debugVertexHighlight = nullptr;
 
         ConnectedComponent* newConnectedComponent(Vertex* root) {
@@ -138,9 +137,8 @@ namespace Graphene {
             auto v = new Vertex(0);
             graph.insert({v, std::unordered_multimap<Vertex*, std::unordered_set<Edge*>>()});
             auto c = newConnectedComponent(v);
-            BlockCutTreeBuilder builder(c);
-            builder.build();
-            c->pendingBlockCutTreeRebuild = false;
+            c->pendingBlockCutTreeRebuild = true;
+            updateConnectedComponent();
             return v;
         }
 
@@ -148,17 +146,15 @@ namespace Graphene {
             LOG_DEBUG("delete all edges connecting " + u->UUID + " and " + v->UUID);
             graph.find(u)->second.erase(v);
             graph.find(v)->second.erase(u);
-            //std::cerr << "update called from deleteEdge\n";
-            updateConnectedComponent();
             u->component->pendingBlockCutTreeRebuild = true;
             v->component->pendingBlockCutTreeRebuild = true;
+            updateConnectedComponent();
         }
 
         void deleteEdgeNoUpdate(Vertex* u, Vertex* v) {
             LOG_DEBUG("delete all edges connecting " + u->UUID + " and " + v->UUID);
             graph.find(u)->second.erase(v);
             graph.find(v)->second.erase(u);
-            //std::cerr << "update called from deleteEdge\n";
         }
 
         void deleteVertex(Vertex* v) {
@@ -183,14 +179,12 @@ namespace Graphene {
             }
             graph.erase(v);
             delete v;
-            //std::cerr << "update called from deleteVertex\n";
             updateConnectedComponent();
-            //LOG_DEBUG("finished delete vertex");
+            LOG_DEBUG("finished delete vertex");
         }
 
         void resizeVertices(int count) {
             LOG_DEBUG("resize vertices to " + std::to_string(count));
-            //std::cerr << "update called from resizeVertices\n";
             updateConnectedComponent();
             while (graph.size() > count)
                 deleteVertex(graph.begin()->first);
@@ -209,7 +203,6 @@ namespace Graphene {
         void clearAllEdges() {
             for (auto &uIt : graph)
                 uIt.second.clear();
-            //std::cerr << "update called from clearAllEdges\n";
             updateConnectedComponent();
         }
 
@@ -225,10 +218,9 @@ namespace Graphene {
             if (graph.find(u)->second.find(v) == graph.find(u)->second.end())
                 graph.find(u)->second.insert({v, std::unordered_set<Edge*>()});
             graph.find(u)->second.find(v)->second.insert(new Edge());
-            //std::cerr << "update called from newEdge\n";
-            updateConnectedComponent();
-            //LOG_DEBUG("new edge " + u->UUID + " > " + v->UUID);
             u->component->pendingBlockCutTreeRebuild = true;
+            v->component->pendingBlockCutTreeRebuild = true; // one of the components will die after update
+            updateConnectedComponent();
             return e;
         }
 

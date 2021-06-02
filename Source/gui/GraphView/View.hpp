@@ -68,7 +68,7 @@ namespace Gui {
             }
 
             void canvasEnd() {
-                framerateCounter.countFrame();
+                framerateCounter.resetCycle();
 
                 ImGui::GetWindowDrawList()->PopClipRect();
                 ImGui::End();

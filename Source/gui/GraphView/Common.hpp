@@ -10,7 +10,7 @@ namespace Gui {
             ::Graphene::Core* core;
         }
         namespace View {
-            Utils::FramerateCounter framerateCounter;
+            Utils::CycleMonitor framerateCounter;
 
             ImVec2 canvasSize;
             ImVec2 canvasCursor;

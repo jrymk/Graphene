@@ -11,63 +11,66 @@
 
 namespace Gui {
 
-	namespace Toolbar {
+    namespace Toolbar {
 
-		bool enableLiveUpdate = true;
-		bool updateGraph = false;
+        bool enableLiveUpdate = true;
+        bool updateGraph = false;
 
-		void show(Graphene::Core* core) {
+        void show(Graphene::Core* core) {
 
-			ImGui::SetNextWindowSizeConstraints(ImVec2(100, 100), ImVec2(FLT_MAX, FLT_MAX));
-			ImGui::Begin("Toolbar");
+            ImGui::SetNextWindowSizeConstraints(ImVec2(100, 100), ImVec2(FLT_MAX, FLT_MAX));
+            ImGui::Begin("Toolbar");
 
-			ImGui::Checkbox("Enable live update (L)", &enableLiveUpdate);
+            ImGui::Checkbox("Enable live update (L)", &enableLiveUpdate);
 
-			ImGui::SameLine();
+            ImGui::SameLine();
 
-			updateGraph = false;
-			if (ImGui::Button("Update graph") || enableLiveUpdate)
-				updateGraph = true;
+            updateGraph = false;
+            if (ImGui::Button("Update graph") || enableLiveUpdate)
+                updateGraph = true;
 
-			if (ImGui::Button("Reset constants to default")) {
-				Constants::c1 = 2;
-				Constants::c2 = 1;
-				Constants::c3 = 1;
+            if (ImGui::Button("Reset constants to default")) {
+                Constants::c1 = 2;
+                Constants::c2 = 1;
+                Constants::c3 = 1;
                 Constants::c4 = 0.1;
                 Constants::c5 = 0.1;
                 Constants::c6 = 0.001;
-			}
+            }
 
-			ImGui::SliderFloat("C1 (Vertex repel factor)", &Constants::c1, 0.01f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
-			ImGui::SameLine();
-			Gui::HelpMarker("[C1] * log(d / C2)");
-
-			ImGui::SliderFloat("C2 (Vertex repel exponent)", &Constants::c2, 0.01f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
-			ImGui::SameLine();
-			Gui::HelpMarker("C1 * log(d / [C2])");
-
-			ImGui::SliderFloat("C3 (Edge minimum length)", &Constants::c3, 0.01f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
-			ImGui::SameLine();
-			Gui::HelpMarker("[C3] / (d^2)");
-
-			ImGui::SliderFloat("C4 (Force multiplier)", &Constants::c4, 0.001f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
-			ImGui::SameLine();
-			Gui::HelpMarker("Force multiplier");
-
-            ImGui::SliderFloat("C5 (Torque multiplier)", &Constants::c5, 0.001f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
+            ImGui::SliderFloat("C1", &Constants::c1, 0.01f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
             ImGui::SameLine();
-            Gui::HelpMarker("?");
+            Gui::HelpMarker("[C1] * log(d / C2)");
 
-            ImGui::SliderFloat("C6 (Max coeff)", &Constants::c6, 0.00001f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
+            ImGui::SliderFloat("C2", &Constants::c2, 0.01f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
             ImGui::SameLine();
-            Gui::HelpMarker("?");
+            Gui::HelpMarker("C1 * log(d / [C2])");
 
+            ImGui::SliderFloat("C3", &Constants::c3, 0.01f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
+            ImGui::SameLine();
+            Gui::HelpMarker("[C3] / (d^2)");
+
+            ImGui::SliderFloat("C4", &Constants::c4, 0.001f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
+            ImGui::SameLine();
+            Gui::HelpMarker("Force multiplier");
+
+            ImGui::Checkbox("Enable force between components", &Constants::forceBetweenComponents);
+
+            if (Constants::forceBetweenComponents) {
+                ImGui::SliderFloat("C5", &Constants::c5, 0.001f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
+                ImGui::SameLine();
+                Gui::HelpMarker("?");
+
+                ImGui::SliderFloat("C6", &Constants::c6, 0.00001f, 10000.0f, "%f", ImGuiSliderFlags_Logarithmic);
+                ImGui::SameLine();
+                Gui::HelpMarker("?");
+            }
 
             ImGui::Checkbox(u8"Show demo window", &showDemoWindow);
 
-			ImGui::End();
-		}
+            ImGui::End();
+        }
 
-	}
+    }
 
 }

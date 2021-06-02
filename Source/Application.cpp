@@ -45,6 +45,8 @@ int main() {
 
         updateGraphAsync = Gui::Toolbar::updateGraph;
         if(updateGraphAsync) core.updatePos();
+
+        core.updateRateCounter.updateWithoutCount();
     }
 
 //    endBackgroundUpdateLoop = true;

@@ -16,4 +16,6 @@ namespace Constants {
     float c5 = 0.1;
     float c6 = 0.001;
 
+    bool forceBetweenComponents = false;
+
 }
