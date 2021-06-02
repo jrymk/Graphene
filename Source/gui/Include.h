@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Window.hpp"
-#include "Toolbar.hpp"
+#include "Toolbox.hpp"
 #include "Input.hpp"
 #include "RawInput.hpp"
 #include "AdjMatrixInput.hpp"
@@ -11,12 +11,6 @@
 #include "GraphView/GraphView.hpp"
 
 namespace Gui {
-
-	Graphene::Core* core;
-
-	ImVec4 clearColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-
 
 }
 
