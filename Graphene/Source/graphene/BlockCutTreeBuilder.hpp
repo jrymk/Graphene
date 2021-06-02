@@ -47,7 +47,8 @@ namespace Graphene {
 //            std::cerr << "root " << root->UUID << "\n";
             countChildren(root);
             dfs(root, root);
-
+            // stores the bcc to vertices mapping (actual)
+            buildMapping();
             LOG_DEBUG("block cut tree built (took " + std::to_string(timer.getMicroseconds()) + "us)");
         }
 
@@ -121,6 +122,24 @@ namespace Graphene {
             }
             if (now == parent && children[now] == 1 && articulation.find(now) == articulation.end()) {
                 makeBlock();
+            }
+        }
+
+        void buildMapping() {
+            component->blockCutTree->mapping.clear();
+            for (auto &bcc : component->blockCutTree->adjList) {
+                if (bcc.first->type == BiconnectedComponentType::BLOCK)
+                    component->blockCutTree->mapping.insert({bcc.first, std::unordered_set<Vertex*>()});
+            }
+            for (auto &v : component->blockCutTree->bcc) {
+                if (v.second->type == BiconnectedComponentType::BLOCK)
+                    component->blockCutTree->mapping.find(v.second)->second.insert(v.first);
+                else {
+                    for (auto &c : component->blockCutTree->adjList.find(v.second)->second) {
+                        if (c->type == BiconnectedComponentType::BLOCK)
+                            component->blockCutTree->mapping.find(c)->second.insert(v.first);
+                    }
+                }
             }
         }
 

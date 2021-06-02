@@ -8,6 +8,7 @@
 #include "../../utils/ProfilerUtils.hpp"
 
 #include "Common.hpp"
+#include "../../graphene/BlockCutTree.hpp"
 #include "RenderUtils.hpp"
 
 namespace Gui {
@@ -150,8 +151,22 @@ namespace Gui {
                         ImGui::GetWindowDrawList()->AddCircleFilled(
                                 vertexScreenCoord,
                                 float(20.0 * pow(View::zoomLevel, 0.1) * ((it.v == Controls::rightMouseDownVertex) ? 1.1 : 1.0)),
-                                (it.v == Controls::rightMouseDownVertex) ? ImGui::ColorConvertFloat4ToU32(component->color)
-                                                                         : ImGui::ColorConvertFloat4ToU32(component->color));
+                                ImGui::ColorConvertFloat4ToU32(component->color)
+                        );
+
+                        // draw bcc indicator
+                        if (component->blockCutTree->bcc.find(it.v) != component->blockCutTree->bcc.end()) {
+                            ImGui::GetWindowDrawList()->AddText(
+                                    {vertexScreenCoord.x, vertexScreenCoord.y - 16.0f},
+                                    IM_COL32(255, 255, 255, 255),
+                                    std::string(((component->blockCutTree->bcc.find(it.v)->second->type == ::Graphene::ARTICULATION)? "ARTICULATION" : "BLOCK")).c_str(),
+                                    nullptr);
+                            ImGui::GetWindowDrawList()->AddText(
+                                    vertexScreenCoord,
+                                    IM_COL32(255, 255, 255, 255),
+                                    component->blockCutTree->bcc.find(it.v)->second->UUID.c_str(),
+                                    nullptr);
+                        }
 
                         ImGui::PushFont(Gui::vertexTextFont);
                         ImGui::SetWindowFontScale(
@@ -196,9 +211,9 @@ namespace Gui {
                 if (Controls::hoveredVertex != nullptr) {
                     ImGui::GetWindowDrawList()->AddCircle(
                             ImVec2(float(View::canvasOrigin.x -
-                                   (View::centerContext.x - Controls::hoveredVertex->getCoord().x) * View::canvasFrameSize * View::zoomLevel),
+                                         (View::centerContext.x - Controls::hoveredVertex->getCoord().x) * View::canvasFrameSize * View::zoomLevel),
                                    float(View::canvasOrigin.y +
-                                   (View::centerContext.y - Controls::hoveredVertex->getCoord().y) * View::canvasFrameSize * View::zoomLevel)
+                                         (View::centerContext.y - Controls::hoveredVertex->getCoord().y) * View::canvasFrameSize * View::zoomLevel)
                             ),
                             float(25.0 * pow(View::zoomLevel, 0.1)),
                             IM_COL32(150, 150, 255, 100),

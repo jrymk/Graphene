@@ -7,7 +7,7 @@
 #include <random>
 #include <algorithm>
 #include "imgui.h"
-#include "../utils/UUIDGen.hpp"
+#include "../utils/GenRandom.hpp"
 #include "Constants.hpp"
 #include "Vector.hpp"
 
@@ -50,7 +50,7 @@ namespace Graphene {
     public:
         Vertex(int _num) {
             number = _num;
-            UUID = Utils::UUIDGen::generate_64();
+            UUID = Utils::UID::generate_64();
         }
 
         void setCoord(Vec2f newCoord) {

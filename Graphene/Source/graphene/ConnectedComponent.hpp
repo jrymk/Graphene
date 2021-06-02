@@ -7,7 +7,7 @@
 #include <random>
 #include <algorithm>
 #include "imgui.h"
-#include "../utils/UUIDGen.hpp"
+#include "../utils/GenRandom.hpp"
 #include "../utils/Log.hpp"
 #include "BlockCutTree.hpp"
 
@@ -88,7 +88,7 @@ namespace Graphene {
         explicit ConnectedComponent(Vertex* v) {
             root = v;
             ImGui::ColorConvertHSVtoRGB(genRandom() * 360.0f, 0.9f, 0.8f, color.x, color.y, color.z);
-            UUID = Utils::UUIDGen::generate_64();
+            UUID = Utils::UID::generate_64();
         }
 
         void updateConnectedComponent(

@@ -28,13 +28,13 @@ namespace Graphene {
 
     public:
         // graph update rate
-        Utils::FramerateCounter updateRateCounter;
+        Utils::CycleMonitor updateRateCounter;
 
         Graph* getGraphObj() {
             return graph;
         }
 
-        std::unordered_map<Vertex*, std::unordered_multimap<Vertex*, std::unordered_set<Edge*>>>& getGraph() {
+        std::unordered_map<Vertex*, std::unordered_multimap<Vertex*, std::unordered_set<Edge*>>> &getGraph() {
             return graph->graph;
         }
 
@@ -140,13 +140,15 @@ namespace Graphene {
 
         void updatePos() {
             Utils::Timer timer;
+
             //graph->mutex.lock();
             //NOTE: You can not run graph->updateConnectedComponent() here as this thread is different from everything else
             for (auto &component : graph->components) {
                 updatePosWithinComponent(component);
             }
 
-            updatePosBetweenComponents();
+            if (Constants::forceBetweenComponents)
+                updatePosBetweenComponents();
 
             for (auto &component : graph->components) {
 
@@ -174,7 +176,7 @@ namespace Graphene {
                     component->radius = sec.radius;
                 }
             }
-            updateRateCounter.countFrame();
+            updateRateCounter.resetCycle();
             //graph->mutex.unlock();
             //LOG_VERBOSE("positions updated (took " + std::to_string(timer.getMicroseconds()) + "us)");
         }

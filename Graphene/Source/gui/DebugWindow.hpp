@@ -21,10 +21,16 @@ namespace Gui {
 
             core->getGraphObj()->debugVertexHighlight = nullptr;
 
-            if (ImGui::Button("Force update components"))
+            if (ImGui::Button("Update components now"))
                 core->getGraphObj()->updateConnectedComponent();
 
-            ImGui::Text(("Components (" + std::to_string(core->getGraph().size()) + ")").c_str());
+            if (ImGui::Button("Rebuild all block cut trees now")) {
+                for (auto &c : core->getComponents())
+                    c->pendingBlockCutTreeRebuild = true;
+                core->getGraphObj()->updateConnectedComponent();
+            }
+
+                ImGui::Text("Components (%d)", int(core->getGraph().size()));
             if (core->getGraph().empty()) {
                 ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.25f, 0.25f, 1.0f));
                 ImGui::Text("Nothing to show here");
