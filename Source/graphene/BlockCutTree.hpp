@@ -9,7 +9,7 @@ namespace Graphene {
 
     enum BiconnectedComponentType {
         BLOCK,
-        ARTICULATION
+        ARTICULATION,
     };
 
     /**
@@ -24,11 +24,15 @@ namespace Graphene {
 
     class BiconnectedComponent {
     public:
+
         BiconnectedComponentType type;
         std::vector<Vertex*> vertices;
+        std::string UUID;
 
         explicit BiconnectedComponent(BiconnectedComponentType type) :
-                type(type) {
+                type(type),
+                UUID(Utils::UID::generate_64()
+                ) {
         }
 
         void addVertex(Vertex* vertex) {
@@ -40,6 +44,7 @@ namespace Graphene {
     public:
         std::unordered_map<Vertex*, BiconnectedComponent*> bcc;
         std::unordered_map<BiconnectedComponent*, std::unordered_set<BiconnectedComponent*>> adjList;
+        std::unordered_map<BiconnectedComponent*, std::unordered_set<Vertex*>> mapping;
 
         ~BlockCutTree() {
             for (auto &i : adjList) {
