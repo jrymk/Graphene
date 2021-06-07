@@ -28,7 +28,7 @@ namespace Graphene {
          */
         void build() {
             Utils::Timer timer;
-            LOG_INFO("building block cut tree for component " + component->getUUID());
+            LOG_INFO("building block cut tree for component " + component->uid);
 
             delete component->blockCutTree;
             component->blockCutTree = new BlockCutTree();
@@ -44,7 +44,7 @@ namespace Graphene {
                 return;
             }
             auto root = component->getRootVertex();
-//            std::cerr << "root " << root->UUID << "\n";
+//            std::cerr << "root " << root->uid << "\n";
             countChildren(root);
             dfs(root, root);
             // stores the bcc to vertices mapping (actual)
@@ -62,7 +62,7 @@ namespace Graphene {
         std::stack<Vertex*> vertexStack;
 
         void countChildren(Vertex* now) {
-//            std::cerr << "count " << now->UUID << "\n";
+//            std::cerr << "count " << now->uid << "\n";
             children[now] = 0;
             visited.insert(now);
             for (Vertex* i : component->adjList[now]) {
@@ -92,7 +92,7 @@ namespace Graphene {
             if (articulation.find(now) != articulation.end()) {
                 return component->blockCutTree->bcc[now];
             }
-//            std::cerr << "articulation " << now->UUID << std::endl;
+//            std::cerr << "articulation " << now->uid << std::endl;
             articulation.insert(now);
             auto bcc = new BiconnectedComponent(BiconnectedComponentType::ARTICULATION);
             component->blockCutTree->adjList[bcc];

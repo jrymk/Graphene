@@ -35,7 +35,7 @@ namespace Graphene {
         bool pauseMove = false;
         int connectedComponent = 0;
         ConnectedComponent* component;
-        std::string UUID;
+        std::string uid;
         char name[1024] = "";
 
     private:
@@ -50,7 +50,7 @@ namespace Graphene {
     public:
         Vertex(int _num) {
             number = _num;
-            UUID = Utils::UID::generate_64();
+            uid = Utils::UID::generate_64();
         }
 
         void setCoord(Vec2f newCoord) {
