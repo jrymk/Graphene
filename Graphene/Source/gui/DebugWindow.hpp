@@ -39,14 +39,14 @@ namespace Gui {
                 for (auto &cIt : core->getComponents()) {
                     ImGui::SetNextItemOpen(true);
                     ImGui::PushStyleColor(ImGuiCol_Text, cIt->color);
-                    if (ImGui::TreeNode(("Component: " + cIt->getUUID()).c_str())) {
+                    if (ImGui::TreeNode(("Component: " + cIt->uid).c_str())) {
                         for (auto &uIt : cIt->adjList) {
                             ImGui::SetNextItemOpen(true);
-                            if (ImGui::TreeNode(("Vertex: " + uIt.first->UUID).c_str())) {
+                            if (ImGui::TreeNode(("Vertex: " + uIt.first->uid).c_str())) {
                                 if (ImGui::IsItemHovered())
                                     core->getGraphObj()->debugVertexHighlight = uIt.first;
                                 for (auto &vIt : uIt.second) {
-                                    ImGui::Text(vIt->UUID.c_str());
+                                    ImGui::Text(vIt->uid.c_str());
                                     if (ImGui::IsItemHovered())
                                         core->getGraphObj()->debugVertexHighlight = vIt;
                                 }
@@ -67,11 +67,11 @@ namespace Gui {
             } else {
                 for (auto &uIt : core->getGraph()) {
                     ImGui::SetNextItemOpen(true);
-                    if (ImGui::TreeNode((uIt.first->UUID).c_str())) {
+                    if (ImGui::TreeNode((uIt.first->uid).c_str())) {
                         if (ImGui::IsItemHovered())
                             core->getGraphObj()->debugVertexHighlight = uIt.first;
                         for (auto &vIt : uIt.second) {
-                            ImGui::Text(vIt.first->UUID.c_str());
+                            ImGui::Text(vIt.first->uid.c_str());
                             if (ImGui::IsItemHovered())
                                 core->getGraphObj()->debugVertexHighlight = vIt.first;
                         }

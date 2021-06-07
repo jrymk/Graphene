@@ -66,7 +66,7 @@ namespace Graphene {
             LOG_VERBOSE("checking for invalid components");
             for (auto component = components.begin(); component != components.end();) {
                 if (!(*component)->isValidComponent()) {
-                    LOG_VERBOSE((*component)->getUUID() + " is no longer a valid component");
+                    LOG_VERBOSE((*component)->uid + " is no longer a valid component");
                     component = deleteConnectedComponent((*component), true);
                 } else
                     component++;
@@ -74,9 +74,9 @@ namespace Graphene {
 
             LOG_VERBOSE("checking for dangling vertices");
             for (auto &it : visited) {
-                //std::cerr << it.first->UUID << " is " << it.second << " visited" << "\n";
+                //std::cerr << it.first->uid << " is " << it.second << " visited" << "\n";
                 if (!it.second) {
-                    LOG_VERBOSE(it.first->UUID + " has no component connected");
+                    LOG_VERBOSE(it.first->uid + " has no component connected");
                     //std::cerr << "new component for vertex above" << "\n";
                     auto c = newConnectedComponent(it.first);
                     c->updateConnectedComponent(adjList, visited);
@@ -96,7 +96,7 @@ namespace Graphene {
         }
 
         std::unordered_set<ConnectedComponent*>::iterator deleteConnectedComponent(ConnectedComponent* component, bool deleteContent) {
-            LOG_DEBUG("delete component " + component->getUUID() + (deleteContent ? " with " : " without ") + "deleting content");
+            LOG_DEBUG("delete component " + component->uid + (deleteContent ? " with " : " without ") + "deleting content");
 
             LOG_VERBOSE("erasing all edges");
             if (!deleteContent) {
@@ -110,16 +110,16 @@ namespace Graphene {
 
             for (auto &it : component->adjList) {
                 if (deleteContent) {
-                    LOG_VERBOSE("deleting vertex " + it.first->UUID);
+                    LOG_VERBOSE("deleting vertex " + it.first->uid);
                     graph.erase(it.first);
                     delete it.first;
                 } else {
-                    LOG_VERBOSE("new component for vertex " + it.first->UUID);
+                    LOG_VERBOSE("new component for vertex " + it.first->uid);
                     newConnectedComponent(it.first);
                 }
             }
 
-            LOG_VERBOSE("removing component " + component->getUUID() + " from list");
+            LOG_VERBOSE("removing component " + component->uid + " from list");
             auto it = components.find(component);
             delete *it;
             auto eraseIt = components.erase(it);
@@ -143,7 +143,7 @@ namespace Graphene {
         }
 
         void deleteEdge(Vertex* u, Vertex* v) {
-            LOG_DEBUG("delete all edges connecting " + u->UUID + " and " + v->UUID);
+            LOG_DEBUG("delete all edges connecting " + u->uid + " and " + v->uid);
             graph.find(u)->second.erase(v);
             graph.find(v)->second.erase(u);
             u->component->pendingBlockCutTreeRebuild = true;
@@ -152,20 +152,20 @@ namespace Graphene {
         }
 
         void deleteEdgeNoUpdate(Vertex* u, Vertex* v) {
-            LOG_DEBUG("delete all edges connecting " + u->UUID + " and " + v->UUID);
+            LOG_DEBUG("delete all edges connecting " + u->uid + " and " + v->uid);
             graph.find(u)->second.erase(v);
             graph.find(v)->second.erase(u);
         }
 
         void deleteVertex(Vertex* v) {
-            LOG_DEBUG("delete vertex " + v->UUID);
+            LOG_DEBUG("delete vertex " + v->uid);
             if (v->component->getRootVertex() == v) {
                 if (v->component->adjList.size() == 1) { // v is the only vertex in the component: delete the component (it should not have adjacent edges too)
-                    LOG_VERBOSE("removing component " + v->component->getUUID());
+                    LOG_VERBOSE("removing component " + v->component->uid);
                     components.erase(v->component);
                     delete v->component;
                 } else { // transfer component ownership to random remaining vertex
-                    LOG_VERBOSE("erasing adjacent edges with " + v->UUID);
+                    LOG_VERBOSE("erasing adjacent edges with " + v->uid);
                     for (auto &it : v->component->adjList) {
                         deleteEdgeNoUpdate(it.first, v);
                         deleteEdgeNoUpdate(v, it.first);
@@ -173,7 +173,7 @@ namespace Graphene {
                     v->component->adjList.erase(v);
                     if (v == v->component->getRootVertex()) {
                         v->component->setRootVertex(v->component->adjList.begin()->first);
-                        LOG_VERBOSE("transfer component " + v->component->getUUID() + " root to " + v->component->getRootVertex()->UUID);
+                        LOG_VERBOSE("transfer component " + v->component->uid + " root to " + v->component->getRootVertex()->uid);
                     }
                 }
             }
@@ -213,7 +213,7 @@ namespace Graphene {
         }
 
         Edge* newEdge(Vertex* u, Vertex* v) {
-            LOG_DEBUG("new edge between " + u->UUID + " and " + v->UUID);
+            LOG_DEBUG("new edge between " + u->uid + " and " + v->uid);
             auto e = new Edge();
             if (graph.find(u)->second.find(v) == graph.find(u)->second.end())
                 graph.find(u)->second.insert({v, std::unordered_set<Edge*>()});

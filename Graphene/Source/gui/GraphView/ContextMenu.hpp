@@ -20,7 +20,7 @@ namespace Gui {
                     if (ImGui::BeginPopupContextItem()) {
                         Controls::contextMenuOpen = true;
                         if (Controls::hoveredVertex != nullptr) {
-                            ImGui::Text(("Vertex: " + Controls::hoveredVertex->UUID).c_str());
+                            ImGui::Text(("Vertex: " + Controls::hoveredVertex->uid).c_str());
                             if (ImGui::Button("Delete")) {
                                 Graphene::core->getGraphObj()->deleteVertex(Controls::hoveredVertex);
                                 Controls::contextMenuOpen = false;
@@ -29,7 +29,7 @@ namespace Gui {
                             if (ImGui::IsItemFocused())
                                 Controls::forceOpenContextMenu = true;
                         } else if (Controls::hoveredComponent != nullptr) {
-                            ImGui::Text(("Component: " + Controls::hoveredComponent->getUUID()).c_str());
+                            ImGui::Text(("Component: " + Controls::hoveredComponent->uid).c_str());
                             if (ImGui::Button("Disassemble")) {
                                 Graphene::core->getGraphObj()->deleteConnectedComponent(Controls::hoveredComponent, false);
                                 Controls::contextMenuOpen = false;

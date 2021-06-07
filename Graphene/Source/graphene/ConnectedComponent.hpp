@@ -17,7 +17,6 @@ namespace Graphene {
     private:
         bool validComponent = false;
         Vertex* root;
-        std::string UUID;
 
         Vec2f centroid = Vec2f(0.0f, 0.0f);
         Vec2f force = Vec2f(0.0f, 0.0f);
@@ -28,6 +27,7 @@ namespace Graphene {
         double radius = 0.0f;
         std::pair<Vec2f, Vec2f> bb = {{0.0f, 0.0f}, {0.0f, 0.0f}};
         std::pair<Vec2f, Vec2f> bbBack = {{0.0f, 0.0f}, {0.0f, 0.0f}};
+        std::string uid;
 
         // a new baby needs a block cut tree too
         bool pendingBlockCutTreeRebuild = true;
@@ -42,10 +42,6 @@ namespace Graphene {
 
         void setRootVertex(Vertex* v) {
             root = v;
-        }
-
-        std::string getUUID() {
-            return UUID;
         }
 
         void updateCentroid() {
@@ -88,7 +84,7 @@ namespace Graphene {
         explicit ConnectedComponent(Vertex* v) {
             root = v;
             ImGui::ColorConvertHSVtoRGB(genRandom() * 360.0f, 0.9f, 0.8f, color.x, color.y, color.z);
-            UUID = Utils::UID::generate_64();
+            uid = Utils::UID::generate_64();
         }
 
         void updateConnectedComponent(
@@ -107,7 +103,7 @@ namespace Graphene {
         void updateConnectedComponent(
                 std::unordered_map<Vertex*, std::unordered_set<Vertex*>>& graph,
                 std::unordered_map<Vertex*, bool>& visited) {
-            LOG_VERBOSE("updating component " + this->UUID);
+            LOG_VERBOSE("updating component " + this->uid);
             validComponent = !(visited.find(root)->second);
 
             if (!validComponent) {
