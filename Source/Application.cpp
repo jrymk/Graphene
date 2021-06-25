@@ -46,7 +46,6 @@ static void GrapheneSettingsHandler_ReadLine(ImGuiContext *, ImGuiSettingsHandle
 
     int sizeX, sizeY;
     if (sscanf(line, "Size=%d,%d", &sizeX, &sizeY) == 2) {
-        std::cerr << "size\n";
         LOG_INFO(std::string("GrapheneSettingsHandler: Size: ") + std::to_string(sizeX) + ", " + std::to_string(sizeY));
         return;
     }

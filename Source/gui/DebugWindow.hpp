@@ -19,6 +19,9 @@ namespace Gui {
             ImGui::SetNextWindowSizeConstraints(ImVec2(100, 100), ImVec2(FLT_MAX, FLT_MAX));
             ImGui::Begin("Debug");
 
+            if (ImGui::Button("Write to Graphene.ini"))
+                ImGui::SaveIniSettingsToDisk(ImGui::GetIO().IniFilename);
+
             core->getGraphObj()->debugVertexHighlight = nullptr;
 
             if (ImGui::Button("Update components now"))
