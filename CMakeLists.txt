@@ -75,7 +75,6 @@ add_executable(Graphene
         Dependencies/imgui/imgui_draw.cpp
         Dependencies/imgui/imgui_tables.cpp
         Dependencies/imgui/imgui_widgets.cpp
-        Dependencies/imgui/imgui_spectrum.cpp
         Dependencies/imgui/imgui.cpp
         Dependencies/imgui/backends/imgui_impl_glfw.cpp
         Dependencies/imgui/backends/imgui_impl_opengl3.cpp

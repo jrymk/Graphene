@@ -1,7 +1,7 @@
 #pragma once
 
 #include "imgui.h"
-#include "imgui_spectrum.h"
+//#include "imgui_spectrum.h"
 
 namespace Gui {
 
@@ -27,11 +27,11 @@ namespace Gui {
 		style->Colors[ImGuiCol_WindowBg].w = 1.0f;
 		ImVec4* colors = ImGui::GetStyle().Colors;
 
-		colors[ImGuiCol_SliderGrabHovered] = ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE400);
-		colors[ImGuiCol_SliderGrabActive] = ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE700);
-		colors[ImGuiCol_SliderBg] = ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::GRAY500);
-		colors[ImGuiCol_SliderBgHovered] = ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::GRAY600);
-		colors[ImGuiCol_SliderBgActive] = ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::GRAY600);
+		//colors[ImGuiCol_SliderGrabHovered] = ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE400);
+		//colors[ImGuiCol_SliderGrabActive] = ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE700);
+		//colors[ImGuiCol_SliderBg] = ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::GRAY500);
+		//colors[ImGuiCol_SliderBgHovered] = ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::GRAY600);
+		//colors[ImGuiCol_SliderBgActive] = ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::GRAY600);
 		colors[ImGuiCol_TextDisabled] = ImVec4(0.55f, 0.55f, 0.55f, 1.0f);
 		colors[ImGuiCol_Button] = ImVec4(0.97f, 0.97f, 0.97f, 0.00f);
 		colors[ImGuiCol_ButtonHovered] = ImVec4(0.0f, 0.0f, 0.0f, 0.20f);
@@ -42,7 +42,7 @@ namespace Gui {
 		colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.89f, 0.89f, 0.89f, 0.51f);
 		colors[ImGuiCol_MenuBarBg] = ImVec4(0.86f, 0.86f, 0.86f, 1.00f);
 		colors[ImGuiCol_Border] = ImVec4(0.20f, 0.20f, 0.20f, 0.3f);
-		colors[ImGuiCol_BorderShadow] = ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::Static::NONE); // We don't want shadows. Ever.
+		//colors[ImGuiCol_BorderShadow] = ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::Static::NONE); // We don't want shadows. Ever.
 		colors[ImGuiCol_Separator] = ImVec4(0.59f, 0.59f, 0.59f, 0.62f);
 		colors[ImGuiCol_SeparatorHovered] = ImVec4(0.00f, 0.56f, 1.00f, 0.78f);
 		colors[ImGuiCol_SeparatorActive] = ImVec4(0.00f, 0.56f, 1.00f, 1.00f);

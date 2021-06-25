@@ -44,6 +44,7 @@ namespace Utils {
             logBuffer.push_back(
                     LogItem(message, file, line, severity)
             );
+            //std::cerr << message << "\n";
             if (logBuffer.size() == 10001)
                 logBuffer.pop_front();
         }

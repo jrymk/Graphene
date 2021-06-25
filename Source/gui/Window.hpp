@@ -8,7 +8,6 @@
 #include "../utils/ExceptionHandler.hpp"
 #include "../graphene/Include.h"
 #include "Themes.hpp"
-#include "imgui_spectrum.h"
 
 /*
 // use dedicated graphics card by default
@@ -76,7 +75,7 @@ namespace Gui {
 		ImGui::GetIO().ConfigWindowsMoveFromTitleBarOnly = true;
         //ImGui::GetIO().MouseDrawCursor = true;
 
-		ImGui::Spectrum::StyleColorsSpectrum();
+		//ImGui::Spectrum::StyleColorsSpectrum();
 		setTheme();
 
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -108,7 +107,7 @@ namespace Gui {
 		framerateTextFont = ImGui::GetIO().Fonts->AddFontFromFileTTF("./Barlow-Medium.ttf", 30.0f, &config, ImGui::GetIO()
 				.Fonts->GetGlyphRangesDefault());
 
-		ImGui::CreateContext();
+		//ImGui::CreateContext();
 
 		return 0;
 	}
