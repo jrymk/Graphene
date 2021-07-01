@@ -35,9 +35,7 @@ namespace Gui {
 		}
 	}
 
-	void glfwErrorCallback(int error, const char* description) {
-		ERR("GLFW Error: " + std::to_string(error) + std::string(description));
-	}
+
 
 	int init() {
 
@@ -70,7 +68,7 @@ namespace Gui {
 		// multi viewport is disabled, so windows don't get hidden by the main window
 		//ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-		ImGui::GetIO().ConfigViewportsNoDecoration = true;
+		//ImGui::GetIO().ConfigViewportsNoDecoration = true;
 		ImGui::GetIO().ConfigViewportsNoDefaultParent = true;
 		ImGui::GetIO().ConfigWindowsMoveFromTitleBarOnly = true;
         //ImGui::GetIO().MouseDrawCursor = true;

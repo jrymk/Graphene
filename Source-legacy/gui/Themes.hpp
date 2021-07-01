@@ -12,7 +12,7 @@ namespace Gui {
 		style->DisplaySafeAreaPadding.y = 8.0f;
 		style->WindowRounding = 4.0f;
 		style->WindowBorderSize = 1.0f;
-		style->WindowMenuButtonPosition = -1;
+		//style->WindowMenuButtonPosition = -1;
 		style->GrabMinSize = 5.0f;
 		style->FrameBorderSize = 1.2f;
 		style->ChildBorderSize = 1.2f;

@@ -60,9 +60,8 @@ include_directories(Dependencies/imgui/examples/libs/usynergy)
 include_directories(Dependencies/imgui/misc/cpp)
 include_directories(Dependencies/imgui/misc/freetype)
 include_directories(Dependencies/imgui/misc/single_file)
-include_directories(Source/graphene)
-include_directories(Source/gui)
-include_directories(Source/utils)
+include_directories(Source)
+
 
 
 
@@ -78,7 +77,7 @@ add_executable(Graphene
         Dependencies/imgui/imgui.cpp
         Dependencies/imgui/backends/imgui_impl_glfw.cpp
         Dependencies/imgui/backends/imgui_impl_opengl3.cpp
-        Source/Application.cpp)
+        Source/main.cpp)
 
 
 target_link_libraries(Graphene imm32.lib)

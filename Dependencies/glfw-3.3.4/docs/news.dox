@@ -834,7 +834,7 @@ showing it.
 
 Windowed mode windows can now be created without decorations, e.g. things like
 a frame, a title bar, with the @ref GLFW_DECORATED window hint and attribute.
-This allows for the creation of things like splash screens.
+This allows for the creation of things like init screens.
 
 
 @subsubsection news_30_keymods Modifier key bit masks

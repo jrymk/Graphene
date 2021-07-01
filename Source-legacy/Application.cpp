@@ -12,6 +12,7 @@
 #include "utils/ExceptionHandler.hpp"
 #include "graphene/Include.h"
 #include "gui/Include.h"
+#include "tools/config.hpp"
 
 //#include "ui/imgui_handler.hpp"
 
