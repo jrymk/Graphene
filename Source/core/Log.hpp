@@ -1,7 +1,8 @@
 #pragma once
 
+#include <deque>
 #include <vector>
-#include "../graphene/Structure.hpp"
+#include "Structure.hpp"
 
 #define LOG_ERROR(x) Utils::Log::addLogEntry(x, __FILE__, __LINE__, Utils::Log::LogItem::Severity::ERR)
 #define LOG_WARNING(x) Utils::Log::addLogEntry(x, __FILE__, __LINE__, Utils::Log::LogItem::Severity::WARNING)

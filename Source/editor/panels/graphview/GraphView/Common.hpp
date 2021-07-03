@@ -1,13 +1,11 @@
 #pragma once
 
-#include "../../graphene/Include.h"
-#include "../../utils/ProfilerUtils.hpp"
+#include "../../../../core/Include.h"
 
-
-namespace Gui {
+namespace gph {
     namespace GraphView {
         namespace Graphene {
-            ::Graphene::Core* core;
+            ::gph::Core* core;
         }
         namespace View {
             Utils::CycleMonitor framerateCounter;
@@ -31,14 +29,14 @@ namespace Gui {
             bool contextMenuOpen = false;
             bool forceOpenContextMenu = false;
 
-            ::Graphene::Vertex* leftMouseSelectionVertex = nullptr;
-            ::Graphene::Vertex* leftMouseDownVertex = nullptr;
+            ::gph::Vertex* leftMouseSelectionVertex = nullptr;
+            ::gph::Vertex* leftMouseDownVertex = nullptr;
             ImVec2 leftMouseDownPos;
-            ::Graphene::Vertex* rightMouseSelectionVertex = nullptr;
-            ::Graphene::Vertex* rightMouseDownVertex = nullptr;
+            ::gph::Vertex* rightMouseSelectionVertex = nullptr;
+            ::gph::Vertex* rightMouseDownVertex = nullptr;
             ImVec2 rightMouseDownPos;
-            ::Graphene::Vertex* hoveredVertex = nullptr;
-            ::Graphene::ConnectedComponent* hoveredComponent = nullptr;
+            ::gph::Vertex* hoveredVertex = nullptr;
+            ::gph::ConnectedComponent* hoveredComponent = nullptr;
         }
 
         Utils::Timer* animationTimer = new Utils::Timer();

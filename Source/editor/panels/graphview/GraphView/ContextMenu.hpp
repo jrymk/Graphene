@@ -5,11 +5,10 @@
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_glfw.h>
 #include <GLFW/glfw3.h>
-#include "../../utils/ProfilerUtils.hpp"
 
 #include "Common.hpp"
 
-namespace Gui {
+namespace gph {
     namespace GraphView {
         namespace ContextMenu {
 

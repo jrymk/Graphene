@@ -6,7 +6,7 @@
 #include <backends/imgui_impl_glfw.h>
 #include <GLFW/glfw3.h>
 #include <vector>
-#include "Structure.hpp"
+#include "../../../../core/Structure.hpp"
 
 
 namespace Gui {

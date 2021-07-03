@@ -1,9 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "../Window.hpp"
 #include "Triangulate.hpp"
-#include "../../utils/Log.hpp"
 
 namespace Gui {
     void drawPolygon(const std::vector<ImVec2> &poly, ImU32 col) {

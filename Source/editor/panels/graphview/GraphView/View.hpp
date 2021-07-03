@@ -6,11 +6,10 @@
 #include <backends/imgui_impl_glfw.h>
 #include <GLFW/glfw3.h>
 
-#include "../../graphene/Structure.hpp"
-#include "../../utils/ProfilerUtils.hpp"
+#include "../../../../core/Structure.hpp"
 #include "Common.hpp"
 
-namespace Gui {
+namespace gph {
     namespace GraphView {
         namespace View {
 
@@ -80,7 +79,7 @@ namespace Gui {
                 double y_max = -1000000000.0;
                 double y_min = 1000000000.0;
 
-                ::Graphene::VertexIter it(Graphene::core->getGraphObj());
+                ::gph::VertexIter it(Graphene::core->getGraphObj());
                 while (it.next()) {
                     x_max = std::max(x_max, it.v->getCoord().x);
                     x_min = std::min(x_min, it.v->getCoord().x);

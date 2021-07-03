@@ -77,7 +77,7 @@ add_executable(Graphene
         Dependencies/imgui/imgui.cpp
         Dependencies/imgui/backends/imgui_impl_glfw.cpp
         Dependencies/imgui/backends/imgui_impl_opengl3.cpp
-        Source/main.cpp)
+        Source/Application.cpp)
 
 
 target_link_libraries(Graphene imm32.lib)

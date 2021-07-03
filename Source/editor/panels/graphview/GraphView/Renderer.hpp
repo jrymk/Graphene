@@ -1,14 +1,13 @@
 #pragma once
 
 #include <cmath>
-#include "../Window.hpp"
 #include "Common.hpp"
-#include "../../graphene/BlockCutTree.hpp"
-#include "RenderUtils/ConvexHull.hpp"
-#include "RenderUtils/AlignedText.hpp"
-#include "RenderUtils/DrawPolygon.hpp"
+#include "../../../../core/BlockCutTree.hpp"
+#include "../RenderUtils/ConvexHull.hpp"
+#include "../RenderUtils/AlignedText.hpp"
+#include "../RenderUtils/DrawPolygon.hpp"
 
-namespace Gui {
+namespace gph {
     namespace GraphView {
         namespace Renderer {
 
@@ -165,7 +164,7 @@ namespace Gui {
 
             void drawEdges() {
                 // edge drawing
-                ::Graphene::EdgeIter it(Graphene::core->getGraphObj());
+                ::gph::EdgeIter it(Graphene::core->getGraphObj());
                 while (it.next()) {
                     ImGui::GetWindowDrawList()->AddLine(
                             View::mapToCanvas(it.u->getCoord()),
@@ -200,7 +199,7 @@ namespace Gui {
 
             void drawVertices() {
                 for (auto &component : Graphene::core->getGraphObj()->components) {
-                    ::Graphene::ComponentVertexIter it(component);
+                    ::gph::ComponentVertexIter it(component);
                     while (it.next()) {
                         ImVec2 vertexScreenCoord(
                                 float(View::canvasOrigin.x - (View::centerContext.x - it.v->getCoord().x) * View::canvasFrameSize * View::zoomLevel),
@@ -219,7 +218,7 @@ namespace Gui {
                                 {0.5f, 0.5f},
                                 {200.0f, 100.0f},
                                 it.v->name,
-                                Gui::vertexTextFont,
+                                ImGui::GetDefaultFont(),
                                 float((36.0 / 54.0) * pow(View::zoomLevel, 0.1) * ((it.v == Controls::rightMouseDownVertex) ? 1.1 : 1.0)),
                                 IM_COL32(15, 15, 15, 255)
                         );

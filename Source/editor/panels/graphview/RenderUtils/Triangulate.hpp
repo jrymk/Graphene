@@ -1,9 +1,7 @@
 #pragma once
 
-#include "../Window.hpp"
-
 #include <vector>
-#include "../graphene/Vector.hpp"
+#include "../../../../core/Vector.hpp"
 
 class Triangulate {
 public:

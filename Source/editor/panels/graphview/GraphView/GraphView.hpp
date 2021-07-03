@@ -5,16 +5,15 @@
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_glfw.h>
 #include <GLFW/glfw3.h>
-#include "../../utils/ProfilerUtils.hpp"
 
 #include "View.hpp"
 #include "Overlay.hpp"
 #include "Renderer.hpp"
 #include "ContextMenu.hpp"
 #include "Controls.hpp"
-#include "RenderUtils/ConvexHull.hpp"
+#include "../RenderUtils/ConvexHull.hpp"
 
-namespace Gui {
+namespace gph {
     namespace GraphView {
 
         void updateKeyboardShortcuts() {
@@ -25,7 +24,7 @@ namespace Gui {
                 Graphene::core->getGraphObj()->newVertex();
         }
 
-        void show(::Graphene::Core* core) {
+        void show(::gph::Core* core) {
             Graphene::core = core;
 
             ImGui::SetNextWindowSizeConstraints(ImVec2(300, 350), ImVec2(FLT_MAX, FLT_MAX));
@@ -81,7 +80,6 @@ namespace Gui {
                 Renderer::drawVertices();
             } else {
                 ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(200, 100, 100, 255));
-                ImGui::PushFont(Gui::framerateTextFont);
                 std::string tempStr("Rendering is disabled");
                 char* label = new char[tempStr.length() + 1];
                 strcpy(label, tempStr.c_str());
@@ -91,7 +89,6 @@ namespace Gui {
 
                 ImGui::RenderTextClipped(bb.Min, bb.Max, label, 0, &labelSize, labelAlign, &bb);
                 ImGui::PopStyleColor(1);
-                ImGui::PopFont();
             }
 
             ContextMenu::update();
