@@ -1,4 +1,4 @@
-/// handles things related to glfw and imgui that happen every frame
+/// perform render and draw calls every frame
 
 #pragma once
 
@@ -9,39 +9,16 @@
 #include <glad.h>
 #include <GLFW/glfw3.h>
 
-#include "init.hpp"
+#include "FrameworkInit.hpp"
 
-namespace gph {
+namespace graphene {
     namespace editor {
         bool newFrame() {
             if (glfwWindowShouldClose(window)) {
-                // cleans up everything after closing the window
-                ImGui_ImplOpenGL3_Shutdown();
-                ImGui_ImplGlfw_Shutdown();
-
-                ImGui::DestroyContext();
-
-                glfwDestroyWindow(window);
-                glfwTerminate();
-
+                frameworkTerminate();
                 return false;
             }
 
-            // renders the window
-            ImGui::Render();
-
-            int displayW, displayH;
-            glfwGetFramebufferSize(window, &displayW, &displayH);
-
-            glViewport(0, 0, displayW, displayH);
-
-            glClearColor(80, 80, 80, 255);
-            glClear(GL_COLOR_BUFFER_BIT);
-
-            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-            glfwSwapBuffers(window);
-
-            // prepare for the "next" frame
             glfwPollEvents();
 
             ImGui_ImplOpenGL3_NewFrame();
@@ -49,6 +26,26 @@ namespace gph {
             ImGui::NewFrame();
 
             ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+
+            return true;
+        }
+
+        void endFrame() {
+            ImGui::EndFrame();
+
+            // renders the window
+            ImGui::Render();
+
+            // update viewport size and clear the screen
+            int displayW, displayH;
+            glfwGetFramebufferSize(window, &displayW, &displayH);
+            glViewport(0, 0, displayW, displayH);
+            glClearColor(80, 80, 80, 255);
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            // draws the content and swap buffers
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+            glfwSwapBuffers(window);
         }
     }
 }
