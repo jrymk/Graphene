@@ -28,6 +28,7 @@ namespace gph {
             Graphene::core = core;
 
             ImGui::SetNextWindowSizeConstraints(ImVec2(300, 350), ImVec2(FLT_MAX, FLT_MAX));
+
             ImGui::Begin(u8"Graph View", 0, ImGuiWindowFlags_NoCollapse);
 
             ImGui::Checkbox("Enable render", &Controls::enableRender);

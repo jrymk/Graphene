@@ -100,10 +100,69 @@ Other changes:
 
 
 -----------------------------------------------------------------------
- VERSION 1.83 WIP (In Progress)
+ VERSION 1.84 WIP (In Progress)
 -----------------------------------------------------------------------
 
+Other Changes:
+- Windows: ImGuiWindowFlags_UnsavedDocument/ImGuiTabItmeFlags_UnsavedDocument display a dot instead of a '*' so it
+  is independent from font style. When in a tab, the dot is displayed at the same position as the close button.
+  Added extra comments to clarify the purpose of this flag in the context of docked windows.
+- Tables: Added ImGuiTableColumnFlags_Disabled acting a master disable over (hidden from user/context menu). (#3935)
+- Tables: Clarified that TableSetColumnEnabled() requires the table to use the ImGuiTableFlags_Hideable flag,
+  because it manipulates the user-accessible show/hide state. (#3935)
+- Tables: Added ImGuiTableColumnFlags_NoHeaderLabel to request TableHeadersRow() to not submit label for a column.
+  Convenient for some small columns. Name will still appear in context menu. (#4206).
+- Tables: Fix columns order on TableSetupScrollFreeze() if previous data got frozen columns out of their section.
+- Tables: Fix invalid data in TableGetSortSpecs() when SpecsDirty flag is unset. (#4233)
+- TabBar: Fixed using more than 32 KB-worth of tab names. (#4176)
+- Fixed printf-style format checks on non-MinGW flavors. (#4183, #3592)
+- Fonts: Functions with a 'float size_pixels' parameter can accept zero if it is set in ImFontSize::SizePixels.
+- Fonts: Prefer using U+FFFD character for fallback instead of '?', if available. (#4269)
+- Fonts: Use U+FF0E dot character to construct an ellipsis if U+002E '.' is not available. (#4269)
+- Fonts: Add U+FFFD ("replacement character") to default asian glyphs ranges. (#4269)
+- Demo: Fixed requirement in 1.83 to link with imgui_demo.cpp if IMGUI_DISABLE_METRICS_WINDOW is not set. (#4171)
+  Normally the right way to disable compiling the demo is to set IMGUI_DISABLE_DEMO_WINDOWS, but we want to avoid
+  implying that the file is required.
+- Backends: Reorganized most backends (Win32, SDL, GLFW, OpenGL2/3, DX9/10/11/12, Vulkan, Allegro) to pull data
+  from a single structure to facilitate usage with multiple-contexts. (#586, #1851, #2004, #3012, #3934, #4141)
+- Backends: Win32: Rework to handle certains Windows 8.1/10 features without a manifest. (#4200, #4191)
+  - ImGui_ImplWin32_GetDpiScaleForMonitor() will handle per-monitor DPI on Windows 10 without a manifest.
+  - ImGui_ImplWin32_EnableDpiAwareness() will call SetProcessDpiAwareness() fallback on Windows 8.1 without a manifest.
+- Backends: DX9: Explicitly disable texture state stages after >= 1. (#4268) [@NZJenkins]
+- Backends: DX12: Fix texture casting crash on 32-bit systems (introduced on 2021/05/19 and v1.83) + added comments
+  about building on 32-bit systems. (#4225) [@kingofthebongo2008]
+- Backends: OpenGL3: Handle GL_CLIP_ORIGIN on <4.5 contexts if "GL_ARB_clip_control" extension is detected. (#4170, #3998)
+- Backends: OpenGL3: Destroy vertex/fragment shader objects right after they are linked into main shader. (#4244) [@Crowbarous]
+- Backends: OpenGL3: Use OES_vertex_array extension on Emscripten + backup/restore current state. (#4266, #4267) [@harry75369]
+- Backends: OSX: Added a fix for shortcuts using CTRL key instead of CMD key. (#4253) [@rokups]
+- Examples: OSX+OpenGL2: Fix event forwarding (fix key remaining stuck when using shortcuts with Cmd/Super key).
+  Other OSX examples were not affected. (#4253, #1873) [@rokups]
+- Examples: Updated all .vcxproj to VS2015 (toolset v140) to facilitate usage with vcpkg.
+- Examples: SDL2: Accomodate for vcpkg install having headers in SDL2/SDL.h vs SDL.h.
+
+Docking+Viewports Branch:
+
+- Docking: Clicking on the right-most close button of a docking node closes all windows. (#4186)
+- Docking: Fix IsWindowAppearing() and ImGuiCond_Appearing on docked windows. (#4177, #3982, #1497, #1061)
+- Viewports: Fix popup/tooltip created without a parent window from being given a ParentViewportId value
+  from the implicit/fallback window. (#4236, #2409)
+- Backends: Vulkan: Fix the use of the incorrect fence for secondary viewports. (#4208) [@FunMiles]
+
+
+-----------------------------------------------------------------------
+ VERSION 1.83 (Released 2011-05-24)
+-----------------------------------------------------------------------
+
+Decorated log: https://github.com/ocornut/imgui/releases/tag/v1.83
+
 Breaking Changes:
+
+- Backends: Obsoleted direct access to ImDrawCmd::TextureId in favor of calling ImDrawCmd::GetTexID(). (#3761) [@thedmd]
+  - If you are using official backends from the source tree: you have nothing to do.
+  - If you copied old backend code or using your own: change access to draw_cmd->TextureId to draw_cmd->GetTexID().
+  Why are we doing this?
+  - This change will be required in the future when adding support for incremental texture atlas updates.
+  - Please note this won't break soon, but we are making the change ahead of time.
 
 Other Changes:
 
@@ -116,43 +175,59 @@ Other Changes:
 - Nav, InputText: Fixed accidental menu toggling while typing non-ascii characters using AltGR. [@rokups] (#370)
 - Nav: Fixed using SetItemDefaultFocus() on windows with _NavFlattened flag. (#787)
 - Nav: Fixed Tabbing initial activation from skipping the first item if it is tabbable through. (#787)
+- Nav: Fixed fast CTRL+Tab (where keys are only held for one single frame) from properly enabling the
+  menu layer of target window if it doesn't have other active layers.
 - Tables: Expose TableSetColumnEnabled() in public api. (#3935)
 - Tables: Better preserve widths when columns count changes. (#4046)
+- Tables: Sharing more memory buffers between tables, reducing general memory footprints. (#3740)
 - TabBar: Fixed mouse reordering with very fast movements (e.g. crossing multiple tabs in a single
-  frame and then immediately standling still (would only affect automation/bots). [@rokups]
+  frame and then immediately standing still (would only affect automation/bots). [@rokups]
+- Menus: made MenuItem() in a menu bar reflect the 'selected' argument with a highlight. (#4128) [@mattelegende]
 - Drags, Sliders, Inputs: Specifying a NULL format to Float functions default them to "%.3f" to be
   consistent with the compile-time default. (#3922)
 - DragScalar: Add default value for v_speed argument to match higher-level functions. (#3922) [@eliasdaler]
 - ColorEdit4: Alpha default to 255 (instead of 0) when omitted in hex input. (#3973) [@squadack]
 - InputText: Do not filter private unicode codepoints (e.g. icons) when pasted from clipboard. (#4005) [@dougbinks]
 - InputText: Align caret/cursor to pixel coordinates. (#4080) [@elvissteinjr]
+- InputText: Fixed CTRL+Arrow or OSX double-click leaking the presence of spaces when ImGuiInputTextFlags_Password
+  is used. (#4155, #4156) [@michael-swan]
 - LabelText: Fixed clipping of multi-line value text when label is single-line. (#4004)
 - LabelText: Fixed vertical alignment of single-line value text when label is multi-line. (#4004)
+- Combos: Changed the combo popup to use a different id to also using a context menu with the default item id.
+  Fixed using BeginPopupContextItem() with no parameter after a combo. (#4167)
 - Popups: Added 'OpenPopup(ImGuiID id)' overload to facilitate calling from nested stacks. (#3993, #331) [@zlash]
+- Tweak computation of io.Framerate so it is less biased toward high-values in the first 120 frames. (#4138)
+- Optimization: Disabling some of MSVC most aggressive Debug runtime checks for some simple/low-level functions
+  (e.g. ImVec2, ImVector) leading to a 10-20% increase of performances with MSVC "default" Debug settings.
+- ImDrawList: Add and use SSE-enabled ImRsqrt() in place of 1.0f / ImSqrt(). (#4091) [@wolfpld]
 - ImDrawList: Fixed/improved thickness of thick strokes with sharp angles. (#4053, #3366, #2964, #2868, #2518, #2183)
   Effectively introduced a regression in 1.67 (Jan 2019), and a fix in 1.70 (Apr 2019) but the fix wasn't actually on
   par with original version. Now incorporating the correct revert.
 - ImDrawList: Fixed PathArcTo() regression from 1.82 preventing use of counter-clockwise angles. (#4030, #3491) [@thedmd]
 - Demo: Improved popups demo and comments.
+- Metrics: Added "Fonts" section with same information as available in "Style Editor">"Fonts".
 - Backends: SDL: Rework global mouse pos availability check listing supported platforms explicitly,
   effectively fixing mouse access on Raspberry Pi. (#2837, #3950) [@lethal-guitar, @hinxx]
 - Backends: Win32: Clearing keyboard down array when losing focus (WM_KILLFOCUS). (#2062, #3532, #3961)
   [@1025798851]
 - Backends: OSX: Fix keys remaining stuck when CMD-tabbing to a different application. (#3832) [@rokups]
 - Backends: DirectX9: calling IDirect3DStateBlock9::Capture() after CreateStateBlock() which appears to
-  workaround/fix state restoring issues. Unknown exactly why so, but bit of a cargo-cult fix. (#3857)
+  workaround/fix state restoring issues. Unknown exactly why so, bit of a cargo-cult fix. (#3857)
 - Backends: DirectX9: explicitly setting up more graphics states to increase compatibility with unusual
   non-default states. (#4063)
 - Backends: DirectX10, DirectX11: fixed a crash when backing/restoring state if nothing is bound when
   entering the rendering function. (#4045) [@Nemirtingas]
+- Backends: GLFW: Adding bound check in KeyCallback because GLFW appears to send -1 on some setups. [#4124]
 - Backends: Vulkan: Fix mapped memory Vulkan validation error when buffer sizes are not multiple of
   VkPhysicalDeviceLimits::nonCoherentAtomSize. (#3957) [@AgentX1994]
+- Backends: WebGPU: Update to latest specs (Chrome Canary 92 and Emscripten 2.0.20). (#4116, #3632) [@bfierz, @Kangz]
 - Backends: OpenGL3: Don't try to read GL_CLIP_ORIGIN unless we're OpenGL 4.5. (#3998, #2366, #2186) [@s7jones]
 - Examples: OpenGL: Add OpenGL ES 2.0 support to modern GL examples. (#2837, #3951) [@lethal-guitar, @hinxx]
 - Examples: Vulkan: Rebuild swapchain on VK_SUBOPTIMAL_KHR. (#3881)
 - Examples: Vulkan: Prefer using discrete GPU if there are more than one available. (#4012) [@rokups]
 - Examples: SDL2: Link with shell32.lib required by SDL2main.lib since SDL 2.0.12. [#3988]
 - Examples: Android: Make Android example build compatible with Gradle 7.0. (#3446)
+- Docs: Improvements to description of using colored glyphs/emojis. (#4169, #3369)
 - Docs: Improvements to minor mistakes in documentation comments (#3923) [@ANF-Studios]
 
 Docking+Viewports Branch:
@@ -161,7 +236,9 @@ Docking+Viewports Branch:
   option set to false (dock/undock by default, hold shift to avoid docking). (#2109)
 - Docking: DockSpace() returns its node ID.
 - Docking: Dockspace() never draws a background. (#3924)
-- Docking: undocking nodes/windows covering most of the monitor max their size down to 90% to ease manipulations.
+- Docking: Undocking nodes/windows covering most of the monitor max their size down to 90% to ease manipulations.
+- Docking: Docking node tab bar honors ItemInnerSpacing.x before first tab. (#4130)
+- Docking: Tweak rendering and alignment of dock node menu marker. (#4130)
 - Docking: Fixed restoring of tab order within a dockspace or a split node.
 - Docking: Fixed reappearing docked windows with no close button showing a tab with extraneous space for one frame.
 - Docking: Fixed multiple simultaneously reappearing window from appearing undocked for one frame.
@@ -477,6 +554,7 @@ Other Changes:
 - Examples: DirectX12: Move ImGui::Render() call above the first barrier to clarify its lack of effect on the graphics pipe.
 - CI: Fix testing for Windows DLL builds. (#3603, #3601) [@iboB]
 - Docs: Improved the wiki and added a https://github.com/ocornut/imgui/wiki/Useful-Widgets page. [@Xipiryon]
+  [2021/05/20: moved to https://github.com/ocornut/imgui/wiki/Useful-Extensions]
 - Docs: Split examples/README.txt into docs/BACKENDS.md and docs/EXAMPLES.md, and improved them.
 - Docs: Consistently renamed all occurrences of "binding" and "back-end" to "backend" in comments and docs.
 

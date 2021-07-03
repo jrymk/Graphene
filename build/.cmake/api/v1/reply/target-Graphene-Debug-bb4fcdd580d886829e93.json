@@ -1,0 +1,1044 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "Graphene.exe"
+		},
+		{
+			"path" : "Graphene.pdb"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_executable",
+			"target_link_libraries",
+			"include_directories"
+		],
+		"files" : 
+		[
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 71,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 83,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 90,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 91,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 7,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 8,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 9,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 10,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 11,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 12,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 13,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 14,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 15,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 16,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 17,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 18,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 19,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 20,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 21,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 22,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 23,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 24,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 25,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 26,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 27,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 28,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 29,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 30,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 31,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 32,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 33,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 34,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 35,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 36,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 37,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 38,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 39,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 40,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 41,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 42,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 43,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 44,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 45,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 46,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 47,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 48,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 49,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 50,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 51,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 52,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 53,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 54,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 55,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 56,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 57,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 58,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 59,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 60,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 61,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 62,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 63,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-g"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 5,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/builds/amiga/include"
+				},
+				{
+					"backtrace" : 6,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/builds/amiga/include/config"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/builds/atari"
+				},
+				{
+					"backtrace" : 8,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/builds/vms"
+				},
+				{
+					"backtrace" : 9,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/devel"
+				},
+				{
+					"backtrace" : 10,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/include"
+				},
+				{
+					"backtrace" : 11,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/include/freetype"
+				},
+				{
+					"backtrace" : 12,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/include/freetype/config"
+				},
+				{
+					"backtrace" : 13,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/include/freetype/internal"
+				},
+				{
+					"backtrace" : 14,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/include/freetype/internal/services"
+				},
+				{
+					"backtrace" : 15,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/autofit"
+				},
+				{
+					"backtrace" : 16,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/base"
+				},
+				{
+					"backtrace" : 17,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/bdf"
+				},
+				{
+					"backtrace" : 18,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/cache"
+				},
+				{
+					"backtrace" : 19,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/cff"
+				},
+				{
+					"backtrace" : 20,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/cid"
+				},
+				{
+					"backtrace" : 21,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/gxvalid"
+				},
+				{
+					"backtrace" : 22,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/gzip"
+				},
+				{
+					"backtrace" : 23,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/lzw"
+				},
+				{
+					"backtrace" : 24,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/otvalid"
+				},
+				{
+					"backtrace" : 25,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/pcf"
+				},
+				{
+					"backtrace" : 26,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/pfr"
+				},
+				{
+					"backtrace" : 27,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/psaux"
+				},
+				{
+					"backtrace" : 28,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/pshinter"
+				},
+				{
+					"backtrace" : 29,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/psnames"
+				},
+				{
+					"backtrace" : 30,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/raster"
+				},
+				{
+					"backtrace" : 31,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/sdf"
+				},
+				{
+					"backtrace" : 32,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/sfnt"
+				},
+				{
+					"backtrace" : 33,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/smooth"
+				},
+				{
+					"backtrace" : 34,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/truetype"
+				},
+				{
+					"backtrace" : 35,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/type1"
+				},
+				{
+					"backtrace" : 36,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/type42"
+				},
+				{
+					"backtrace" : 37,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/winfonts"
+				},
+				{
+					"backtrace" : 38,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glad/include"
+				},
+				{
+					"backtrace" : 39,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glad/include/glad"
+				},
+				{
+					"backtrace" : 40,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glad/include/KHR"
+				},
+				{
+					"backtrace" : 41,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64"
+				},
+				{
+					"backtrace" : 42,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64/include"
+				},
+				{
+					"backtrace" : 43,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64/include/GLFW"
+				},
+				{
+					"backtrace" : 44,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glm-0.9.9.8/glm"
+				},
+				{
+					"backtrace" : 45,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glm-0.9.9.8/glm/detail"
+				},
+				{
+					"backtrace" : 46,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glm-0.9.9.8/glm/ext"
+				},
+				{
+					"backtrace" : 47,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glm-0.9.9.8/glm/gtc"
+				},
+				{
+					"backtrace" : 48,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glm-0.9.9.8/glm/gtx"
+				},
+				{
+					"backtrace" : 49,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glm-0.9.9.8/glm/simd"
+				},
+				{
+					"backtrace" : 50,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/imgui"
+				},
+				{
+					"backtrace" : 51,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/imgui/backends"
+				},
+				{
+					"backtrace" : 52,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/imgui/examples/example_allegro5"
+				},
+				{
+					"backtrace" : 53,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/imgui/examples/libs/gl3w/GL"
+				},
+				{
+					"backtrace" : 54,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/imgui/examples/libs/glfw"
+				},
+				{
+					"backtrace" : 55,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/imgui/examples/libs/glfw/include"
+				},
+				{
+					"backtrace" : 56,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/imgui/examples/libs/glfw/include/GLFW"
+				},
+				{
+					"backtrace" : 57,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/imgui/examples/libs/usynergy"
+				},
+				{
+					"backtrace" : 58,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/imgui/misc/cpp"
+				},
+				{
+					"backtrace" : 59,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/imgui/misc/freetype"
+				},
+				{
+					"backtrace" : 60,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/imgui/misc/single_file"
+				},
+				{
+					"backtrace" : 61,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Source"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glfw-3.3.4/include"
+				}
+			],
+			"language" : "C",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		},
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-g"
+				},
+				{
+					"fragment" : "-std=gnu++14"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 5,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/builds/amiga/include"
+				},
+				{
+					"backtrace" : 6,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/builds/amiga/include/config"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/builds/atari"
+				},
+				{
+					"backtrace" : 8,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/builds/vms"
+				},
+				{
+					"backtrace" : 9,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/devel"
+				},
+				{
+					"backtrace" : 10,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/include"
+				},
+				{
+					"backtrace" : 11,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/include/freetype"
+				},
+				{
+					"backtrace" : 12,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/include/freetype/config"
+				},
+				{
+					"backtrace" : 13,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/include/freetype/internal"
+				},
+				{
+					"backtrace" : 14,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/include/freetype/internal/services"
+				},
+				{
+					"backtrace" : 15,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/autofit"
+				},
+				{
+					"backtrace" : 16,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/base"
+				},
+				{
+					"backtrace" : 17,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/bdf"
+				},
+				{
+					"backtrace" : 18,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/cache"
+				},
+				{
+					"backtrace" : 19,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/cff"
+				},
+				{
+					"backtrace" : 20,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/cid"
+				},
+				{
+					"backtrace" : 21,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/gxvalid"
+				},
+				{
+					"backtrace" : 22,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/gzip"
+				},
+				{
+					"backtrace" : 23,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/lzw"
+				},
+				{
+					"backtrace" : 24,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/otvalid"
+				},
+				{
+					"backtrace" : 25,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/pcf"
+				},
+				{
+					"backtrace" : 26,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/pfr"
+				},
+				{
+					"backtrace" : 27,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/psaux"
+				},
+				{
+					"backtrace" : 28,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/pshinter"
+				},
+				{
+					"backtrace" : 29,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/psnames"
+				},
+				{
+					"backtrace" : 30,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/raster"
+				},
+				{
+					"backtrace" : 31,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/sdf"
+				},
+				{
+					"backtrace" : 32,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/sfnt"
+				},
+				{
+					"backtrace" : 33,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/smooth"
+				},
+				{
+					"backtrace" : 34,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/truetype"
+				},
+				{
+					"backtrace" : 35,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/type1"
+				},
+				{
+					"backtrace" : 36,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/type42"
+				},
+				{
+					"backtrace" : 37,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/freetype/src/winfonts"
+				},
+				{
+					"backtrace" : 38,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glad/include"
+				},
+				{
+					"backtrace" : 39,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glad/include/glad"
+				},
+				{
+					"backtrace" : 40,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glad/include/KHR"
+				},
+				{
+					"backtrace" : 41,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64"
+				},
+				{
+					"backtrace" : 42,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64/include"
+				},
+				{
+					"backtrace" : 43,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64/include/GLFW"
+				},
+				{
+					"backtrace" : 44,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glm-0.9.9.8/glm"
+				},
+				{
+					"backtrace" : 45,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glm-0.9.9.8/glm/detail"
+				},
+				{
+					"backtrace" : 46,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glm-0.9.9.8/glm/ext"
+				},
+				{
+					"backtrace" : 47,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glm-0.9.9.8/glm/gtc"
+				},
+				{
+					"backtrace" : 48,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glm-0.9.9.8/glm/gtx"
+				},
+				{
+					"backtrace" : 49,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glm-0.9.9.8/glm/simd"
+				},
+				{
+					"backtrace" : 50,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/imgui"
+				},
+				{
+					"backtrace" : 51,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/imgui/backends"
+				},
+				{
+					"backtrace" : 52,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/imgui/examples/example_allegro5"
+				},
+				{
+					"backtrace" : 53,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/imgui/examples/libs/gl3w/GL"
+				},
+				{
+					"backtrace" : 54,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/imgui/examples/libs/glfw"
+				},
+				{
+					"backtrace" : 55,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/imgui/examples/libs/glfw/include"
+				},
+				{
+					"backtrace" : 56,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/imgui/examples/libs/glfw/include/GLFW"
+				},
+				{
+					"backtrace" : 57,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/imgui/examples/libs/usynergy"
+				},
+				{
+					"backtrace" : 58,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/imgui/misc/cpp"
+				},
+				{
+					"backtrace" : 59,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/imgui/misc/freetype"
+				},
+				{
+					"backtrace" : 60,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/imgui/misc/single_file"
+				},
+				{
+					"backtrace" : 61,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Source"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/jerrymk/repos/Graphene/Dependencies/glfw-3.3.4/include"
+				}
+			],
+			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					1
+				],
+				"standard" : "14"
+			},
+			"sourceIndexes" : 
+			[
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 3,
+			"id" : "glfw::@df7ebc5ef225110dc2c7"
+		}
+	],
+	"id" : "Graphene::@6890427a1f51a3e7e1df",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "-g",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "-static",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "-limm32",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "Dependencies\\glfw-3.3.4\\src\\libglfw3.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "-static-libgcc",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "-static-libstdc++",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "Graphene",
+	"nameOnDisk" : "Graphene.exe",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Dependencies/glad/src/glad.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "Dependencies/imgui/imgui_demo.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "Dependencies/imgui/imgui_draw.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "Dependencies/imgui/imgui_tables.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "Dependencies/imgui/imgui_widgets.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "Dependencies/imgui/imgui.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "Dependencies/imgui/backends/imgui_impl_glfw.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "Dependencies/imgui/backends/imgui_impl_opengl3.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "Source/Application.cpp",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "EXECUTABLE"
+}

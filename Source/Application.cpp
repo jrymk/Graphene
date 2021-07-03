@@ -1,19 +1,18 @@
 #include "editor/Include.h"
 #include "core/Include.h"
 #include "editor/panels/graphview/GraphView/GraphView.hpp"
+#include "editor/panels/graphview/GraphView.hpp"
 
 int main() {
     gph::Core core;
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 100; i++)
         core.getGraphObj()->newVertex();
 
-    while (graphene::editor::frameworkInit(graphene::editor::frameworkConfig())) {
+    if (graphene::editor::frameworkInit(graphene::editor::frameworkConfig())) {
         while (graphene::editor::newFrame()) {
-            ImGui::ShowDemoWindow();
-
             gph::GraphView::show(&core);
-
+            ImGui::ShowDemoWindow();
             graphene::editor::endFrame();
         }
     }

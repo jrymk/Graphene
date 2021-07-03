@@ -34,9 +34,6 @@
     <ClCompile Include="..\..\imgui_widgets.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\imgui_spectrum.cpp">
-      <Filter>imgui</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\backends\imgui_impl_glfw.cpp">
       <Filter>sources</Filter>
     </ClCompile>
@@ -65,9 +62,6 @@
     </ClInclude>
     <ClInclude Include="..\..\backends\imgui_impl_opengl3.h">
       <Filter>sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\imgui_spectrum.h">
-      <Filter>imgui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
