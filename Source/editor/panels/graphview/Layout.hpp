@@ -5,14 +5,9 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
-namespace graphene {
-    namespace editor {
-        namespace graphview {
-            void windowBegin() {
+namespace graphene::editor::graphview {
+    void windowBegin() {
 
 
-            }
-
-        }
     }
 }

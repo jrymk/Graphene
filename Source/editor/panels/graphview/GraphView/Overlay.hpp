@@ -8,7 +8,7 @@
 
 #include "Common.hpp"
 
-namespace gph {
+namespace graphene {
     namespace GraphView {
         namespace Overlay {
 

@@ -7,7 +7,7 @@
 #include "../RenderUtils/AlignedText.hpp"
 #include "../RenderUtils/DrawPolygon.hpp"
 
-namespace gph {
+namespace graphene {
     namespace GraphView {
         namespace Renderer {
 
@@ -164,7 +164,7 @@ namespace gph {
 
             void drawEdges() {
                 // edge drawing
-                ::gph::EdgeIter it(Graphene::core->getGraphObj());
+                ::graphene::EdgeIter it(Graphene::core->getGraphObj());
                 while (it.next()) {
                     ImGui::GetWindowDrawList()->AddLine(
                             View::mapToCanvas(it.u->getCoord()),
@@ -199,7 +199,7 @@ namespace gph {
 
             void drawVertices() {
                 for (auto &component : Graphene::core->getGraphObj()->components) {
-                    ::gph::ComponentVertexIter it(component);
+                    ::graphene::ComponentVertexIter it(component);
                     while (it.next()) {
                         ImVec2 vertexScreenCoord(
                                 float(View::canvasOrigin.x - (View::centerContext.x - it.v->getCoord().x) * View::canvasFrameSize * View::zoomLevel),

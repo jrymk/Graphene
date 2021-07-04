@@ -8,7 +8,7 @@
 
 #include "Common.hpp"
 
-namespace gph {
+namespace graphene {
     namespace GraphView {
         namespace Controls {
 
@@ -17,7 +17,7 @@ namespace gph {
 
                 float closestVertexDistance = FLT_MAX;
 
-                ::gph::VertexIter it(Graphene::core->getGraphObj());
+                ::graphene::VertexIter it(Graphene::core->getGraphObj());
 
                 while (it.next()) {
                     float mouseVertexDistanceSquared =

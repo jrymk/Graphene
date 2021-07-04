@@ -13,7 +13,7 @@
 #include "Controls.hpp"
 #include "../RenderUtils/ConvexHull.hpp"
 
-namespace gph {
+namespace graphene {
     namespace GraphView {
 
         void updateKeyboardShortcuts() {
@@ -24,7 +24,7 @@ namespace gph {
                 Graphene::core->getGraphObj()->newVertex();
         }
 
-        void show(::gph::Core* core) {
+        void show(::graphene::core::Core* core) {
             Graphene::core = core;
 
             ImGui::SetNextWindowSizeConstraints(ImVec2(300, 350), ImVec2(FLT_MAX, FLT_MAX));
