@@ -3,12 +3,14 @@
 #include "Graph.hpp"
 #include "GraphIter.hpp"
 #include "Constants.hpp"
-#include "tools/Profiler.hpp"
+#include "GraphicExporter.hpp"
+#include "../tools/Profiler.hpp"
 
 namespace graphene::core {
 class Core {
   private:
 	Graph* graph = new Graph();
+	GraphicExporter* exporter;
 
   public:
 	// graph update rate
@@ -23,7 +25,7 @@ class Core {
 	std::unordered_set<ConnectedComponent*> getComponents() { return graph->components; }
 
 	// binds a graph to a core
-	explicit Core() {}
+	explicit Core() { exporter = new GraphicExporter(this); }
 
 	// graph updated via visual tool
 	bool pendingInputUpdate = false;
@@ -146,6 +148,8 @@ class Core {
 		updateRateCounter.resetCycle();
 		// graph->mutex.unlock();
 		// LOG_VERBOSE("positions updated (took " + std::to_string(timer.getMicroseconds()) + "us)");
+
+		exporter->exportGraphic(getGraph());
 	}
 };
 

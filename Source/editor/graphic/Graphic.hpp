@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <atomic>
+#include "../../core/Vector.hpp"
 #include "../../core/Vertex.hpp"
 #include "../../core/Edge.hpp"
 
@@ -11,6 +12,7 @@ class Graphic {
   public:
 	struct Vertex {
 		::graphene::core::Vertex* corePtr;
+		Vec2f position;
 	};
 	struct Edge {
 		::graphene::core::Edge* corePtr;

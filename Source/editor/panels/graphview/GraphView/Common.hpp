@@ -1,14 +1,16 @@
 #pragma once
 
-#include "../../../../core/Include.h"
+#include "../../../../core/Core.hpp"
+#include "../../../../tools/Profiler.hpp"
 
 namespace graphene {
 namespace GraphView {
 namespace Graphene {
-::graphene::core::Core *core;
+graphene::core::Core* core;
 }
 namespace View {
-Utils::CycleMonitor framerateCounter;
+
+graphene::tools::profiler::CycleMonitor framerateCounter;
 
 ImVec2 canvasSize;
 ImVec2 canvasCursor;
@@ -29,16 +31,16 @@ bool gridVisible = true;
 bool contextMenuOpen = false;
 bool forceOpenContextMenu = false;
 
-::graphene::Vertex *leftMouseSelectionVertex = nullptr;
-::graphene::Vertex *leftMouseDownVertex = nullptr;
+graphene::core::Vertex* leftMouseSelectionVertex = nullptr;
+graphene::core::Vertex* leftMouseDownVertex = nullptr;
 ImVec2 leftMouseDownPos;
-::graphene::Vertex *rightMouseSelectionVertex = nullptr;
-::graphene::Vertex *rightMouseDownVertex = nullptr;
+graphene::core::Vertex* rightMouseSelectionVertex = nullptr;
+graphene::core::Vertex* rightMouseDownVertex = nullptr;
 ImVec2 rightMouseDownPos;
-::graphene::Vertex *hoveredVertex = nullptr;
-::graphene::ConnectedComponent *hoveredComponent = nullptr;
+graphene::core::Vertex* hoveredVertex = nullptr;
+graphene::core::ConnectedComponent* hoveredComponent = nullptr;
 } // namespace Controls
 
-Utils::Timer *animationTimer = new Utils::Timer();
+graphene::tools::profiler::Timer* animationTimer = new graphene::tools::profiler::Timer();
 } // namespace GraphView
 } // namespace graphene
