@@ -471,6 +471,4 @@ CMakeUserPresets.json
 *-prefix/
 
 # End of https://www.toptal.com/developers/gitignore/api/clion+iml,cmake
-Dependencies/imgui/examples/**
 build/.cmake/**
-Source-legacy/**
