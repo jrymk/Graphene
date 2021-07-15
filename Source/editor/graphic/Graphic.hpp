@@ -16,13 +16,15 @@ class Graphic {
 	};
 	struct Edge {
 		::graphene::core::Edge* corePtr;
+		Vec2f position1;
+		Vec2f position2;
 	};
 
 	std::atomic<bool> writeReady;
 	std::vector<Edge> edges;
 	std::vector<Vertex> vertices;
 
-	Graphic() = default;
+	Graphic() { writeReady = true; }
 
 	void clear() {
 		edges.clear();
