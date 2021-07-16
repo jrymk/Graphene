@@ -14,7 +14,7 @@ include_directories(Dependencies/imgui/backends)
 include_directories(Dependencies/imgui/misc/cpp)
 include_directories(Dependencies/imgui/misc/freetype)
 include_directories(Dependencies/imgui/misc/single_file)
-include_directories(Sources)
+include_directories(Sources/)
 
 
 find_package(OpenGL REQUIRED)
@@ -29,7 +29,7 @@ add_executable(Graphene
         Dependencies/imgui/imgui.cpp
         Dependencies/imgui/backends/imgui_impl_glfw.cpp
         Dependencies/imgui/backends/imgui_impl_opengl3.cpp
-        Sources/Application.cpp)
+        Sources/Main.cpp)
 
 
 target_link_libraries(Graphene imm32.lib)
