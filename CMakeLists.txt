@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(Graphene)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 include_directories(Dependencies/glad/include)
 include_directories(Dependencies/glad/include/glad)
@@ -14,6 +14,8 @@ include_directories(Dependencies/imgui/backends)
 include_directories(Dependencies/imgui/misc/cpp)
 include_directories(Dependencies/imgui/misc/freetype)
 include_directories(Dependencies/imgui/misc/single_file)
+include_directories(Dependencies/stduuid/include)
+include_directories(Dependencies/stduuid/gsl)
 include_directories(Sources/)
 
 
