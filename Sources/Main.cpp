@@ -1,10 +1,11 @@
 #include <iostream>
-#include "System/Window/WindowManager.hpp"
-#include "System/Logging/Logging.hpp"
+#include <Core/Data/Structure/Structure.hpp>
+#include <System/Window/WindowManager.hpp>
+#include <System/Logging/Logging.hpp>
+#include <Core/Data/Properties/Uuid.hpp>
 
 int main() {
-	gfn::window::windowConfig windowConfig;
-	gfn::window::launchWindow(windowConfig);
+	gfn::window::launchWindow();
 
 	while (!glfwWindowShouldClose(gfn::window::glfwWindow)) {
 		gfn::window::preFrame();
@@ -12,6 +13,8 @@ int main() {
 		ImGui::ShowDemoWindow();
 
 		gfn::window::postFrame();
+
+		// std::cout << gfn::window::config::maximize << "\n";
 	}
 
 	return 0;

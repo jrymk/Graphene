@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <deque>
+#include <iostream>
 
 #define logInsert(x) gfn::logging::messageBuffer = gfn::logging::messageBuffer + x
 #define logError(x) gfn::logging::addLogEntry(x, __FILE__, __LINE__, gfn::logging::LogItem::Severity::ERR)
@@ -34,6 +35,7 @@ void addLogEntry(std::string message, std::string file, int line, LogItem::Sever
 	logBuffer.push_back(LogItem(message, file, line, severity));
 	if (logBuffer.size() == 10001)
 		logBuffer.pop_front();
+	std::cerr << message << "\n";
 }
 
 } // namespace gfn::logging
