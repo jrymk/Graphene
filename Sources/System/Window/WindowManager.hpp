@@ -7,8 +7,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "WindowConfigs.hpp"
-#include "Frame.hpp"
+#include <System/Window/WindowConfigs.hpp>
+#include <System/Window/Frame.hpp>
 
 namespace gfn::window {
 static void glfw_error_callback(int error, const char* description) {
@@ -17,7 +17,7 @@ static void glfw_error_callback(int error, const char* description) {
 
 GLFWwindow* glfwWindow = nullptr;
 
-bool launchWindow(windowConfig& config) {
+bool launchWindow() {
 	glfwSetErrorCallback(glfw_error_callback);
 	if (!glfwInit())
 		return false;
@@ -26,7 +26,7 @@ bool launchWindow(windowConfig& config) {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
-	glfwWindow = glfwCreateWindow(config.width, config.height, "Graphene", NULL, NULL);
+	glfwWindow = glfwCreateWindow(config::width, config::height, "Graphene", NULL, NULL);
 
 	if (glfwWindow == NULL)
 		return false;
@@ -41,18 +41,20 @@ bool launchWindow(windowConfig& config) {
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO();
-	(void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;	  // Enable Window Docking
+
+	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
+	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;	  // Enable Window Docking
+	ImGui::GetIO().ConfigWindowsMoveFromTitleBarOnly = true;
+	ImGui::GetIO().ConfigDockingAlwaysTabBar = true;
 
 	ImGui::StyleColorsLight();
 
 	ImGui_ImplGlfw_InitForOpenGL(glfwWindow, true);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
-	io.Fonts->AddFontFromFileTTF(".\\Barlow-Regular.ttf", 16.0f);
+	ImGui::GetIO().IniFilename = "Graphene.ini";
+	ImGui::GetIO().Fonts->AddFontFromFileTTF(".\\Barlow-Regular.ttf", 16.0f);
 
 	return true;
 }

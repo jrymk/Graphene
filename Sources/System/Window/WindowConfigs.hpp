@@ -1,10 +1,11 @@
 #pragma once
 
-namespace gfn::window {
-class windowConfig {
-  public:
-	bool maximize = false;
-	int width = 1280;
-	int height = 720;
-};
-} // namespace gfn::window
+#include <imgui.h>
+#include <imgui_internal.h>
+#include <System/Logging/Logging.hpp>
+
+namespace gfn::window::config {
+int maximize = false;
+int width = 1280;
+int height = 720;
+}
