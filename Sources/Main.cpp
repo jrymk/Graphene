@@ -1,9 +1,9 @@
 #include <iostream>
 #include <Core/Data/Structure/Structure.hpp>
-#include <Core/Core/Core.hpp>
+#include <Core/Core.hpp>
 #include <System/Window/WindowManager.hpp>
 #include <System/Logging/Logging.hpp>
-#include <Core/Data/Properties/Uuid.hpp>
+#include <Core/Data/Uuid.hpp>
 
 int main() {
 	gfn::window::launchWindow();

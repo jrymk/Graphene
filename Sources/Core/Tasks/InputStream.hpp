@@ -4,10 +4,6 @@
 #include <queue>
 #include <mutex>
 
-namespace gfn::core {
-typedef std::string command; // I just don't like how std::string looks
-};
-
 namespace gfn::core::input {
 class InputStream {
 	std::queue<gfn::core::command> queue;

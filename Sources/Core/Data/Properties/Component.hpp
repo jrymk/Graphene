@@ -4,10 +4,10 @@
 #include <Core/Objects/Vec2f.hpp>
 
 namespace gfn::core::data {
-class EdgeProp {
+class ComponentProp {
   public:
 	gfn::core::Uuid uuid;
 
-	EdgeProp(gfn::core::Uuid _uuid) : uuid(_uuid) {}
+	ComponentProp(gfn::core::Uuid _uuid) : uuid(_uuid) {}
 };
 } // namespace gfn::core::data

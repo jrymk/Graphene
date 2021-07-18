@@ -1,20 +1,23 @@
 #pragma once
 
-#include <vector>
-#include <unordered_set>
-#include <unordered_map>
-#include <Core/Data/Properties/Uuid.hpp>
 #include <Core/Data/Properties/Properties.hpp>
-
+#include <Core/Data/Structure/AdjacencyList.hpp>
 #include <Core/Data/Structure/ConnectedComponent.hpp>
+#include <Core/Tasks/Tasks.hpp>
 
 namespace gfn::core::data {
-// files in this folder maintains the structure of the graph, including updating the graph
-// from input, identify components, building block cut tree and more.
 class Structure {
   public:
-	std::unordered_map<gfn::core::Uuid, std::unordered_multimap<gfn::core::Uuid, std::unordered_set<gfn::core::Uuid>>>
-		adjList;
-};
+	gfn::core::data::AdjacencyList adjacencyList;
+	gfn::core::data::ComponentList componentList;
+	gfn::core::data::Properties* properties;
+	gfn::core::TaskManager* coreTaskManager;
 
-}; // namespace gfn::core::data
+	Structure() {
+		adjacencyList.bindTaskManager(coreTaskManager);
+		componentList.bindSource(&adjacencyList);
+		componentList.bindProperties(properties);
+		componentList.bindTaskManager(coreTaskManager);
+	}
+};
+} // namespace gfn::core::data
