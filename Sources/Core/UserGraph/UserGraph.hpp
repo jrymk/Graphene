@@ -133,6 +133,10 @@ class UserGraph {
 					logInsert("UserGraph: Added new edge with startVertex [") logInsert(startVertex)
 						logInsert("] endVertex [") logInsert(endVertex) logInsert("] edge [") logInsert(edgeId)
 							logVerbose("] successfully");
+
+					props->newEdgeProp(edgeId);
+					props->getEdgeProp(edgeId)->startVertexUuid = startVertex;
+					props->getEdgeProp(edgeId)->edgeUuid = edgeUuid;
 					return {true, edgeId};
 				}
 				logInsert("UserGraph: Add new edge with startVertex [") logInsert(startVertex)
@@ -174,6 +178,10 @@ class UserGraph {
 				logInsert("UserGraph: Added new edge with startVertex [") logInsert(startVertex)
 					logInsert("] endVertex [") logInsert(endVertex) logInsert("] edge [") logInsert(edgeUuid)
 						logVerbose("] successfully");
+
+				props->newEdgeProp(edgeUuid);
+				props->getEdgeProp(edgeUuid)->startVertexUuid = startVertex;
+				props->getEdgeProp(edgeUuid)->edgeUuid = edgeUuid;
 				return true;
 			}
 
