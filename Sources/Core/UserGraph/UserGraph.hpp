@@ -136,7 +136,7 @@ class UserGraph {
 
 					props->newEdgeProp(edgeId);
 					props->getEdgeProp(edgeId)->startVertexUuid = startVertex;
-					props->getEdgeProp(edgeId)->edgeUuid = edgeUuid;
+					props->getEdgeProp(edgeId)->edgeUuid = edgeId;
 					return {true, edgeId};
 				}
 				logInsert("UserGraph: Add new edge with startVertex [") logInsert(startVertex)
