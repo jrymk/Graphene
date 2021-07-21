@@ -5,7 +5,7 @@
 #include <deque>
 #include <iostream>
 
-#define logInsert(x) gfn::logging::messageBuffer = gfn::logging::messageBuffer + x
+#define logInsert(x) gfn::logging::messageBuffer = gfn::logging::messageBuffer + x;
 #define logError(x) gfn::logging::addLogEntry(x, __FILE__, __LINE__, gfn::logging::LogItem::Severity::ERR)
 #define logWarning(x) gfn::logging::addLogEntry(x, __FILE__, __LINE__, gfn::logging::LogItem::Severity::WARNING)
 #define logInfo(x) gfn::logging::addLogEntry(x, __FILE__, __LINE__, gfn::logging::LogItem::Severity::INFO)
