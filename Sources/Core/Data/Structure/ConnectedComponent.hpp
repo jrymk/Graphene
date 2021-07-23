@@ -10,14 +10,22 @@
 #include <System/Logging/Logging.hpp>
 
 namespace gfn::core::data {
+class BlockCutTree;
 
 class ConnectedComponent {
   public:
 	gfn::core::Uuid uuid;
 	gfn::core::Uuid root;
 	std::unordered_set<gfn::core::Uuid> vertices;
+	std::unordered_map<gfn::core::Uuid, std::unordered_set<gfn::core::Uuid>> adjList;
+	gfn::core::data::BlockCutTree bcc;
+	gfn::core::data::Properties* properties;
 
-	ConnectedComponent(gfn::core::Uuid _uuid) : uuid(_uuid) {}
+	ConnectedComponent(gfn::core::Uuid _uuid, gfn::core::data::Properties* _properties)
+		: uuid(_uuid), properties(_properties) {
+		bcc.bindProperties(_properties);
+		bcc.bindComponent(this);
+	}
 };
 
 class ComponentList {
@@ -30,7 +38,9 @@ class ComponentList {
 
 	void updateDfs(gfn::core::data::ConnectedComponent& component, gfn::core::Uuid u,
 				   std::unordered_set<gfn::core::Uuid>& remaining) {
+		remaining.erase(u);
 		component.vertices.insert(u);
+		component.adjList[u];
 		properties->getVertexProp(u).component = component.uuid;
 
 		auto uIt = source->getRawList().find(u);
@@ -41,7 +51,6 @@ class ComponentList {
 		}
 
 		for (auto& v : uIt->second) {
-			remaining.erase(v.first);
 			updateDfs(component, v.first, remaining);
 		}
 	}
@@ -69,9 +78,17 @@ class ComponentList {
 		// generate new components for those who don't have one
 		for (auto vIt = remaining.begin(); vIt != remaining.end(); vIt++) {
 			gfn::core::Uuid uuid = gfn::system::uuid::createUuid();
-			components.insert(std::make_pair(uuid, gfn::core::data::ConnectedComponent(uuid)));
+			components.insert(std::make_pair(uuid, gfn::core::data::ConnectedComponent(uuid, properties)));
 
 			updateDfs(components.find(uuid)->second, *vIt, remaining);
+		}
+
+		// build the in-component adjacency list
+		for (auto& u : source->getRawList()) {
+			for (auto& v : u.second) {
+				components.find(properties->getVertexProp(u.first).component)->second.adjList[u.first].insert(v.first);
+				components.find(properties->getVertexProp(v.first).component)->second.adjList[v.first].insert(u.first);
+			}
 		}
 	}
 };

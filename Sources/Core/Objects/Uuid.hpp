@@ -14,4 +14,6 @@ namespace gfn::core::uuid {
 std::string createUuid() { return uuids::to_string(uuids::uuid_system_generator{}()); }
 
 std::string createNil() { return "00000000-0000-0000-0000-000000000000"; }
+
+bool isUuid(gfn::core::Uuid uuid) { return (uuid[8] == '-' && uuid[13] == '-' && uuid[18] == '-' && uuid[23] == '-'); }
 } // namespace gfn::core::uuid

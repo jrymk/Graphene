@@ -1,34 +1,23 @@
 #pragma once
 
-#include <string>
-#include <System/Logging/Logging.hpp>
-
-#include <Core/Data/Config/Config.hpp>
-#include <Core/Data/Structure/Structure.hpp>
-#include <Core/Data/Properties/Properties.hpp>
-#include <Core/Tasks/Tasks.hpp>
+#include <Core/UserGraph/UserGraph.hpp>
+#include <Core/Structure/Structure.hpp>
+#include <Core/Properties/Properties.hpp>
+#include <Core/Parser/Parser.hpp>
 
 namespace gfn::core {
-// the hub of all the operation
-// subdivisions (configs, structure, properties...) will not communicate with each other
 class Core {
   public:
-	gfn::core::TaskManager* taskManager;
-	gfn::core::data::Configs configs;
-	gfn::core::data::Properties properties;
-	gfn::core::data::Structure structure;
-	// gfn::core::input::InputStream inputStream;
+	gfn::core::properties::Properties properties;
+	gfn::core::usergraph::UserGraph usergraph;
+	gfn::core::structure::Structure structure;
 
-	/*void queueInput(gfn::core::command cmd) {
-		inputStream.push(cmd);
-		logVerbose(cmd);
-	}*/
+	gfn::core::parser::Parser parser;
 
 	Core() {
-		taskManager = new gfn::core::TaskManager();
-		structure.coreTaskManager = taskManager;
-		structure.properties = &properties;
+		parser.usergraph = &usergraph;
+		usergraph.bindProperties(&properties);
+		structure.componentList.bindProperties(&properties);
 	}
 };
-
 } // namespace gfn::core

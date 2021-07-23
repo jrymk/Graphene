@@ -59,7 +59,8 @@
         "regex": "cpp",
         "future": "cpp",
         "variant": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "queue": "cpp"
     },
     "C_Cpp.errorSquiggles": "Enabled"
 }

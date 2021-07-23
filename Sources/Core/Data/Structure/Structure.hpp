@@ -3,6 +3,7 @@
 #include <Core/Data/Properties/Properties.hpp>
 #include <Core/Data/Structure/AdjacencyList.hpp>
 #include <Core/Data/Structure/ConnectedComponent.hpp>
+#include <Core/Data/Structure/BlockCutTree.hpp>
 #include <Core/Tasks/Tasks.hpp>
 
 namespace gfn::core::data {

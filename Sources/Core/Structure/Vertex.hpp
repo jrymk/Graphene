@@ -3,9 +3,9 @@
 #include <Core/Objects/Uuid.hpp>
 #include <Core/Properties/VertexProp.hpp>
 
-class gfn::core::structure::Component;
-
 namespace gfn::core::structure {
+class Component;
+
 ///@brief the data structure used internally for faster and more versatile access
 class Vertex {
   public:

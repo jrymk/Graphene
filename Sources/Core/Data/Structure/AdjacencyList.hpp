@@ -109,7 +109,6 @@ class AdjacencyList {
 			return false;
 		}
 
-		taskManager->insertTaskNext("properties remove edge " + edgeID);
 		vEit->second.erase(eIt);
 
 		logInsert("core::data: Remove edge from ");
@@ -145,11 +144,6 @@ class AdjacencyList {
 			logWarning(" failed: edge from v1 to v2 does not exist");
 			return false;
 		}
-
-		gfn::core::TaskStack ts;
-		for (auto& e : vEit->second)
-			ts.push("properties remove edge " + e);
-		ts.popAllToNext(taskManager);
 
 		v1it->second.erase(vEit);
 

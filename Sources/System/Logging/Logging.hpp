@@ -26,16 +26,17 @@ struct LogItem {
 	Severity severity;
 
 	LogItem(std::string _message, std::string _file, int _line, LogItem::Severity _severity)
-		: index(nIndex++), message(messageBuffer + _message), file(_file), line(_line), severity(_severity) {}
+		: index(nIndex++), message(_message), file(_file), line(_line), severity(_severity) {}
 };
 
 std::deque<LogItem> logBuffer;
 
 void addLogEntry(std::string message, std::string file, int line, LogItem::Severity severity) {
-	logBuffer.push_back(LogItem(message, file, line, severity));
+	logBuffer.push_back(LogItem(messageBuffer + message, file, line, severity));
 	if (logBuffer.size() == 10001)
 		logBuffer.pop_front();
-	std::cerr << message << "\n";
+	std::cerr << messageBuffer + message << "\n";
+	messageBuffer = "";
 }
 
 } // namespace gfn::logging
