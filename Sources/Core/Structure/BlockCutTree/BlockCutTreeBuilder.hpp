@@ -47,6 +47,7 @@ class BlockCutTreeBuilder {
 		dfs(root, root);
 		// stores the bcc to vertices mapping (actual)
 		buildMapping();
+		return true;
 	}
 
   private:

@@ -39,7 +39,7 @@ class ComponentList {
 	/// @brief Constructs all components from UserGraph (must run in sync with core cycle)
 	/// @param usergraph the source graph where the components are constructed from
 	void componentify(gfn::core::usergraph::UserGraph* usergraph) {
-		usergraph->propsCheckup(true);
+		usergraph->validateProps(true);
 
 		for (auto& v : vertices)
 			delete v;
@@ -116,6 +116,7 @@ class ComponentList {
 			v->component->uuid = v->prop->_prevComponent;
 			logInsert("Componentifier: Assigned component uuid {") logInsert(v->prop->_prevComponent)
 				logInsert("} from previous root vertex {") logInsert(v->uuid) logVerbose("}");
+            v->component->root = v;
 		}
 		for (auto& c : components) {
 			if (c->uuid == gfn::core::uuid::createNil()) {
@@ -135,6 +136,12 @@ class ComponentList {
 				v.first->prop->_prevComponent = c->uuid;
 			}
 			c->root->prop->_prevComponentRoot = true;
+		}
+
+		// build block cut trees
+		for (auto& c : components) {
+			gfn::core::structure::BlockCutTreeBuilder builder(c);
+			builder.build();
 		}
 	}
 

@@ -54,6 +54,7 @@ bool launchWindow() {
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
 	ImGui::GetIO().IniFilename = "Graphene.ini";
+	ImGui::GetIO().IniSavingRate = 1;
 	ImGui::GetIO().Fonts->AddFontFromFileTTF(".\\Barlow-Regular.ttf", 16.0f);
 
 	return true;

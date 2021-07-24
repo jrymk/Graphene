@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 #include <unordered_set>
+#include <atomic>
 #include <Core/Objects/Uuid.hpp>
 #include <Core/Properties/Properties.hpp>
 
@@ -11,11 +12,12 @@ namespace gfn::core::usergraph {
 class UserGraph {
 	std::unordered_map<gfn::core::Uuid, std::unordered_map<gfn::core::Uuid, std::unordered_set<gfn::core::Uuid>>>
 		adjList;
-
 	gfn::core::properties::Properties* props;
 
   public:
 	UserGraph() {}
+
+	std::atomic_bool pendingUpdate = true;
 
 	void bindProperties(gfn::core::properties::Properties* props) { this->props = props; }
 
@@ -24,22 +26,14 @@ class UserGraph {
 		return adjList;
 	}
 
-	///@brief Recommended to be called upon graph update, this function checks for dangling or missing props from
-	/// Properties
-	/// @param fix when encountered a prop mismatch, auto create/delete the prop
+	///@brief Recommended to be called upon graph update, this function checks for missing props from Properties
+	/// @param fix when encountered a prop mismatch, auto create the prop
 	/// @returns true if everything is fine, will return false even if it is fixed
-	bool propsCheckup(bool fix = true) {
+	bool validateProps(bool fix = true) {
 		int problems = 0;
 
 		auto vertexPropList = props->getVertexPropList();
 		auto edgePropList = props->getEdgePropList();
-		std::unordered_set<gfn::core::Uuid> invalidVertexPropList;
-		std::unordered_set<gfn::core::Uuid> invalidEdgePropList;
-
-		for (auto& v : vertexPropList)
-			invalidVertexPropList.insert(v.first);
-		for (auto& e : edgePropList)
-			invalidEdgePropList.insert(e.first);
 
 		// checking for missing props
 		std::unordered_set<gfn::core::Uuid> invalidVertexList;
@@ -47,42 +41,35 @@ class UserGraph {
 
 		for (auto& u : adjList) {
 			invalidVertexList.insert(u.first);
-			invalidVertexPropList.erase(u.first);
 			for (auto& v : u.second) {
 				for (auto& e : v.second) {
 					invalidEdgeList.insert(e);
-					invalidEdgePropList.erase(e);
 				}
 			}
 		}
 
-		for (auto it = invalidVertexList.begin(); it != invalidVertexList.end(); it++) {
-			if (vertexPropList.find(*it) != vertexPropList.end())
-				it = invalidVertexList.erase(it);
-		}
-		for (auto it = invalidEdgeList.begin(); it != invalidEdgeList.end(); it++) {
-			if (edgePropList.find(*it) != edgePropList.end())
-				it = invalidEdgeList.erase(it);
+		// at this point invalid lists is a whole list of vertex/edges in the usergraph. we use it to mark the props if
+		// they are valid
+		for (auto& p : vertexPropList) {
+			if (invalidVertexList.find(p.first) == invalidVertexList.end())
+				p.second.present = false;
+			else
+				p.second.present = true;
 		}
 
-		if (!invalidVertexPropList.empty()) {
-			for (auto& v : invalidVertexPropList) {
-				problems++;
-				logInsert("UserGraph: Props checkup error found: Dangling vertex {") logInsert(v)
-					logWarning("} prop does not exist in usergraph");
-				if (fix)
-					props->eraseVertexProp(v);
-			}
+		for (auto it = invalidVertexList.begin(); it != invalidVertexList.end();) {
+			if (vertexPropList.find(*it) != vertexPropList.end())
+				it = invalidVertexList.erase(it);
+			else
+				it++;
 		}
-		if (!invalidEdgePropList.empty()) {
-			for (auto& e : invalidEdgePropList) {
-				problems++;
-				logInsert("UserGraph: Props checkup error found: Dangling edge {") logInsert(e)
-					logWarning("} prop does not exist in usergraph");
-				if (fix)
-					props->eraseEdgeProp(e);
-			}
+		for (auto it = invalidEdgeList.begin(); it != invalidEdgeList.end();) {
+			if (edgePropList.find(*it) != edgePropList.end())
+				it = invalidEdgeList.erase(it);
+			else
+				it++;
 		}
+
 		if (!invalidVertexList.empty()) {
 			for (auto& v : invalidVertexList) {
 				problems++;
@@ -116,13 +103,14 @@ class UserGraph {
 	/// @returns  a pair with first indicating if it was successful and second the uuid auto-generated that
 	/// represents the vertex created
 	std::pair<bool, gfn::core::Uuid> addVertex() {
+		pendingUpdate = true;
 		for (int retries = 1; retries <= 5; retries++) {
 			auto uuid = gfn::core::uuid::createUuid();
 			if (adjList.insert({uuid, std::unordered_map<gfn::core::Uuid, std::unordered_set<gfn::core::Uuid>>()})
 					.second) {
 				// add entry to adjacency list
 				props->newVertexProp(uuid);
-				logInsert("UserGraph: Added new vertex {") logInsert(uuid) logVerbose("} (auto-generated)");
+				logInsert("UserGraph: Added new vertex {") logInsert(uuid) logInfo("} (auto-generated)");
 				return {true, uuid};
 			}
 			// prop already existed somehow
@@ -136,10 +124,11 @@ class UserGraph {
 
 	// add a new vertex with the given uuid
 	bool addVertex(gfn::core::Uuid uuid) {
+		pendingUpdate = true;
 		if (adjList.insert({uuid, std::unordered_map<gfn::core::Uuid, std::unordered_set<gfn::core::Uuid>>()}).second) {
 			// add entry to adjacency list
 			props->newVertexProp(uuid);
-			logInsert("UserGraph: Added new vertex {") logInsert(uuid) logVerbose("}");
+			logInsert("UserGraph: Added new vertex {") logInsert(uuid) logInfo("}");
 			return true;
 		}
 		logInsert("UserGraph: Add new vertex {") logInsert(uuid) logError("} failed (uuid given already exists)");
@@ -152,6 +141,7 @@ class UserGraph {
 	/// @returns if the deleting was successful
 	bool removeVertex(gfn::core::Uuid uuid, bool eraseVertexProperties = true, bool eraseEdgeProperties = true,
 					  bool removeAllAdjacentEdges = true) {
+		pendingUpdate = true;
 		auto uIt = adjList.find(uuid);
 		if (uIt == adjList.end()) {
 			logInsert("UserGraph: Remove vertex {") logInsert(uuid) logWarning("} failed (not found)");
@@ -193,7 +183,7 @@ class UserGraph {
 		}
 
 		logInsert("UserGraph: Removing vertex {") logInsert(uuid) logInsert("} with eraseVertexProperties ")
-			logVerbose(eraseVertexProperties ? "enabled" : "disabled");
+			logInfo(eraseVertexProperties ? "enabled" : "disabled");
 		if (eraseVertexProperties)
 			props->eraseVertexProp(uuid);
 
@@ -204,6 +194,7 @@ class UserGraph {
 	/// @returns a pair with first indicating if it was successful and second the uuid auto-generated that
 	/// represents the edge created
 	std::pair<bool, gfn::core::Uuid> addEdge(gfn::core::Uuid startVertex, gfn::core::Uuid endVertex) {
+		pendingUpdate = true;
 		auto startIt = adjList.find(startVertex);
 		if (startIt == adjList.end()) {
 			logInsert("UserGraph: Add edge failed (startVertex {") logInsert(startVertex) logInsert("} does not exist");
@@ -227,7 +218,7 @@ class UserGraph {
 				if (startIt->second.find(endVertex)->second.insert(edgeId).second) {
 					logInsert("UserGraph: Added new edge with startVertex {") logInsert(startVertex)
 						logInsert("} endVertex {") logInsert(endVertex) logInsert("} edge {") logInsert(edgeId)
-							logVerbose("} successfully");
+							logInfo("} successfully");
 
 					props->newEdgeProp(edgeId);
 					props->getEdgeProp(edgeId)->startVertexUuid = startVertex;
@@ -251,6 +242,7 @@ class UserGraph {
 
 	// add a new edge with the given uuid between two given vertices
 	bool addEdge(gfn::core::Uuid startVertex, gfn::core::Uuid endVertex, gfn::core::Uuid edgeUuid) {
+		pendingUpdate = true;
 		auto startIt = adjList.find(startVertex);
 		if (startIt == adjList.end()) {
 			logInsert("UserGraph: Add edge failed (startVertex {") logInsert(startVertex) logInsert("} does not exist");
@@ -272,7 +264,7 @@ class UserGraph {
 			if (startIt->second.find(endVertex)->second.insert(edgeUuid).second) {
 				logInsert("UserGraph: Added new edge with startVertex {") logInsert(startVertex)
 					logInsert("} endVertex {") logInsert(endVertex) logInsert("} edge {") logInsert(edgeUuid)
-						logVerbose("} successfully");
+						logInfo("} successfully");
 
 				props->newEdgeProp(edgeUuid);
 				props->getEdgeProp(edgeUuid)->startVertexUuid = startVertex;
@@ -296,6 +288,7 @@ class UserGraph {
 	/// also be
 	/// returned if properties not found (properties delete unsuccessfullk)
 	bool removeEdge(gfn::core::Uuid edgeUuid, bool eraseProperties) {
+		pendingUpdate = true;
 		auto prop = props->getEdgeProp(edgeUuid);
 		if (prop) { // prop exists
 					// the "use start and end vertices from prop" route
@@ -308,12 +301,15 @@ class UserGraph {
 						if (endIt->second.empty()) {
 							// no more edges between the given start-end vertex pair
 							startIt->second.erase(endIt);
-							if (!eraseProperties || (eraseProperties && props->eraseEdgeProp(edgeUuid)))
+							if (!eraseProperties || (eraseProperties && props->eraseEdgeProp(edgeUuid))) {
+								logInsert("UserGraph: Successfully removed edge {") logInsert(edgeUuid) logInfo("}");
 								return true;
+							}
 							logInsert("UserGraph: Remove edge {") logInsert(edgeUuid)
 								logWarning("} failed (edge prop deletion failed)");
 							return false;
 						}
+						logInsert("UserGraph: Successfully removed edge {") logInsert(edgeUuid) logInfo("}");
 						// still have edges between the given start-end vertex pair
 						return true;
 					}
@@ -336,11 +332,11 @@ class UserGraph {
 		for (auto& u : adjList) {
 			for (auto& v : u.second) {
 				if (v.second.erase(edgeUuid)) {
-					logInsert("UserGraph: Remove edge {") logInsert(edgeUuid)
-						logVerbose("} successfully with warnings (completed with full scan)");
-
-					if (!eraseProperties || (eraseProperties && props->eraseEdgeProp(edgeUuid)))
+					if (!eraseProperties || (eraseProperties && props->eraseEdgeProp(edgeUuid))) {
+						logInsert("UserGraph: Remove edge {") logInsert(edgeUuid)
+							logInfo("} successfully with warnings (completed with full scan)");
 						return true;
+					}
 					logInsert("UserGraph: Remove edge {") logInsert(edgeUuid)
 						logWarning("} failed (edge prop deletion failed)");
 					return false;

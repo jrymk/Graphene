@@ -5,6 +5,8 @@
 namespace gfn::core::properties {
 struct EdgeProp {
 	gfn::core::Uuid edgeUuid;
+	bool present = false;
+
 	gfn::core::Uuid startVertexUuid;
 	gfn::core::Uuid endVertexUuid;
 };
