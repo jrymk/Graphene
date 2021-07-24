@@ -39,7 +39,7 @@ class ComponentList {
 	/// @brief Constructs all components from UserGraph (must run in sync with core cycle)
 	/// @param usergraph the source graph where the components are constructed from
 	void componentify(gfn::core::usergraph::UserGraph* usergraph) {
-		usergraph->validateProps(true);
+		//usergraph->validateProps(true);
 
 		for (auto& v : vertices)
 			delete v;
@@ -58,6 +58,7 @@ class ComponentList {
 
 		// initialize new vertex and edge objects
 		for (auto& u : usergraph->getAdjList()) {
+            std::cerr << u.first << "\n";
 			auto vertex = new Vertex();
 			vertex->uuid = u.first;
 			vertex->prop = props->getVertexProp(u.first);
@@ -86,6 +87,7 @@ class ComponentList {
 		// spawn in as many component as needed
 		while (!pendingV.empty()) {
 			auto component = new Component();
+			component->root = *pendingV.begin();
 			components.insert(component);
 			// recursively recreate vertex entries in component adjacency list (no edges)
 			_componentifyDfs(component, (*pendingV.begin())->uuid, mapping, pendingV, usergraph);

@@ -94,7 +94,9 @@ class UserGraph {
 				logWarning(" errors in total");
 			return false;
 		}
-		logInsert("UserGraph: Props checkup completed: Found ") logInsert(std::to_string(problems))
+		logInsert("UserGraph: Props checkup completed: Found ")
+		logInsert(std::to_string(problems))
+
 			logVerbose(" errors in total");
 		return true;
 	}

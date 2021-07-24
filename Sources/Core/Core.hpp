@@ -16,27 +16,30 @@ class Core {
 	gfn::core::usergraph::UserGraph usergraph;
 	gfn::core::structure::Structure structure;
 	gfn::interface::Content content;
-	gfn::core::parser::Parser parser;
+	//gfn::core::parser::Parser parser;
 
 	Core() {
-		parser.usergraph = &usergraph;
+		//parser.usergraph = &usergraph;
 		usergraph.bindProperties(&properties);
 		structure.componentList.bindProperties(&properties);
 	}
 
 	void coreCycle(gfn::interface::Interface* interface) {
+        //parser.execute("graph new vertex");
 		if (usergraph.pendingUpdate) {
 			// update component list with usergraph and rebuild block cut tree (currently all)
 			structure.componentList.componentify(&usergraph);
+            usergraph.pendingUpdate = false;
 		}
 
 		/// TODO: graph update stuff
+        std::cerr << usergraph.getAdjList().size() << "\n";
 
-		if (pendingOutput) {
+        /*if (pendingOutput) {
 			content.properties = properties;
 			interface->buffer.put(content);
 			pendingOutput = false;
-		}
+		}*/
 	}
 };
 } // namespace gfn::core

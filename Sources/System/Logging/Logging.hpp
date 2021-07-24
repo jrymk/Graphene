@@ -35,7 +35,7 @@ void addLogEntry(std::string message, std::string file, int line, LogItem::Sever
 	logBuffer.push_back(LogItem(messageBuffer + message, file, line, severity));
 	if (logBuffer.size() == 100001)
 		logBuffer.pop_front();
-	// std::cerr << messageBuffer + message << "\n";
+	//std::cerr << messageBuffer + message << "\n";
 	messageBuffer = "";
 }
 
