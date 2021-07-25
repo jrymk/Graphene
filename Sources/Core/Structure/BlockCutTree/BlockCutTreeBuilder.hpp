@@ -8,7 +8,7 @@
 #include <Core/Structure/BlockCutTree/BlockCutTree.hpp>
 #include <Core/Structure/BlockCutTree/BiconnectedComponent.hpp>
 #include <Core/Properties/Properties.hpp>
-#include <System/Logging/Logging.hpp>
+#include <Core/Logging/Logging.hpp>
 
 namespace gfn::core::structure {
 // each component owns one block cut tree, rebuilt upon graph update (componentifier)
@@ -36,13 +36,14 @@ class BlockCutTreeBuilder {
 		while (!vertexStack.empty())
 			vertexStack.pop();
 		if (component->getAdjList().empty()) {
-			logInsert("BlockCutTreeBuilder: Component {") logInsert(component->uuid)
-				logVerbose("} adjacency list is empty");
+			logMessage << "BlockCutTreeBuilder: Component {" << component->uuid << "} adjacency list is empty";
+			logVerbose;
 			return true;
 		}
 		auto root = component->root;
-		logInsert("BlockCutTreeBuilder: Component {") logInsert(component->uuid)
-			logInsert("} building block cut tree with root vertex {") logInsert(root->uuid) logVerbose("}");
+		logMessage << "BlockCutTreeBuilder: Component {" << component->uuid
+				   << "} building block cut tree with root vertex {" << root->uuid << "}";
+		logVerbose;
 		countChildren(root);
 		dfs(root, root);
 		// stores the bcc to vertices mapping (actual)

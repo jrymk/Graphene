@@ -7,7 +7,7 @@
 #include <Core/Structure/Vertex.hpp>
 #include <Core/Structure/Edge.hpp>
 #include <Core/Properties/Properties.hpp>
-#include <System/Logging/Logging.hpp>
+#include <Core/Logging/Logging.hpp>
 
 namespace gfn::core::structure {
 /**

@@ -60,7 +60,9 @@
         "future": "cpp",
         "variant": "cpp",
         "span": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "cfloat": "cpp",
+        "climits": "cpp"
     },
     "C_Cpp.errorSquiggles": "Enabled"
 }

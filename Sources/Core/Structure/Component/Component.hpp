@@ -37,9 +37,9 @@ class Component {
 	std::unordered_set<Vertex*> getAdjacentVertices(Vertex* v) {
 		auto vIt = adjList.find(v);
 		if (vIt == adjList.end()) {
-			logInsert("Component: Request to get adjacent vertices for vertex {") logInsert(v->uuid)
-				logInsert("} in component {") logInsert(uuid)
-					logWarning("} failed (vertex does not exist in component)");
+			logMessage << "Component: Request to get adjacent vertices for vertex {" << v->uuid << "} in component {"
+					   << uuid << "} failed (vertex does not exist in component)";
+			logWarning;
 			return std::unordered_set<Vertex*>();
 		}
 		return vIt->second.first;
@@ -49,9 +49,9 @@ class Component {
 	bool isAdjacent(Vertex* u, Vertex* v) {
 		auto uIt = adjList.find(u);
 		if (uIt == adjList.end()) {
-			logInsert("Component: Request to check adjacentivity for vertex {") logInsert(u->uuid) logInsert("} and {")
-				logInsert(v->uuid) logInsert("} in component {") logInsert(uuid)
-					logWarning("} failed (start vertex does not exist in component)");
+			logMessage << "Component: Request to check adjacentivity for vertex {" << u->uuid << "} and {" << v->uuid
+					   << "} in component {" << uuid << "} failed (start vertex does not exist in component)";
+			logWarning;
 			return false;
 		}
 		return uIt->second.first.find(v) != uIt->second.first.end();

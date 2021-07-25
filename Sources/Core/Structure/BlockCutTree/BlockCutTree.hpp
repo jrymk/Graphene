@@ -30,27 +30,36 @@ class BlockCutTree {
 		auto uIt = adjList.find(u);
 		auto vIt = adjList.find(v);
 		if (uIt == adjList.end()) {
-			logInsert("BlockCutTree: Add edge operation failed (bcc u does not exist)");
+			// logBuffer->warning("BlockCutTree: Add edge operation failed (bcc u does not exist)", LOGINFO);
 			return false;
 		}
 		if (vIt == adjList.end()) {
-			logInsert("BlockCutTree: Add edge operation failed (bcc v does not exist)");
+			// logBuffer->warning("BlockCutTree: Add edge operation failed (bcc v does not exist)", LOGINFO);
 			return false;
 		}
 		if (u->getType() == v->getType()) {
-			logInsert("BlockCutTree: Add edge operation failed between {") logInsert(u->uuid) logInsert("} and {")
-				logInsert(v->uuid) logWarning("} (adding edge between biconnected component with same type");
+			// logBuffer->warning("BlockCutTree: Add edge operation failed between {", LOGINFO);
+			// logBuffer->join(u->uuid);
+			// logBuffer->join("} and {");
+			// logBuffer->join(v->uuid);
+			// logBuffer->join("} (adding edge between biconnected component with same type", LOGINFO);
 			return false;
 		}
 		if (!uIt->second.insert(v).second) {
-			logInsert("BlockCutTree: Edge not added from {") logInsert(u->uuid) logInsert("} to {") logInsert(v->uuid)
-				logWarning("} (already exists");
+			// logBuffer->warning("BlockCutTree: Edge not added from {", LOGINFO);
+			// logBuffer->join(u->uuid);
+			// logBuffer->join("} to {");
+			// logBuffer->join(v->uuid);
+			// logBuffer->join("} (already exists");
 			if (returnFalseOnAlreadyExist)
 				return false;
 		}
 		if (!vIt->second.insert(u).second) {
-			logInsert("BlockCutTree: Edge not added from {") logInsert(v->uuid) logInsert("} to {") logInsert(u->uuid)
-				logWarning("} (already exists");
+			// logBuffer->warning("BlockCutTree: Edge not added from {", LOGINFO);
+			// logBuffer->join(v->uuid);
+			// logBuffer->join("} to {");
+			// logBuffer->join(u->uuid);
+			// logBuffer->join("} (already exists");
 			if (returnFalseOnAlreadyExist)
 				return false;
 		}

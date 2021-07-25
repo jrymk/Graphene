@@ -4,24 +4,28 @@
 #include <Core/Objects/Uuid.hpp>
 #include <Core/Properties/VertexProp.hpp>
 #include <Core/Properties/EdgeProp.hpp>
-#include <System/Logging/Logging.hpp>
+#include <Core/Logging/Logging.hpp>
 
 namespace gfn::core::properties {
 /// @brief Stores all the properties such as positions, colors and names that will be accessed from outside for vertices
 /// and edges
 class Properties {
+	gfn::core::logging::LogBuffer* logBuffer;
 	// this class stays ar the bottom of anything, so that usergraph, core, the api and so on can access it
 	std::unordered_map<gfn::core::Uuid, gfn::core::properties::VertexProp> vertexPropList;
 	std::unordered_map<gfn::core::Uuid, gfn::core::properties::EdgeProp> edgePropList;
 
   public:
+	void bindLogBuffer(gfn::core::logging::LogBuffer* logBuffer) { this->logBuffer = logBuffer; }
+
 	/// @brief retrieve the properties object of the given vertex
 	/// @returns nullptr if the prop does not exist, else the pointer to the prop object
 	gfn::core::properties::VertexProp* getVertexProp(gfn::core::Uuid uuid, bool warnOnNotFound = true) {
 		auto it = vertexPropList.find(uuid);
 		if (it == vertexPropList.end()) {
 			if (warnOnNotFound) {
-				logInsert("Properties: Get vertex prop {") logInsert(uuid) logWarning("} failed (not found)");
+				logMessage << "Properties: Get vertex prop {" << uuid << "} failed (not found)";
+				logWarning;
 			}
 			return nullptr;
 		}
@@ -34,7 +38,8 @@ class Properties {
 		auto it = edgePropList.find(uuid);
 		if (it == edgePropList.end()) {
 			if (warnOnNotFound) {
-				logInsert("Properties: Get edge prop {") logInsert(uuid) logWarning("} failed (not found)");
+				logMessage << "Properties: Get edge prop {" << uuid << "} failed (not found)";
+				logWarning;
 			}
 			return nullptr;
 		}
@@ -45,30 +50,36 @@ class Properties {
 	/// @returns false if prop already exist but clearExisting is false
 	bool newVertexProp(gfn::core::Uuid uuid, bool clearExisting = false) {
 		if (clearExisting && vertexPropList.erase(uuid)) {
-			logInsert("Properties: Cleared existing vertex prop {") logInsert(uuid) logVerbose("}");
+			logMessage << "Properties: Cleared existing vertex prop {" << uuid << "}";
+			logVerbose;
 		}
 
 		if (vertexPropList.insert({uuid, gfn::core::properties::VertexProp()}).second) {
-			logInsert("Properties: New vertex prop {") logInsert(uuid) logVerbose("}");
+			logMessage << "Properties: New vertex prop {" << uuid << "} at " << getVertexProp(uuid)->position;
+			logInfo;
 			getVertexProp(uuid)->uuid = uuid;
 			return true;
 		}
-		logInsert("Properties: New vertex prop {") logInsert(uuid) logWarning("} failed (unexpectedly already exists)");
+		logMessage << "Properties: New vertex prop {" << uuid << "} failed (unexpectedly already exists)";
+		logWarning;
 		return false;
 	}
 
-	/// @brief allocate a new vertex properties object
+	/// @brief allocate a new vertex properties objectx
 	bool newEdgeProp(gfn::core::Uuid uuid, bool clearExisting = false) {
 		if (clearExisting && edgePropList.erase(uuid)) {
-			logInsert("Properties: Cleared existing vertex prop {") logInsert(uuid) logVerbose("}");
+			logMessage << "Properties: Cleared existing vertex prop {" << uuid << "}";
+			logVerbose;
 		}
 
 		if (edgePropList.insert({uuid, gfn::core::properties::EdgeProp()}).second) {
-			logInsert("Properties: New edge prop {") logInsert(uuid) logVerbose("}");
+			logMessage << "Properties: New edge prop {" << uuid << "}";
+			logVerbose;
 			getEdgeProp(uuid)->edgeUuid = uuid;
 			return true;
 		}
-		logInsert("Properties: New edge prop {") logInsert(uuid) logWarning("} failed (unexpectedly already exists)");
+		logMessage << "Properties: New edge prop {" << uuid << "} failed (unexpectedly already exists)";
+		logWarning;
 		return false;
 	}
 
@@ -77,11 +88,13 @@ class Properties {
 	bool eraseVertexProp(gfn::core::Uuid uuid) {
 		auto it = vertexPropList.find(uuid);
 		if (it == vertexPropList.end()) {
-			logInsert("Properties: Erase vertex prop {") logInsert(uuid) logWarning("} failed (not found)");
+			logMessage << "Properties: Erase vertex prop {" << uuid << "} failed (not found)";
+			logWarning;
 			return false;
 		}
 		vertexPropList.erase(it);
-		logInsert("Properties: Erase vertex prop {") logInsert(uuid) logVerbose("}");
+		logMessage << "Properties: Erase vertex prop {" << uuid << "}";
+		logVerbose;
 	}
 
 	/// @brief erase an edge prop
@@ -89,11 +102,13 @@ class Properties {
 	bool eraseEdgeProp(gfn::core::Uuid uuid) {
 		auto it = edgePropList.find(uuid);
 		if (it == edgePropList.end()) {
-			logInsert("Properties: Erase edge prop {") logInsert(uuid) logWarning("} failed (not found)");
+			logMessage << "Properties: Erase edge prop {" << uuid << "} failed (not found)";
+			logWarning;
 			return false;
 		}
 		edgePropList.erase(it);
-		logInsert("Properties: Erase edge prop {") logInsert(uuid) logVerbose("}");
+		logMessage << "Properties: Erase edge prop {" << uuid << "}";
+		logVerbose;
 	}
 
 	///@brief Returns the entire prop list, mainly for usergraph prop checkup

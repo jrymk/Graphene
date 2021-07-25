@@ -1,18 +1,15 @@
 #pragma once
 
-#include <Interface/LockingBuffer.hpp>
+#include <Interface/TripleBuffer.hpp>
 #include <Core/Properties/Properties.hpp>
+#include <Core/Logging/Logging.hpp>
 
 #undef interface // I just really want to use this word
 
 namespace gfn::interface {
-class Content {
-  public:
-	gfn::core::properties::Properties properties;
-};
-
 class Interface {
   public:
-	LockingBuffer<Content> buffer;
+	TripleBuffer<gfn::core::properties::Properties> properties;
+	TripleBuffer<gfn::core::logging::LogBuffer> logBuffer;
 };
 } // namespace gfn::interface

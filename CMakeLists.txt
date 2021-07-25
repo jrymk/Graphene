@@ -33,7 +33,6 @@ add_executable(Graphene
         Dependencies/imgui/backends/imgui_impl_opengl3.cpp
         Sources/Main.cpp)
 
-
 target_link_libraries(Graphene imm32.lib)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)

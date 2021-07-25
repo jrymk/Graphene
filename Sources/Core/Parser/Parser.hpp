@@ -13,7 +13,7 @@ class Parser {
 	gfn::core::usergraph::UserGraph* usergraph;
 
 	bool execute(Command cmd) {
-		std::cout << "Command: " << cmd << "\n";
+		//std::cout << "Command: " << cmd << "\n";
 		std::stringstream ss;
 		std::string arg;
 		ss << cmd;

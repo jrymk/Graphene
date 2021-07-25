@@ -9,7 +9,7 @@
 #include <Core/Structure/Vertex.hpp>
 #include <Core/Structure/Edge.hpp>
 #include <Core/Properties/Properties.hpp>
-#include <System/Logging/Logging.hpp>
+#include <Core/Logging/Logging.hpp>
 
 namespace gfn::core::structure {
 /**
@@ -39,7 +39,7 @@ class ComponentList {
 	/// @brief Constructs all components from UserGraph (must run in sync with core cycle)
 	/// @param usergraph the source graph where the components are constructed from
 	void componentify(gfn::core::usergraph::UserGraph* usergraph) {
-		//usergraph->validateProps(true);
+		// usergraph->validateProps(true);
 
 		for (auto& v : vertices)
 			delete v;
@@ -58,7 +58,6 @@ class ComponentList {
 
 		// initialize new vertex and edge objects
 		for (auto& u : usergraph->getAdjList()) {
-            std::cerr << u.first << "\n";
 			auto vertex = new Vertex();
 			vertex->uuid = u.first;
 			vertex->prop = props->getVertexProp(u.first);
@@ -98,10 +97,10 @@ class ComponentList {
 			auto u = mapping.find(e->startVertexUuid)->second;
 			auto v = mapping.find(e->endVertexUuid)->second;
 			if (u->component != v->component) {
-				logInsert("Componentifier: Edge {") logInsert(e->edgeUuid) logInsert("} start vertex {")
-					logInsert(u->uuid) logInsert("} component {") logInsert(u->component->uuid)
-						logInsert("} is different from end vertex {") logInsert(v->uuid) logInsert("} component {")
-							logInsert(v->component->uuid) logWarning("}, something went wrong assigning components");
+				logMessage << "Componentifier: Edge {" << e->edgeUuid << "} start vertex {" << u->uuid
+						   << "} component {" << u->component->uuid << "} is different from end vertex {" << v->uuid
+						   << "} component {" << v->component->uuid << "}, something went wrong assigning components";
+				logWarning;
 			}
 			auto c = u->component;
 			auto uIt = c->getAdjList().find(u);
@@ -116,24 +115,32 @@ class ComponentList {
 
 		for (auto& v : previousComponentRoot) {
 			v->component->uuid = v->prop->_prevComponent;
-			logInsert("Componentifier: Assigned component uuid {") logInsert(v->prop->_prevComponent)
-				logInsert("} from previous root vertex {") logInsert(v->uuid) logVerbose("}");
-            v->component->root = v;
+			logMessage << "Componentifier: Assigned component uuid {" << v->prop->_prevComponent
+					   << "} from previous root vertex {" << v->uuid << "}";
+			logVerbose;
+			v->component->root = v;
 		}
 		for (auto& c : components) {
 			if (c->uuid == gfn::core::uuid::createNil()) {
 				auto uuid = gfn::core::uuid::createUuid();
 				c->uuid = uuid;
 				c->root = c->getAdjList().begin()->first;
-				logInsert("Componentifier: Assigned component uuid {") logInsert(uuid)
-					logInsert("} (auto-generated) and assigned vertex {")
-						logInsert(c->getAdjList().begin()->first->uuid) logVerbose("} as root");
+				logMessage << "Componentifier: Assigned component uuid {" << uuid
+						   << "} (auto-generated) and assigned vertex {" << c->getAdjList().begin()->first->uuid
+						   << "} as root";
+				logVerbose;
 			}
 		}
 
 		// finish up everything
+		logMessage << "Componentifier: Component list:";
+		logVerbose;
 		for (auto& c : components) {
+			logMessage << "     {" << c->uuid << "}";
+			logVerbose;
 			for (auto& v : c->getAdjList()) {
+				logMessage << "        {" << v.first->uuid << "}";
+				logVerbose;
 				v.first->prop->_prevComponentRoot = false;
 				v.first->prop->_prevComponent = c->uuid;
 			}
