@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <string>
 #include <iostream>
 #include <Core/Core.hpp>
@@ -67,7 +68,7 @@ int main() {
 		// core.parser.execute("graph new vertex"); // No, you can not run this here
 		ImGui::End();
 
-		// gfn::editor::logs::show(interface.logBuffer.getReadBuffer());
+		gfn::editor::logs::show(interface.logBuffer.getReadBuffer());
 
 		gfn::editor::debuggraphview::show(interface.properties.getReadBuffer());
 		// read done

@@ -6,6 +6,7 @@
 #include <Core/Properties/Properties.hpp>
 #include <Core/Parser/Parser.hpp>
 #include <Interface/Interface.hpp>
+#include <Core/Updater/Updater.hpp>
 #include <atomic>
 
 namespace gfn::core {
@@ -23,14 +24,8 @@ class Core {
 	}
 
 	void coreCycle(gfn::interface::Interface* interface) {
-		static bool first = true;
-		if (first) {
-			for (int i = 0; i < 1000; i++) {
-				parser.execute("graph new vertex");
-			}
-			first = false;
-		}
-
+		gfn::core::logging::logBuffer = &interface->logBuffer.getWriteBuffer();
+		parser.execute("graph new vertex");
 		if (usergraph.pendingUpdate) {
 			// update component list with usergraph and rebuild block cut tree (currently all)
 			structure.componentList.componentify(&usergraph);
@@ -48,7 +43,6 @@ class Core {
 
 		if (interface->logBuffer.pendingWrite()) {
 			// assignment operator, writes the core content to the write buffer
-			interface->logBuffer.getWriteBuffer() = gfn::core::logging::logBuffer;
 			interface->logBuffer.writeDone();
 		}
 	}

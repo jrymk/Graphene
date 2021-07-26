@@ -6,7 +6,6 @@
 namespace gfn::editor::debuggraphview {
 void show(gfn::core::properties::Properties* prop) {
 	ImGui::Begin("Debug Graph View");
-
 	for (auto& v : prop->getVertexPropList()) {
 		ImGui::GetWindowDrawList()->AddCircleFilled(
 			ImVec2(ImGui::GetCursorScreenPos().x + v.second.position.x * 800.0 + 400.0,

@@ -66,8 +66,9 @@ std::string getNowStamp() {
 	tm local_tm = *localtime(&tt);
 	std::stringstream ss;
 	ss << std::setw(4) << std::setfill('0') << local_tm.tm_year + 1900 << std::setw(2) << local_tm.tm_mon
-	   << local_tm.tm_mday << "-" << local_tm.tm_hour << local_tm.tm_min << local_tm.tm_sec << ":" << std::setw(3)
-	   << getNowMillis() << ":" << getNowMicros();
+	   << std::setw(2) << local_tm.tm_mday << "-" << std::setw(2) << local_tm.tm_hour << std::setw(2) << local_tm.tm_min
+	   << std::setw(2) << local_tm.tm_sec << ":" << std::setw(3) << getNowMillis() << ":" << std::setw(3)
+	   << getNowMicros();
 	return ss.str();
 }
 
