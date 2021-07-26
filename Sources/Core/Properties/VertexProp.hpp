@@ -8,10 +8,12 @@ namespace gfn::core::properties {
 struct VertexProp {
 	gfn::core::Uuid uuid;
 	bool present;
-	gfn::core::Vec2f position;
+    gfn::core::Vec2f position;
+    gfn::core::Vec2f force;
 
-	gfn::core::Uuid _prevComponent = gfn::core::uuid::createNil();
-	bool _prevComponentRoot = false;
+	gfn::core::Uuid _component = gfn::core::uuid::createNil();
+	bool _isComponentRoot = false;
+	gfn::core::Vec2f _componentCentroidPosition;
 
 	VertexProp() {
 		uuid = gfn::core::uuid::createNil();

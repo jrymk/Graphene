@@ -16,7 +16,7 @@ const ImU32 severityCol[5] = {
 
 void show(gfn::core::logging::LogBuffer* logBuffer) {
 	// std::cerr << logBuffer->buffer.size() << "\n";
-	auto buffer = *logBuffer;
+	//auto buffer = *logBuffer;
 	bool open = true;
 	bool goToBottom = false;
 	ImGui::SetNextWindowSizeConstraints(ImVec2(100, 100), ImVec2(FLT_MAX, FLT_MAX));
@@ -25,7 +25,7 @@ void show(gfn::core::logging::LogBuffer* logBuffer) {
 		if (ImGui::BeginMenuBar()) {
 			if (ImGui::BeginMenu("Options")) {
 				if (ImGui::MenuItem("Clear all"))
-                    buffer.buffer.clear();
+                    logBuffer->buffer.clear();
 				if (ImGui::MenuItem("Go to bottom"))
 					goToBottom = true;
 				ImGui::MenuItem("Auto scroll", nullptr, &autoScroll);
@@ -71,7 +71,7 @@ void show(gfn::core::logging::LogBuffer* logBuffer) {
 			ImGui::EndMenuBar();
 		}
 
-		for (auto& it : buffer.buffer) {
+		for (auto& it : logBuffer->buffer) {
 			int severity = 0;
 			ImU32 textColorTemp = ImGui::GetColorU32(ImGuiCol_Text);
 			switch (it->severity) {

@@ -227,9 +227,12 @@ class UserGraph {
 			auto edgeId = gfn::core::uuid::createUuid();
 			if (!props->getEdgeProp(edgeId, false)) { // prop does not exist
 				// add entry to adjacency list
-				if (startIt->second.insert({endVertex, std::unordered_set<gfn::core::Uuid>()}).second) {
-					// created new endVertex entry
-				}
+                if (startIt->second.insert({endVertex, std::unordered_set<gfn::core::Uuid>()}).second) {
+                    // created new endVertex entry
+                }
+                if (endIt->second.insert({startVertex, std::unordered_set<gfn::core::Uuid>()}).second) {
+                    // created new endVertex entry
+                }
 
 				if (startIt->second.find(endVertex)->second.insert(edgeId).second) {
 					logMessage << "UserGraph: Added new edge with startVertex {" << startVertex << "} endVertex {"
@@ -238,6 +241,7 @@ class UserGraph {
 
 					props->newEdgeProp(edgeId);
 					props->getEdgeProp(edgeId)->startVertexUuid = startVertex;
+					props->getEdgeProp(edgeId)->endVertexUuid = endVertex;
 					props->getEdgeProp(edgeId)->edgeUuid = edgeId;
 					return {true, edgeId};
 				}
@@ -279,6 +283,9 @@ class UserGraph {
 			if (startIt->second.insert({endVertex, std::unordered_set<gfn::core::Uuid>()}).second) {
 				// created new endVertex entry
 			}
+            if (endIt->second.insert({startVertex, std::unordered_set<gfn::core::Uuid>()}).second) {
+                // created new endVertex entry
+            }
 
 			if (startIt->second.find(endVertex)->second.insert(edgeUuid).second) {
 				logMessage << "UserGraph: Added new edge with startVertex {" << startVertex << "} endVertex {"
@@ -287,6 +294,7 @@ class UserGraph {
 
 				props->newEdgeProp(edgeUuid);
 				props->getEdgeProp(edgeUuid)->startVertexUuid = startVertex;
+				props->getEdgeProp(edgeUuid)->endVertexUuid = endVertex;
 				props->getEdgeProp(edgeUuid)->edgeUuid = edgeUuid;
 				return true;
 			}

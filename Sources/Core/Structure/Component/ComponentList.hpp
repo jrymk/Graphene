@@ -36,6 +36,8 @@ class ComponentList {
 
 	void bindProperties(gfn::core::properties::Properties* properties) { this->props = properties; }
 
+	std::unordered_set<Component*>& getComponents() { return components; }
+
 	/// @brief Constructs all components from UserGraph (must run in sync with core cycle)
 	/// @param usergraph the source graph where the components are constructed from
 	void componentify(gfn::core::usergraph::UserGraph* usergraph) {
@@ -66,7 +68,7 @@ class ComponentList {
 			// keep a list of previous component roots to later assign them back to the fresh component objects and
 			// maximize the reusability (so component properties can be kept)
 			// this is a fairly bad implementation, and might be changed in the future
-			if (vertex->prop->_prevComponentRoot)
+			if (vertex->prop->_isComponentRoot)
 				previousComponentRoot.insert(vertex);
 			for (auto& v : u.second) {
 				for (auto& e : v.second) {
@@ -92,6 +94,28 @@ class ComponentList {
 			_componentifyDfs(component, (*pendingV.begin())->uuid, mapping, pendingV, usergraph);
 		}
 
+		/// TODO: Fix up the crappy component reuse implementation
+
+		for (auto& v : previousComponentRoot) {
+			v->component->uuid = v->prop->_component;
+			logMessage << "Componentifier: Assigned component uuid {" << v->prop->_component
+					   << "} from previous root vertex {" << v->uuid << "}";
+			logVerbose;
+			v->component->root = v;
+		}
+
+		for (auto& c : components) {
+			if (c->uuid == gfn::core::uuid::createNil()) {
+				auto uuid = gfn::core::uuid::createUuid();
+				c->uuid = uuid;
+				c->root = c->getAdjList().begin()->first;
+				logMessage << "Componentifier: Assigned component uuid {" << uuid
+						   << "} (auto-generated) and assigned vertex {" << c->getAdjList().begin()->first->uuid
+						   << "} as root";
+				logVerbose;
+			}
+		}
+
 		// construct edges for the components
 		for (auto& e : edges) {
 			auto u = mapping.find(e->startVertexUuid)->second;
@@ -111,40 +135,24 @@ class ComponentList {
 			uIt->second.second.find(v)->second.insert(e);
 		}
 
-		/// TODO: Fix up the crappy component reuse implementation
-
-		for (auto& v : previousComponentRoot) {
-			v->component->uuid = v->prop->_prevComponent;
-			logMessage << "Componentifier: Assigned component uuid {" << v->prop->_prevComponent
-					   << "} from previous root vertex {" << v->uuid << "}";
-			logVerbose;
-			v->component->root = v;
-		}
-		for (auto& c : components) {
-			if (c->uuid == gfn::core::uuid::createNil()) {
-				auto uuid = gfn::core::uuid::createUuid();
-				c->uuid = uuid;
-				c->root = c->getAdjList().begin()->first;
-				logMessage << "Componentifier: Assigned component uuid {" << uuid
-						   << "} (auto-generated) and assigned vertex {" << c->getAdjList().begin()->first->uuid
-						   << "} as root";
-				logVerbose;
-			}
-		}
-
 		// finish up everything
-		logMessage << "Componentifier: Component list:";
+		logMessage << "Componentifier: Component list: (" << components.size() << " entries)";
 		logVerbose;
 		for (auto& c : components) {
 			logMessage << "     {" << c->uuid << "}";
 			logVerbose;
+			c->root->prop->_componentCentroidPosition = gfn::core::Vec2f(0.0, 0.0);
 			for (auto& v : c->getAdjList()) {
 				logMessage << "        {" << v.first->uuid << "}";
 				logVerbose;
-				v.first->prop->_prevComponentRoot = false;
-				v.first->prop->_prevComponent = c->uuid;
+				v.first->prop->_isComponentRoot = false;
+				v.first->prop->_component = c->uuid;
+				c->root->prop->_componentCentroidPosition += v.first->prop->position;
 			}
-			c->root->prop->_prevComponentRoot = true;
+			c->root->prop->_componentCentroidPosition /= double(c->getAdjList().size());
+			logMessage << "       at position " << c->root->prop->_componentCentroidPosition;
+			logVerbose;
+			c->root->prop->_isComponentRoot = true;
 		}
 
 		// build block cut trees
@@ -166,6 +174,7 @@ class ComponentList {
 			{u, std::pair<std::unordered_set<Vertex*>, std::unordered_map<Vertex*, std::unordered_set<Edge*>>>()});
 		pending.erase(u);
 		// assign the component
+		u->component = c;
 		u->component = c;
 
 		auto userIt = usergraph->getAdjList().find(uId);

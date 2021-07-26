@@ -10,10 +10,12 @@ typedef std::string Command;
 
 class Parser {
   public:
+	Parser() = default;
+
 	gfn::core::usergraph::UserGraph* usergraph;
 
-	bool execute(Command cmd) {
-		//std::cout << "Command: " << cmd << "\n";
+	gfn::core::Uuid execute(Command cmd) {
+		// std::cout << "Command: " << cmd << "\n";
 		std::stringstream ss;
 		std::string arg;
 		ss << cmd;
@@ -31,7 +33,7 @@ class Parser {
 								usergraph->addVertex(arg);
 						}
 					} else // graph new vertex
-						usergraph->addVertex();
+						return usergraph->addVertex().second;
 				} else if (arg == "edge") {
 					ss >> arg;
 					if (gfn::core::uuid::isUuid(arg)) {
@@ -46,7 +48,7 @@ class Parser {
 									// graph new edge 000-000 000-000 ***
 								}
 							} else
-								usergraph->addEdge(u, v); // graph new edge 000-000 000-000
+								return usergraph->addEdge(u, v).second; // graph new edge 000-000 000-000
 						} else {
 							// graph new edge 000-000 *** ***
 						}
@@ -57,7 +59,7 @@ class Parser {
 				}
 			}
 		}
-		return true;
+		return gfn::core::uuid::createNil();
 	}
 };
 } // namespace gfn::core::parser
