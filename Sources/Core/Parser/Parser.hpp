@@ -2,8 +2,8 @@
 
 #include <sstream>
 #include <string>
-#include <Core/UserGraph/UserGraph.hpp>
-#include <Core/Objects/Uuid.hpp>
+#include <UserGraph/UserGraph.hpp>
+#include <Objects/Uuid.hpp>
 
 namespace gfn::core::parser {
 typedef std::string Command;
@@ -12,9 +12,9 @@ class Parser {
   public:
 	Parser() = default;
 
-	gfn::core::usergraph::UserGraph* usergraph;
+	gfn::usergraph::UserGraph* usergraph;
 
-	gfn::core::Uuid execute(Command cmd) {
+	gfn::Uuid execute(Command cmd) {
 		// std::cout << "Command: " << cmd << "\n";
 		std::stringstream ss;
 		std::string arg;
@@ -26,7 +26,7 @@ class Parser {
 				ss >> arg;
 				if (arg == "vertex") { // graph new vertex
 					if (ss >> arg) {
-						if (gfn::core::uuid::isUuid(arg)) { // graph new vertex 00000000-0000-0000-0000-000000000000
+						if (gfn::uuid::isUuid(arg)) { // graph new vertex 00000000-0000-0000-0000-000000000000
 							if (ss >> arg) {
 								// graph new vertex 00000000-0000-0000-0000-000000000000 ***
 							} else
@@ -36,13 +36,13 @@ class Parser {
 						return usergraph->addVertex().second;
 				} else if (arg == "edge") {
 					ss >> arg;
-					if (gfn::core::uuid::isUuid(arg)) {
+					if (gfn::uuid::isUuid(arg)) {
 						::std::string u = arg;
 						ss >> arg;
-						if (gfn::core::uuid::isUuid(arg)) {
+						if (gfn::uuid::isUuid(arg)) {
 							::std::string v = arg;
 							if (ss >> arg) {
-								if (gfn::core::uuid::isUuid(arg)) // graph new edge 000-000 000-000 000-000
+								if (gfn::uuid::isUuid(arg)) // graph new edge 000-000 000-000 000-000
 									usergraph->addEdge(u, v, arg);
 								else {
 									// graph new edge 000-000 000-000 ***
@@ -59,7 +59,7 @@ class Parser {
 				}
 			}
 		}
-		return gfn::core::uuid::createNil();
+		return gfn::uuid::createNil();
 	}
 };
 } // namespace gfn::core::parser

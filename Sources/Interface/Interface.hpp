@@ -1,17 +1,19 @@
 #pragma once
 
 #include <Interface/TripleBuffer.hpp>
-#include <Core/Properties/Properties.hpp>
-#include <Core/Logging/Logging.hpp>
-#include <Core/Configs/Configs.hpp>
+#include <Properties/UserProps.hpp>
+#include <Configs/Configs.hpp>
 
 #undef interface // I just really want to use this word
 
 namespace gfn::interface {
-class Interface {
-  public:
-	TripleBuffer<gfn::core::properties::Properties> properties;
-	TripleBuffer<gfn::core::logging::LogBuffer> logBuffer;
-	TripleBuffer<gfn::core::configs::Configs> configs;
-};
+    class Interface {
+    public:
+        // this standalone data structure of user props will safely export graph data from core
+        TripleBuffer<gfn::properties::UserProps> userprops;
+        // this non working log buffer will soon push logs to the terminal, gui or a log file
+        TripleBuffer<gfn::logging::LogBuffer> logBuffer;
+        // this stores the configurations for core to run, from the user to the core
+        TripleBuffer<gfn::configs::Configs> configs;
+    };
 } // namespace gfn::interface

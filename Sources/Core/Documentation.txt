@@ -1,0 +1,32 @@
+For coding graph drawing algorithm, just ignore uuid and usergraph. All you need (perhaps) is in Components*
+The graph update cycle is in Core::coreCycle()
+The graph update function is gfn::core::drawlgo::update()  (sorry for the name)
+
+Note: It runs utterly slow in debug mode...
+
+gfn::structure::Structure - Stores the structure of the graph. when writing graph drawing algorithm stuff, this is all you need
+    componentList - A set of Component*s
+        Component::adjList - The graph structure of a given component
+            std::unordered_map<Vertex*, std::pair<std::unordered_set<Vertex*>, std::unordered_map<Vertex*, std::unordered_set<Edge*>>>>
+                               "The vertex"       This is a set of adjacent                       All the edges that have the starting
+                                                  vertices to the vertex                          vertex "The vertex", for graph drawing
+                                                                                                  algorithms this means nothing, for now...
+                                                                                                  (I am thinking about treating an edge as a "force directed node" that will also repel each other)
+            gfn::structure::Vertex
+                props - Stores the properties that will be exposed to the user interface, such as...
+                    <important ones>
+                    gfn::Vec2f position - The position of the vertex
+
+                    <nothing to do with graph drawing algo ones>
+                    uuid - A unique identifier given to each vertex (and edge, and component) for code integration and thread safe graph operations
+                    enabled - Whether the vertex actually exist, because I want the ability to keep the prop after the vertex is deleted
+
+                internalProps - Stores the properties that don't need to be exposed to the user interface, such as...
+                    <important ones>
+                    gfn::Vec2f force - Force save state for force directed graph drawing
+
+                    <the rest is not really important>
+
+                other variables outside of props and internalProps - These are variables that does not live through a graph update, such as the pointer to it's component, as structure::Component objects are created every graph update, there is no point of keeping them in the props, and accessing it may lead to exceptions
+
+        Component::blockCutTree - This is not my work, I don't know

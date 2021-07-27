@@ -1,7 +1,7 @@
 #pragma once
 
 #include <imgui.h>
-#include <Core/Logging/Logging.hpp>
+#include <Logging/Logging.hpp>
 
 #undef ERROR
 
@@ -14,7 +14,7 @@ const ImU32 severityCol[5] = {
 	IM_COL32(44, 151, 168, 255), IM_COL32(148, 148, 148, 255),
 };
 
-void show(gfn::core::logging::LogBuffer* logBuffer) {
+void show(gfn::logging::LogBuffer* logBuffer) {
 	// std::cerr << logBuffer->buffer.size() << "\n";
 	//auto buffer = *logBuffer;
 	bool open = true;
@@ -75,23 +75,23 @@ void show(gfn::core::logging::LogBuffer* logBuffer) {
 			int severity = 0;
 			ImU32 textColorTemp = ImGui::GetColorU32(ImGuiCol_Text);
 			switch (it->severity) {
-			case gfn::core::logging::LogEntry::Severity::ERROR:
+			case gfn::logging::LogEntry::Severity::ERROR:
 				ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(168, 48, 44, 255));
 				severity = 4;
 				break;
-			case gfn::core::logging::LogEntry::Severity::WARNING:
+			case gfn::logging::LogEntry::Severity::WARNING:
 				ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(168, 129, 44, 255));
 				severity = 3;
 				break;
-			case gfn::core::logging::LogEntry::Severity::INFO:
+			case gfn::logging::LogEntry::Severity::INFO:
 				ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(102, 168, 44, 255));
 				severity = 2;
 				break;
-			case gfn::core::logging::LogEntry::Severity::DEBUG:
+			case gfn::logging::LogEntry::Severity::DEBUG:
 				ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(44, 151, 168, 255));
 				severity = 1;
 				break;
-			case gfn::core::logging::LogEntry::Severity::VERBOSE:
+			case gfn::logging::LogEntry::Severity::VERBOSE:
 				ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(148, 148, 148, 255));
 				severity = 0;
 				break;

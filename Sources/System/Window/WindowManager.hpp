@@ -33,7 +33,7 @@ bool launchWindow() {
 		return false;
 
 	glfwMakeContextCurrent(glfwWindow);
-	glfwSwapInterval(0);
+	glfwSwapInterval(1);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cerr << "Failed to initialize OpenGL loader!\n";

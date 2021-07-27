@@ -1,57 +1,65 @@
 #pragma once
 
+#include "thread_pool/thread_pool.hpp"
+#include <thread>
+#include <iostream>
 #include <cmath>
-#include <Core/Structure/Structure.hpp>
-#include <Core/Properties/Properties.hpp>
-#include <Core/Configs/Configs.hpp>
+#include <queue>
+#include <Structure/Structure.hpp>
+#include <Properties/Properties.hpp>
+#include <Configs/Configs.hpp>
+#include <Core/Drawlgo/WithinComponent.hpp>
+#include <System/Timer/Timer.hpp>
 
 // updater is such a bad name, I need a new one
 namespace gfn::core::drawlgo {
     class Drawlgo {
+        bool doMultithreading = false;
+        int performanceCheckCounter = 0;
+
     public:
-        double distance(gfn::core::structure::Vertex *u, gfn::core::structure::Vertex *v) {
-            double dx = u->prop->position.x - v->prop->position.x;
-            double dy = u->prop->position.y - v->prop->position.y;
-            return std::sqrt(dx * dx + dy * dy);
-        }
+        void update(gfn::configs::Configs* configs, gfn::structure::Structure* structure,
+                    gfn::properties::Properties* properties) {
+            if (++performanceCheckCounter == 10000) {
+                performanceCheckCounter = 0;
 
-        gfn::core::Vec2f repelForce(gfn::core::configs::Configs *configs, gfn::core::structure::Vertex *u,
-                                    gfn::core::structure::Vertex *v) {
-            double dis = distance(u, v);
-            if (dis == 0.0)
-                return {0.0, 0.0};
-            double coeff = -configs->c3 / dis / dis;
-            return (v->prop->position - u->prop->position).normalize() * coeff;
-        }
-
-        gfn::core::Vec2f attractForce(gfn::core::configs::Configs *configs, gfn::core::structure::Vertex *u,
-                                      gfn::core::structure::Vertex *v) {
-            double dis = distance(u, v);
-            if (dis == 0.0f)
-                return Vec2f(0, 0);
-            double coeff = configs->c1 * log(dis / configs->c2);
-            return (v->prop->position - u->prop->position).normalize() * coeff;
-        }
-
-        void update(gfn::core::configs::Configs *configs, gfn::core::structure::Structure *structure,
-                    gfn::core::properties::Properties *properties) {
-            for (auto &c : structure->componentList.getComponents()) {
-                for (auto &u : c->getAdjList())
-                    u.first->prop->force = gfn::core::Vec2f(0.0, 0.0);
-                for (auto &u : c->getAdjList()) {
-                    for (auto &v : c->getAdjacentVertices(u.first)) {
-                        u.first->prop->force += repelForce(configs, u.first, v);
-                        v->prop->force += repelForce(configs, v, u.first);
-                    }
-                    for (auto &v : c->getAdjList()) {
-                        if (u.first == v.first)
-                            continue;
-                        u.first->prop->force += attractForce(configs, u.first, v.first);
-                        v.first->prop->force += attractForce(configs, v.first, u.first);
-                    }
+                gfn::timer::Timer mTimer;
+                thread_pool::ThreadPool thread_pool{};
+                std::vector<std::future<void>> futures;
+                for (auto& c : structure->componentList.getComponents()) {
+                    futures.emplace_back(thread_pool.Submit(updateComponent, configs, c, properties));
                 }
-                for (auto &u : c->getAdjList())// flush move
-                    u.first->prop->position += u.first->prop->force * configs->c4;
+                for (const auto& it : futures) {
+                    it.wait();
+                }
+                auto mTime = mTimer.getMicroseconds();
+
+                gfn::timer::Timer sTimer;
+                for (auto& c : structure->componentList.getComponents())
+                    updateComponent(configs, c, properties);
+                auto sTime = sTimer.getMicroseconds();
+
+                if (mTime < sTime)
+                    doMultithreading = true;
+                else
+                    doMultithreading = false;
+
+                std::cerr << "Performance analysis: \n    Single threaded: " << sTime << "us\n    Multi threaded: " << mTime << "\n        Multi threading: "
+                          << (doMultithreading ? "On\n" : "Off\n");
+            } else {
+                if (doMultithreading) {
+                    thread_pool::ThreadPool thread_pool{};
+                    std::vector<std::future<void>> futures;
+                    for (auto& c : structure->componentList.getComponents()) {
+                        futures.emplace_back(thread_pool.Submit(updateComponent, configs, c, properties));
+                    }
+                    for (const auto& it : futures) {
+                        it.wait();
+                    }
+                } else {
+                    for (auto& c : structure->componentList.getComponents())
+                        updateComponent(configs, c, properties);
+                }
             }
         }
     };

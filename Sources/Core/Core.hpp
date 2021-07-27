@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Core/Logging/Logging.hpp>
-#include <Core/UserGraph/UserGraph.hpp>
-#include <Core/Structure/Structure.hpp>
-#include <Core/Configs/Configs.hpp>
-#include <Core/Properties/Properties.hpp>
+#include <Logging/Logging.hpp>
+#include <UserGraph/UserGraph.hpp>
+#include <Structure/Structure.hpp>
+#include <Configs/Configs.hpp>
+#include <Properties/Properties.hpp>
 #include <Core/Parser/Parser.hpp>
 #include <Interface/Interface.hpp>
 #include <Core/Drawlgo/Drawlgo.hpp>
@@ -13,58 +13,61 @@
 namespace gfn::core {
     class Core {
     public:
-        gfn::interface::Interface *interface;
-        gfn::core::properties::Properties properties;
-        gfn::core::usergraph::UserGraph usergraph;
-        gfn::core::structure::Structure structure;
+        gfn::interface::Interface* interface;
+        gfn::properties::Properties properties;
+        gfn::usergraph::UserGraph usergraph;
+        gfn::structure::Structure structure;
         gfn::core::drawlgo::Drawlgo drawlgo;
         gfn::core::parser::Parser parser;
 
-        Core(gfn::interface::Interface *interface) : interface(interface) {
+        Core(gfn::interface::Interface* interface) : interface(interface) {
             usergraph.bindProperties(&properties);
-            structure.componentList.bindProperties(&properties);
+            structure.componentList.bindSource(&usergraph, &properties);
             parser.usergraph = &usergraph;
         }
 
         void coreCycle() {
-            gfn::core::logging::logBuffer = &interface->logBuffer.getWriteBuffer();
+            // gfn::core::logging::logBuffer = &interface->logBuffer.getWrite();
             static bool first = true;
             if (first) {
-                auto a = parser.execute("graph new vertex");
-                auto b = parser.execute("graph new vertex");
-                auto c = parser.execute("graph new vertex");
-                auto d = parser.execute("graph new vertex");
-                auto e = parser.execute("graph new vertex");
-                parser.execute("graph new edge " + a + " " + b);
-                parser.execute("graph new edge " + c + " " + b);
-                parser.execute("graph new edge " + e + " " + d);
-                parser.execute("graph new edge " + b + " " + d);
+                for (int k = 0; k < 1; k++) {
+                    gfn::Uuid a, b;
+                    a = parser.execute("graph new vertex");
+                    for (int i = 0; i < 30; i++) {
+                        b = parser.execute("graph new vertex");
+                        parser.execute("graph new edge " + a + " " + b);
+                        a = b;
+                    }
+                }
                 first = false;
             }
 
-            drawlgo.update(interface->configs.getReadBuffer(), &structure, &properties);
+            // gfn::timer::Timer updateTimer;
+            drawlgo.update(interface->configs.getRead(), &structure, &properties);
+            // std::cerr << "Graph update took " << updateTimer.getMicroseconds() << "us\n";
 
             if (usergraph.pendingUpdate) {
                 // update component list with usergraph and rebuild block cut tree (currently all)
-                structure.componentList.componentify(&usergraph);
+                structure.componentList.componentify();
                 usergraph.pendingUpdate = false;
             }
 
             // std::cerr << usergraph.getAdjList().size() << "\n";
             /// TODO: graph update stuff
 
-            if (interface->properties.pendingWrite()) {
+            if (interface->userprops.wantWrite()) {
                 // assignment operator, writes the core content to the write buffer
-                interface->properties.getWriteBuffer() = properties;
-                interface->properties.writeDone();
+                properties.exportToUserProps(interface->userprops.getWrite());
+                interface->userprops.writeDone();
             }
 
-            if (interface->logBuffer.pendingWrite()) {
+            if (interface->logBuffer.wantWrite()) {
                 // assignment operator, writes the core content to the write buffer
                 // interface->logBuffer.writeDone();
             }
 
             interface->configs.readDone();
+            // std::cerr << "Write took " << writeTimer.getMicroseconds() << "us\n";
         }
     };
 } // namespace gfn::core

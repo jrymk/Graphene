@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(Graphene)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 include_directories(Dependencies/glad/include)
 include_directories(Dependencies/glad/include/glad)
@@ -16,6 +16,7 @@ include_directories(Dependencies/imgui/misc/freetype)
 include_directories(Dependencies/imgui/misc/single_file)
 include_directories(Dependencies/stduuid/include)
 include_directories(Dependencies/stduuid/gsl)
+include_directories(Dependencies/thread_pool/include)
 include_directories(Sources/)
 
 
@@ -42,4 +43,6 @@ add_subdirectory(Dependencies/glfw-3.3.4)
 set(CMAKE_EXE_LINKER_FLAGS " -static")
 target_link_libraries(Graphene glfw)
 target_link_libraries(Graphene -static-libgcc -static-libstdc++)
+
+target_compile_features(Graphene PRIVATE cxx_std_20)
 
