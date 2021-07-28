@@ -2,7 +2,7 @@
 
 #include <Objects/Vec2f.hpp>
 #include <Objects/Uuid.hpp>
-#include <System/Random/Random.hpp>
+#include <Objects/Color.hpp>
 
 namespace gfn::properties {
     ///@brief Vertex properties that will be copied to the rendering thread / properties for the end user
@@ -11,10 +11,15 @@ namespace gfn::properties {
         bool enabled;
         gfn::Vec2f position;
 
+        gfn::Color vertexFillColor;
+        double radius;
+
         VertexProps() {
             uuid = gfn::uuid::createNil();
             enabled = false;
             position = Vec2f();
+            vertexFillColor.setRGBA(255, 211, 0, 255);
+            radius = 0.5;
         }
     };
 

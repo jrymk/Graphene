@@ -73,7 +73,7 @@ namespace gfn::interface {
         }
 
         void writeDone() {
-// set the available buffer to write buffer and mark available buffer up to date
+            // set the available buffer to write buffer and mark available buffer up to date
             const std::lock_guard<std::mutex> lock(availableBufferMutex);
             std::swap(writeBuffer, availableBuffer);
             //availableBuffer.exchange(writeBuffer);

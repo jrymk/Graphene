@@ -9,45 +9,31 @@
 #include <Interface/Interface.hpp>
 #include <Editor/DebugGraphView.hpp>
 // #include <Editor/Logs.hpp>
-
-#include <thread>
-
-void updateGraphLoop(gfn::core::Core &core, bool &update, bool &end) {
-    while (!end) {
-        if (update) {
-            // std::cerr << ".";
-            core.coreCycle();
-        }
-    }
-}
+#include <Document/Document.hpp>
+#include <Preferences/Preferences.hpp>
+#include <Editor/EditorManager.hpp>
 
 int main() {
-    std::cerr << "Hello world\n";
-
     gfn::window::launchWindow();
-    gfn::interface::Interface interface;
-    gfn::core::Core core(&interface);
 
-    bool updateGraphAsync = true;
-    bool endBackgroundUpdateLoop = false;
-
-    std::thread backgroundUpdateThread(updateGraphLoop, std::ref(core), std::ref(updateGraphAsync),
-                                       std::ref(endBackgroundUpdateLoop));
-    backgroundUpdateThread.detach();
+    gfn::editor::newFile("Untitled document");
+    gfn::editor::newFile("Untitled document (1)");
 
     while (!glfwWindowShouldClose(gfn::window::glfwWindow)) {
-        // core.coreCycle(&interface);
-        // std::cerr << "|";
         gfn::window::preFrame();
+
         ImGui::ShowDemoWindow();
+
+        gfn::editor::update();
 
         // gfn::editor::logs::show();
 
-        //auto stat = interface.properties.getOutpaceStatistics();
-        //static int v;
+        // auto stat = interface.properties.getOutpaceStatistics();
+        // static int v;
 
-        //if (!interface.properties.isReadBufferRead())
+        // if (!interface.properties.isReadBufferRead())
         //    v = stat.second - stat.first;
+        // preferences.getKeyBind().showEnrollPopup(gfn::keybind::ACTION_CAMERA_PAN);
 
         ImGui::Begin("Command centre");
 
@@ -76,28 +62,22 @@ int main() {
         ImGui::SliderFloat("c4", &_c4, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
         ImGui::SliderFloat("c5", &_c5, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
         ImGui::SliderFloat("c6", &_c6, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
-        interface.configs.getWrite()->c1 = _c1;
+        /*interface.configs.getWrite()->c1 = _c1;
         interface.configs.getWrite()->c2 = _c2;
         interface.configs.getWrite()->c3 = _c3;
         interface.configs.getWrite()->c4 = _c4;
         interface.configs.getWrite()->c5 = _c5;
-        interface.configs.getWrite()->c6 = _c6;
+        interface.configs.getWrite()->c6 = _c6;*/
 
         // if (ImGui::Button("New vertex"))
         // core.parser.execute("graph new vertex"); // No, you can not run this here
         ImGui::End();
 
-        gfn::editor::logs::show(interface.logBuffer.getRead());
-        interface.logBuffer.readDone();
-
-        gfn::editor::debuggraphview::show(interface.userprops.getRead());
-        interface.userprops.readDone();
-
-        interface.configs.writeDone();
-
         gfn::window::postFrame();
     }
-    endBackgroundUpdateLoop = true;
+
+    gfn::editor::terminate();
+
     gfn::window::closeWindow();
     return 0;
 }

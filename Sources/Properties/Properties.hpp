@@ -5,6 +5,7 @@
 #include <Properties/UserProps.hpp>
 #include <Properties/VertexProps.hpp>
 #include <Properties/EdgeProps.hpp>
+#include <System/Random/Random.hpp>
 #include <Logging/Logging.hpp>
 
 namespace gfn::properties {

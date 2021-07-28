@@ -20,7 +20,10 @@ namespace gfn::core {
         gfn::core::drawlgo::Drawlgo drawlgo;
         gfn::core::parser::Parser parser;
 
-        Core(gfn::interface::Interface* interface) : interface(interface) {
+        Core() = default;
+
+        void bindInterface(gfn::interface::Interface* _interface) {
+            this->interface = _interface;
             usergraph.bindProperties(&properties);
             structure.componentList.bindSource(&usergraph, &properties);
             parser.usergraph = &usergraph;

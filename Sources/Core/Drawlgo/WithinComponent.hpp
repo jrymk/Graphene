@@ -13,7 +13,7 @@ namespace gfn::core::drawlgo {
     }
 
     gfn::Vec2f repelForce(gfn::configs::Configs* configs, gfn::structure::Vertex* u,
-                                gfn::structure::Vertex* v) {
+                          gfn::structure::Vertex* v) {
         double dis = distance(u, v);
         if (dis == 0.0)
             return {0.0, 0.0};
@@ -22,7 +22,7 @@ namespace gfn::core::drawlgo {
     }
 
     gfn::Vec2f attractForce(gfn::configs::Configs* configs, gfn::structure::Vertex* u,
-                                  gfn::structure::Vertex* v) {
+                            gfn::structure::Vertex* v) {
         double dis = distance(u, v);
         if (dis == 0.0f)
             return Vec2f(0, 0);
@@ -46,7 +46,7 @@ namespace gfn::core::drawlgo {
                     v.first->internalProps->force += repelForce(configs, v.first, u.first);
                 }
             }
-            for (auto& u : c->getAdjList()) // flush move
+            for (auto& u : c->getAdjList())  // flush move
                 u.first->props->position += u.first->internalProps->force * configs->c4;
         }
     }
