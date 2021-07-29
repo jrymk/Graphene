@@ -29,7 +29,7 @@ int main() {
                              "2 3 "
                              "2 5 "
                              "3 6 "
-                             "4 5"
+                             "4 5 "
                              "5 6 "
     };
     std::stringstream ss(testInput);

@@ -11,6 +11,7 @@ namespace gfn::editor::graphview {
         gfn::preferences::Preferences* preferences;
         Camera* camera;
 
+        // these can be both active, usually we prioritize hoveredVertex, if it is null, take edge
         gfn::Uuid hoveredVertex;
         gfn::Uuid hoveredEdge;
 
@@ -63,7 +64,7 @@ namespace gfn::editor::graphview {
                 auto e = ei.second;
                 float cursorDistance = distanceToALine(io.MousePos, camera->map(e.startVertexPosition),
                                                        camera->map(e.endVertexPosition));
-                if (cursorDistance <= e.thickness / 2.0f + preferences->graphview_selection_tolerance &&
+                if (cursorDistance <= camera->map(e.thickness) / 2.0f + preferences->graphview_selection_tolerance &&
                     cursorDistance < minDistance) {
                     minDistance = cursorDistance;
                     hoveredEdge = e.edgeUuid;

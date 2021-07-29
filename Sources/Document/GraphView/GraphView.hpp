@@ -68,8 +68,16 @@ namespace gfn::editor::graphview {
             if (selection.hoveredVertex != gfn::uuid::createNil()) {
                 auto props = interface->userprops.getRead()->getVertexProps(selection.hoveredVertex);
                 ImGui::GetWindowDrawList()->AddCircle(camera.map(props->position), camera.map(props->radius),
-                                                      IM_COL32(0, 255, 0, 255), 0, 1.0f);
+                                                      IM_COL32(0, 255, 0, 255), 0, camera.map(0.05f));
             }
+            else if (selection.hoveredEdge != gfn::uuid::createNil()) {
+                auto edgeProps = interface->userprops.getRead()->getEdgeProps(selection.hoveredEdge);
+                auto uProps = interface->userprops.getRead()->getVertexProps(edgeProps->startVertexUuid);
+                auto vProps = interface->userprops.getRead()->getVertexProps(edgeProps->endVertexUuid);
+                ImGui::GetWindowDrawList()->AddLine(camera.map(uProps->position), camera.map(vProps->position),
+                                                    IM_COL32(0, 255, 0, 255), camera.map(0.05f));
+            }
+
             // ImGui::PopStyleVar(1);
             ImGui::End();
         }
