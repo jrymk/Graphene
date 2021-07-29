@@ -5,7 +5,7 @@
 #include <Structure/Structure.hpp>
 #include <Configs/Configs.hpp>
 #include <Properties/Properties.hpp>
-#include <Core/Parser/Parser.hpp>
+#include <Core/Parser/CmdInterface.hpp>
 #include <Interface/Interface.hpp>
 #include <Core/Drawlgo/Drawlgo.hpp>
 #include <atomic>
@@ -18,7 +18,7 @@ namespace gfn::core {
         gfn::usergraph::UserGraph usergraph;
         gfn::structure::Structure structure;
         gfn::core::drawlgo::Drawlgo drawlgo;
-        gfn::core::parser::Parser parser;
+        gfn::core::cmd::CmdInterface parser;
 
         Core() = default;
 
@@ -33,15 +33,25 @@ namespace gfn::core {
             // gfn::core::logging::logBuffer = &interface->logBuffer.getWrite();
             static bool first = true;
             if (first) {
-                for (int k = 0; k < 1; k++) {
-                    gfn::Uuid a, b;
-                    a = parser.execute("graph new vertex");
-                    for (int i = 0; i < 30; i++) {
-                        b = parser.execute("graph new vertex");
-                        parser.execute("graph new edge " + a + " " + b);
-                        a = b;
-                    }
+                int vertices = 30;
+                int edges = 1000;
+
+                std::vector<gfn::Uuid> temp;
+                auto a = parser.execute("graph new vertex");
+                temp.push_back(a);
+                for (int v = 0; v < vertices; v++) {
+                    auto b = parser.execute("graph new vertex");
+                    temp.push_back(b);
+                    std::uniform_int_distribution<int> dis(0, temp.size() - 1);
+                    int u = dis(gfn::system::random::getEngine());
+                    parser.execute("graph new edge " + temp[u] + " " + b);
                 }
+                /*for (int e = 0; e < edges; e++) {
+                    std::uniform_int_distribution<int> dis(0, vertices - 1);
+                    int u = dis(gfn::system::random::getEngine());
+                    int v = dis(gfn::system::random::getEngine());
+                    parser.execute("graph new edge " + temp[u] + " " + temp[v]);
+                }*/
                 first = false;
             }
 

@@ -46,6 +46,7 @@ namespace gfn::structure {
         /// @brief Constructs all components from UserGraph (must run in sync with core cycle)
         /// @param usergraph the source graph where the components are constructed from
         void componentify() {
+            std::cerr << "componentifying\n";
             // no props validation here, as this function is the one that actually creates props
             for (auto& v : vertices)
                 delete v;

@@ -25,7 +25,7 @@ namespace gfn::properties {
 
     ///@brief Vertex properties used in core / internal properties for graph drawing and such
     struct VertexPropsInternal {
-        gfn::Vec2f force;
+        gfn::Vec2f force = gfn::Vec2f(0.0, 0.0);
 
         gfn::Vec2f componentCentroidPosition;
         gfn::Uuid component = gfn::uuid::createNil();

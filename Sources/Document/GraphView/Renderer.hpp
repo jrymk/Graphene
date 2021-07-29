@@ -15,8 +15,8 @@ namespace gfn::editor::graphview {
             auto userprops = interface->userprops.getRead();
             for (auto& ei : userprops->getEdgePropList()) {
                 auto e = ei.second;
-                drawList->AddLine(camera->map(userprops->getVertexProps(e.startVertexUuid)->position),
-                                  camera->map(userprops->getVertexProps(e.endVertexUuid)->position),
+                drawList->AddLine(camera->map(e.startVertexPosition),
+                                  camera->map(e.endVertexPosition),
                                   e.edgeFillColor.color32, camera->map(e.thickness));
             }
         }

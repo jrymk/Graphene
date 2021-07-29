@@ -39,10 +39,16 @@ namespace gfn::editor::graphview {
         }
 
         void update() {
-            if (!interface || !preferences) // did you forget to bind interface or preferences?
-                return;
+            assert(interface && preferences); // did you forget to bind interface or preferences?
 
-
+            /*if (interface->userprops.getRead()->getEdgePropList().size() > 0) {
+                gfn::timer::Timer timer;
+                for (int i = 0; i < 10000; i++) {
+                    auto list = interface->userprops.getRead()->getEdgePropList();
+                    auto v = interface->userprops.getRead()->getVertexProps((list.begin()->second.startVertexUuid));
+                }
+                std::cout << "Find 10000 props took " << timer.getMicroseconds() << "us\n";
+            }*/
             ImGui::SetNextWindowSizeConstraints(ImVec2(100.0f, 100.0f), ImVec2(FLT_MAX, FLT_MAX));
             ImGui::Begin(("Graph View #" + documentUuid).c_str());
             isWindowFocused = ImGui::IsWindowFocused();
@@ -55,7 +61,7 @@ namespace gfn::editor::graphview {
 
             camera.update(preferences);
             selection.update();
-            
+
             renderer.drawEdges();
             renderer.drawVertices();
 

@@ -58,8 +58,9 @@ namespace gfn::logging {
         int line = -1;
         Severity severity = Severity::ERROR;
 
-        LogEntry(std::string _timeStamp, std::string _message, std::string _file, int _line, LogEntry::Severity _severity)
-                : timeStamp(_timeStamp), message(_message), file(_file), line(_line), severity(_severity) {}
+        LogEntry(std::string _timeStamp, std::string _message, std::string _file, int _line,
+                 LogEntry::Severity _severity) : timeStamp(_timeStamp), message(_message), file(_file), line(_line),
+                                                 severity(_severity) {}
     };
 
     std::stringstream messageStream;

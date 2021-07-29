@@ -61,9 +61,8 @@ namespace gfn::editor::graphview {
             minDistance = FLT_MAX;
             for (auto& ei : userprops->getEdgePropList()) {
                 auto e = ei.second;
-                auto sv = userprops->getVertexProps(e.startVertexUuid)->position;
-                auto ev = userprops->getVertexProps(e.endVertexUuid)->position;
-                float cursorDistance = distanceToALine(io.MousePos, camera->map(sv), camera->map(ev));
+                float cursorDistance = distanceToALine(io.MousePos, camera->map(e.startVertexPosition),
+                                                       camera->map(e.endVertexPosition));
                 if (cursorDistance <= e.thickness / 2.0f + preferences->graphview_selection_tolerance &&
                     cursorDistance < minDistance) {
                     minDistance = cursorDistance;

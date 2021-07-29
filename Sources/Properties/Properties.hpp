@@ -50,6 +50,7 @@ namespace gfn::properties {
         /// @returns false if prop already exist but clearExisting is false
         bool newVertexProps
                 (const gfn::Uuid& uuid, bool clearExisting = false) {
+            std::cerr << "new prop!\n";
             if (clearExisting && vertexPropsList.erase(uuid)) {
                 logMessage << "Properties: Cleared existing core vertex prop {" << uuid << "}";
                 logVerbose;
@@ -136,8 +137,11 @@ namespace gfn::properties {
                 destination->getVertexPropList().insert({v.first, v.second.first});
 
             destination->getEdgePropList().clear();
-            for (auto& e : edgePropsList)
+            for (auto& e : edgePropsList) {
+                e.second.first.startVertexPosition = getVertexProps(e.second.first.startVertexUuid).first->position;
+                e.second.first.endVertexPosition = getVertexProps(e.second.first.endVertexUuid).first->position;
                 destination->getEdgePropList().insert({e.first, e.second.first});
+            }
         }
     };
 } // namespace gfn::properties

@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
+include(GenerateExportHeader)
 project(Graphene)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -16,12 +17,12 @@ include_directories(Dependencies/imgui/misc/freetype)
 include_directories(Dependencies/imgui/misc/single_file)
 include_directories(Dependencies/stduuid/include)
 include_directories(Dependencies/stduuid/gsl)
-include_directories(Dependencies/thread_pool/include)
+include_directories(Dependencies/thread_pool)
 include_directories(Sources/)
 
 
 find_package(OpenGL REQUIRED)
-include_directories( ${OPENGL_INCLUDE_DIRS} )
+include_directories(${OPENGL_INCLUDE_DIRS})
 
 add_executable(Graphene
         Dependencies/glad/src/glad.c

@@ -6,13 +6,13 @@
 #include <Objects/Uuid.hpp>
 #include <Logging/Logging.hpp>
 #include <Properties/Properties.hpp>
+#include <Objects/Command.hpp>
 
 ///@brief usergraph is the place where the master graph structure is stored, stored in UUIDs, it is friendly to string
 /// command inputs, have more tolerance to misuse.
 namespace gfn::usergraph {
     class UserGraph {
-        std::unordered_map<gfn::Uuid, std::unordered_map<gfn::Uuid, std::unordered_set<gfn::Uuid>>>
-                adjList;
+        std::unordered_map<gfn::Uuid, std::unordered_map<gfn::Uuid, std::unordered_set<gfn::Uuid>>> adjList;
         gfn::logging::LogBuffer* logBuffer;
         gfn::properties::Properties* properties;
 
@@ -25,9 +25,23 @@ namespace gfn::usergraph {
 
         void bindProperties(gfn::properties::Properties* _properties) { properties = _properties; }
 
-        std::unordered_map<gfn::Uuid, std::unordered_map<gfn::Uuid, std::unordered_set<gfn::Uuid>>>&
-        getAdjList() {
+        std::unordered_map<gfn::Uuid, std::unordered_map<gfn::Uuid, std::unordered_set<gfn::Uuid>>>& getAdjList() {
             return adjList;
+        }
+
+        gfn::Uuid execute(const Command& cmd) {
+            gfn::command::Parser parser(cmd);
+            auto op = parser.readWord();
+            if (op == "new") {
+                auto it = parser.readWord();
+                if (it == "vertex")
+                    addVertexCmd(parser.getRemaining());
+                if (it == "edge")
+                    addEdgeCmd(parser.getRemaining());
+            }
+            if (op == "delete") {
+
+            }
         }
 
         ///@brief Recommended to be called upon graph update, this function checks for missing props from Properties
@@ -42,9 +56,9 @@ namespace gfn::usergraph {
             for (auto& v : vertexPropList) {
                 if (v.second.first.uuid != v.first) {
                     problems++;
-                    logMessage << "UserGraph: Props checkup error found: Vertex {" << v.second.first.uuid
+                    /*logMessage << "UserGraph: Props checkup error found: Vertex {" << v.second.first.uuid
                                << "} prop uuid does not match up with the key in props list " << v.first;
-                    logWarning;
+                    logWarning*/;
                     if (fix)
                         v.second.first.uuid = v.first;
                 }
@@ -52,9 +66,9 @@ namespace gfn::usergraph {
             for (auto& e : edgePropList) {
                 if (e.second.first.edgeUuid != e.first) {
                     problems++;
-                    logMessage << "UserGraph: Props checkup error found: Edge {" << e.second.first.edgeUuid
+                    /*logMessage << "UserGraph: Props checkup error found: Edge {" << e.second.first.edgeUuid
                                << "} prop uuid does not match up with the key in props list " << e.first;
-                    logWarning;
+                    logWarning*/;
                     if (fix)
                         e.second.first.edgeUuid = e.first;
                 }
@@ -98,8 +112,8 @@ namespace gfn::usergraph {
             if (!invalidVertexList.empty()) {
                 for (auto& v : invalidVertexList) {
                     problems++;
-                    logMessage << "UserGraph: Props checkup error found: Vertex {" << v << "} prop does not exist";
-                    logWarning;
+                    /*logMessage << "UserGraph: Props checkup error found: Vertex {" << v << "} prop does not exist";
+                    logWarning*/;
                     if (fix)
                         properties->newVertexProps(v);
                 }
@@ -107,20 +121,20 @@ namespace gfn::usergraph {
             if (!invalidEdgeList.empty()) {
                 for (auto& e : invalidEdgeList) {
                     problems++;
-                    logMessage << "UserGraph: Props checkup error found: Edge {" << e << "} prop does not exist";
-                    logWarning;
+                    /*logMessage << "UserGraph: Props checkup error found: Edge {" << e << "} prop does not exist";
+                    logWarning*/;
                     if (fix)
                         properties->newEdgeProps(e);
                 }
             }
 
             if (problems) {
-                logMessage << "UserGraph: Props checkup completed: Found " << problems << " errors in total";
-                logWarning;
+                /*logMessage << "UserGraph: Props checkup completed: Found " << problems << " errors in total";
+                logWarning*/;
                 return false;
             }
-            logMessage << "UserGraph: Props checkup completed: Found " << problems << "errors in total";
-            logVerbose;
+            /*logMessage << "UserGraph: Props checkup completed: Found " << problems << "errors in total";
+            logVerbose*/;
             return true;
         }
 
@@ -131,84 +145,90 @@ namespace gfn::usergraph {
             pendingUpdate = true;
             for (int retries = 1; retries <= 5; retries++) {
                 auto uuid = gfn::uuid::createUuid();
-                if (adjList.insert({uuid, std::unordered_map<gfn::Uuid, std::unordered_set<gfn::Uuid>>()})
-                        .second) {
+                if (adjList.insert({uuid, std::unordered_map<gfn::Uuid, std::unordered_set<gfn::Uuid>>()}).second) {
                     // add entry to adjacency list
                     properties->newVertexProps(uuid);
-                    logMessage << "UserGraph: Added new vertex {" << uuid << "} (auto-generated)";
-                    logInfo;
+                    /*logMessage << "UserGraph: Added new vertex {" << uuid << "} (auto-generated)";
+                    logInfo*/;
                     return {true, uuid};
                 }
                 // props already existed somehow
-                logMessage << "UserGraph: Add new vertex {" << uuid
+                /*logMessage << "UserGraph: Add new vertex {" << uuid
                            << "} (auto-generated) failed (already exists, retrying: " << std::to_string(retries)
                            << "/5)";
-                logWarning;
+                logWarning*/;
             }
-            logMessage << "UserGraph: (unexpected uuid creation failure)";
-            logError;
+            /*logMessage << "UserGraph: (unexpected uuid creation failure)";
+            logError*/;
             return {false, gfn::uuid::createNil()};
         }
 
         // add a new vertex with the given uuid
-        bool addVertex(gfn::Uuid uuid) {
+        bool addVertex(const gfn::Uuid& uuid) {
             pendingUpdate = true;
-            if (adjList.insert(
-                    {uuid, std::unordered_map<gfn::Uuid, std::unordered_set<gfn::Uuid>>()}).second) {
+            if (adjList.insert({uuid, std::unordered_map<gfn::Uuid, std::unordered_set<gfn::Uuid>>()}).second) {
                 // add entry to adjacency list
                 properties->newVertexProps(uuid);
-                logMessage << "UserGraph: Added new vertex {" << uuid << "}";
-                logInfo;
+                /*logMessage << "UserGraph: Added new vertex {" << uuid << "}";
+                logInfo*/;
                 return true;
             }
-            logMessage << "UserGraph: Add new vertex {" << uuid << "} failed (uuid given already exists)";
-            logError;
+            /*logMessage << "UserGraph: Add new vertex {" << uuid << "} failed (uuid given already exists)";
+            logError*/;
             return false;
+        }
+
+        void addVertexCmd(const gfn::Command& cmd) {
+            gfn::command::Parser parser(cmd);
+            auto id = parser.readWord();
+            if (id.empty())
+                addVertex();
+            else
+                addVertex(id);
         }
 
         ///@brief Deletes vertex with the given uuid. erase**Properties will also clear the properties tied to the uuid,
         /// without erase so you can create a new vertex/edge with the same uuid to retreive all the properties.
         /// removeAllAdjacentEdges remove edges that points to the vertex getting deleted
         /// @returns if the deleting was successful
-        bool
-        removeVertex(const gfn::Uuid& uuid, bool eraseVertexProperties = true, bool eraseEdgeProperties = true,
-                     bool removeAllAdjacentEdges = true) {
+        bool removeVertex(const gfn::Uuid& uuid, bool eraseVertexProperties = true, bool eraseEdgeProperties = true,
+                          bool removeAllAdjacentEdges = true) {
             pendingUpdate = true;
             auto uIt = adjList.find(uuid);
             if (uIt == adjList.end()) {
-                logMessage << "UserGraph: Remove vertex {" << uuid << "} failed (not found)";
-                logWarning;
+                /*logMessage << "UserGraph: Remove vertex {" << uuid << "} failed (not found)";
+                logWarning*/;
                 return false;
             }
 
-            logMessage << "UserGraph: Removing edges adjacent to vertex {" << uuid << "} with eraseEdgeProperties "
+            /*logMessage << "UserGraph: Removing edges adjacent to vertex {" << uuid << "} with eraseEdgeProperties "
                        << (eraseEdgeProperties ? "enabled" : "disabled");
-            logVerbose;
+            logVerbose*/;
             if (eraseEdgeProperties) {
                 for (auto& v : uIt->second) {
-                    logMessage << "    vertex {" << v.first << "}";
-                    logVerbose;
+                    /*logMessage << "    vertex {" << v.first << "}";
+                    logVerbose*/;
                     for (auto& e : v.second) {
-                        logMessage << "        edge {" << e << "}";
-                        logVerbose;
+                        /*logMessage << "        edge {" << e << "}";
+                        logVerbose*/;
                         /// TODO: erase edge property
                     }
                 }
             }
 
             if (removeAllAdjacentEdges) {
-                logMessage << "  <edges TO the vertex>";
-                logVerbose;
+                /*logMessage << "  <edges TO the vertex>";
+                logVerbose*/;
                 for (auto& u : adjList) {
                     if (u.first != uuid) {
                         for (auto& v : u.second) {
                             if (v.first == uuid) {
-                                logMessage << "    from vertex {" << u.first << "}";
-                                logVerbose;
+                                /*logMessage << "    from vertex {" << u.first << "}";
+                                logVerbose*/;
                                 if (eraseEdgeProperties) {
                                     for (auto& e : v.second) {
-                                        logMessage << "        edge {" << e << "}";
-                                        logVerbose;
+                                        /*logMessage << "        edge {" << e << "}";
+                                        logVerbose*/;
                                         /// TODO: erase edge property
                                     }
                                 }
@@ -219,9 +239,9 @@ namespace gfn::usergraph {
                 }
             }
 
-            logMessage << "UserGraph: Removing vertex {" << uuid << "} with eraseVertexProperties "
+            /*logMessage << "UserGraph: Removing vertex {" << uuid << "} with eraseVertexProperties "
                        << (eraseVertexProperties ? "enabled" : "disabled");
-            logInfo;
+            logInfo*/;
             if (eraseVertexProperties)
                 properties->eraseVertexProps(uuid);
 
@@ -231,20 +251,19 @@ namespace gfn::usergraph {
         // add a new edge with auto-generated uuid between two given vertices
         /// @returns a pair with first indicating if it was successful and second the uuid auto-generated that
         /// represents the edge created
-        std::pair<bool, gfn::Uuid>
-        addEdge(const gfn::Uuid& startVertex, const gfn::Uuid& endVertex) {
+        std::pair<bool, gfn::Uuid> addEdge(const gfn::Uuid& startVertex, const gfn::Uuid& endVertex) {
             pendingUpdate = true;
             auto startIt = adjList.find(startVertex);
             if (startIt == adjList.end()) {
-                logMessage << "UserGraph: Add edge failed (startVertex {" << startVertex << "} does not exist";
-                logWarning;
+                /*logMessage << "UserGraph: Add edge failed (startVertex {" << startVertex << "} does not exist";
+                logWarning*/;
                 return {false, gfn::uuid::createNil()};
             }
 
             auto endIt = adjList.find(endVertex);
             if (endIt == adjList.end()) {
-                logMessage << "UserGraph: Add edge failed (endVertex {" << endVertex << "} does not exist";
-                logWarning;
+                /*logMessage << "UserGraph: Add edge failed (endVertex {" << endVertex << "} does not exist";
+                logWarning*/;
                 return {false, gfn::uuid::createNil()};
             }
 
@@ -260,9 +279,9 @@ namespace gfn::usergraph {
                     }
 
                     if (startIt->second.find(endVertex)->second.insert(edgeId).second) {
-                        logMessage << "UserGraph: Added new edge with startVertex {" << startVertex << "} endVertex {"
+                        /*logMessage << "UserGraph: Added new edge with startVertex {" << startVertex << "} endVertex {"
                                    << endVertex << "} edge {" << edgeId << "} successfully";
-                        logInfo;
+                        logInfo*/;
 
                         properties->newEdgeProps(edgeId);
                         properties->getEdgeProps(edgeId).first->startVertexUuid = startVertex;
@@ -270,38 +289,37 @@ namespace gfn::usergraph {
                         properties->getEdgeProps(edgeId).first->edgeUuid = edgeId;
                         return {true, edgeId};
                     }
-                    logMessage << "UserGraph: Add new edge with startVertex {" << startVertex << "} endVertex {"
+                    /*logMessage << "UserGraph: Add new edge with startVertex {" << startVertex << "} endVertex {"
                                << endVertex << "} edge {" << edgeId << "} failed (unexpected insertion failure)";
-                    logError;
+                    logError*/;
                     return {false, gfn::uuid::createNil()};
                 }
                 // props already existed somehow
-                logMessage << "UserGraph: Add new edge with startVertex {" << startVertex << "} endVertex {"
+                /*logMessage << "UserGraph: Add new edge with startVertex {" << startVertex << "} endVertex {"
                            << endVertex
                            << "} failed (edge {" << edgeId
                            << "} (auto-generated) already exists, retrying: " << std::to_string(retries) << "/5)";
-                logWarning;
+                logWarning*/;
             }
-            logMessage << "UserGraph: (unexpected uuid creation failure)";
-            logError;
+            /*logMessage << "UserGraph: (unexpected uuid creation failure)";
+            logError*/;
             return {false, gfn::uuid::createNil()};
         }
 
         // add a new edge with the given uuid between two given vertices
-        bool
-        addEdge(const gfn::Uuid& startVertex, const gfn::Uuid& endVertex, const gfn::Uuid& edgeUuid) {
+        bool addEdge(const gfn::Uuid& startVertex, const gfn::Uuid& endVertex, const gfn::Uuid& edgeUuid) {
             pendingUpdate = true;
             auto startIt = adjList.find(startVertex);
             if (startIt == adjList.end()) {
-                logMessage << "UserGraph: Add edge failed (startVertex {" << startVertex << "} does not exist";
-                logWarning;
+                /*logMessage << "UserGraph: Add edge failed (startVertex {" << startVertex << "} does not exist";
+                logWarning*/;
                 return false;
             }
 
             auto endIt = adjList.find(endVertex);
             if (endIt == adjList.end()) {
-                logMessage << "UserGraph: Add edge failed (endVertex {" << endVertex << "} does not exist";
-                logWarning;
+                /*logMessage << "UserGraph: Add edge failed (endVertex {" << endVertex << "} does not exist";
+                logWarning*/;
                 return false;
             }
 
@@ -315,9 +333,9 @@ namespace gfn::usergraph {
                 }
 
                 if (startIt->second.find(endVertex)->second.insert(edgeUuid).second) {
-                    logMessage << "UserGraph: Added new edge with startVertex {" << startVertex << "} endVertex {"
+                    /*logMessage << "UserGraph: Added new edge with startVertex {" << startVertex << "} endVertex {"
                                << endVertex << "} edge {" << edgeUuid << "} successfully";
-                    logInfo;
+                    logInfo*/;
 
                     properties->newEdgeProps(edgeUuid);
                     properties->getEdgeProps(edgeUuid).first->startVertexUuid = startVertex;
@@ -326,16 +344,29 @@ namespace gfn::usergraph {
                     return true;
                 }
 
-                logMessage << "UserGraph: Add new edge with startVertex {" << startVertex << "} endVertex {"
+                /*logMessage << "UserGraph: Add new edge with startVertex {" << startVertex << "} endVertex {"
                            << endVertex
                            << "} edge {" << edgeUuid << "} failed (unexpected insertion failure)";
-                logError;
+                logError*/;
                 return false;
             }
-            logMessage << "UserGraph: Add new edge with startVertex {" << startVertex << "} endVertex {" << endVertex
+            /*logMessage << "UserGraph: Add new edge with startVertex {" << startVertex << "} endVertex {" << endVertex
                        << "} edge {" << edgeUuid << "} failed (edge uuid given already exists)";
-            logWarning;
+            logWarning*/;
             return false;
+        }
+
+        void addEdgeCmd(const gfn::Command& cmd) {
+            gfn::command::Parser parser(cmd);
+            auto sv = parser.readWord();
+            auto ev = parser.readWord();
+            auto ei = parser.readWord();
+            if (!sv.empty() && !ev.empty()) {
+                if (ei.empty())
+                    addEdge(sv, ev);
+                else
+                    addEdge(sv, ev, ei);
+            }
         }
 
         ///@brief remove edge with specified uuid (one edge)
@@ -356,62 +387,62 @@ namespace gfn::usergraph {
                             if (endIt->second.empty()) {
                                 // no more edges between the given start-end vertex pair
                                 startIt->second.erase(endIt);
-                                if (!eraseProperties || (eraseProperties &&
-                                                         properties->eraseEdgeProps(edgeUuid))) {
-                                    logMessage << "UserGraph: Successfully removed edge {" << edgeUuid << "}";
-                                    logInfo;
+                                if (!eraseProperties || (eraseProperties && properties->eraseEdgeProps(edgeUuid))) {
+                                    /*logMessage << "UserGraph: Successfully removed edge {" << edgeUuid << "}";
+                                    logInfo*/;
                                     return true;
                                 }
-                                logMessage << "UserGraph: Remove edge {" << edgeUuid
+                                /*logMessage << "UserGraph: Remove edge {" << edgeUuid
                                            << "} failed (edge prop deletion failed)";
-                                logWarning;
+                                logWarning*/;
                                 return false;
                             }
-                            logMessage << "UserGraph: Successfully removed edge {" << edgeUuid << "}";
-                            logInfo;
+                            /*logMessage << "UserGraph: Successfully removed edge {" << edgeUuid << "}";
+                            logInfo*/;
                             // still have edges between the given start-end vertex pair
                             return true;
                         }
                         // can find start and end vertex entries but edge deletion failed, entering full scan route
-                        logMessage
+                        /*logMessage
                                 << "UserGraph: Remove edge {" << edgeUuid
                                 << "} failed (vertices from prop found but not the edge, trying full scan from usergraph)";
-                        logWarning;
+                        logWarning*/;
                     }
-                    logMessage << "UserGraph: Remove edge {" << edgeUuid
+                    /*logMessage << "UserGraph: Remove edge {" << edgeUuid
                                << "} failed (endVertex from prop entry not found from startVertex, trying full scan "
                                   "from usergraph)";
-                    logWarning;
+                    logWarning*/;
                 }
-                logMessage << "UserGraph: Remove edge {" << edgeUuid
+                /*logMessage << "UserGraph: Remove edge {" << edgeUuid
                            << "} failed (startVertex from prop not found, trying full scan from usergraph)";
-                logWarning;
+                logWarning*/;
             } else {
-                logMessage << "UserGraph: Remove edge {" << edgeUuid
+                /*logMessage << "UserGraph: Remove edge {" << edgeUuid
                            << "} failed (not found in properties, trying full scan from usergraph)";
-                logWarning;
+                logWarning*/;
             }
 
             // Bad, bad route, scans EVERY edge in the graph. Only when needed
             for (auto& u : adjList) {
                 for (auto& v : u.second) {
                     if (v.second.erase(edgeUuid)) {
-                        if (!eraseProperties ||
-                            (eraseProperties && properties->eraseEdgeProps(edgeUuid))) {
-                            logMessage << "UserGraph: Remove edge {" << edgeUuid
+                        if (!eraseProperties || (eraseProperties && properties->eraseEdgeProps(edgeUuid))) {
+                            /*logMessage << "UserGraph: Remove edge {" << edgeUuid
                                        << "} successfully with warnings (completed with full scan)";
-                            logInfo;
+                            logInfo*/;
                             return true;
                         }
-                        logMessage << "UserGraph: Remove edge {" << edgeUuid << "} failed (edge prop deletion failed)";
-                        logWarning;
+                        /*logMessage << "UserGraph: Remove edge {" << edgeUuid << "} failed (edge prop deletion
+                        failed)";
+                        logWarning*/;
                         return false;
                     }
                 }
             }
 
-            logMessage << "UserGraph: Remove edge {" << edgeUuid << "} failed (edge not found, including in usergraph)";
-            logWarning;
+            /*logMessage << "UserGraph: Remove edge {" << edgeUuid << "} failed (edge not found, including in "
+                                                                     "usergraph)";
+            logWarning*/;
         }
     };
 } // namespace gfn::core::usergraph

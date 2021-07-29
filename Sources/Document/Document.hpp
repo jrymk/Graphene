@@ -3,7 +3,6 @@
 #include <thread>
 #include <atomic>
 #include <Document/GraphView/GraphView.hpp>
-#include <Editor/DebugGraphView.hpp>
 #include <Preferences/Preferences.hpp>
 #include <Objects/Uuid.hpp>
 
@@ -37,6 +36,10 @@ namespace gfn::document {
             coreThread.detach();
         }
 
+        void execute(std::string cmd) {
+            core.parser.execute(cmd);
+        }
+
         // endless core update loop
         void coreUpdate() {
             while (!_terminateCoreUpdate) {
@@ -47,6 +50,7 @@ namespace gfn::document {
 
         // called every gui cycle
         void update() {
+            gfn::timer::Timer a;
             graphview.update();
 
             isWindowFocused = graphview.isWindowFocused;

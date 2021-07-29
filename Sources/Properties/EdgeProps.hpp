@@ -10,7 +10,9 @@ namespace gfn::properties {
         bool enabled;
 
         gfn::Uuid startVertexUuid;
+        gfn::Vec2f startVertexPosition;
         gfn::Uuid endVertexUuid;
+        gfn::Vec2f endVertexPosition;
 
         gfn::Color edgeFillColor;
         double thickness;

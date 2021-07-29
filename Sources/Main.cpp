@@ -7,7 +7,6 @@
 #include <Editor/Logs.hpp>
 #include <Objects/Uuid.hpp>
 #include <Interface/Interface.hpp>
-#include <Editor/DebugGraphView.hpp>
 // #include <Editor/Logs.hpp>
 #include <Document/Document.hpp>
 #include <Preferences/Preferences.hpp>
@@ -16,8 +15,14 @@
 int main() {
     gfn::window::launchWindow();
 
-    gfn::editor::newFile("Untitled document");
-    gfn::editor::newFile("Untitled document (1)");
+    gfn::editor::startup();
+
+    gfn::editor::newFile("test");
+    //gfn::editor::newFile("Untitled document (1)");
+    //gfn::editor::newFile("Untitled document (2)");
+    //gfn::editor::newFile("Untitled document (3)");
+    //gfn::editor::newFile("Untitled document (4)");
+    //gfn::editor::newFile("Untitled document (1)");
 
     while (!glfwWindowShouldClose(gfn::window::glfwWindow)) {
         gfn::window::preFrame();
