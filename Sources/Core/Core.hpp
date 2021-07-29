@@ -5,9 +5,11 @@
 #include <Structure/Structure.hpp>
 #include <Configs/Configs.hpp>
 #include <Properties/Properties.hpp>
-#include <Core/Parser/CmdInterface.hpp>
+#include <Properties/PropertiesCmd.hpp>
+#include <Core/Command/CmdInterface.hpp>
 #include <Interface/Interface.hpp>
 #include <Core/Drawlgo/Drawlgo.hpp>
+#include <Core/Command/CmdBuffer.hpp>
 #include <atomic>
 
 namespace gfn::core {
@@ -18,7 +20,7 @@ namespace gfn::core {
         gfn::usergraph::UserGraph usergraph;
         gfn::structure::Structure structure;
         gfn::core::drawlgo::Drawlgo drawlgo;
-        gfn::core::cmd::CmdInterface parser;
+        gfn::core::cmd::CmdInterface cmdInterface;
 
         Core() = default;
 
@@ -26,33 +28,19 @@ namespace gfn::core {
             this->interface = _interface;
             usergraph.bindProperties(&properties);
             structure.componentList.bindSource(&usergraph, &properties);
-            parser.usergraph = &usergraph;
+            cmdInterface.usergraph = &usergraph;
         }
 
         void coreCycle() {
             // gfn::core::logging::logBuffer = &interface->logBuffer.getWrite();
-            static bool first = true;
-            if (first) {
-                int vertices = 30;
-                int edges = 1000;
+            while (!interface->cmdBuffer.getRead()->commands.empty()) {
+                gfn::Command output;
 
-                std::vector<gfn::Uuid> temp;
-                auto a = parser.execute("graph new vertex");
-                temp.push_back(a);
-                for (int v = 0; v < vertices; v++) {
-                    auto b = parser.execute("graph new vertex");
-                    temp.push_back(b);
-                    std::uniform_int_distribution<int> dis(0, temp.size() - 1);
-                    int u = dis(gfn::system::random::getEngine());
-                    parser.execute("graph new edge " + temp[u] + " " + b);
-                }
-                /*for (int e = 0; e < edges; e++) {
-                    std::uniform_int_distribution<int> dis(0, vertices - 1);
-                    int u = dis(gfn::system::random::getEngine());
-                    int v = dis(gfn::system::random::getEngine());
-                    parser.execute("graph new edge " + temp[u] + " " + temp[v]);
-                }*/
-                first = false;
+                usergraph.tryInterpret(interface->cmdBuffer.getRead()->commands.front(), output);
+                gfn::properties::tryInterpret(&properties, interface->cmdBuffer.getRead()->commands.front(), output);
+
+                std::cout << output.getString() << "\n";
+                interface->cmdBuffer.getRead()->commands.pop_front();
             }
 
             // gfn::timer::Timer updateTimer;
@@ -78,8 +66,8 @@ namespace gfn::core {
                 // assignment operator, writes the core content to the write buffer
                 // interface->logBuffer.writeDone();
             }
-
             interface->configs.readDone();
+            interface->cmdBuffer.readDone();
             // std::cerr << "Write took " << writeTimer.getMicroseconds() << "us\n";
         }
     };

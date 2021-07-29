@@ -7700,7 +7700,7 @@
 2006-06-25  Jens Claudius  <jens.claudius@yahoo.com>
 
 	The Type 1 parser now skips over top-level procedures as required
-	for a `Simplified Parser'.  This makes the parser more robust as it
+	for a `Simplified CmdInterface'.  This makes the parser more robust as it
 	doesn't poke around in PostScript code.  Additionally, it makes the
 	FontDirectory hackery in src/type1/t1load.c unnecessary.
 

@@ -3,6 +3,7 @@
 #include <Interface/TripleBuffer.hpp>
 #include <Properties/UserProps.hpp>
 #include <Configs/Configs.hpp>
+#include <Core/Command/CmdBuffer.hpp>
 
 #undef interface // I just really want to use this word
 
@@ -15,5 +16,7 @@ namespace gfn::interface {
         TripleBuffer<gfn::logging::LogBuffer> logBuffer;
         // this stores the configurations for core to run, from the user to the core
         TripleBuffer<gfn::configs::Configs> configs;
+
+        TripleBuffer<gfn::cmdbuffer::CmdBuffer> cmdBuffer;
     };
 } // namespace gfn::interface

@@ -15,6 +15,8 @@ namespace gfn::editor::graphview {
             auto userprops = interface->userprops.getRead();
             for (auto& ei : userprops->getEdgePropList()) {
                 auto e = ei.second;
+                if (!e.enabled)
+                    continue;
                 drawList->AddLine(camera->map(e.startVertexPosition),
                                   camera->map(e.endVertexPosition),
                                   e.edgeFillColor.color32, camera->map(e.thickness));
@@ -26,6 +28,8 @@ namespace gfn::editor::graphview {
             auto userprops = interface->userprops.getRead();
             for (auto& vi : userprops->getVertexPropList()) {
                 auto v = vi.second;
+                if (!v.enabled)
+                    continue;
                 drawList->AddCircleFilled(camera->map(v.position), camera->map(v.radius), v.vertexFillColor.color32, 0);
             }
         }

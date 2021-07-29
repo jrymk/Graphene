@@ -4,6 +4,7 @@
 #include <thread>
 #include <iostream>
 #include <string>
+#include <queue>
 #include <sstream>
 #include <Document/Document.hpp>
 
@@ -16,7 +17,7 @@ namespace gfn::editor {
 
     bool stopInput = false;
 
-    std::stringstream ss;
+    std::queue<std::string> cmdQueue;
 
     void waitInputLoop() {
         while (true) {
@@ -24,8 +25,12 @@ namespace gfn::editor {
             if (stopInput)
                 break;
             std::getline(std::cin, input);
-            ss << input;
+            cmdQueue.push(input);
         }
+    }
+
+    void execute(const std::string& cmd) {
+        cmdQueue.push(cmd);
     }
 
     void startup() {
@@ -40,8 +45,10 @@ namespace gfn::editor {
     }
 
     void update() {
-        if (!ss.str().empty()) {
+        while (!cmdQueue.empty()) {
             std::string document;
+            std::stringstream ss(cmdQueue.front());
+            cmdQueue.pop();
             ss >> document;
             for (auto& d : documents) {
                 if (d->documentUuid == document) {

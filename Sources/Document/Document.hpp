@@ -36,8 +36,8 @@ namespace gfn::document {
             coreThread.detach();
         }
 
-        void execute(std::string cmd) {
-            core.parser.execute(cmd);
+        void execute(const std::string& cmd) {
+            interface.cmdBuffer.getWrite()->commands.emplace_back(cmd);
         }
 
         // endless core update loop
@@ -50,12 +50,14 @@ namespace gfn::document {
 
         // called every gui cycle
         void update() {
-            gfn::timer::Timer a;
             graphview.update();
 
             isWindowFocused = graphview.isWindowFocused;
             interface.userprops.readDone();
             interface.configs.writeDone();
+            interface.cmdBuffer.writeDone();
+
+            //interface.cmdBuffer.getWrite()->commands.clear();
         }
 
         void terminate() { _terminateCoreUpdate = true; }

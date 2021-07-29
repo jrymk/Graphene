@@ -7,15 +7,48 @@
 #include <Properties/EdgeProps.hpp>
 #include <System/Random/Random.hpp>
 #include <Logging/Logging.hpp>
+#include <Objects/Command.hpp>
 
 namespace gfn::properties {
 /// @brief Stores all the properties such as positions, colors and force values for internal use
     class Properties {
+        // user friendly name mapping for uuids
+        std::unordered_map<std::string, gfn::Uuid> accessNames;
         // this class stays ar the bottom of anything, so that usergraph, core, the api and so on can access it
         std::unordered_map<gfn::Uuid, std::pair<gfn::properties::VertexProps, gfn::properties::VertexPropsInternal>> vertexPropsList;
         std::unordered_map<gfn::Uuid, std::pair<gfn::properties::EdgeProps, gfn::properties::EdgePropsInternal>> edgePropsList;
 
     public:
+        /// @brief uuids can be hard to type and read, user can assign custom names to every uuid for easy access
+        bool assignAccessName(const std::string& accessName, const gfn::Uuid& uuid, bool overwrite = false) {
+            if (!uuid::isUuid(uuid)) {
+                // not a uuid
+                return false;
+            }
+            auto f = accessNames.find(accessName);
+            if (f != accessNames.end()) {
+                if (overwrite) {
+                    f->second = uuid;
+                    return true;
+                } else {
+                    // access name already exist
+                    return false;
+                }
+            }
+            accessNames.insert({accessName, uuid});
+            return true;
+        }
+
+        gfn::Uuid convertAccessName(const std::string& accessName) {
+            auto f = accessNames.find(accessName);
+            if (f != accessNames.end())
+                return f->second;
+            else {
+                return "";
+                // access name is not assigned
+            }
+        }
+
         /// @brief retrieve the properties object of the given vertex
         /// @returns first: vertex prop, second: vertex prop internal; nullptr if the prop does not exist, else the pointer to the prop object
         std::pair<gfn::properties::VertexProps*, gfn::properties::VertexPropsInternal*>
@@ -48,8 +81,7 @@ namespace gfn::properties {
 
         /// @brief allocate a new vertex properties object
         /// @returns false if prop already exist but clearExisting is false
-        bool newVertexProps
-                (const gfn::Uuid& uuid, bool clearExisting = false) {
+        bool newVertexProps(const gfn::Uuid& uuid, bool clearExisting = false) {
             std::cerr << "new prop!\n";
             if (clearExisting && vertexPropsList.erase(uuid)) {
                 logMessage << "Properties: Cleared existing core vertex prop {" << uuid << "}";
@@ -105,6 +137,7 @@ namespace gfn::properties {
             vertexPropsList.erase(it);
             logMessage << "Properties: Erase core vertex prop {" << edgeUuid << "}";
             logVerbose;
+            return true;
         }
 
         /// @brief erase an edge prop
@@ -119,6 +152,7 @@ namespace gfn::properties {
             edgePropsList.erase(it);
             logMessage << "Properties: Erase core edge prop {" << edgeUuid << "}";
             logVerbose;
+            return true;
         }
 
         ///@brief Returns the entire prop list, mainly for usergraph prop checkup

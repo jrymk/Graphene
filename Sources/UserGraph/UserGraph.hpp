@@ -29,19 +29,22 @@ namespace gfn::usergraph {
             return adjList;
         }
 
-        gfn::Uuid execute(const Command& cmd) {
-            gfn::command::Parser parser(cmd);
-            auto op = parser.readWord();
-            if (op == "new") {
-                auto it = parser.readWord();
-                if (it == "vertex")
-                    addVertexCmd(parser.getRemaining());
-                if (it == "edge")
-                    addEdgeCmd(parser.getRemaining());
+        bool tryInterpret(gfn::Command command, gfn::Command& output) {
+            auto cmd = command.getParamValue("command");
+            if (cmd == "mkvertex") {
+                addVertex(command, output);
+                return true;
+            } else if (cmd == "rmvertex") {
+                removeVertex(command, output);
+                return true;
+            } else if (cmd == "mkedge") {
+                addEdge(command, output);
+                return true;
+            } else if (cmd == "rmedge") {
+                removeEdge(command, output);
+                return true;
             }
-            if (op == "delete") {
-
-            }
+            return false;
         }
 
         ///@brief Recommended to be called upon graph update, this function checks for missing props from Properties
@@ -139,98 +142,95 @@ namespace gfn::usergraph {
         }
 
         // add a new vertex with auto-generated uuid
-        /// @returns  a pair with first indicating if it was successful and second the uuid auto-generated that
         /// represents the vertex created
-        std::pair<bool, gfn::Uuid> addVertex() {
+        void addVertex(gfn::Command command, gfn::Command& output) {
             pendingUpdate = true;
-            for (int retries = 1; retries <= 5; retries++) {
-                auto uuid = gfn::uuid::createUuid();
-                if (adjList.insert({uuid, std::unordered_map<gfn::Uuid, std::unordered_set<gfn::Uuid>>()}).second) {
-                    // add entry to adjacency list
-                    properties->newVertexProps(uuid);
-                    /*logMessage << "UserGraph: Added new vertex {" << uuid << "} (auto-generated)";
-                    logInfo*/;
-                    return {true, uuid};
+
+            gfn::Uuid uuid;
+            if (uuid::isUuid(command.getParamValue("-uuid"))) {
+                uuid = command.getParamValue("-uuid");
+                output.newParam("-uuidsource", "user");
+            } else {
+                uuid = gfn::uuid::createUuid();
+                output.newParam("-uuidsource", "gen");
+            }
+            if (!command.getParamValue("-name").empty()) {
+                if (command.getFlag("-force"))
+                    properties->assignAccessName(command.getParamValue("-name"), uuid, true);
+                else {
+                    if (properties->convertAccessName(command.getParamValue("-name")).empty())
+                        properties->assignAccessName(command.getParamValue("-name"), uuid);
+                    else {
+                        output.newParam("-error", "ACCESS_NAME_ALREADY_DEFINED");
+                        output.newParam("-fix", "Pick another access name");
+                        output.newParam("-successful", "false");
+                        return;
+                    }
                 }
-                // props already existed somehow
-                /*logMessage << "UserGraph: Add new vertex {" << uuid
-                           << "} (auto-generated) failed (already exists, retrying: " << std::to_string(retries)
-                           << "/5)";
-                logWarning*/;
             }
-            /*logMessage << "UserGraph: (unexpected uuid creation failure)";
-            logError*/;
-            return {false, gfn::uuid::createNil()};
-        }
-
-        // add a new vertex with the given uuid
-        bool addVertex(const gfn::Uuid& uuid) {
-            pendingUpdate = true;
             if (adjList.insert({uuid, std::unordered_map<gfn::Uuid, std::unordered_set<gfn::Uuid>>()}).second) {
-                // add entry to adjacency list
                 properties->newVertexProps(uuid);
-                /*logMessage << "UserGraph: Added new vertex {" << uuid << "}";
-                logInfo*/;
-                return true;
+                properties->getVertexProps(uuid).first->enabled = true;
+                output.newParam("-successful", "true");
+                output.newParam("-uuid", uuid);
+                return;
             }
-            /*logMessage << "UserGraph: Add new vertex {" << uuid << "} failed (uuid given already exists)";
-            logError*/;
-            return false;
-        }
-
-        void addVertexCmd(const gfn::Command& cmd) {
-            gfn::command::Parser parser(cmd);
-            auto id = parser.readWord();
-            if (id.empty())
-                addVertex();
-            else
-                addVertex(id);
+            output.newParam("-successful", "false");
+            output.newParam("-error", "VERTEX_ALREADY_EXIST");
         }
 
         ///@brief Deletes vertex with the given uuid. erase**Properties will also clear the properties tied to the uuid,
         /// without erase so you can create a new vertex/edge with the same uuid to retreive all the properties.
         /// removeAllAdjacentEdges remove edges that points to the vertex getting deleted
         /// @returns if the deleting was successful
-        bool removeVertex(const gfn::Uuid& uuid, bool eraseVertexProperties = true, bool eraseEdgeProperties = true,
-                          bool removeAllAdjacentEdges = true) {
+        void removeVertex(gfn::Command command, gfn::Command& output) {
             pendingUpdate = true;
-            auto uIt = adjList.find(uuid);
-            if (uIt == adjList.end()) {
-                /*logMessage << "UserGraph: Remove vertex {" << uuid << "} failed (not found)";
-                logWarning*/;
-                return false;
+            gfn::Uuid uuid;
+            if (!command.getParamValue("-uuid").empty()) {
+                // uuid provided
+                uuid = command.getParamValue("-uuid");
+                if (adjList.find(uuid) == adjList.end()) {
+                    output.newParam("-successful", "false");
+                    output.newParam("-uuid", uuid);
+                    output.newParam("-error", "VERTEX_UUID_NOT_FOUND");
+                    return;
+                }
+            } else if (!command.getParamValue("-name").empty()) {
+                // name provided
+                uuid = properties->convertAccessName(command.getParamValue("-name"));
+                if (uuid.empty()) {
+                    output.newParam("-successful", "false");
+                    output.newParam("-error", "ACCESS_NAME_UNDEFINED");
+                    return;
+                }
+                if (adjList.find(uuid) == adjList.end()) {
+                    output.newParam("-successful", "false");
+                    output.newParam("-uuid", uuid);
+                    output.newParam("-error", "VERTEX_UUID_NOT_FOUND");
+                    return;
+                }
             }
-
-            /*logMessage << "UserGraph: Removing edges adjacent to vertex {" << uuid << "} with eraseEdgeProperties "
-                       << (eraseEdgeProperties ? "enabled" : "disabled");
-            logVerbose*/;
-            if (eraseEdgeProperties) {
-                for (auto& v : uIt->second) {
-                    /*logMessage << "    vertex {" << v.first << "}";
-                    logVerbose*/;
-                    for (auto& e : v.second) {
-                        /*logMessage << "        edge {" << e << "}";
-                        logVerbose*/;
-                        /// TODO: erase edge property
-                    }
+            auto uIt = adjList.find(uuid);
+            bool erase = command.getFlag("-erase-edge-props");
+            for (auto& v : uIt->second) {
+                for (auto& e : v.second) {
+                    if (erase)
+                        properties->eraseEdgeProps(e);
+                    else
+                        properties->getEdgeProps(e).first->enabled = false;
                 }
             }
 
-            if (removeAllAdjacentEdges) {
-                /*logMessage << "  <edges TO the vertex>";
-                logVerbose*/;
+            if (!command.getFlag("-do-not-remove-edges")) {
                 for (auto& u : adjList) {
                     if (u.first != uuid) {
                         for (auto& v : u.second) {
                             if (v.first == uuid) {
-                                /*logMessage << "    from vertex {" << u.first << "}";
-                                logVerbose*/;
-                                if (eraseEdgeProperties) {
-                                    for (auto& e : v.second) {
-                                        /*logMessage << "        edge {" << e << "}";
-                                        logVerbose*/;
-                                        /// TODO: erase edge property
-                                    }
+                                for (auto& e : v.second) {
+                                    if (erase)
+                                        properties->eraseEdgeProps(e);
+                                    else
+                                        properties->getEdgeProps(e).first->enabled = false;
                                 }
                                 u.second.erase(uuid); // erase vertex-edge entries from other vertices
                             }
@@ -238,134 +238,115 @@ namespace gfn::usergraph {
                     }
                 }
             }
-
-            /*logMessage << "UserGraph: Removing vertex {" << uuid << "} with eraseVertexProperties "
-                       << (eraseVertexProperties ? "enabled" : "disabled");
-            logInfo*/;
-            if (eraseVertexProperties)
+            if (command.getFlag("-erase-vertex-props"))
                 properties->eraseVertexProps(uuid);
-
             adjList.erase(uuid);
+            output.newParam("-successful", "true");
+            output.newParam("-uuid", uuid);
         }
 
         // add a new edge with auto-generated uuid between two given vertices
         /// @returns a pair with first indicating if it was successful and second the uuid auto-generated that
         /// represents the edge created
-        std::pair<bool, gfn::Uuid> addEdge(const gfn::Uuid& startVertex, const gfn::Uuid& endVertex) {
+        void addEdge(gfn::Command command, gfn::Command& output) {
             pendingUpdate = true;
-            auto startIt = adjList.find(startVertex);
-            if (startIt == adjList.end()) {
-                /*logMessage << "UserGraph: Add edge failed (startVertex {" << startVertex << "} does not exist";
-                logWarning*/;
-                return {false, gfn::uuid::createNil()};
-            }
 
-            auto endIt = adjList.find(endVertex);
-            if (endIt == adjList.end()) {
-                /*logMessage << "UserGraph: Add edge failed (endVertex {" << endVertex << "} does not exist";
-                logWarning*/;
-                return {false, gfn::uuid::createNil()};
-            }
-
-            for (int retries = 1; retries <= 5; retries++) {
-                auto edgeId = gfn::uuid::createUuid();
-                if (!properties->getEdgeProps(edgeId, false).first) { // props does not exist
-                    // add entry to adjacency list
-                    if (startIt->second.insert({endVertex, std::unordered_set<gfn::Uuid>()}).second) {
-                        // created new endVertex entry
-                    }
-                    if (endIt->second.insert({startVertex, std::unordered_set<gfn::Uuid>()}).second) {
-                        // created new endVertex entry
-                    }
-
-                    if (startIt->second.find(endVertex)->second.insert(edgeId).second) {
-                        /*logMessage << "UserGraph: Added new edge with startVertex {" << startVertex << "} endVertex {"
-                                   << endVertex << "} edge {" << edgeId << "} successfully";
-                        logInfo*/;
-
-                        properties->newEdgeProps(edgeId);
-                        properties->getEdgeProps(edgeId).first->startVertexUuid = startVertex;
-                        properties->getEdgeProps(edgeId).first->endVertexUuid = endVertex;
-                        properties->getEdgeProps(edgeId).first->edgeUuid = edgeId;
-                        return {true, edgeId};
-                    }
-                    /*logMessage << "UserGraph: Add new edge with startVertex {" << startVertex << "} endVertex {"
-                               << endVertex << "} edge {" << edgeId << "} failed (unexpected insertion failure)";
-                    logError*/;
-                    return {false, gfn::uuid::createNil()};
+            gfn::Uuid startUuid;
+            auto startParam = command.getParamValue("-u");
+            if (!startParam.empty())
+                startUuid = startParam;
+            else if (!command.getParamValue("-uname").empty()) {
+                startUuid = properties->convertAccessName(command.getParamValue("-uname"));
+                if (startUuid.empty()) {
+                    output.newParam("-successful", "false");
+                    output.newParam("-error", "START_VERTEX_ACCESS_NAME_UNDEFINED");
+                    return;
                 }
-                // props already existed somehow
-                /*logMessage << "UserGraph: Add new edge with startVertex {" << startVertex << "} endVertex {"
-                           << endVertex
-                           << "} failed (edge {" << edgeId
-                           << "} (auto-generated) already exists, retrying: " << std::to_string(retries) << "/5)";
-                logWarning*/;
+            } else {
+                // no start vertex specified
+                output.newParam("-successful", "false");
+                output.newParam("-error", "START_VERTEX_UNSPECIFIED");
+                output.newParam("-fix", "Specify start vertex with [-u] or [-uname]");
+                return;
             }
-            /*logMessage << "UserGraph: (unexpected uuid creation failure)";
-            logError*/;
-            return {false, gfn::uuid::createNil()};
-        }
-
-        // add a new edge with the given uuid between two given vertices
-        bool addEdge(const gfn::Uuid& startVertex, const gfn::Uuid& endVertex, const gfn::Uuid& edgeUuid) {
-            pendingUpdate = true;
-            auto startIt = adjList.find(startVertex);
-            if (startIt == adjList.end()) {
-                /*logMessage << "UserGraph: Add edge failed (startVertex {" << startVertex << "} does not exist";
-                logWarning*/;
-                return false;
+            auto uIt = adjList.find(startUuid);
+            if (uIt == adjList.end()) {
+                output.newParam("-successful", "false");
+                output.newParam("-error", "START_VERTEX_NOT_FOUND");
+                return;
             }
 
-            auto endIt = adjList.find(endVertex);
-            if (endIt == adjList.end()) {
-                /*logMessage << "UserGraph: Add edge failed (endVertex {" << endVertex << "} does not exist";
-                logWarning*/;
-                return false;
+            gfn::Uuid endUuid;
+            auto endParam = command.getParamValue("-v");
+            if (!endParam.empty())
+                endUuid = endParam;
+            else if (!command.getParamValue("-vname").empty()) {
+                endUuid = properties->convertAccessName(command.getParamValue("-vname"));
+                if (endUuid.empty()) {
+                    output.newParam("-successful", "false");
+                    output.newParam("-error", "END_VERTEX_ACCESS_NAME_UNDEFINED");
+                    return;
+                }
+            } else {
+                // no start vertex specified
+                output.newParam("-successful", "false");
+                output.newParam("-error", "END_VERTEX_UNSPECIFIED");
+                output.newParam("-fix", "Specify end vertex with [-v] or [-vname]");
+                return;
+            }
+            auto vIt = adjList.find(endUuid);
+            if (vIt == adjList.end()) {
+                output.newParam("-successful", "false");
+                output.newParam("-error", "END_VERTEX_NOT_FOUND");
+                return;
             }
 
+            gfn::Uuid edgeUuid;
+            if (uuid::isUuid(command.getParamValue("-uuid"))) {
+                edgeUuid = command.getParamValue("-uuid");
+                output.newParam("-uuidsource", "user");
+            } else {
+                edgeUuid = gfn::uuid::createUuid();
+                output.newParam("-uuidsource", "gen");
+            }
+            if (!command.getParamValue("-name").empty()) {
+                if (command.getFlag("-force"))
+                    properties->assignAccessName(command.getParamValue("-name"), edgeUuid, true);
+                else {
+                    if (properties->convertAccessName(command.getParamValue("-name")).empty())
+                        properties->assignAccessName(command.getParamValue("-name"), edgeUuid);
+                    else {
+                        output.newParam("-error", "ACCESS_NAME_ALREADY_DEFINED");
+                        output.newParam("-fix", "Pick another access name");
+                        output.newParam("-successful", "false");
+                        return;
+                    }
+                }
+            }
             if (!properties->getEdgeProps(edgeUuid, false).first) { // props does not exist
                 // add entry to adjacency list
-                if (startIt->second.insert({endVertex, std::unordered_set<gfn::Uuid>()}).second) {
+                if (uIt->second.insert({endUuid, std::unordered_set<gfn::Uuid>()}).second) {
                     // created new endVertex entry
                 }
-                if (endIt->second.insert({startVertex, std::unordered_set<gfn::Uuid>()}).second) {
+                if (vIt->second.insert({startUuid, std::unordered_set<gfn::Uuid>()}).second) {
                     // created new endVertex entry
                 }
-
-                if (startIt->second.find(endVertex)->second.insert(edgeUuid).second) {
-                    /*logMessage << "UserGraph: Added new edge with startVertex {" << startVertex << "} endVertex {"
-                               << endVertex << "} edge {" << edgeUuid << "} successfully";
-                    logInfo*/;
-
-                    properties->newEdgeProps(edgeUuid);
-                    properties->getEdgeProps(edgeUuid).first->startVertexUuid = startVertex;
-                    properties->getEdgeProps(edgeUuid).first->endVertexUuid = endVertex;
-                    properties->getEdgeProps(edgeUuid).first->edgeUuid = edgeUuid;
-                    return true;
+                if (uIt->second.find(endUuid)->second.insert(edgeUuid).second) {
+                    output.newParam("-uuid", edgeUuid);
+                    if (!properties->newEdgeProps(edgeUuid)) {
+                        output.newParam("-successful", "false");
+                        output.newParam("-error", "EDGE_UUID_ALREADY_EXIST");
+                        return;
+                    }
+                    auto p = properties->getEdgeProps(edgeUuid);
+                    p.first->startVertexUuid = startUuid;
+                    p.first->endVertexUuid = endUuid;
+                    p.first->edgeUuid = edgeUuid;
+                    p.first->enabled = true;
+                    output.newParam("-u", startUuid);
+                    output.newParam("-v", endUuid);
+                    output.newParam("-successful", "true");
                 }
-
-                /*logMessage << "UserGraph: Add new edge with startVertex {" << startVertex << "} endVertex {"
-                           << endVertex
-                           << "} edge {" << edgeUuid << "} failed (unexpected insertion failure)";
-                logError*/;
-                return false;
-            }
-            /*logMessage << "UserGraph: Add new edge with startVertex {" << startVertex << "} endVertex {" << endVertex
-                       << "} edge {" << edgeUuid << "} failed (edge uuid given already exists)";
-            logWarning*/;
-            return false;
-        }
-
-        void addEdgeCmd(const gfn::Command& cmd) {
-            gfn::command::Parser parser(cmd);
-            auto sv = parser.readWord();
-            auto ev = parser.readWord();
-            auto ei = parser.readWord();
-            if (!sv.empty() && !ev.empty()) {
-                if (ei.empty())
-                    addEdge(sv, ev);
-                else
-                    addEdge(sv, ev, ei);
             }
         }
 
@@ -373,76 +354,246 @@ namespace gfn::usergraph {
         ///@returns if the edge deleting is successful or not (edge not found). If eraseProperties is on, false will
         /// also be
         /// returned if properties not found (properties delete unsuccessful)
-        bool removeEdge(const gfn::Uuid& edgeUuid, bool eraseProperties) {
+        void removeEdge(gfn::Command command, gfn::Command& output) {
             pendingUpdate = true;
+
+            gfn::Uuid edgeUuid;
+            if (!command.getParamValue("-uuid").empty()) {
+                // uuid provided
+                edgeUuid = command.getParamValue("-uuid");
+            } else if (!command.getParamValue("-name").empty()) {
+                // name provided
+                edgeUuid = properties->convertAccessName(command.getParamValue("-name"));
+                if (edgeUuid.empty()) {
+                    output.newParam("-successful", "false");
+                    output.newParam("-error", "ACCESS_NAME_UNDEFINED");
+                    return;
+                }
+            } else {
+                // v to v mode
+                gfn::Uuid startUuid;
+                auto startParam = command.getParamValue("-u");
+                if (!startParam.empty())
+                    startUuid = startParam;
+                else if (!command.getParamValue("-uname").empty()) {
+                    startUuid = properties->convertAccessName(command.getParamValue("-uname"));
+                    if (startUuid.empty()) {
+                        output.newParam("-successful", "false");
+                        output.newParam("-error", "START_VERTEX_ACCESS_NAME_UNDEFINED");
+                        return;
+                    }
+                } else {
+                    // no start vertex specified
+                    output.newParam("-successful", "false");
+                    output.newParam("-error", "START_VERTEX_UNSPECIFIED");
+                    output.newParam("-fix", "Specify start vertex with [-u] or [-uname]");
+                    return;
+                }
+
+                auto uIt = adjList.find(startUuid);
+                if (uIt == adjList.end()) {
+                    output.newParam("-successful", "false");
+                    output.newParam("-error", "START_VERTEX_NOT_FOUND");
+                    return;
+                }
+
+                gfn::Uuid endUuid;
+                auto endParam = command.getParamValue("-v");
+                if (!endParam.empty())
+                    endUuid = endParam;
+                else if (!command.getParamValue("-vname").empty()) {
+                    endUuid = properties->convertAccessName(command.getParamValue("-vname"));
+                    if (endUuid.empty()) {
+                        output.newParam("-successful", "false");
+                        output.newParam("-error", "END_VERTEX_ACCESS_NAME_UNDEFINED");
+                        return;
+                    }
+                } else {
+                    // no start vertex specified
+                    output.newParam("-successful", "false");
+                    output.newParam("-error", "END_VERTEX_UNSPECIFIED");
+                    output.newParam("-fix", "Specify end vertex with [-v] or [-vname]");
+                    return;
+                }
+                auto vIt = adjList.find(endUuid);
+                if (vIt == adjList.end()) {
+                    output.newParam("-successful", "false");
+                    output.newParam("-error", "END_VERTEX_NOT_FOUND");
+                    return;
+                }
+
+                // v to v mode
+                auto sIt = adjList.find(startUuid);
+                auto eIt = adjList.find(endUuid);
+                if (sIt == adjList.end()) {
+                    output.newParam("-successful", "false");
+                    output.newParam("-error", "START_VERTEX_NOT_FOUND");
+                    return;
+                }
+                if (eIt == adjList.end()) {
+                    output.newParam("-successful", "false");
+                    output.newParam("-error", "END_VERTEX_NOT_FOUND");
+                    return;
+                }
+                auto sEIt = eIt->second.find(startUuid);
+                auto eEIt = sIt->second.find(endUuid);
+                if (sEIt == eIt->second.end()) {
+                    output.newParam("-successful", "false");
+                    output.newParam("-error", "START_VERTEX_ENTRY_NOT_FOUND");
+                    return;
+                }
+                if (eEIt == sIt->second.end()) {
+                    output.newParam("-successful", "false");
+                    output.newParam("-error", "END_VERTEX_ENTRY_NOT_FOUND");
+                    return;
+                }
+
+                bool erase = command.getFlag("-erase-edge-props");
+                for (auto& e : sEIt->second) {
+                    if (!erase) {
+                        properties->getEdgeProps(e).first->enabled = false;
+                        continue;
+                    }
+                    if (properties->eraseEdgeProps(e)) {
+                        output.newParam("-uuid", e);
+                        continue;
+                    }
+                    output.newParam("-successful", "false");
+                    output.newParam("-error", "EDGE_PROPS_ERASE_FAILED");
+                    return;
+                }
+                for (auto& e : eEIt->second) {
+                    if (!erase) {
+                        properties->getEdgeProps(e).first->enabled = false;
+                        continue;
+                    }
+                    if (properties->eraseEdgeProps(e)) {
+                        output.newParam("-uuid", e);
+                        continue;
+                    }
+                    output.newParam("-successful", "false");
+                    output.newParam("-error", "EDGE_PROPS_ERASE_FAILED");
+                    return;
+                }
+                sIt->second.erase(eEIt);
+                eIt->second.erase(sEIt);
+
+                output.newParam("-successful", "true");
+                return;
+                // v to v mode
+            }
+
+            // edge mode
             auto prop = properties->getEdgeProps(edgeUuid);
             if (prop.first) { // props exists
+                output.newParam("-uuid", edgeUuid);
                 // the "use start and end vertices from props" route
                 auto startIt = adjList.find(prop.first->startVertexUuid);
+                gfn::Uuid startVertex = startIt->first;
                 if (startIt != adjList.end()) {
+                    output.newParam("-u", startVertex);
                     auto endIt = startIt->second.find(prop.first->endVertexUuid);
+                    gfn::Uuid endVertex = endIt->first;
                     if (endIt != startIt->second.end()) {
+                        output.newParam("-v", endVertex);
                         if (endIt->second.erase(edgeUuid)) {
                             // erased the edge successfully
                             if (endIt->second.empty()) {
                                 // no more edges between the given start-end vertex pair
                                 startIt->second.erase(endIt);
-                                if (!eraseProperties || (eraseProperties && properties->eraseEdgeProps(edgeUuid))) {
-                                    /*logMessage << "UserGraph: Successfully removed edge {" << edgeUuid << "}";
-                                    logInfo*/;
-                                    return true;
+                                bool erase = command.getFlag("-erase-edge-props");
+
+                                if (!erase || (erase && properties->eraseEdgeProps(edgeUuid))) {
+                                    if (!erase)
+                                        properties->getEdgeProps(edgeUuid).first->enabled = true;
+                                    if (endIt->second.empty())
+                                        startIt->second.erase(endIt);
+                                    auto rStartIt = adjList.find(endVertex);
+                                    if (rStartIt == adjList.end()) {
+                                        output.newParam("-error", "END_VERTEX_ENTRY_NOT_FOUND");
+                                        output.newParam("-successful", "false");
+                                        return;
+                                    }
+                                    auto rEndIt = rStartIt->second.find(startVertex);
+                                    if (rEndIt == rStartIt->second.end()) {
+                                        output.newParam("-error", "START_VERTEX_EDGE_ENTRY_NOT_FOUND");
+                                        output.newParam("-successful", "false");
+                                        return;
+                                    }
+                                    if (adjList.find(endVertex)->second.find(startVertex)->second.empty())
+                                        rStartIt->second.erase(rEndIt);
+
+                                    output.newParam("-successful", "true");
+                                    return;
                                 }
-                                /*logMessage << "UserGraph: Remove edge {" << edgeUuid
-                                           << "} failed (edge prop deletion failed)";
-                                logWarning*/;
-                                return false;
+                                output.newParam("-successful", "false");
+                                output.newParam("-error", "EDGE_PROPS_ERASE_FAILED");
+                                return;
                             }
-                            /*logMessage << "UserGraph: Successfully removed edge {" << edgeUuid << "}";
-                            logInfo*/;
-                            // still have edges between the given start-end vertex pair
-                            return true;
+                            if (endIt->second.empty())
+                                startIt->second.erase(endIt);
+                            auto rStartIt = adjList.find(endVertex);
+                            if (rStartIt == adjList.end()) {
+                                output.newParam("-error", "END_VERTEX_ENTRY_NOT_FOUND");
+                                output.newParam("-successful", "false");
+                                return;
+                            }
+                            auto rEndIt = rStartIt->second.find(startVertex);
+                            if (rEndIt == rStartIt->second.end()) {
+                                output.newParam("-error", "START_VERTEX_EDGE_ENTRY_NOT_FOUND");
+                                output.newParam("-successful", "false");
+                                return;
+                            }
+                            if (adjList.find(endVertex)->second.find(startVertex)->second.empty())
+                                rStartIt->second.erase(rEndIt);
+
+                            output.newParam("-successful", "true");
+                            return;
                         }
-                        // can find start and end vertex entries but edge deletion failed, entering full scan route
-                        /*logMessage
-                                << "UserGraph: Remove edge {" << edgeUuid
-                                << "} failed (vertices from prop found but not the edge, trying full scan from usergraph)";
-                        logWarning*/;
+                        output.newParam("-warning", "EDGE_DELETION_FAILED");
                     }
-                    /*logMessage << "UserGraph: Remove edge {" << edgeUuid
-                               << "} failed (endVertex from prop entry not found from startVertex, trying full scan "
-                                  "from usergraph)";
-                    logWarning*/;
+                    output.newParam("-warning", "END_VERTEX_NOT_CONNECTED");
                 }
-                /*logMessage << "UserGraph: Remove edge {" << edgeUuid
-                           << "} failed (startVertex from prop not found, trying full scan from usergraph)";
-                logWarning*/;
-            } else {
-                /*logMessage << "UserGraph: Remove edge {" << edgeUuid
-                           << "} failed (not found in properties, trying full scan from usergraph)";
-                logWarning*/;
-            }
+                output.newParam("-warning", "START_VERTEX_NOT_CONNECTED");
+            } else
+                output.newParam("-warning", "EDGE_PROP_NOT_FOUND");
 
             // Bad, bad route, scans EVERY edge in the graph. Only when needed
+            output.newParam("-warning", "FULL_SCAN_MODE");
             for (auto& u : adjList) {
                 for (auto& v : u.second) {
                     if (v.second.erase(edgeUuid)) {
-                        if (!eraseProperties || (eraseProperties && properties->eraseEdgeProps(edgeUuid))) {
-                            /*logMessage << "UserGraph: Remove edge {" << edgeUuid
-                                       << "} successfully with warnings (completed with full scan)";
-                            logInfo*/;
-                            return true;
+                        bool erase = command.getFlag("-erase-edge-props");
+
+                        if (!erase || (erase && properties->eraseEdgeProps(edgeUuid))) {
+                            if (!erase)
+                                properties->getEdgeProps(edgeUuid).first->enabled = true;
+                            auto rStartIt = adjList.find(v.first);
+                            if (rStartIt == adjList.end()) {
+                                output.newParam("-error", "END_VERTEX_ENTRY_NOT_FOUND");
+                                output.newParam("-successful", "false");
+                                return;
+                            }
+                            auto rEndIt = rStartIt->second.find(u.first);
+                            if (rEndIt == rStartIt->second.end()) {
+                                output.newParam("-error", "START_VERTEX_EDGE_ENTRY_NOT_FOUND");
+                                output.newParam("-successful", "false");
+                                return;
+                            }
+                            if (adjList.find(v.first)->second.find(u.first)->second.empty())
+                                rStartIt->second.erase(rEndIt);
+
+                            output.newParam("-successful", "true");
+                            return;
                         }
-                        /*logMessage << "UserGraph: Remove edge {" << edgeUuid << "} failed (edge prop deletion
-                        failed)";
-                        logWarning*/;
-                        return false;
+                        output.newParam("-successful", "false");
+                        output.newParam("-error", "EDGE_PROPS_ERASE_FAILED");
+                        return;
                     }
                 }
             }
-
-            /*logMessage << "UserGraph: Remove edge {" << edgeUuid << "} failed (edge not found, including in "
-                                                                     "usergraph)";
-            logWarning*/;
+            output.newParam("-successful", "false");
+            output.newParam("-error", "EDGE_NOT_FOUND");
         }
     };
 } // namespace gfn::core::usergraph

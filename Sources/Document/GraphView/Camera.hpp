@@ -15,7 +15,7 @@ namespace gfn::editor::graphview {
 
         Camera() {
             centerCoord = gfn::Vec2f(0.0, 0.0);
-            zoom = 1.0;
+            zoom = 10.0;
             //targetCenterCoord = gfn::Vec2f(0.0, 0.0);
             //targetZoom = 1.0;
 

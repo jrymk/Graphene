@@ -17,12 +17,32 @@ int main() {
 
     gfn::editor::startup();
 
-    gfn::editor::newFile("test");
-    //gfn::editor::newFile("Untitled document (1)");
-    //gfn::editor::newFile("Untitled document (2)");
-    //gfn::editor::newFile("Untitled document (3)");
-    //gfn::editor::newFile("Untitled document (4)");
-    //gfn::editor::newFile("Untitled document (1)");
+    gfn::editor::newFile("giraffe");
+
+    std::string testInput = {""
+                             "7 10 "
+                             "0 1 "
+                             "0 2 "
+                             "0 4 "
+                             "1 2 "
+                             "1 4 "
+                             "2 3 "
+                             "2 5 "
+                             "3 6 "
+                             "4 5"
+                             "5 6 "
+    };
+    std::stringstream ss(testInput);
+    int v, e;
+    ss >> v >> e;
+    for (int i = 0; i < v; i++)
+        gfn::editor::execute("giraffe mkvertex -name " + std::to_string(i));
+    for (int i = 0; i < e; i++) {
+        int s, t;
+        ss >> s >> t;
+        gfn::editor::execute("giraffe mkedge -uname " + std::to_string(s) + " -vname " + std::to_string(t));
+    }
+
 
     while (!glfwWindowShouldClose(gfn::window::glfwWindow)) {
         gfn::window::preFrame();
