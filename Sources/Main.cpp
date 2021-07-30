@@ -121,7 +121,8 @@ int main() {
     while (!glfwWindowShouldClose(gfn::window::glfwWindow)) {
         gfn::window::preFrame();
 
-        ImGui::ShowDemoWindow();
+        //ImGui::ShowDemoWindow();
+        ImGui::ShowMetricsWindow();
 
         gfn::editor::update();
 
@@ -135,6 +136,8 @@ int main() {
         // preferences.getKeyBind().showEnrollPopup(gfn::keybind::ACTION_CAMERA_PAN);
 
         ImGui::Begin("Command centre");
+
+        ImGui::Text(("Focused document: " + gfn::editor::focusedDocument->documentUuid).c_str());
 
         /*ImGui::PushStyleColor(ImGuiCol_SliderGrab, IM_COL32(255, 255, 255, 255));
         if (v > 0)
@@ -155,18 +158,31 @@ int main() {
         static float _c4 = 0.1f;
         static float _c5 = 0.1f;
         static float _c6 = 0.001f;
+        if (gfn::editor::focusedDocument) {
+            _c1 = float(gfn::editor::focusedDocument->interface.configs.getWrite()->c1);
+            _c2 = float(gfn::editor::focusedDocument->interface.configs.getWrite()->c2);
+            _c3 = float(gfn::editor::focusedDocument->interface.configs.getWrite()->c3);
+            _c4 = float(gfn::editor::focusedDocument->interface.configs.getWrite()->c4);
+            _c5 = float(gfn::editor::focusedDocument->interface.configs.getWrite()->c5);
+            _c6 = float(gfn::editor::focusedDocument->interface.configs.getWrite()->c6);
+        }
         ImGui::SliderFloat("c1", &_c1, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
         ImGui::SliderFloat("c2", &_c2, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
         ImGui::SliderFloat("c3", &_c3, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
         ImGui::SliderFloat("c4", &_c4, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
         ImGui::SliderFloat("c5", &_c5, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
         ImGui::SliderFloat("c6", &_c6, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
-        /*interface.configs.getWrite()->c1 = _c1;
-        interface.configs.getWrite()->c2 = _c2;
-        interface.configs.getWrite()->c3 = _c3;
-        interface.configs.getWrite()->c4 = _c4;
-        interface.configs.getWrite()->c5 = _c5;
-        interface.configs.getWrite()->c6 = _c6;*/
+        if (gfn::editor::focusedDocument) {
+            gfn::editor::focusedDocument->interface.configs.getWrite()->c1 = _c1;
+            gfn::editor::focusedDocument->interface.configs.getWrite()->c2 = _c2;
+            gfn::editor::focusedDocument->interface.configs.getWrite()->c3 = _c3;
+            gfn::editor::focusedDocument->interface.configs.getWrite()->c4 = _c4;
+            gfn::editor::focusedDocument->interface.configs.getWrite()->c5 = _c5;
+            gfn::editor::focusedDocument->interface.configs.getWrite()->c6 = _c6;
+
+            gfn::editor::focusedDocument->interface.configs.writeDone();
+        }
+
 
         // if (ImGui::Button("New vertex"))
         // core.parser.execute("graph new vertex"); // No, you can not run this here

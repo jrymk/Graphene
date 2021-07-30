@@ -8,6 +8,7 @@
 
 namespace gfn::document {
     class Document {
+    public:
         gfn::core::Core core; // updates vertex positions
         gfn::interface::Interface interface; // to interact with the multithreaded core
         gfn::editor::graphview::GraphView graphview; // handles graph rendering and interaction
@@ -16,7 +17,6 @@ namespace gfn::document {
         std::atomic<bool> _enableCoreUpdate = true;
         std::atomic<bool> _terminateCoreUpdate = false;
 
-    public:
         gfn::Uuid documentUuid;
         std::string savePath;
         bool isWindowFocused = false;

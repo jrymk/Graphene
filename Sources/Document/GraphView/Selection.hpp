@@ -14,6 +14,18 @@ namespace gfn::editor::graphview {
         // these can be both active, usually we prioritize hoveredVertex, if it is null, take edge
         gfn::Uuid hoveredVertex;
         gfn::Uuid hoveredEdge;
+        gfn::Uuid leftMouseDownVertex;
+        gfn::Uuid leftMouseDownEdge;
+        gfn::Uuid rightMouseDownVertex;
+        gfn::Uuid rightMouseDownEdge;
+        gfn::Uuid middleMouseDownVertex;
+        gfn::Uuid middleMouseDownEdge;
+        gfn::Uuid leftMouseUpVertex;
+        gfn::Uuid leftMouseUpEdge;
+        gfn::Uuid rightMouseUpVertex;
+        gfn::Uuid rightMouseUpEdge;
+        gfn::Uuid middleMouseUpVertex;
+        gfn::Uuid middleMouseUpEdge;
 
         float distance(ImVec2 a, ImVec2 b) {
             float deltaX = b.x - a.x;
@@ -73,6 +85,48 @@ namespace gfn::editor::graphview {
                     minDistance = cursorDistance;
                     hoveredEdge = e.edgeUuid;
                 }
+            }
+
+            if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+                leftMouseDownVertex = hoveredVertex;
+                leftMouseDownEdge = hoveredEdge;
+            }
+            if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+                rightMouseDownVertex = hoveredVertex;
+                rightMouseDownEdge = hoveredEdge;
+            }
+            if (ImGui::IsMouseClicked(ImGuiMouseButton_Middle)) {
+                middleMouseDownVertex = hoveredVertex;
+                middleMouseDownEdge = hoveredEdge;
+            }
+
+            if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
+                leftMouseUpVertex = hoveredVertex;
+                leftMouseUpEdge = hoveredEdge;
+            } else if (!ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+                leftMouseDownVertex = "";
+                leftMouseDownEdge = "";
+                leftMouseUpVertex = "";
+                leftMouseUpEdge = "";
+            }
+            if (ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+                rightMouseUpVertex = hoveredVertex;
+                rightMouseUpEdge = hoveredEdge;
+            }else if (!ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
+                rightMouseDownVertex = "";
+                rightMouseDownEdge = "";
+                rightMouseUpVertex = "";
+                rightMouseUpEdge = "";
+            }
+            if (ImGui::IsMouseReleased(ImGuiMouseButton_Middle)) {
+                middleMouseUpVertex = hoveredVertex;
+                middleMouseUpEdge = hoveredEdge;
+            }
+            else if (!ImGui::IsMouseDown(ImGuiMouseButton_Middle)) {
+                middleMouseDownVertex = "";
+                middleMouseDownEdge = "";
+                middleMouseUpVertex = "";
+                middleMouseUpEdge = "";
             }
         }
     };
