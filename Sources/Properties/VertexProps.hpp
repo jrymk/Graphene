@@ -13,6 +13,7 @@ namespace gfn::properties {
 
         gfn::Color vertexFillColor;
         double radius;
+        double radiusOuter;
 
         VertexProps() {
             uuid = gfn::uuid::createNil();
@@ -20,6 +21,7 @@ namespace gfn::properties {
             position = Vec2f();
             vertexFillColor.setRGBA(255, 211, 0, 255);
             radius = 0.5;
+            radiusOuter = 0.8;
         }
     };
 

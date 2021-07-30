@@ -17,9 +17,13 @@ namespace gfn::editor::graphview {
                 auto e = ei.second;
                 if (!e.enabled)
                     continue;
-                drawList->AddLine(camera->map(e.startVertexPosition),
-                                  camera->map(e.endVertexPosition),
+                drawList->AddLine(camera->map(e.startVertexPosition), camera->map(e.endVertexPosition),
                                   e.edgeFillColor.color32, camera->map(e.thickness));
+                /*drawList->AddBezierQuadratic(camera->map(e.startVertexPosition), camera->map(e.position),
+                                             camera->map(e.endVertexPosition), e.edgeFillColor.color32,
+                                             camera->map(e.thickness));*/
+
+                //drawList->AddCircleFilled(camera->map(e.position), camera->map(e.radius), e.edgeNodeColor.color32, 0);
             }
         }
 
@@ -30,6 +34,8 @@ namespace gfn::editor::graphview {
                 auto v = vi.second;
                 if (!v.enabled)
                     continue;
+                /*drawList->AddCircleFilled(camera->map(v.position), camera->map(v.radiusOuter), IM_COL32(0, 0, 0, 255),
+                                          0);*/
                 drawList->AddCircleFilled(camera->map(v.position), camera->map(v.radius), v.vertexFillColor.color32, 0);
             }
         }

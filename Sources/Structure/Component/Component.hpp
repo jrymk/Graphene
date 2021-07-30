@@ -12,11 +12,9 @@ namespace gfn::structure {
 /// (same as usergraph) and connectivity-based adj list
     class Component {
     private:
-        std::unordered_map<Vertex*,
-                std::pair<std::unordered_set<Vertex*>,                            // connectivity-based
-                        std::unordered_map<Vertex*, std::unordered_set<Edge*>> // directional-edge-based
-                >>
-                adjList;
+        std::unordered_map<Vertex*, std::pair<std::unordered_set<Vertex*>,                            // connectivity-based
+                std::unordered_map<Vertex*, std::unordered_set<Edge*>> // directional-edge-based
+        >> adjList;
         gfn::structure::BlockCutTree blockCutTree;
 
     public:
@@ -28,8 +26,7 @@ namespace gfn::structure {
 
         Component() { uuid = gfn::uuid::createNil(); }
 
-        std::unordered_map<Vertex*,
-                std::pair<std::unordered_set<Vertex*>, std::unordered_map<Vertex*, std::unordered_set<Edge*>>>>&
+        std::unordered_map<Vertex*, std::pair<std::unordered_set<Vertex*>, std::unordered_map<Vertex*, std::unordered_set<Edge*>>>>&
         getAdjList() {
             return adjList;
         }
@@ -40,10 +37,9 @@ namespace gfn::structure {
             auto vIt = adjList.find(v);
             if (vIt == adjList.end()) {
                 logMessage << "Component: Request to get adjacent vertices for vertex {" << v->props->uuid
-                           << "} in component {"
-                           << uuid << "} failed (vertex does not exist in component)";
+                           << "} in component {" << uuid << "} failed (vertex does not exist in component)";
                 logWarning;
-                return std::unordered_set<Vertex*>();
+                return {};
             }
             return vIt->second.first;
         }
@@ -53,8 +49,8 @@ namespace gfn::structure {
             auto uIt = adjList.find(u);
             if (uIt == adjList.end()) {
                 logMessage << "Component: Request to check adjacentivity for vertex {" << u->props->uuid << "} and {"
-                           << v->props->uuid
-                           << "} in component {" << uuid << "} failed (start vertex does not exist in component)";
+                           << v->props->uuid << "} in component {" << uuid
+                           << "} failed (start vertex does not exist in component)";
                 logWarning;
                 return false;
             }

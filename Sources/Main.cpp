@@ -18,8 +18,8 @@ int main() {
 
     gfn::editor::startup();
 
-    {
-        //gfn::editor::newFile("giraffe(fixed)");
+    /*{
+        gfn::editor::newFile("giraffe(fixed)");
         std::string testInput = {""
                                  "7 10 "
                                  "0 1 "
@@ -43,10 +43,10 @@ int main() {
             ss >> s >> t;
             gfn::editor::execute("mkedge -uname " + std::to_string(s) + " -vname " + std::to_string(t));
         }
-    }
+    }*/
     {
-        //gfn::editor::newFile("kangaroo(small tree)");
-        int c = 16;
+        gfn::editor::newFile("kangaroo(small tree)");
+        int c = 64;
         gfn::editor::execute("cd -d kangaroo(small tree)");
         gfn::editor::execute("mkvertex -name " + std::to_string(0));
         for (int j = 0; j < c; j++) {
@@ -57,8 +57,8 @@ int main() {
         }
     }
     {
-        //gfn::editor::newFile("elephant(grid)");
-        int c = 8;
+        gfn::editor::newFile("elephant(grid)");
+        int c = 32;
         gfn::editor::execute("cd -d elephant(grid)");
         for (int i = 0; i < c; i++) {
             for (int j = 0; j < c; j++)
@@ -80,8 +80,8 @@ int main() {
         }
     }
     {
-        //gfn::editor::newFile("koala(big ass tree)");
-        int c = 256;
+        gfn::editor::newFile("koala(big ass tree)");
+        int c = 1024;
         gfn::editor::execute("cd -d koala(big ass tree)");
         gfn::editor::execute("mkvertex -name " + std::to_string(0));
         for (int j = 0; j < c; j++) {
@@ -92,8 +92,8 @@ int main() {
         }
     }
     {
-        //gfn::editor::newFile("graphene");
-        int c = 8;
+        gfn::editor::newFile("graphene");
+        int c = 16;
         gfn::editor::execute("cd -d graphene");
         for (int i = 0; i < c; i++) {
             for (int j = 0; j < c; j++)
@@ -117,6 +117,7 @@ int main() {
         }
     }
 
+    gfn::editor::newFile("Untitled(1)");
 
     while (!glfwWindowShouldClose(gfn::window::glfwWindow)) {
         gfn::window::preFrame();
@@ -178,24 +179,24 @@ int main() {
             float c4 = c4p;
             float c5 = c5p;
             float c6 = c6p;
-            ImGui::SliderFloat("c1", &c1, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
-            ImGui::SliderFloat("c2", &c2, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
-            ImGui::SliderFloat("c3", &c3, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
-            ImGui::SliderFloat("c4", &c4, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
-            ImGui::SliderFloat("c5", &c5, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
-            ImGui::SliderFloat("c6", &c6, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
+            ImGui::SliderFloat("c1", &c1, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+            ImGui::SliderFloat("c2", &c2, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+            ImGui::SliderFloat("c3", &c3, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+            ImGui::SliderFloat("c4", &c4, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+            ImGui::SliderFloat("c5", &c5, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+            ImGui::SliderFloat("c6", &c6, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
             if (c1p != c1)
-                gfn::editor::execute("constant -c1 " + std::to_string(c1));
+                gfn::editor::execute("constant -c1 =" + std::to_string(c1));
             if (c2p != c2)
-                gfn::editor::execute("constant -c2 " + std::to_string(c2));
+                gfn::editor::execute("constant -c2 =" + std::to_string(c2));
             if (c3p != c3)
-                gfn::editor::execute("constant -c3 " + std::to_string(c3));
+                gfn::editor::execute("constant -c3 =" + std::to_string(c3));
             if (c4p != c4)
-                gfn::editor::execute("constant -c4 " + std::to_string(c4));
+                gfn::editor::execute("constant -c4 =" + std::to_string(c4));
             if (c5p != c5)
-                gfn::editor::execute("constant -c5 " + std::to_string(c5));
+                gfn::editor::execute("constant -c5 =" + std::to_string(c5));
             if (c6p != c6)
-                gfn::editor::execute("constant -c6 " + std::to_string(c6));
+                gfn::editor::execute("constant -c6 =" + std::to_string(c6));
             c1p = c1;
             c2p = c2;
             c3p = c3;

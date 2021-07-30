@@ -49,20 +49,6 @@ class GraphView {
 		camera.update(preferences);
 		selection.update();
 
-		if (!selection.hoveredVertex.empty()) {
-			auto props = interface->userprops.getRead()->getVertexProps(selection.hoveredVertex);
-			ImGui::GetWindowDrawList()->AddCircleFilled(camera.map(props->position),
-														camera.map(props->radius + preferences->glow_size),
-														IM_COL32(0, 255, 255, 255), 0);
-		} else if (!selection.hoveredEdge.empty()) {
-			auto edgeProps = interface->userprops.getRead()->getEdgeProps(selection.hoveredEdge);
-			auto uProps = interface->userprops.getRead()->getVertexProps(edgeProps->startVertexUuid);
-			auto vProps = interface->userprops.getRead()->getVertexProps(edgeProps->endVertexUuid);
-			ImGui::GetWindowDrawList()->AddLine(camera.map(uProps->position), camera.map(vProps->position),
-												IM_COL32(0, 255, 255, 255),
-												camera.map(edgeProps->thickness + preferences->glow_size * 2.0));
-		}
-
 		if (!selection.leftMouseDownVertex.empty()) {
 			auto uProps = interface->userprops.getRead()->getVertexProps(selection.leftMouseDownVertex);
 			if (!selection.hoveredVertex.empty()) {
@@ -73,6 +59,20 @@ class GraphView {
 				ImGui::GetWindowDrawList()->AddLine(camera.map(uProps->position), ImGui::GetMousePos(),
 													IM_COL32(0, 255, 0, 100), camera.map(0.2f));
 			}
+		}
+
+		if (!selection.hoveredVertex.empty()) {
+		    auto props = interface->userprops.getRead()->getVertexProps(selection.hoveredVertex);
+		    ImGui::GetWindowDrawList()->AddCircleFilled(camera.map(props->position),
+                                                        camera.map(props->radius + preferences->glow_size),
+                                                        IM_COL32(0, 255, 255, 255), 0);
+		} else if (!selection.hoveredEdge.empty()) {
+		    auto edgeProps = interface->userprops.getRead()->getEdgeProps(selection.hoveredEdge);
+		    auto uProps = interface->userprops.getRead()->getVertexProps(edgeProps->startVertexUuid);
+		    auto vProps = interface->userprops.getRead()->getVertexProps(edgeProps->endVertexUuid);
+		    ImGui::GetWindowDrawList()->AddLine(camera.map(uProps->position), camera.map(vProps->position),
+                                                IM_COL32(0, 255, 255, 255),
+                                                camera.map(edgeProps->thickness + preferences->glow_size * 2.0));
 		}
 
 		renderer.drawEdges();

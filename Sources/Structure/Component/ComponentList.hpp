@@ -150,6 +150,8 @@ namespace gfn::structure {
                 vIt->second.first.insert(u);
                 uIt->second.second.insert({v, std::unordered_set<Edge*>()}); // the edge-based adj list
                 uIt->second.second.find(v)->second.insert(e);
+                e->startVertex = u;
+                e->endVertex = v;
                 c->edges.insert(e);
             }
 
@@ -193,7 +195,6 @@ namespace gfn::structure {
             c->vertices.insert(u);
             pending.erase(u);
             // assign the component
-            u->component = c;
             u->component = c;
 
             auto userIt = usergraph->getAdjList().find(uId);
