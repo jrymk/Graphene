@@ -8,7 +8,8 @@ namespace gfn::properties {
     struct EdgeProps {
         gfn::Uuid edgeUuid;
         bool enabled;
-
+        gfn::Vec2f position;
+        
         gfn::Uuid startVertexUuid;
         gfn::Vec2f startVertexPosition;
         gfn::Uuid endVertexUuid;

@@ -29,7 +29,7 @@ namespace gfn::usergraph {
             return adjList;
         }
 
-        bool tryInterpret(gfn::Command command, gfn::Command& output) {
+        bool tryParse(gfn::Command command, gfn::Command& output) {
             auto cmd = command.getParamValue("command");
             if (cmd == "mkvertex") {
                 addVertex(command, output);
@@ -450,6 +450,7 @@ namespace gfn::usergraph {
 
                 bool erase = command.getFlag("-erase-edge-props");
                 for (auto& e : sEIt->second) {
+                    output.newParam("-edge-uuid", e);
                     if (!erase) {
                         properties->getEdgeProps(e).first->enabled = false;
                         continue;
@@ -463,6 +464,7 @@ namespace gfn::usergraph {
                     return;
                 }
                 for (auto& e : eEIt->second) {
+                    output.newParam("-edge-uuid", e);
                     if (!erase) {
                         properties->getEdgeProps(e).first->enabled = false;
                         continue;

@@ -21,6 +21,8 @@ namespace gfn::structure {
 
     public:
         gfn::Uuid uuid;
+        std::unordered_set<Vertex*> vertices;
+        std::unordered_set<Edge*> edges;
 
         Vertex* root;
 

@@ -50,6 +50,8 @@ namespace gfn::editor::graphview {
             float minDistance = FLT_MAX;
             for (auto& vi : userprops->getVertexPropList()) {
                 auto v = vi.second;
+                if (!v.enabled)
+                    continue;
                 ImVec2 center = camera->map(v.position);
                 float cursorDistance = distance(io.MousePos, center);
                 if (cursorDistance <= camera->map(v.radius) + preferences->graphview_selection_tolerance &&
@@ -62,6 +64,8 @@ namespace gfn::editor::graphview {
             minDistance = FLT_MAX;
             for (auto& ei : userprops->getEdgePropList()) {
                 auto e = ei.second;
+                if (!e.enabled)
+                    continue;
                 float cursorDistance = distanceToALine(io.MousePos, camera->map(e.startVertexPosition),
                                                        camera->map(e.endVertexPosition));
                 if (cursorDistance <= camera->map(e.thickness) / 2.0f + preferences->graphview_selection_tolerance &&

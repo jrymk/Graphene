@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Properties/Properties.hpp>
+#include <Parser/Parser.hpp>
 
 namespace gfn::properties {
     void setVertexProp(gfn::properties::Properties* properties, gfn::Command command, gfn::Command& output) {
@@ -46,71 +47,29 @@ namespace gfn::properties {
             return;
         }
         if (key == "enabled") {
-            if (value == "true")
-                p.first->enabled = true;
-            else if (value == "false")
-                p.first->enabled = false;
-            else {
-                output.newParam("-error", "ILLEGAL_VALUE");
-                output.newParam("-fix", R"(Expected "true" or "false")");
-                return;
-            }
-        }
-        if (key == "position") {
-            double x, y;
-            if (sscanf(value.c_str(), "(%lf, %lf)", &x, &y) == 2) {
-                p.first->position.x = x;
-                p.first->position.y = y;
-            } else {
-                output.newParam("-error", "ILLEGAL_VALUE");
-                output.newParam("-fix", "Expected (x, y)");
-            }
+            parser::parseBool(p.first->enabled, value, output);
             return;
         }
         if (key == "position.x") {
-            double x;
-            if (sscanf(value.c_str(), "%lf", &x) == 1) {
-                p.first->position.x = x;
-            } else {
-                output.newParam("-error", "ILLEGAL_VALUE");
-                output.newParam("-fix", "Expected a floating point number");
-            }
+            parser::parseFloat(p.first->position.x, value, output);
             return;
         }
         if (key == "position.y") {
-            double y;
-            if (sscanf(value.c_str(), "%lf", &y) == 1) {
-                p.first->position.y = y;
-            } else {
-                output.newParam("-error", "ILLEGAL_VALUE");
-                output.newParam("-fix", "Expected a floating point number");
-            }
+            parser::parseFloat(p.first->position.y, value, output);
             return;
         }
         if (key == "vertexFillColor") {
-            int r, g, b, a;
-            if (sscanf(value.c_str(), "(%d, %d, %d, %d)", &r, &g, &b, &a) == 4) {
-                if (r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255 && a >= 0 && a <= 255)
-                    p.first->vertexFillColor.setRGBA(r, g, b, a);
-                else {
-                    output.newParam("-error", "ILLEGAL_VALUE");
-                    output.newParam("-fix", "Expected unsigned integers within range of 0 to 255");
-                }
-            } else {
-                output.newParam("-error", "ILLEGAL_VALUE");
-                output.newParam("-fix", "Expected (r, g, b, a)");
-            }
+            int color32;
+            parser::parseInt(color32, value, output);
+            p.first->vertexFillColor.color32 = color32;
+            if (output.getParamValue("-parse-successful") == "true")
+                return;
+            output.newParam("-fix",
+                            "Expected 32 bit integer, do 16777216r + 65536g + 256b + a or use ImGui::ColorConvertFloat4ToU32()");
             return;
         }
         if (key == "radius") {
-            double r;
-            std::stringstream ss(value);
-            if (ss >> r) {
-                p.first->radius = r;
-            } else {
-                output.newParam("-error", "ILLEGAL_VALUE");
-                output.newParam("-fix", "Expected a floating point number");
-            }
+            parser::parseFloat(p.first->radius, value, output);
             return;
         }
     }
@@ -153,12 +112,6 @@ namespace gfn::properties {
             output.newParam("-value", p.first->enabled ? "true" : "false");
             return;
         }
-        if (key == "position") {
-            output.newParam("-value",
-                            "(" + std::to_string(p.first->position.x) + ", " + std::to_string(p.first->position.y) +
-                            ")");
-            return;
-        }
         if (key == "position.x") {
             output.newParam("-value", std::to_string(p.first->position.x));
             return;
@@ -168,10 +121,7 @@ namespace gfn::properties {
             return;
         }
         if (key == "vertexFillColor") {
-            ImVec4 rgba = ImGui::ColorConvertU32ToFloat4(p.first->vertexFillColor.color32);
-            output.newParam("-value",
-                            "(" + std::to_string(int(rgba.x * 255)) + ", " + std::to_string(int(rgba.y * 255)) + ", " +
-                            std::to_string(int(rgba.z * 255)) + ", " + std::to_string(int(rgba.w * 255)) + ")");
+            output.newParam("-value", std::to_string(p.first->vertexFillColor.color32));
             return;
         }
         if (key == "radius") {
@@ -180,7 +130,137 @@ namespace gfn::properties {
         }
     }
 
-    bool tryInterpret(gfn::properties::Properties* properties, gfn::Command command, gfn::Command& output) {
+    void setEdgeProp(gfn::properties::Properties* properties, gfn::Command command, gfn::Command& output) {
+        gfn::Uuid uuid;
+        std::pair<gfn::properties::EdgeProps*, gfn::properties::EdgePropsInternal*> p;
+        if (!command.getParamValue("-uuid").empty()) {
+            // uuid provided
+            uuid = command.getParamValue("-uuid");
+            p = properties->getEdgeProps(uuid);
+
+        } else if (!command.getParamValue("-name").empty()) {
+            // name provided
+            uuid = properties->convertAccessName(command.getParamValue("-name"));
+            if (uuid.empty()) {
+                output.newParam("-error", "ACCESS_NAME_UNDEFINED");
+                return;
+            }
+        }
+        p = properties->getEdgeProps(uuid);
+        if (p.first == nullptr || p.second == nullptr) {
+            output.newParam("-uuid", uuid);
+            output.newParam("-error", "EDGE_PROP_NOT_FOUND");
+            return;
+        }
+        auto key = command.getParamValue("-key");
+        auto value = command.getParamValue("-value");
+        if (key.empty()) {
+            output.newParam("-uuid", uuid);
+            output.newParam("-error", "KEY_UNSPECIFIED");
+            output.newParam("-fix", "Specify key with [-key]");
+            return;
+        }
+        if (value.empty()) {
+            output.newParam("-uuid", uuid);
+            output.newParam("-error", "VALUE_UNSPECIFIED");
+            output.newParam("-fix", "Specify value with [-value]");
+            return;
+        }
+
+        if (key == "edgeUuid") {
+            output.newParam("-error", "UUID_READ_ONLY");
+            output.newParam("-fix", "Uuid can not be modified. Add new vertex with specified uuid instead");
+            return;
+        }
+        if (key == "enabled") {
+            parser::parseBool(p.first->enabled, value, output);
+            return;
+        }
+        if (key == "startVertexUuid") {
+            if (properties->getVertexProps(value).first)
+                p.first->startVertexUuid = value;
+            else {
+                output.newParam("-error", "VERTEX_NOT_FOUND");
+                output.newParam("-fix", "Expected a vertex uuid");
+            }
+            return;
+        }
+        if (key == "endVertexUuid") {
+            if (properties->getVertexProps(value).first)
+                p.first->endVertexUuid = value;
+            else {
+                output.newParam("-error", "VERTEX_NOT_FOUND");
+                output.newParam("-fix", "Expected a vertex uuid");
+            }
+            return;
+        }
+        if (key == "edgeFillColor") {
+            int color32;
+            parser::parseInt(color32, value, output);
+            p.first->edgeFillColor.color32 = color32;
+            if (output.getParamValue("-parse-successful") == "true")
+                return;
+            output.newParam("-fix",
+                            "Expected 32 bit integer, do 16777216r + 65536g + 256b + a or use ImGui::ColorConvertFloat4ToU32()");
+            return;
+        }
+        if (key == "thickness") {
+            parser::parseFloat(p.first->thickness, value, output);
+            return;
+        }
+    }
+
+    void getEdgeProp(gfn::properties::Properties* properties, gfn::Command command, gfn::Command& output) {
+        gfn::Uuid uuid;
+        std::pair<gfn::properties::EdgeProps*, gfn::properties::EdgePropsInternal*> p;
+        if (!command.getParamValue("-uuid").empty()) {
+            // uuid provided
+            uuid = command.getParamValue("-uuid");
+            p = properties->getEdgeProps(uuid);
+
+        } else if (!command.getParamValue("-name").empty()) {
+            // name provided
+            uuid = properties->convertAccessName(command.getParamValue("-name"));
+            if (uuid.empty()) {
+                output.newParam("-error", "ACCESS_NAME_UNDEFINED");
+                return;
+            }
+        }
+        p = properties->getEdgeProps(uuid);
+        if (p.first == nullptr || p.second == nullptr) {
+            output.newParam("-uuid", uuid);
+            output.newParam("-error", "EDGE_PROP_NOT_FOUND");
+            return;
+        }
+        auto key = command.getParamValue("-key");
+        if (key.empty()) {
+            output.newParam("-uuid", uuid);
+            output.newParam("-error", "KEY_UNSPECIFIED");
+            output.newParam("-fix", "Specify key with [-key]");
+            return;
+        }
+
+        if (key == "edgeUuid") {
+            output.newParam("-value", p.first->edgeUuid);
+            return;
+        }if (key == "startVertexUuid") {
+            output.newParam("-value", p.first->startVertexUuid);
+            return;
+        }if (key == "endVertexUuid") {
+            output.newParam("-value", p.first->endVertexUuid);
+            return;
+        }
+        if (key == "edgeFillColor") {
+            output.newParam("-value", std::to_string(p.first->edgeFillColor.color32));
+            return;
+        }
+        if (key == "thickness") {
+            output.newParam("-value", std::to_string(p.first->thickness));
+            return;
+        }
+    }
+
+    bool tryParse(gfn::properties::Properties* properties, gfn::Command command, gfn::Command& output) {
         auto cmd = command.getParamValue("command");
         if (cmd == "setvertexprop") {
             setVertexProp(properties, command, output);
@@ -189,8 +269,10 @@ namespace gfn::properties {
             getVertexProp(properties, command, output);
             return true;
         } else if (cmd == "setedgeprop") {
+            setEdgeProp(properties, command, output);
             return true;
         } else if (cmd == "getedgeprop") {
+            getEdgeProp(properties, command, output);
             return true;
         }
         return false;

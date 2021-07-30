@@ -42,13 +42,6 @@ namespace gfn {
             return "";
         }
 
-        std::string& getParamValueRef(const std::string& paramKey) {
-            for (auto& e : params) {
-                if (e.first == paramKey)
-                    return e.second;
-            }
-        }
-
         bool getFlag(const std::string& paramKey) {
             return !getParamValue(paramKey).empty();
         }
@@ -57,11 +50,13 @@ namespace gfn {
             params.emplace_back(key, value);
         }
 
-        void appendParam(const std::string& key, const std::string& value) {
-            if (getParamValue(key).empty())
-                params.emplace_back(key, value);
-            else
-                getParamValueRef(key).append(" " + value);
+        void eraseParam(const std::string& key) {
+            for (auto it = params.begin(); it != params.end(); it++) {
+                if (it->first == key)
+                    it = params.erase(it);
+                else
+                    it++;
+            }
         }
 
         std::string getString() {

@@ -13,7 +13,7 @@ namespace gfn::editor {
     gfn::preferences::Preferences preferences;
 
     std::unordered_set<gfn::document::Document*> documents;
-    gfn::document::Document* focusedDocument;
+    gfn::document::Document* focusedDocument = nullptr;
 
     bool stopInput = false;
 
@@ -45,25 +45,34 @@ namespace gfn::editor {
     }
 
     void update() {
-        while (!cmdQueue.empty()) {
-            std::string document;
-            std::stringstream ss(cmdQueue.front());
-            cmdQueue.pop();
-            ss >> document;
-            for (auto& d : documents) {
-                if (d->documentUuid == document) {
-                    std::string cmd;
-                    std::getline(ss, cmd);
-                    d->execute(cmd);
-                }
-            }
-            ss.str("");
-        }
-
         for (auto& d : documents) {
             if (d->isWindowFocused)
                 focusedDocument = d;
         }
+
+        while (!cmdQueue.empty()) {
+            std::string cmd = cmdQueue.front();
+            gfn::Command command(cmd);
+            cmdQueue.pop();
+
+            if (command.getParamValue("command") == "cd") {
+                if (!command.getParamValue("-d").empty()) {
+                    for (auto& d : documents) {
+                        if (d->documentUuid == command.getParamValue("-d"))
+                            focusedDocument = d;
+                    }
+                } else
+                    std::cerr << "Expected document uuid, use [-d]\n";
+            } else {
+                if (focusedDocument)
+                    focusedDocument->execute(cmd);
+                else
+                    std::cerr << "No document focused\n";
+            }
+            if (focusedDocument)
+                std::cout << focusedDocument->documentUuid << "> ";
+        }
+
         for (auto& d : documents)
             d->update();
     }

@@ -36,16 +36,16 @@ namespace gfn::document {
             coreThread.detach();
         }
 
-        void execute(const std::string& cmd) {
-            interface.cmdBuffer.getWrite()->commands.emplace_back(cmd);
-        }
-
         // endless core update loop
         void coreUpdate() {
             while (!_terminateCoreUpdate) {
                 if (_enableCoreUpdate)
                     core.coreCycle();
             }
+        }
+
+        void execute(const std::string& cmd) {
+            interface.cmdBuffer.getWrite()->commands.emplace_back(cmd);
         }
 
         // called every gui cycle

@@ -91,7 +91,7 @@ namespace gfn::properties {
             auto result = vertexPropsList.insert(
                     {uuid, {gfn::properties::VertexProps(), gfn::properties::VertexPropsInternal()}});
             if (result.second) {
-                std::uniform_real_distribution dis(-0.5, 0.5);
+                std::uniform_real_distribution dis(-20.0, 20.0);
                 result.first->second.first.position = gfn::Vec2f(dis(gfn::system::random::getEngine()),
                                                                  dis(gfn::system::random::getEngine()));
                 logMessage << "Properties: New core vertex prop {" << uuid << "} at "

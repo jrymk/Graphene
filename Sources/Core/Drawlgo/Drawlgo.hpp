@@ -20,7 +20,7 @@ namespace gfn::core::drawlgo {
     public:
         void update(gfn::configs::Configs* configs, gfn::structure::Structure* structure,
                     gfn::properties::Properties* properties) {
-            if (++performanceCheckCounter == 10000) {
+            if (++performanceCheckCounter == 50000) {
                 performanceCheckCounter = 0;
 
                 gfn::timer::Timer mTimer;

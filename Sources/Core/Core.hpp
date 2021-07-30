@@ -36,8 +36,8 @@ namespace gfn::core {
             while (!interface->cmdBuffer.getRead()->commands.empty()) {
                 gfn::Command output;
 
-                usergraph.tryInterpret(interface->cmdBuffer.getRead()->commands.front(), output);
-                gfn::properties::tryInterpret(&properties, interface->cmdBuffer.getRead()->commands.front(), output);
+                usergraph.tryParse(interface->cmdBuffer.getRead()->commands.front(), output);
+                gfn::properties::tryParse(&properties, interface->cmdBuffer.getRead()->commands.front(), output);
 
                 std::cout << output.getString() << "\n";
                 interface->cmdBuffer.getRead()->commands.pop_front();
@@ -58,6 +58,7 @@ namespace gfn::core {
 
             if (interface->userprops.wantWrite()) {
                 // assignment operator, writes the core content to the write buffer
+                // not the fastest way to do it, but whatever...
                 properties.exportToUserProps(interface->userprops.getWrite());
                 interface->userprops.writeDone();
             }

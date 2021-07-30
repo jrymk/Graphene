@@ -22,11 +22,11 @@ namespace gfn::structure {
         gfn::usergraph::UserGraph* usergraph;
         gfn::properties::Properties* properties;
 
+    public:
         std::unordered_set<Vertex*> vertices;
         std::unordered_set<Edge*> edges;
         std::unordered_set<Component*> components;
 
-    public:
         ~ComponentList() {
             for (auto& v : vertices)
                 delete v;
@@ -126,8 +126,8 @@ namespace gfn::structure {
                     c->uuid = uuid;
                     c->root = c->getAdjList().begin()->first;
                     logMessage << "Componentifier: Assigned component uuid {" << uuid
-                               << "} (auto-generated) and assigned vertex {" << c->getAdjList().begin()->first->props->uuid
-                               << "} as root";
+                               << "} (auto-generated) and assigned vertex {"
+                               << c->getAdjList().begin()->first->props->uuid << "} as root";
                     logVerbose;
                 }
             }
@@ -138,8 +138,8 @@ namespace gfn::structure {
                 auto v = mapping.find(e->props->endVertexUuid)->second;
                 if (u->component != v->component) {
                     logMessage << "Componentifier: Edge {" << e->props->edgeUuid << "} start vertex {" << u->props->uuid
-                               << "} component {" << u->component->uuid << "} is different from end vertex {" << v->props->uuid
-                               << "} component {" << v->component->uuid
+                               << "} component {" << u->component->uuid << "} is different from end vertex {"
+                               << v->props->uuid << "} component {" << v->component->uuid
                                << "}, something went wrong assigning components";
                     logWarning;
                 }
@@ -150,6 +150,7 @@ namespace gfn::structure {
                 vIt->second.first.insert(u);
                 uIt->second.second.insert({v, std::unordered_set<Edge*>()}); // the edge-based adj list
                 uIt->second.second.find(v)->second.insert(e);
+                c->edges.insert(e);
             }
 
             // finish up everything
@@ -187,9 +188,9 @@ namespace gfn::structure {
         void _componentifyDfs(Component* c, const gfn::Uuid& uId, std::unordered_map<gfn::Uuid, Vertex*>& mapping,
                               std::unordered_set<Vertex*>& pending) {
             Vertex* u = mapping.find(uId)->second;
-            c->getAdjList().insert(
-                    {u,
-                     std::pair<std::unordered_set<Vertex*>, std::unordered_map<Vertex*, std::unordered_set<Edge*>>>()});
+            c->getAdjList().insert({u,
+                                    std::pair<std::unordered_set<Vertex*>, std::unordered_map<Vertex*, std::unordered_set<Edge*>>>()});
+            c->vertices.insert(u);
             pending.erase(u);
             // assign the component
             u->component = c;

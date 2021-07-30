@@ -16,7 +16,7 @@ namespace gfn::core::cmd {
         gfn::usergraph::UserGraph* usergraph;
 
         gfn::Uuid execute(gfn::Command command, gfn::Command& output) {
-            usergraph->tryInterpret(std::move(command), output);
+            usergraph->tryParse(std::move(command), output);
 
             return gfn::uuid::createNil();
         }
