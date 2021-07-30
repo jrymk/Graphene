@@ -16,16 +16,20 @@ namespace gfn::editor::graphview {
         gfn::Uuid hoveredEdge;
         gfn::Uuid leftMouseDownVertex;
         gfn::Uuid leftMouseDownEdge;
+        gfn::Vec2f leftMousePosDelta;
         gfn::Uuid rightMouseDownVertex;
         gfn::Uuid rightMouseDownEdge;
+        gfn::Vec2f rightMousePosDelta;
         gfn::Uuid middleMouseDownVertex;
         gfn::Uuid middleMouseDownEdge;
+        gfn::Vec2f middleMousePosDelta;
         gfn::Uuid leftMouseUpVertex;
         gfn::Uuid leftMouseUpEdge;
         gfn::Uuid rightMouseUpVertex;
         gfn::Uuid rightMouseUpEdge;
         gfn::Uuid middleMouseUpVertex;
         gfn::Uuid middleMouseUpEdge;
+        gfn::Vec2f cursorCoord;
 
         float distance(ImVec2 a, ImVec2 b) {
             float deltaX = b.x - a.x;
@@ -52,8 +56,8 @@ namespace gfn::editor::graphview {
         }
 
         void update() {
-            hoveredVertex = gfn::uuid::createNil();
-            hoveredEdge = gfn::uuid::createNil();
+            hoveredVertex = "";
+            hoveredEdge = "";
 
             auto io = ImGui::GetIO();
             auto userprops = interface->userprops.getRead();
@@ -90,15 +94,24 @@ namespace gfn::editor::graphview {
             if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
                 leftMouseDownVertex = hoveredVertex;
                 leftMouseDownEdge = hoveredEdge;
+                leftMousePosDelta = gfn::Vec2f(0.0, 0.0);
             }
             if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
                 rightMouseDownVertex = hoveredVertex;
                 rightMouseDownEdge = hoveredEdge;
+                rightMousePosDelta = gfn::Vec2f(0.0, 0.0);
             }
             if (ImGui::IsMouseClicked(ImGuiMouseButton_Middle)) {
                 middleMouseDownVertex = hoveredVertex;
                 middleMouseDownEdge = hoveredEdge;
+                middleMousePosDelta = gfn::Vec2f(0.0, 0.0);
             }
+            if (!leftMouseDownVertex.empty())
+                leftMousePosDelta = gfn::Vec2f(camera->rMap(io.MouseDelta.x), camera->rMap(io.MouseDelta.y));
+            if (!rightMouseDownVertex.empty())
+                rightMousePosDelta = gfn::Vec2f(camera->rMap(io.MouseDelta.x), camera->rMap(io.MouseDelta.y));
+            if (!middleMouseDownVertex.empty())
+                middleMousePosDelta = gfn::Vec2f(camera->rMap(io.MouseDelta.x), camera->rMap(io.MouseDelta.y));
 
             if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
                 leftMouseUpVertex = hoveredVertex;
@@ -112,7 +125,7 @@ namespace gfn::editor::graphview {
             if (ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
                 rightMouseUpVertex = hoveredVertex;
                 rightMouseUpEdge = hoveredEdge;
-            }else if (!ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
+            } else if (!ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
                 rightMouseDownVertex = "";
                 rightMouseDownEdge = "";
                 rightMouseUpVertex = "";
@@ -121,13 +134,14 @@ namespace gfn::editor::graphview {
             if (ImGui::IsMouseReleased(ImGuiMouseButton_Middle)) {
                 middleMouseUpVertex = hoveredVertex;
                 middleMouseUpEdge = hoveredEdge;
-            }
-            else if (!ImGui::IsMouseDown(ImGuiMouseButton_Middle)) {
+            } else if (!ImGui::IsMouseDown(ImGuiMouseButton_Middle)) {
                 middleMouseDownVertex = "";
                 middleMouseDownEdge = "";
                 middleMouseUpVertex = "";
                 middleMouseUpEdge = "";
             }
+
+            cursorCoord = camera->rMap(ImGui::GetMousePos());
         }
     };
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Interface/TripleBuffer.hpp>
+#include <UserGraph/UserGraph.hpp>
 #include <Properties/UserProps.hpp>
 #include <Configs/Configs.hpp>
 #include <Core/Command/CmdBuffer.hpp>
@@ -12,6 +13,8 @@ namespace gfn::interface {
     public:
         // this standalone data structure of user props will safely export graph data from core
         TripleBuffer<gfn::properties::UserProps> userprops;
+
+        TripleBuffer<gfn::usergraph::UserGraph> usergraph;
         // this non working log buffer will soon push logs to the terminal, gui or a log file
         TripleBuffer<gfn::logging::LogBuffer> logBuffer;
         // this stores the configurations for core to run, from the user to the core

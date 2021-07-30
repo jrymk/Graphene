@@ -17,7 +17,7 @@ namespace gfn::preferences {
         double graphview_smooth_pan_speed = 0.3; // 1.0: disable smoothing
         double graphview_smooth_zoom_speed = 0.3; // 1.0: disable smoothing
         float graphview_selection_tolerance = 5; // 0.0: must click on point
-
+        float glow_size = 0.2f;
 
     };
 }

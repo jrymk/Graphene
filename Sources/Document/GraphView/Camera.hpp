@@ -38,6 +38,15 @@ namespace gfn::editor::graphview {
             return float(c * zoom);
         }
 
+        gfn::Vec2f rMap(ImVec2 c) {
+            return {float(centerCoord.x + (c.x - canvasCoord().x) / zoom),
+                    float(centerCoord.y - (c.y - canvasCoord().y) / zoom)};
+        }
+
+        double rMap(float c) {
+            return c / zoom;
+        }
+
         /*ImVec2 mapNoSmooth(gfn::Vec2f c) {
             return {float(canvasCoord().x - (targetCenterCoord.x - c.x) * targetZoom),
                     float(canvasCoord().y + (targetCenterCoord.y - c.y) * targetZoom)};

@@ -19,7 +19,7 @@ namespace gfn::usergraph {
     public:
         UserGraph() {}
 
-        std::atomic_bool pendingUpdate = true;
+        bool pendingUpdate = true;
 
         void bindLogBuffer(gfn::logging::LogBuffer* logBuffer) { this->logBuffer = logBuffer; }
 
@@ -224,22 +224,26 @@ namespace gfn::usergraph {
             if (!command.getFlag("-do-not-remove-edges")) {
                 for (auto& u : adjList) {
                     if (u.first != uuid) {
-                        for (auto& v : u.second) {
-                            if (v.first == uuid) {
-                                for (auto& e : v.second) {
+                        for (auto v = u.second.begin(); v != u.second.end();) {
+                            if (v->first == uuid) {
+                                for (auto& e : v->second) {
                                     if (erase)
                                         properties->eraseEdgeProps(e);
                                     else
                                         properties->getEdgeProps(e).first->enabled = false;
                                 }
-                                u.second.erase(uuid); // erase vertex-edge entries from other vertices
-                            }
+                                v = u.second.erase(
+                                        u.second.find(uuid)); // erase vertex-edge entries from other vertices
+                            } else
+                                v++;
                         }
                     }
                 }
             }
             if (command.getFlag("-erase-vertex-props"))
                 properties->eraseVertexProps(uuid);
+            else
+                properties->getVertexProps(uuid).first->enabled = false;
             adjList.erase(uuid);
             output.newParam("-successful", "true");
             output.newParam("-uuid", uuid);
@@ -491,66 +495,54 @@ namespace gfn::usergraph {
                 output.newParam("-uuid", edgeUuid);
                 // the "use start and end vertices from props" route
                 auto startIt = adjList.find(prop.first->startVertexUuid);
-                gfn::Uuid startVertex = startIt->first;
                 if (startIt != adjList.end()) {
+                    gfn::Uuid startVertex = startIt->first;
                     output.newParam("-u", startVertex);
                     auto endIt = startIt->second.find(prop.first->endVertexUuid);
-                    gfn::Uuid endVertex = endIt->first;
                     if (endIt != startIt->second.end()) {
+                        gfn::Uuid endVertex = endIt->first;
                         output.newParam("-v", endVertex);
                         if (endIt->second.erase(edgeUuid)) {
                             // erased the edge successfully
+
                             if (endIt->second.empty()) {
-                                // no more edges between the given start-end vertex pair
-                                startIt->second.erase(endIt);
-                                bool erase = command.getFlag("-erase-edge-props");
+                                // no more edges between the given start-end vertex pair, perform bi-directional edge
+                                // entry deletion
+                                startIt->second.erase(endIt); // start -> end entry
 
-                                if (!erase || (erase && properties->eraseEdgeProps(edgeUuid))) {
-                                    if (!erase)
-                                        properties->getEdgeProps(edgeUuid).first->enabled = true;
-                                    if (endIt->second.empty())
-                                        startIt->second.erase(endIt);
-                                    auto rStartIt = adjList.find(endVertex);
-                                    if (rStartIt == adjList.end()) {
-                                        output.newParam("-error", "END_VERTEX_ENTRY_NOT_FOUND");
-                                        output.newParam("-successful", "false");
-                                        return;
-                                    }
-                                    auto rEndIt = rStartIt->second.find(startVertex);
-                                    if (rEndIt == rStartIt->second.end()) {
-                                        output.newParam("-error", "START_VERTEX_EDGE_ENTRY_NOT_FOUND");
-                                        output.newParam("-successful", "false");
-                                        return;
-                                    }
-                                    if (adjList.find(endVertex)->second.find(startVertex)->second.empty())
-                                        rStartIt->second.erase(rEndIt);
-
-                                    output.newParam("-successful", "true");
+                                auto rStartIt = adjList.find(endVertex);
+                                if (rStartIt == adjList.end()) {
+                                    output.newParam("-error", "END_VERTEX_ENTRY_NOT_FOUND");
+                                    output.newParam("-successful", "false");
                                     return;
                                 }
-                                output.newParam("-successful", "false");
-                                output.newParam("-error", "EDGE_PROPS_ERASE_FAILED");
-                                return;
+                                auto rEndIt = rStartIt->second.find(startVertex);
+                                if (rEndIt == rStartIt->second.end()) {
+                                    output.newParam("-error", "START_VERTEX_EDGE_ENTRY_NOT_FOUND");
+                                    output.newParam("-successful", "false");
+                                    return;
+                                }
+                                if (!rEndIt->second.empty()) { // check if edge set for end -> start is empty
+                                    output.newParam("-error", "EDGE_SET_REVERSE_DISAGREE");
+                                    output.newParam("-successful", "false");
+                                    return;
+                                }
+                                rStartIt->second.erase(rEndIt); // end -> start entry
                             }
-                            if (endIt->second.empty())
-                                startIt->second.erase(endIt);
-                            auto rStartIt = adjList.find(endVertex);
-                            if (rStartIt == adjList.end()) {
-                                output.newParam("-error", "END_VERTEX_ENTRY_NOT_FOUND");
-                                output.newParam("-successful", "false");
-                                return;
-                            }
-                            auto rEndIt = rStartIt->second.find(startVertex);
-                            if (rEndIt == rStartIt->second.end()) {
-                                output.newParam("-error", "START_VERTEX_EDGE_ENTRY_NOT_FOUND");
-                                output.newParam("-successful", "false");
-                                return;
-                            }
-                            if (adjList.find(endVertex)->second.find(startVertex)->second.empty())
-                                rStartIt->second.erase(rEndIt);
+                            // still got edges between start vertex and end vertex, do nothing
 
-                            output.newParam("-successful", "true");
+                            // prop deletion
+                            bool erase = command.getFlag("-erase-edge-props");
+                            if (!erase || (erase && properties->eraseEdgeProps(edgeUuid))) {
+                                if (!erase)
+                                    properties->getEdgeProps(edgeUuid).first->enabled = false;
+                                output.newParam("-successful", "true");
+                                return;
+                            }
+                            output.newParam("-successful", "false");
+                            output.newParam("-error", "EDGE_PROPS_ERASE_FAILED");
                             return;
+                            // prop deletion
                         }
                         output.newParam("-warning", "EDGE_DELETION_FAILED");
                     }
@@ -569,7 +561,7 @@ namespace gfn::usergraph {
 
                         if (!erase || (erase && properties->eraseEdgeProps(edgeUuid))) {
                             if (!erase)
-                                properties->getEdgeProps(edgeUuid).first->enabled = true;
+                                properties->getEdgeProps(edgeUuid).first->enabled = false;
                             auto rStartIt = adjList.find(v.first);
                             if (rStartIt == adjList.end()) {
                                 output.newParam("-error", "END_VERTEX_ENTRY_NOT_FOUND");

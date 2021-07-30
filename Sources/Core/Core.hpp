@@ -19,6 +19,7 @@ namespace gfn::core {
         gfn::properties::Properties properties;
         gfn::usergraph::UserGraph usergraph;
         gfn::structure::Structure structure;
+        gfn::configs::Configs configs;
         gfn::core::drawlgo::Drawlgo drawlgo;
         gfn::core::cmd::CmdInterface cmdInterface;
 
@@ -36,21 +37,24 @@ namespace gfn::core {
             while (!interface->cmdBuffer.getRead()->commands.empty()) {
                 gfn::Command output;
 
+                std::cout << "Command: " << interface->cmdBuffer.getRead()->commands.front().getString();
                 usergraph.tryParse(interface->cmdBuffer.getRead()->commands.front(), output);
                 gfn::properties::tryParse(&properties, interface->cmdBuffer.getRead()->commands.front(), output);
+                configs.tryParse(interface->cmdBuffer.getRead()->commands.front(), output);
 
                 std::cout << output.getString() << "\n";
                 interface->cmdBuffer.getRead()->commands.pop_front();
             }
 
             // gfn::timer::Timer updateTimer;
-            drawlgo.update(interface->configs.getRead(), &structure, &properties);
+            drawlgo.update(&configs, &structure, &properties);
             // std::cerr << "Graph update took " << updateTimer.getMicroseconds() << "us\n";
 
             if (usergraph.pendingUpdate) {
                 // update component list with usergraph and rebuild block cut tree (currently all)
                 structure.componentList.componentify();
                 usergraph.pendingUpdate = false;
+                interface->usergraph.getWriteRef() = usergraph;
             }
 
             // std::cerr << usergraph.getAdjList().size() << "\n";
@@ -67,7 +71,8 @@ namespace gfn::core {
                 // assignment operator, writes the core content to the write buffer
                 // interface->logBuffer.writeDone();
             }
-            interface->configs.readDone();
+            interface->configs.getWriteRef() = configs;
+            interface->configs.writeDone();
             interface->cmdBuffer.readDone();
             // std::cerr << "Write took " << writeTimer.getMicroseconds() << "us\n";
         }

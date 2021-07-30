@@ -19,7 +19,7 @@ int main() {
     gfn::editor::startup();
 
     {
-        gfn::editor::newFile("giraffe(fixed)");
+        //gfn::editor::newFile("giraffe(fixed)");
         std::string testInput = {""
                                  "7 10 "
                                  "0 1 "
@@ -45,7 +45,7 @@ int main() {
         }
     }
     {
-        gfn::editor::newFile("kangaroo(small tree)");
+        //gfn::editor::newFile("kangaroo(small tree)");
         int c = 16;
         gfn::editor::execute("cd -d kangaroo(small tree)");
         gfn::editor::execute("mkvertex -name " + std::to_string(0));
@@ -57,7 +57,7 @@ int main() {
         }
     }
     {
-        gfn::editor::newFile("elephant(grid)");
+        //gfn::editor::newFile("elephant(grid)");
         int c = 8;
         gfn::editor::execute("cd -d elephant(grid)");
         for (int i = 0; i < c; i++) {
@@ -80,7 +80,7 @@ int main() {
         }
     }
     {
-        gfn::editor::newFile("koala(big ass tree)");
+        //gfn::editor::newFile("koala(big ass tree)");
         int c = 256;
         gfn::editor::execute("cd -d koala(big ass tree)");
         gfn::editor::execute("mkvertex -name " + std::to_string(0));
@@ -92,7 +92,7 @@ int main() {
         }
     }
     {
-        gfn::editor::newFile("graphene");
+        //gfn::editor::newFile("graphene");
         int c = 8;
         gfn::editor::execute("cd -d graphene");
         for (int i = 0; i < c; i++) {
@@ -137,7 +137,11 @@ int main() {
 
         ImGui::Begin("Command centre");
 
-        ImGui::Text(("Focused document: " + gfn::editor::focusedDocument->documentUuid).c_str());
+        if (ImGui::Button("New file"))
+            gfn::editor::newFile(gfn::uuid::createUuid());
+
+        if (gfn::editor::focusedDocument)
+            ImGui::Text(("Focused document: " + gfn::editor::focusedDocument->documentUuid).c_str());
 
         /*ImGui::PushStyleColor(ImGuiCol_SliderGrab, IM_COL32(255, 255, 255, 255));
         if (v > 0)
@@ -152,37 +156,100 @@ int main() {
 
         ImGui::PopStyleColor(2);*/
 
-        static float _c1 = 2.0f;
-        static float _c2 = 1.0f;
-        static float _c3 = 1.0f;
-        static float _c4 = 0.1f;
-        static float _c5 = 0.1f;
-        static float _c6 = 0.001f;
         if (gfn::editor::focusedDocument) {
-            _c1 = float(gfn::editor::focusedDocument->interface.configs.getWrite()->c1);
-            _c2 = float(gfn::editor::focusedDocument->interface.configs.getWrite()->c2);
-            _c3 = float(gfn::editor::focusedDocument->interface.configs.getWrite()->c3);
-            _c4 = float(gfn::editor::focusedDocument->interface.configs.getWrite()->c4);
-            _c5 = float(gfn::editor::focusedDocument->interface.configs.getWrite()->c5);
-            _c6 = float(gfn::editor::focusedDocument->interface.configs.getWrite()->c6);
+            static float c1p;
+            static float c2p;
+            static float c3p;
+            static float c4p;
+            static float c5p;
+            static float c6p;
+            if (gfn::editor::onFocusDocument) {
+                c1p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c1);
+                c2p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c2);
+                c3p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c3);
+                c4p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c4);
+                c5p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c5);
+                c6p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c6);
+            }
+            gfn::editor::focusedDocument->interface.configs.readDone();
+            float c1 = c1p;
+            float c2 = c2p;
+            float c3 = c3p;
+            float c4 = c4p;
+            float c5 = c5p;
+            float c6 = c6p;
+            ImGui::SliderFloat("c1", &c1, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
+            ImGui::SliderFloat("c2", &c2, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
+            ImGui::SliderFloat("c3", &c3, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
+            ImGui::SliderFloat("c4", &c4, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
+            ImGui::SliderFloat("c5", &c5, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
+            ImGui::SliderFloat("c6", &c6, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
+            if (c1p != c1)
+                gfn::editor::execute("constant -c1 " + std::to_string(c1));
+            if (c2p != c2)
+                gfn::editor::execute("constant -c2 " + std::to_string(c2));
+            if (c3p != c3)
+                gfn::editor::execute("constant -c3 " + std::to_string(c3));
+            if (c4p != c4)
+                gfn::editor::execute("constant -c4 " + std::to_string(c4));
+            if (c5p != c5)
+                gfn::editor::execute("constant -c5 " + std::to_string(c5));
+            if (c6p != c6)
+                gfn::editor::execute("constant -c6 " + std::to_string(c6));
+            c1p = c1;
+            c2p = c2;
+            c3p = c3;
+            c4p = c4;
+            c5p = c5;
+            c6p = c6;
         }
-        ImGui::SliderFloat("c1", &_c1, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
-        ImGui::SliderFloat("c2", &_c2, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
-        ImGui::SliderFloat("c3", &_c3, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
-        ImGui::SliderFloat("c4", &_c4, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
-        ImGui::SliderFloat("c5", &_c5, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
-        ImGui::SliderFloat("c6", &_c6, 0.000001, 10.0, "%f", ImGuiSliderFlags_Logarithmic);
-        if (gfn::editor::focusedDocument) {
-            gfn::editor::focusedDocument->interface.configs.getWrite()->c1 = _c1;
-            gfn::editor::focusedDocument->interface.configs.getWrite()->c2 = _c2;
-            gfn::editor::focusedDocument->interface.configs.getWrite()->c3 = _c3;
-            gfn::editor::focusedDocument->interface.configs.getWrite()->c4 = _c4;
-            gfn::editor::focusedDocument->interface.configs.getWrite()->c5 = _c5;
-            gfn::editor::focusedDocument->interface.configs.getWrite()->c6 = _c6;
 
-            gfn::editor::focusedDocument->interface.configs.writeDone();
+        auto doc = gfn::editor::focusedDocument;
+        if (doc) {
+            if (ImGui::TreeNode("UserGraph adjacency list")) {
+                if (ImGui::TreeNode("Vertices")) {
+                    auto g = doc->interface.usergraph.getRead();
+                    for (auto& u : g->getAdjList()) {
+                        if (ImGui::TreeNode(u.first.c_str())) {
+                            for (auto& v : u.second) {
+                                ImGui::TreeNode(v.first.c_str());
+                                for (auto& e : v.second) {
+                                    ImGui::Text(e.c_str());
+                                }
+                                ImGui::TreePop();
+                            }
+                            ImGui::TreePop();
+                        }
+                    }
+
+                    ImGui::TreePop();
+                }
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("Properties")) {
+                if (ImGui::TreeNode("Vertices")) {
+                    for (auto& v : doc->interface.userprops.getRead()->getVertexPropList()) {
+                        if (ImGui::TreeNode(v.first.c_str())) {
+                            ImGui::Text(("enabled: " + std::string(v.second.enabled ? "true" : "false")).c_str());
+                            ImGui::TreePop();
+                        }
+                    }
+                    ImGui::TreePop();
+                }
+                if (ImGui::TreeNode("Edges")) {
+                    for (auto& v : doc->interface.userprops.getRead()->getEdgePropList()) {
+                        if (ImGui::TreeNode(v.first.c_str())) {
+                            ImGui::Text(("enabled: " + std::string(v.second.enabled ? "true" : "false")).c_str());
+                            ImGui::Text(("start: " + v.second.startVertexUuid).c_str());
+                            ImGui::Text(("end: " + v.second.endVertexUuid).c_str());
+                            ImGui::TreePop();
+                        }
+                    }
+                    ImGui::TreePop();
+                }
+                ImGui::TreePop();
+            }
         }
-
 
         // if (ImGui::Button("New vertex"))
         // core.parser.execute("graph new vertex"); // No, you can not run this here

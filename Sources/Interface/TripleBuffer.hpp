@@ -65,6 +65,12 @@ namespace gfn::interface {
             return writeBuffer;
         }
 
+        // writer interface
+        T& getWriteRef() {
+            // writer thread have complete ownership of this buffer
+            return *writeBuffer;
+        }
+
         // start the write process if the read thread has used up the buffer, meaning available buffer is no longer up to
         // date
         bool wantWrite() {

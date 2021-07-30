@@ -14,6 +14,7 @@ namespace gfn::editor {
 
     std::unordered_set<gfn::document::Document*> documents;
     gfn::document::Document* focusedDocument = nullptr;
+    bool onFocusDocument = false;
 
     bool stopInput = false;
 
@@ -45,9 +46,12 @@ namespace gfn::editor {
     }
 
     void update() {
+        onFocusDocument = false;
         for (auto& d : documents) {
-            if (d->isWindowFocused)
+            if (d->isWindowFocused && focusedDocument != d) {
                 focusedDocument = d;
+                onFocusDocument = true;
+            }
         }
 
         while (!cmdQueue.empty()) {
@@ -72,9 +76,14 @@ namespace gfn::editor {
             if (focusedDocument)
                 std::cout << focusedDocument->documentUuid << "> ";
         }
-
-        for (auto& d : documents)
-            d->update();
+        if (focusedDocument)
+            focusedDocument->isWindowFocused = true;
+        for (auto d = documents.begin(); d != documents.end();) {
+            if (!(*d)->update())
+                d = documents.erase(d);
+            else
+                d++;
+        }
     }
 
     void terminate() {

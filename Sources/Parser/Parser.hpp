@@ -26,7 +26,8 @@ namespace gfn::parser {
     void parseInt(int& dest, const std::string& value, gfn::Command& output) {
         std::stringstream ss(value);
         int i;
-        if (ss >> i) {
+        char c;
+        if (ss >> c >> i) {
             output.newParam("-parse-successful", "true");
             output.newParam("-value", std::to_string(i));
             dest = i;
@@ -34,13 +35,14 @@ namespace gfn::parser {
         }
         output.newParam("-parse-successful", "false");
         output.newParam("-error", "PARSE_ERROR");
-        output.newParam("-fix", "Expected integer number");
+        output.newParam("-fix", "Expected integer number with a leading =");
     }
 
     void parseFloat(double& dest, const std::string& value, gfn::Command& output) {
         std::stringstream ss(value);
         double f;
-        if (ss >> f) {
+        char c;
+        if (ss >> c >> f) {
             output.newParam("-parse-successful", "true");
             output.newParam("-value", std::to_string(f));
             dest = f;
@@ -48,6 +50,6 @@ namespace gfn::parser {
         }
         output.newParam("-parse-successful", "false");
         output.newParam("-error", "PARSE_ERROR");
-        output.newParam("-fix", "Expected floating point number");
+        output.newParam("-fix", "Expected floating point number with a leading =");
     }
 }
