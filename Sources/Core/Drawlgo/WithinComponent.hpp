@@ -17,7 +17,7 @@ namespace gfn::core::drawlgo {
         double dis = distance(u, v);
         if (dis == 0.0)
             return {0.0, 0.0};
-        double coeff = -configs->c3 / dis / dis;
+        double coeff = -configs->c3.value / dis / dis;
         return (v - u).normalize() * coeff;
     }
 
@@ -25,50 +25,51 @@ namespace gfn::core::drawlgo {
         double dis = distance(u, v);
         if (dis == 0.0f)
             return {0, 0};
-        double coeff = configs->c1 * log(dis / configs->c2);
+        double coeff = configs->c1.value * log(dis / configs->c2.value);
         return (v - u).normalize() * coeff;
     }
 
     void updateVertex(gfn::configs::Configs* configs, gfn::structure::Component* c, gfn::structure::Vertex* u) {
         for (auto& v : c->getAdjacentVertices(u))
-            u->internalProps->force += attractForce(configs, u->props->position, v->props->position);
+            u->props->force.value += attractForce(configs, u->props->position.value, v->props->position.value);
         for (auto& v : c->vertices) {
             if (u == v)
                 continue;
-            u->internalProps->force += repelForce(configs, u->props->position, v->props->position);
-            //v->internalProps->force += repelForce(configs, v->props->position, u->props->position);
+            u->props->force.value += repelForce(configs, u->props->position.value, v->props->position.value);
+            //v->props->force += repelForce(configs, v->props->position, u->props->position);
         }
         /*for (auto& e : c->edges) {
-            u->internalProps->force += repelForce(configs, u->props->position, e->props->position);
-            //e->internalProps->force += repelForce(configs, e->props->position, u->props->position);
+            u->props->force += repelForce(configs, u->props->position, e->props->position);
+            //e->props->force += repelForce(configs, e->props->position, u->props->position);
         }*/
     }
 
     /*void updateEdge(gfn::configs::Configs* configs, gfn::structure::Component* c, gfn::structure::Edge* u) {
-        u->internalProps->force += attractForce(configs, u->props->position, u->startVertex->props->position);
-        u->internalProps->force += attractForce(configs, u->props->position, u->endVertex->props->position);
-        u->startVertex->internalProps->force += attractForce(configs, u->startVertex->props->position,
+        u->props->force += attractForce(configs, u->props->position, u->startVertex->props->position);
+        u->props->force += attractForce(configs, u->props->position, u->endVertex->props->position);
+        u->startVertex->props->force += attractForce(configs, u->startVertex->props->position,
                                                              u->props->position);
-        u->endVertex->internalProps->force += attractForce(configs, u->endVertex->props->position,
+        u->endVertex->props->force += attractForce(configs, u->endVertex->props->position,
                                                              u->props->position);
 
         for (auto& v : c->vertices) {
-            u->internalProps->force += repelForce(configs, u->props->position, v->props->position);
-            //v->internalProps->force += repelForce(configs, v->props->position, u->props->position);
+            u->props->force += repelForce(configs, u->props->position, v->props->position);
+            //v->props->force += repelForce(configs, v->props->position, u->props->position);
         }
         for (auto& e : c->edges) {
             if (e == u)
                 continue;
-            u->internalProps->force += repelForce(configs, u->props->position, e->props->position);
-            //e->internalProps->force += repelForce(configs, e->props->position, u->props->position);
+            u->props->force += repelForce(configs, u->props->position, e->props->position);
+            //e->props->force += repelForce(configs, e->props->position, u->props->position);
         }
     }*/
 
-    void updateComponentSingleThreaded(gfn::configs::Configs* configs, gfn::structure::Component* c) {
+    unsigned long long updateComponentSingleThreaded(gfn::configs::Configs* configs, gfn::structure::Component* c) {
+        gfn::timer::Timer timer;
         for (auto& u : c->vertices)
-            u->internalProps->force = gfn::Vec2f(0.0, 0.0);
+            u->props->force.value = gfn::Vec2f(0.0, 0.0);
         /*for (auto& e : c->edges)
-            e->internalProps->force = gfn::Vec2f(0.0, 0.0);*/
+            e->props->force = gfn::Vec2f(0.0, 0.0);*/
 
         for (auto& u : c->vertices)
             updateVertex(configs, c, u);
@@ -77,16 +78,26 @@ namespace gfn::core::drawlgo {
 
         // flush move
         for (auto& u : c->vertices)
-            u->props->position += u->internalProps->force * configs->c4;
+            u->props->position.value += u->props->force.value * configs->c4.value;
         /*for (auto& e : c->edges)
-            e->props->position += e->internalProps->force * configs->c4;*/
+            e->props->position += e->props->force * configs->c4;*/
+
+        for (auto& e : c->edges) {
+            e->props->startVertexPosition = e->startVertex->props->position;
+            e->props->endVertexPosition = e->endVertex->props->position;
+        }
+
+        unsigned long long t = timer.getMicroseconds();
+        //std::cerr << "Single: that took " << t << "us\n";
+        return timer.getMicroseconds();
     }
 
-    void updateComponentMultiThreaded(gfn::configs::Configs* configs, gfn::structure::Component* c) {
+    unsigned long long updateComponentMultiThreaded(gfn::configs::Configs* configs, gfn::structure::Component* c) {
+        gfn::timer::Timer timer;
         for (auto& u : c->vertices)
-            u->internalProps->force = gfn::Vec2f(0.0, 0.0);
+            u->props->force.value = gfn::Vec2f(0.0, 0.0);
         /*for (auto& e : c->edges)
-            e->internalProps->force = gfn::Vec2f(0.0, 0.0);*/
+            e->props->force = gfn::Vec2f(0.0, 0.0);*/
 
         thread_pool::ThreadPool thread_pool{};
         std::vector<std::future<void>> futures;
@@ -98,8 +109,16 @@ namespace gfn::core::drawlgo {
             it.wait();
 
         for (auto& u : c->vertices)
-            u->props->position += u->internalProps->force * configs->c4;
+            u->props->position.value += u->props->force.value * configs->c4.value;
+
+        for (auto& e : c->edges) {
+            e->props->startVertexPosition = e->startVertex->props->position;
+            e->props->endVertexPosition = e->endVertex->props->position;
+        }
         /*for (auto& e : c->edges)
-            e->props->position += e->internalProps->force * configs->c4;*/
+            e->props->position += e->props->force * configs->c4;*/
+        unsigned long long t = timer.getMicroseconds();
+        //std::cerr << "Multi: that took " << t << "us\n";
+        return timer.getMicroseconds();
     }
 }

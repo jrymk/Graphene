@@ -60,34 +60,35 @@ namespace gfn::editor::graphview {
             hoveredEdge = "";
 
             auto io = ImGui::GetIO();
-            auto userprops = interface->userprops.getRead();
+            auto userprops = interface->properties.getRead();
 
             // finds the vertex closest to the mouse cursor and meet the distance requirement
             float minDistance = FLT_MAX;
             for (auto& vi : userprops->getVertexPropList()) {
                 auto v = vi.second;
-                if (!v.enabled)
+                if (!v.enabled.value)
                     continue;
-                ImVec2 center = camera->map(v.position);
+                ImVec2 center = camera->map(v.position.value);
                 float cursorDistance = distance(io.MousePos, center);
-                if (cursorDistance <= camera->map(v.radius) + preferences->graphview_selection_tolerance &&
+                if (cursorDistance <= camera->map(v.radius.value) + preferences->graphview_selection_tolerance &&
                     cursorDistance < minDistance) {
                     minDistance = cursorDistance;
-                    hoveredVertex = v.uuid;
+                    hoveredVertex = v.uuid.value;
                 }
             }
             // finds the edge closest to the mouse cursor and meet the distance requirement
             minDistance = FLT_MAX;
             for (auto& ei : userprops->getEdgePropList()) {
                 auto e = ei.second;
-                if (!e.enabled)
+                if (!e.enabled.value)
                     continue;
-                float cursorDistance = distanceToALine(io.MousePos, camera->map(e.startVertexPosition),
-                                                       camera->map(e.endVertexPosition));
-                if (cursorDistance <= camera->map(e.thickness) / 2.0f + preferences->graphview_selection_tolerance &&
+                float cursorDistance = distanceToALine(io.MousePos, camera->map(e.startVertexPosition.value),
+                                                       camera->map(e.endVertexPosition.value));
+                if (cursorDistance <=
+                    camera->map(e.thickness.value) / 2.0f + preferences->graphview_selection_tolerance &&
                     cursorDistance < minDistance) {
                     minDistance = cursorDistance;
-                    hoveredEdge = e.edgeUuid;
+                    hoveredEdge = e.edgeUuid.value;
                 }
             }
 

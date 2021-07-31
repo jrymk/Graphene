@@ -18,6 +18,7 @@ include_directories(Dependencies/imgui/misc/single_file)
 include_directories(Dependencies/stduuid/include)
 include_directories(Dependencies/stduuid/gsl)
 include_directories(Dependencies/thread_pool)
+include_directories(Dependencies/json)
 include_directories(Sources/)
 
 

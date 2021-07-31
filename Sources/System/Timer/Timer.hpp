@@ -36,12 +36,6 @@ namespace gfn::timer {
                     std::chrono::steady_clock::now() - start);
             return diff.count();
         }
-
-        unsigned long long getNano() {
-            timespec ts;
-            clock_gettime(3, &ts);
-            return ts.tv_nsec;
-        }
     };
 
     int getNowMillis() {

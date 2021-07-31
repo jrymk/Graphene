@@ -2,23 +2,33 @@
 
 #include <unordered_map>
 #include <Objects/Uuid.hpp>
-#include <Properties/UserProps.hpp>
 #include <Properties/VertexProps.hpp>
 #include <Properties/EdgeProps.hpp>
 #include <System/Random/Random.hpp>
 #include <Logging/Logging.hpp>
 #include <Objects/Command.hpp>
+#include <json.hpp>
 
-namespace gfn::properties {
+namespace gfn::props {
 /// @brief Stores all the properties such as positions, colors and force values for internal use
     class Properties {
         // user friendly name mapping for uuids
         std::unordered_map<std::string, gfn::Uuid> accessNames;
         // this class stays ar the bottom of anything, so that usergraph, core, the api and so on can access it
-        std::unordered_map<gfn::Uuid, std::pair<gfn::properties::VertexProps, gfn::properties::VertexPropsInternal>> vertexPropsList;
-        std::unordered_map<gfn::Uuid, std::pair<gfn::properties::EdgeProps, gfn::properties::EdgePropsInternal>> edgePropsList;
+        std::unordered_map<gfn::Uuid, gfn::props::VertexProps> vertexPropsList;
+        std::unordered_map<gfn::Uuid, gfn::props::EdgeProps> edgePropsList;
 
     public:
+        void serialize(nlohmann::json& j) {
+            j["vertices"] = nullptr;
+            j["edges"] = nullptr;
+            for (auto &v : vertexPropsList)
+                v.second.serialize(j["vertices"][v.first]);
+            for (auto &e : edgePropsList)
+                e.second.serialize(j["edges"][e.first]);
+        }
+
+
         /// @brief uuids can be hard to type and read, user can assign custom names to every uuid for easy access
         bool assignAccessName(const std::string& accessName, const gfn::Uuid& uuid, bool overwrite = false) {
             if (!uuid::isUuid(uuid)) {
@@ -50,33 +60,31 @@ namespace gfn::properties {
         }
 
         /// @brief retrieve the properties object of the given vertex
-        /// @returns first: vertex prop, second: vertex prop internal; nullptr if the prop does not exist, else the pointer to the prop object
-        std::pair<gfn::properties::VertexProps*, gfn::properties::VertexPropsInternal*>
-        getVertexProps(const gfn::Uuid& uuid, bool warnOnNotFound = true) {
+        /// @returns nullptr if the prop does not exist, else the pointer to the prop object
+        gfn::props::VertexProps* getVertexProps(const gfn::Uuid& uuid, bool warnOnNotFound = true) {
             auto it = vertexPropsList.find(uuid);
             if (it == vertexPropsList.end()) {
                 if (warnOnNotFound) {
                     logMessage << "Properties: Get core vertex prop {" << uuid << "} failed (not found)";
                     logWarning;
                 }
-                return {nullptr, nullptr};
+                return nullptr;
             }
-            return {&it->second.first, &it->second.second};
+            return &it->second;
         }
 
         /// @brief retrieve the properties object of the given edge
-        /// @first: edge prop, second: edge prop internal; returns nullptr if the prop does not exist, else the pointer to the prop object
-        std::pair<gfn::properties::EdgeProps*, gfn::properties::EdgePropsInternal*>
-        getEdgeProps(const gfn::Uuid& edgeUuid, bool warnOnNotFound = true) {
+        /// @returns: returns nullptr if the prop does not exist, else the pointer to the prop object
+        gfn::props::EdgeProps* getEdgeProps(const gfn::Uuid& edgeUuid, bool warnOnNotFound = true) {
             auto it = edgePropsList.find(edgeUuid);
             if (it == edgePropsList.end()) {
                 if (warnOnNotFound) {
                     logMessage << "Properties: Get core edge prop {" << edgeUuid << "} failed (not found)";
                     logWarning;
                 }
-                return {nullptr, nullptr};
+                return nullptr;
             }
-            return {&it->second.first, &it->second.second};
+            return &it->second;
         }
 
         /// @brief allocate a new vertex properties object
@@ -88,16 +96,15 @@ namespace gfn::properties {
                 logVerbose;
             }
 
-            auto result = vertexPropsList.insert(
-                    {uuid, {gfn::properties::VertexProps(), gfn::properties::VertexPropsInternal()}});
+            auto result = vertexPropsList.insert({uuid, gfn::props::VertexProps()});
             if (result.second) {
                 std::uniform_real_distribution dis(-20.0, 20.0);
-                result.first->second.first.position = gfn::Vec2f(dis(gfn::system::random::getEngine()),
+                result.first->second.position.value = gfn::Vec2f(dis(gfn::system::random::getEngine()),
                                                                  dis(gfn::system::random::getEngine()));
-                logMessage << "Properties: New core vertex prop {" << uuid << "} at "
-                           << getVertexProps(uuid).first->position;
+                logMessage << "Properties: New core vertex prop {" << uuid << "} at " <<
+                           getVertexProps(uuid)->position.value;
                 logInfo;
-                getVertexProps(uuid).first->uuid = uuid;
+                getVertexProps(uuid)->uuid.value = uuid;
                 return true;
             }
             logMessage << "Properties: New vertex prop {" << uuid << "} failed (unexpectedly already exists)";
@@ -112,10 +119,9 @@ namespace gfn::properties {
                 logVerbose;
             }
 
-            auto result = edgePropsList.insert(
-                    {edgeUuid, {gfn::properties::EdgeProps(), gfn::properties::EdgePropsInternal()}});
+            auto result = edgePropsList.insert({edgeUuid, gfn::props::EdgeProps()});
             if (result.second) {
-                result.first->second.first.edgeUuid = edgeUuid;
+                result.first->second.edgeUuid.value = edgeUuid;
                 logMessage << "Properties: New core edge prop {" << edgeUuid << "}";
                 logVerbose;
                 return true;
@@ -156,26 +162,12 @@ namespace gfn::properties {
         }
 
         ///@brief Returns the entire prop list, mainly for usergraph prop checkup
-        std::unordered_map<gfn::Uuid, std::pair<gfn::properties::VertexProps, gfn::properties::VertexPropsInternal>>&
-        getVertexPropList() {
+        std::unordered_map<gfn::Uuid, gfn::props::VertexProps>& getVertexPropList() {
             return vertexPropsList;
         }
 
         ///@brief Returns the entire prop list, mainly for usergraph prop checkup
-        std::unordered_map<gfn::Uuid, std::pair<gfn::properties::EdgeProps, gfn::properties::EdgePropsInternal>>&
+        std::unordered_map<gfn::Uuid, gfn::props::EdgeProps>&
         getEdgePropList() { return edgePropsList; }
-
-        void exportToUserProps(gfn::properties::UserProps* destination) {
-            destination->getVertexPropList().clear();
-            for (auto& v : vertexPropsList)
-                destination->getVertexPropList().insert({v.first, v.second.first});
-
-            destination->getEdgePropList().clear();
-            for (auto& e : edgePropsList) {
-                e.second.first.startVertexPosition = getVertexProps(e.second.first.startVertexUuid).first->position;
-                e.second.first.endVertexPosition = getVertexProps(e.second.first.endVertexUuid).first->position;
-                destination->getEdgePropList().insert({e.first, e.second.first});
-            }
-        }
     };
 } // namespace gfn::properties

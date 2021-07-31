@@ -6,6 +6,10 @@ namespace gfn {
     struct Color {
         uint32_t color32;
 
+        Color() {
+            color32 = IM_COL32(255, 0, 255, 255);
+        }
+
         static float normalize(int v) {
             return float(v) / 255.0f;
         }

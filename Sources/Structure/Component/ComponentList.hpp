@@ -20,7 +20,7 @@ namespace gfn::structure {
     class ComponentList {
         // the componentifier will build a component list based on the usergraph and properties given
         gfn::usergraph::UserGraph* usergraph;
-        gfn::properties::Properties* properties;
+        gfn::props::Properties* properties;
 
     public:
         std::unordered_set<Vertex*> vertices;
@@ -36,7 +36,7 @@ namespace gfn::structure {
                 delete c;
         }
 
-        void bindSource(gfn::usergraph::UserGraph* _usergraph, gfn::properties::Properties* _properties) {
+        void bindSource(gfn::usergraph::UserGraph* _usergraph, gfn::props::Properties* _properties) {
             usergraph = _usergraph;
             properties = _properties;
         }
@@ -68,26 +68,24 @@ namespace gfn::structure {
                 // initialize vertex objects
                 auto vertex = new Vertex();
                 // assign the vertex a "core prop" for fast access (can not be shared by the "user prop")
-                vertex->props = properties->getVertexProps(u.first).first;
-                vertex->internalProps = properties->getVertexProps(u.first).second;
-                vertex->props->uuid = u.first;
+                vertex->props = properties->getVertexProps(u.first);
+                vertex->props->uuid.value = u.first;
                 vertices.insert(vertex);
-                mapping.insert({vertex->props->uuid, vertex});
+                mapping.insert({vertex->props->uuid.value, vertex});
 
                 // keep a list of previous component roots to later assign them back to the fresh component objects and
                 // maximize the reusability (so component properties can be kept)
                 // this is a fairly bad implementation, and might be changed in the future
-                if (vertex->internalProps->isComponentRoot)
+                if (vertex->props->isComponentRoot.value)
                     previousComponentRoot.insert(vertex);
                 for (auto& v : u.second) {
                     for (auto& e : v.second) {
                         // initialize edge objects
                         auto edge = new Edge();
-                        edge->props = properties->getEdgeProps(e).first;
-                        edge->internalProps = properties->getEdgeProps(e).second;
-                        edge->props->edgeUuid = e;
-                        edge->props->startVertexUuid = u.first;
-                        edge->props->endVertexUuid = v.first;
+                        edge->props = properties->getEdgeProps(e);
+                        edge->props->edgeUuid.value = e;
+                        edge->props->startVertexUuid.value = u.first;
+                        edge->props->endVertexUuid.value = v.first;
                         edges.insert(edge);
                     }
                 }
@@ -103,17 +101,18 @@ namespace gfn::structure {
                 component->root = *pendingVertices.begin();
                 components.insert(component);
                 // recursively recreate vertex entries in component adjacency list (no edges)
-                _componentifyDfs(component, (*pendingVertices.begin())->props->uuid, mapping, pendingVertices);
+                _componentifyDfs(component, (*pendingVertices.begin())->props->uuid.value, mapping,
+                                 pendingVertices);
             }
 
             /// TODO: Fix up the crappy component reuse implementation
 
             for (auto& v : previousComponentRoot) {
                 if (v->component->uuid == gfn::uuid::createNil()) {
-                    v->component->uuid = v->internalProps->component;
+                    v->component->uuid = v->props->component.value;
                     v->component->root = v;
-                    logMessage << "Componentifier: Assigned component uuid {" << v->internalProps->component
-                               << "} from previous root vertex {" << v->props->uuid << "}";
+                    logMessage << "Componentifier: Assigned component uuid {" << v->props->component.value
+                               << "} from previous root vertex {" << v->props->uuid.value << "}";
                     logVerbose;
                 } else {
                     // A component merge event
@@ -127,19 +126,20 @@ namespace gfn::structure {
                     c->root = c->getAdjList().begin()->first;
                     logMessage << "Componentifier: Assigned component uuid {" << uuid
                                << "} (auto-generated) and assigned vertex {"
-                               << c->getAdjList().begin()->first->props->uuid << "} as root";
+                               << c->getAdjList().begin()->first->props->uuid.value << "} as root";
                     logVerbose;
                 }
             }
 
             // construct edges for the components
             for (auto& e : edges) {
-                auto u = mapping.find(e->props->startVertexUuid)->second;
-                auto v = mapping.find(e->props->endVertexUuid)->second;
+                auto u = mapping.find(e->props->startVertexUuid.value)->second;
+                auto v = mapping.find(e->props->endVertexUuid.value)->second;
                 if (u->component != v->component) {
-                    logMessage << "Componentifier: Edge {" << e->props->edgeUuid << "} start vertex {" << u->props->uuid
+                    logMessage << "Componentifier: Edge {" << e->props->edgeUuid.value << "} start vertex {"
+                               << u->props->uuid.value
                                << "} component {" << u->component->uuid << "} is different from end vertex {"
-                               << v->props->uuid << "} component {" << v->component->uuid
+                               << v->props->uuid.value << "} component {" << v->component->uuid
                                << "}, something went wrong assigning components";
                     logWarning;
                 }
@@ -161,18 +161,18 @@ namespace gfn::structure {
             for (auto& c : components) {
                 logMessage << "     {" << c->uuid << "}";
                 logVerbose;
-                c->root->internalProps->componentCentroidPosition = gfn::Vec2f(0.0, 0.0);
+                c->root->props->componentCentroidPosition.value = gfn::Vec2f(0.0, 0.0);
                 for (auto& v : c->getAdjList()) {
-                    logMessage << "        {" << v.first->props->uuid << "}";
+                    logMessage << "        {" << v.first->props->uuid.value << "}";
                     logVerbose;
-                    v.first->internalProps->isComponentRoot = false;
-                    v.first->internalProps->component = c->uuid;
-                    c->root->internalProps->componentCentroidPosition += v.first->props->position;
+                    v.first->props->isComponentRoot.value = false;
+                    v.first->props->component.value = c->uuid;
+                    c->root->props->componentCentroidPosition.value += v.first->props->position.value;
                 }
-                c->root->internalProps->componentCentroidPosition /= double(c->getAdjList().size());
-                logMessage << "       at position " << c->root->internalProps->componentCentroidPosition;
+                c->root->props->componentCentroidPosition.value /= double(c->getAdjList().size());
+                logMessage << "       at position " << c->root->props->componentCentroidPosition.value;
                 logVerbose;
-                c->root->internalProps->isComponentRoot = true;
+                c->root->props->isComponentRoot.value = true;
             }
 
             // build block cut trees
@@ -202,6 +202,12 @@ namespace gfn::structure {
                 if (pending.find(mapping.find(v.first)->second) != pending.end()) { // still pending
                     _componentifyDfs(c, v.first, mapping, pending);
                 }
+            }
+        }
+
+        void updateEdgeStartEndPositions() {
+            for (auto &e : edges) {
+
             }
         }
     };

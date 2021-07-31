@@ -42,7 +42,7 @@ namespace gfn::structure {
             }
             auto root = component->root;
             logMessage << "BlockCutTreeBuilder: Component {" << component->uuid
-                       << "} building block cut tree with root vertex {" << root->props->uuid << "}";
+            << "} building block cut tree with root vertex {" << root->props->uuid.value << "}";
             logVerbose;
             countChildren(root);
             dfs(root, root);

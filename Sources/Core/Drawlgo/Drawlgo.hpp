@@ -14,34 +14,34 @@
 // updater is such a bad name, I need a new one
 namespace gfn::core::drawlgo {
     class Drawlgo {
+        // optimize performance by measuring four multithreading modes every 5 seconds
         int multiThreadingMode = 3;
-        int performanceCheckCounter = 0;
+        gfn::timer::Timer performanceCheckTimer;
 
     public:
         void update(gfn::configs::Configs* configs, gfn::structure::Structure* structure,
-                    gfn::properties::Properties* properties) {
-            if (++performanceCheckCounter == 20000000) {
-                performanceCheckCounter = 0;
+                    gfn::props::Properties* properties) {
+            if (performanceCheckTimer.getSeconds() >= 5.0) {
                 // MULTITHREADING MODE 0
                 gfn::timer::Timer cMvM;
                 {
                     thread_pool::ThreadPool thread_pool{};
-                    std::vector<std::future<void>> futures;
+                    std::vector<std::future<unsigned long long>> futures;
                     for (auto& c : structure->componentList.getComponents())
                         futures.emplace_back(thread_pool.Submit(updateComponentMultiThreaded, configs, c));
-                    for (const auto& it : futures)
-                        it.wait();
+                    for (auto& it : futures)
+                        it.get();
                 }
                 auto cMvMtime = std::make_pair(cMvM.getMicroseconds(), 0);
                 // MULTITHREADING MODE 1
                 gfn::timer::Timer cMvS;
                 {
                     thread_pool::ThreadPool thread_pool{};
-                    std::vector<std::future<void>> futures;
+                    std::vector<std::future<unsigned long long>> futures;
                     for (auto& c : structure->componentList.getComponents())
                         futures.emplace_back(thread_pool.Submit(updateComponentSingleThreaded, configs, c));
-                    for (const auto& it : futures)
-                        it.wait();
+                    for (auto& it : futures)
+                        it.get();
                 }
                 auto cMvStime = std::make_pair(cMvS.getMicroseconds(), 1);
                 // MULTITHREADING MODE 2
@@ -60,27 +60,30 @@ namespace gfn::core::drawlgo {
                 auto cSvStime = std::make_pair(cSvS.getMicroseconds(), 3);
 
                 multiThreadingMode = std::min(std::min(cMvMtime, cMvStime), std::min(cSvMtime, cSvStime)).second;
-                std::cerr << "CMVM[0]: " << cMvMtime.first << "  CMVS[1]: " << cMvMtime.first << "  CSVM[2]: "
-                          << cSvMtime.first << "  CSVS[3]: " << cSvStime.first << "\n";
+                std::cerr << "  CMVM[0]: " <<
+                          cMvMtime.first << "  CMVS[1]: " << cMvStime.first << "  CSVM[2]: " << cSvMtime.first
+                          << "  CSVS[3]: " << cSvStime.first << "\n";
                 std::cerr << "MULTITHREADING MODE: " << multiThreadingMode << "\n";
+
+                performanceCheckTimer.restart();
             } else {
                 // MULTITHREADING MODE 0
                 if (multiThreadingMode == 0) {
                     thread_pool::ThreadPool thread_pool{};
-                    std::vector<std::future<void>> futures;
+                    std::vector<std::future<unsigned long long>> futures;
                     for (auto& c : structure->componentList.getComponents())
                         futures.emplace_back(thread_pool.Submit(updateComponentMultiThreaded, configs, c));
-                    for (const auto& it : futures)
-                        it.wait();
+                    for (auto& it : futures)
+                        it.get();
                 }
                 // MULTITHREADING MODE 1
                 if (multiThreadingMode == 1) {
                     thread_pool::ThreadPool thread_pool{};
-                    std::vector<std::future<void>> futures;
+                    std::vector<std::future<unsigned long long>> futures;
                     for (auto& c : structure->componentList.getComponents())
                         futures.emplace_back(thread_pool.Submit(updateComponentSingleThreaded, configs, c));
-                    for (const auto& it : futures)
-                        it.wait();
+                    for (auto& it : futures)
+                        it.get();
                 }
                 // MULTITHREADING MODE 2
                 if (multiThreadingMode == 2) {

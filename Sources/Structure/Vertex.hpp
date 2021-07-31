@@ -11,7 +11,6 @@ namespace gfn::structure {
     public:
         Component* component;
 
-        gfn::properties::VertexProps* props;
-        gfn::properties::VertexPropsInternal* internalProps;
+        gfn::props::VertexProps* props;
     };
 } // namespace gfn::core::structure

@@ -18,6 +18,10 @@ namespace gfn::editor {
 
     bool stopInput = false;
 
+    bool waitingSerialized = false;
+    gfn::Uuid serializeToken = "";
+    gfn::document::Document* waitingSerializedDoc = nullptr;
+
     std::queue<std::string> cmdQueue;
 
     void waitInputLoop() {
@@ -45,6 +49,19 @@ namespace gfn::editor {
         document->startup();
     }
 
+    void saveFile(gfn::document::Document* document) {
+        waitingSerializedDoc = document;
+        // request for a save by marking buffer out of date
+        //waitingSerializedDoc->interface.serialized.readDone();
+        // wait for response ///TODO
+        serializeToken = gfn::uuid::createUuid();
+        waitingSerialized = true;
+
+        execute("save -token=" + serializeToken);
+        //while (document->interface.serialized.isReadBufferRead()) {}
+        //std::cout << gfn::editor::focusedDocument->interface.serialized.getRead()->dump(4, ' ', false) << "\n";
+    }
+
     void update() {
         onFocusDocument = false;
         for (auto& d : documents) {
@@ -52,6 +69,17 @@ namespace gfn::editor {
                 focusedDocument = d;
                 onFocusDocument = true;
             }
+        }
+
+        if (waitingSerialized) {
+            if ((*waitingSerializedDoc->interface.serialized.getRead())["token"] == serializeToken) {
+                // new data in
+                std::cout << waitingSerializedDoc->interface.serialized.getRead()->dump(4, ' ', false) << "\n";
+                waitingSerialized = false;
+                waitingSerializedDoc = nullptr;
+            }
+            if (waitingSerializedDoc)
+                waitingSerializedDoc->interface.serialized.readDone();
         }
 
         while (!cmdQueue.empty()) {
@@ -73,15 +101,16 @@ namespace gfn::editor {
                 else
                     std::cerr << "No document focused\n";
             }
-            if (focusedDocument)
-                std::cout << focusedDocument->documentUuid << "> ";
         }
         if (focusedDocument)
             focusedDocument->isWindowFocused = true;
         for (auto d = documents.begin(); d != documents.end();) {
-            if (!(*d)->update())
+            if (!(*d)->update()) {
+                if (focusedDocument == *d)
+                    focusedDocument = nullptr;
+                (*d)->terminate();
                 d = documents.erase(d);
-            else
+            } else
                 d++;
         }
     }

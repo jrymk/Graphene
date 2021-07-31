@@ -12,13 +12,14 @@
 #include <Document/Document.hpp>
 #include <Preferences/Preferences.hpp>
 #include <Editor/EditorManager.hpp>
+#include <json.hpp>
 
 int main() {
     gfn::window::launchWindow();
 
     gfn::editor::startup();
 
-    /*{
+    {
         gfn::editor::newFile("giraffe(fixed)");
         std::string testInput = {""
                                  "7 10 "
@@ -32,88 +33,82 @@ int main() {
                                  "3 6 "
                                  "4 5 "
                                  "5 6 "};
-        gfn::editor::execute("cd -d giraffe(fixed)");
+        gfn::editor::execute("cd -d=giraffe(fixed)");
         std::stringstream ss(testInput);
         int v, e;
         ss >> v >> e;
         for (int i = 0; i < v; i++)
-            gfn::editor::execute("mkvertex -name " + std::to_string(i));
+            gfn::editor::execute("mkvertex -name=" + std::to_string(i));
         for (int i = 0; i < e; i++) {
             int s, t;
             ss >> s >> t;
-            gfn::editor::execute("mkedge -uname " + std::to_string(s) + " -vname " + std::to_string(t));
+            gfn::editor::execute("mkedge -uname=" + std::to_string(s) + " -vname=" + std::to_string(t));
         }
-    }*/
+    }
     {
-        gfn::editor::newFile("kangaroo(small tree)");
+        gfn::editor::newFile("kangaroo(small_tree)");
         int c = 64;
-        gfn::editor::execute("cd -d kangaroo(small tree)");
-        gfn::editor::execute("mkvertex -name " + std::to_string(0));
+        gfn::editor::execute("cd -d=kangaroo(small_tree)");
+        gfn::editor::execute("mkvertex -name=" + std::to_string(0));
         for (int j = 0; j < c; j++) {
-            gfn::editor::execute("mkvertex -name " + std::to_string(j + 1));
+            gfn::editor::execute("mkvertex -name=" + std::to_string(j + 1));
             std::uniform_int_distribution<int> dis(0, j);
-            gfn::editor::execute("mkedge -uname " + std::to_string(j + 1) + " -vname " +
+            gfn::editor::execute("mkedge -uname=" + std::to_string(j + 1) + " -vname=" +
                                  std::to_string(dis(gfn::system::random::getEngine())));
         }
     }
     {
-        gfn::editor::newFile("elephant(grid)");
+        gfn::editor::newFile("elephant(donut)");
         int c = 32;
-        gfn::editor::execute("cd -d elephant(grid)");
+        gfn::editor::execute("cd -d=elephant(donut)");
         for (int i = 0; i < c; i++) {
             for (int j = 0; j < c; j++)
-                gfn::editor::execute("mkvertex -name " + std::to_string(i) + "*" + std::to_string(j));
+                gfn::editor::execute("mkvertex -name=" + std::to_string(i) + "*" + std::to_string(j));
         }
         for (int i = 0; i < c; i++) {
             // PLANE
             for (int j = 0; j < c - 1; j++) {
-                gfn::editor::execute("mkedge -uname " + std::to_string(i) + "*" + std::to_string(j) + " -vname " +
+                gfn::editor::execute("mkedge -uname=" + std::to_string(i) + "*" + std::to_string(j) + " -vname=" +
                                      std::to_string(i) + "*" + std::to_string(j + 1));
-                gfn::editor::execute("mkedge -uname " + std::to_string(j) + "*" + std::to_string(i) + " -vname " +
+                gfn::editor::execute("mkedge -uname=" + std::to_string(j) + "*" + std::to_string(i) + " -vname=" +
                                      std::to_string(j + 1) + "*" + std::to_string(i));
             }
             // DONUT
-            /*gfn::editor::execute("mkedge -uname " + std::to_string(i) + "*" + std::to_string(c - 1) + " -vname " +
+            gfn::editor::execute("mkedge -uname=" + std::to_string(i) + "*" + std::to_string(c - 1) + " -vname=" +
                                  std::to_string(i) + "*" + std::to_string(0));
-            gfn::editor::execute("mkedge -uname " + std::to_string(0) + "*" + std::to_string(i) + " -vname " +
-                                 std::to_string(c - 1) + "*" + std::to_string(i));*/
+            gfn::editor::execute("mkedge -uname=" + std::to_string(0) + "*" + std::to_string(i) + " -vname=" +
+                                 std::to_string(c - 1) + "*" + std::to_string(i));
         }
     }
     {
-        gfn::editor::newFile("koala(big ass tree)");
+        gfn::editor::newFile("koala(big_ass_tree)");
         int c = 1024;
-        gfn::editor::execute("cd -d koala(big ass tree)");
-        gfn::editor::execute("mkvertex -name " + std::to_string(0));
+        gfn::editor::execute("cd -d=koala(big_ass_tree)");
+        gfn::editor::execute("mkvertex -name=" + std::to_string(0));
         for (int j = 0; j < c; j++) {
-            gfn::editor::execute("mkvertex -name " + std::to_string(j + 1));
+            gfn::editor::execute("mkvertex -name=" + std::to_string(j + 1));
             std::uniform_int_distribution<int> dis(0, j);
-            gfn::editor::execute("mkedge -uname " + std::to_string(j + 1) + " -vname " +
+            gfn::editor::execute("mkedge -uname=" + std::to_string(j + 1) + " -vname=" +
                                  std::to_string(dis(gfn::system::random::getEngine())));
         }
     }
     {
         gfn::editor::newFile("graphene");
-        int c = 16;
-        gfn::editor::execute("cd -d graphene");
+        int c = 32;
+        gfn::editor::execute("cd -d=graphene");
         for (int i = 0; i < c; i++) {
             for (int j = 0; j < c; j++)
-                gfn::editor::execute("mkvertex -name " + std::to_string(i) + "*" + std::to_string(j));
+                gfn::editor::execute("mkvertex -name=" + std::to_string(i) + "*" + std::to_string(j));
         }
         for (int i = 0; i < c; i++) {
-            // PLANE
             for (int j = 0; j < c - 1; j++) {
                 if ((i + j) % 2) {
-                    gfn::editor::execute("mkedge -uname " + std::to_string(i) + "*" + std::to_string(j) + " -vname " +
+                    gfn::editor::execute("mkedge -uname=" + std::to_string(i) + "*" + std::to_string(j) + " -vname=" +
                                          std::to_string(i) + "*" + std::to_string(j + 1));
                 }
-                gfn::editor::execute("mkedge -uname " + std::to_string(j) + "*" + std::to_string(i) + " -vname " +
+                gfn::editor::execute("mkedge -uname=" + std::to_string(j) + "*" + std::to_string(i) + " -vname=" +
                                      std::to_string(j + 1) + "*" + std::to_string(i));
             }
-            // DONUT
-            /*gfn::editor::execute("mkedge -uname " + std::to_string(i) + "*" + std::to_string(c - 1) + " -vname " +
-                                 std::to_string(i) + "*" + std::to_string(0));
-            gfn::editor::execute("mkedge -uname " + std::to_string(0) + "*" + std::to_string(i) + " -vname " +
-                                 std::to_string(c - 1) + "*" + std::to_string(i));*/
         }
     }
 
@@ -141,6 +136,12 @@ int main() {
         if (ImGui::Button("New file"))
             gfn::editor::newFile(gfn::uuid::createUuid());
 
+        if (gfn::editor::focusedDocument) {
+            if (ImGui::Button("Save file (output to terminal)"))
+                gfn::editor::saveFile(gfn::editor::focusedDocument);
+        }
+
+
         if (gfn::editor::focusedDocument)
             ImGui::Text(("Focused document: " + gfn::editor::focusedDocument->documentUuid).c_str());
 
@@ -165,12 +166,12 @@ int main() {
             static float c5p;
             static float c6p;
             if (gfn::editor::onFocusDocument) {
-                c1p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c1);
-                c2p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c2);
-                c3p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c3);
-                c4p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c4);
-                c5p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c5);
-                c6p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c6);
+                c1p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c1.value);
+                c2p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c2.value);
+                c3p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c3.value);
+                c4p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c4.value);
+                c5p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c5.value);
+                c6p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c6.value);
             }
             gfn::editor::focusedDocument->interface.configs.readDone();
             float c1 = c1p;
@@ -186,17 +187,17 @@ int main() {
             ImGui::SliderFloat("c5", &c5, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
             ImGui::SliderFloat("c6", &c6, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
             if (c1p != c1)
-                gfn::editor::execute("constant -c1 =" + std::to_string(c1));
+                gfn::editor::execute("constant -c1=" + std::to_string(c1));
             if (c2p != c2)
-                gfn::editor::execute("constant -c2 =" + std::to_string(c2));
+                gfn::editor::execute("constant -c2=" + std::to_string(c2));
             if (c3p != c3)
-                gfn::editor::execute("constant -c3 =" + std::to_string(c3));
+                gfn::editor::execute("constant -c3=" + std::to_string(c3));
             if (c4p != c4)
-                gfn::editor::execute("constant -c4 =" + std::to_string(c4));
+                gfn::editor::execute("constant -c4=" + std::to_string(c4));
             if (c5p != c5)
-                gfn::editor::execute("constant -c5 =" + std::to_string(c5));
+                gfn::editor::execute("constant -c5=" + std::to_string(c5));
             if (c6p != c6)
-                gfn::editor::execute("constant -c6 =" + std::to_string(c6));
+                gfn::editor::execute("constant -c6=" + std::to_string(c6));
             c1p = c1;
             c2p = c2;
             c3p = c3;
@@ -229,20 +230,20 @@ int main() {
             }
             if (ImGui::TreeNode("Properties")) {
                 if (ImGui::TreeNode("Vertices")) {
-                    for (auto& v : doc->interface.userprops.getRead()->getVertexPropList()) {
+                    for (auto& v : doc->interface.properties.getRead()->getVertexPropList()) {
                         if (ImGui::TreeNode(v.first.c_str())) {
-                            ImGui::Text(("enabled: " + std::string(v.second.enabled ? "true" : "false")).c_str());
+                            ImGui::Text(("enabled: " + std::string(v.second.enabled.value ? "true" : "false")).c_str());
                             ImGui::TreePop();
                         }
                     }
                     ImGui::TreePop();
                 }
                 if (ImGui::TreeNode("Edges")) {
-                    for (auto& v : doc->interface.userprops.getRead()->getEdgePropList()) {
+                    for (auto& v : doc->interface.properties.getRead()->getEdgePropList()) {
                         if (ImGui::TreeNode(v.first.c_str())) {
-                            ImGui::Text(("enabled: " + std::string(v.second.enabled ? "true" : "false")).c_str());
-                            ImGui::Text(("start: " + v.second.startVertexUuid).c_str());
-                            ImGui::Text(("end: " + v.second.endVertexUuid).c_str());
+                            ImGui::Text(("enabled: " + std::string(v.second.enabled.value ? "true" : "false")).c_str());
+                            ImGui::Text(("start: " + v.second.startVertexUuid.value).c_str());
+                            ImGui::Text(("end: " + v.second.endVertexUuid.value).c_str());
                             ImGui::TreePop();
                         }
                     }

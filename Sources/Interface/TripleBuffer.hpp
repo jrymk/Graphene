@@ -60,15 +60,13 @@ namespace gfn::interface {
         }
 
         // writer interface
-        T* getWrite() {
-            // writer thread have complete ownership of this buffer
-            return writeBuffer;
-        }
-
-        // writer interface
-        T& getWriteRef() {
+        T& getWrite() {
             // writer thread have complete ownership of this buffer
             return *writeBuffer;
+        }
+
+        void forceSwap() {
+            std::swap(readBuffer, availableBuffer);
         }
 
         // start the write process if the read thread has used up the buffer, meaning available buffer is no longer up to

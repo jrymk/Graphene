@@ -14,7 +14,7 @@ namespace gfn::usergraph {
     class UserGraph {
         std::unordered_map<gfn::Uuid, std::unordered_map<gfn::Uuid, std::unordered_set<gfn::Uuid>>> adjList;
         gfn::logging::LogBuffer* logBuffer;
-        gfn::properties::Properties* properties;
+        gfn::props::Properties* properties;
 
     public:
         UserGraph() {}
@@ -23,7 +23,7 @@ namespace gfn::usergraph {
 
         void bindLogBuffer(gfn::logging::LogBuffer* logBuffer) { this->logBuffer = logBuffer; }
 
-        void bindProperties(gfn::properties::Properties* _properties) { properties = _properties; }
+        void bindProperties(gfn::props::Properties* _properties) { properties = _properties; }
 
         std::unordered_map<gfn::Uuid, std::unordered_map<gfn::Uuid, std::unordered_set<gfn::Uuid>>>& getAdjList() {
             return adjList;
@@ -57,23 +57,23 @@ namespace gfn::usergraph {
             auto edgePropList = properties->getEdgePropList();
 
             for (auto& v : vertexPropList) {
-                if (v.second.first.uuid != v.first) {
+                if (v.second.uuid.value != v.first) {
                     problems++;
-                    /*logMessage << "UserGraph: Props checkup error found: Vertex {" << v.second.first.uuid
+                    /*logMessage << "UserGraph: Props checkup error found: Vertex {" << v.second.uuid
                                << "} prop uuid does not match up with the key in props list " << v.first;
                     logWarning*/;
                     if (fix)
-                        v.second.first.uuid = v.first;
+                        v.second.uuid.value = v.first;
                 }
             }
             for (auto& e : edgePropList) {
-                if (e.second.first.edgeUuid != e.first) {
+                if (e.second.edgeUuid.value != e.first) {
                     problems++;
-                    /*logMessage << "UserGraph: Props checkup error found: Edge {" << e.second.first.edgeUuid
+                    /*logMessage << "UserGraph: Props checkup error found: Edge {" << e.second.edgeUuid
                                << "} prop uuid does not match up with the key in props list " << e.first;
                     logWarning*/;
                     if (fix)
-                        e.second.first.edgeUuid = e.first;
+                        e.second.edgeUuid.value = e.first;
                 }
             }
 
@@ -94,9 +94,9 @@ namespace gfn::usergraph {
             // they are valid
             for (auto& p : vertexPropList) {
                 if (invalidVertexList.find(p.first) == invalidVertexList.end())
-                    p.second.first.enabled = false;
+                    p.second.enabled.value = false;
                 else
-                    p.second.first.enabled = true;
+                    p.second.enabled.value = true;
             }
 
             for (auto it = invalidVertexList.begin(); it != invalidVertexList.end();) {
@@ -170,7 +170,7 @@ namespace gfn::usergraph {
             }
             if (adjList.insert({uuid, std::unordered_map<gfn::Uuid, std::unordered_set<gfn::Uuid>>()}).second) {
                 properties->newVertexProps(uuid);
-                properties->getVertexProps(uuid).first->enabled = true;
+                properties->getVertexProps(uuid)->enabled.value = true;
                 output.newParam("-successful", "true");
                 output.newParam("-uuid", uuid);
                 return;
@@ -217,7 +217,7 @@ namespace gfn::usergraph {
                     if (erase)
                         properties->eraseEdgeProps(e);
                     else
-                        properties->getEdgeProps(e).first->enabled = false;
+                        properties->getEdgeProps(e)->enabled.value = false;
                 }
             }
 
@@ -230,7 +230,7 @@ namespace gfn::usergraph {
                                     if (erase)
                                         properties->eraseEdgeProps(e);
                                     else
-                                        properties->getEdgeProps(e).first->enabled = false;
+                                        properties->getEdgeProps(e)->enabled.value = false;
                                 }
                                 v = u.second.erase(
                                         u.second.find(uuid)); // erase vertex-edge entries from other vertices
@@ -243,7 +243,7 @@ namespace gfn::usergraph {
             if (command.getFlag("-erase-vertex-props"))
                 properties->eraseVertexProps(uuid);
             else
-                properties->getVertexProps(uuid).first->enabled = false;
+                properties->getVertexProps(uuid)->enabled.value = false;
             adjList.erase(uuid);
             output.newParam("-successful", "true");
             output.newParam("-uuid", uuid);
@@ -327,7 +327,7 @@ namespace gfn::usergraph {
                     }
                 }
             }
-            if (!properties->getEdgeProps(edgeUuid, false).first) { // props does not exist
+            if (!properties->getEdgeProps(edgeUuid, false)) { // props does not exist
                 // add entry to adjacency list
                 if (uIt->second.insert({endUuid, std::unordered_set<gfn::Uuid>()}).second) {
                     // created new endVertex entry
@@ -343,10 +343,10 @@ namespace gfn::usergraph {
                         return;
                     }
                     auto p = properties->getEdgeProps(edgeUuid);
-                    p.first->startVertexUuid = startUuid;
-                    p.first->endVertexUuid = endUuid;
-                    p.first->edgeUuid = edgeUuid;
-                    p.first->enabled = true;
+                    p->startVertexUuid.value = startUuid;
+                    p->endVertexUuid.value = endUuid;
+                    p->edgeUuid.value = edgeUuid;
+                    p->enabled.value = true;
                     output.newParam("-u", startUuid);
                     output.newParam("-v", endUuid);
                     output.newParam("-successful", "true");
@@ -456,7 +456,7 @@ namespace gfn::usergraph {
                 for (auto& e : sEIt->second) {
                     output.newParam("-edge-uuid", e);
                     if (!erase) {
-                        properties->getEdgeProps(e).first->enabled = false;
+                        properties->getEdgeProps(e)->enabled.value = false;
                         continue;
                     }
                     if (properties->eraseEdgeProps(e)) {
@@ -470,7 +470,7 @@ namespace gfn::usergraph {
                 for (auto& e : eEIt->second) {
                     output.newParam("-edge-uuid", e);
                     if (!erase) {
-                        properties->getEdgeProps(e).first->enabled = false;
+                        properties->getEdgeProps(e)->enabled.value = false;
                         continue;
                     }
                     if (properties->eraseEdgeProps(e)) {
@@ -491,14 +491,14 @@ namespace gfn::usergraph {
 
             // edge mode
             auto prop = properties->getEdgeProps(edgeUuid);
-            if (prop.first) { // props exists
+            if (prop) { // props exists
                 output.newParam("-uuid", edgeUuid);
                 // the "use start and end vertices from props" route
-                auto startIt = adjList.find(prop.first->startVertexUuid);
+                auto startIt = adjList.find(prop->startVertexUuid.value);
                 if (startIt != adjList.end()) {
                     gfn::Uuid startVertex = startIt->first;
                     output.newParam("-u", startVertex);
-                    auto endIt = startIt->second.find(prop.first->endVertexUuid);
+                    auto endIt = startIt->second.find(prop->endVertexUuid.value);
                     if (endIt != startIt->second.end()) {
                         gfn::Uuid endVertex = endIt->first;
                         output.newParam("-v", endVertex);
@@ -535,7 +535,7 @@ namespace gfn::usergraph {
                             bool erase = command.getFlag("-erase-edge-props");
                             if (!erase || (erase && properties->eraseEdgeProps(edgeUuid))) {
                                 if (!erase)
-                                    properties->getEdgeProps(edgeUuid).first->enabled = false;
+                                    properties->getEdgeProps(edgeUuid)->enabled.value = false;
                                 output.newParam("-successful", "true");
                                 return;
                             }
@@ -561,7 +561,7 @@ namespace gfn::usergraph {
 
                         if (!erase || (erase && properties->eraseEdgeProps(edgeUuid))) {
                             if (!erase)
-                                properties->getEdgeProps(edgeUuid).first->enabled = false;
+                                properties->getEdgeProps(edgeUuid)->enabled.value = false;
                             auto rStartIt = adjList.find(v.first);
                             if (rStartIt == adjList.end()) {
                                 output.newParam("-error", "END_VERTEX_ENTRY_NOT_FOUND");

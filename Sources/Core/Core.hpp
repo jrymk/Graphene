@@ -16,7 +16,7 @@ namespace gfn::core {
     class Core {
     public:
         gfn::interface::Interface* interface;
-        gfn::properties::Properties properties;
+        gfn::props::Properties properties;
         gfn::usergraph::UserGraph usergraph;
         gfn::structure::Structure structure;
         gfn::configs::Configs configs;
@@ -35,14 +35,20 @@ namespace gfn::core {
         void coreCycle() {
             // gfn::core::logging::logBuffer = &interface->logBuffer.getWrite();
             while (!interface->cmdBuffer.getRead()->commands.empty()) {
+                gfn::Command command = interface->cmdBuffer.getRead()->commands.front();
                 gfn::Command output;
+                std::cout << "Command: " << command.getString() << "\n";
 
-                std::cout << "Command: " << interface->cmdBuffer.getRead()->commands.front().getString();
-                usergraph.tryParse(interface->cmdBuffer.getRead()->commands.front(), output);
-                gfn::properties::tryParse(&properties, interface->cmdBuffer.getRead()->commands.front(), output);
-                configs.tryParse(interface->cmdBuffer.getRead()->commands.front(), output);
-
-                std::cout << output.getString() << "\n";
+                if (command.getParamValue("command") == "save") {
+                    nlohmann::json j;
+                    properties.serialize(j["properties"]);
+                    j["token"] = command.getParamValue("-token");
+                    interface->serialized.getWrite() = j;
+                    interface->serialized.writeDone();
+                } else if (usergraph.tryParse(command, output) ||
+                           gfn::props::tryParse(&properties, command, output) ||
+                           configs.tryParse(command, output))
+                    std::cout << output.getString() << "\n";
                 interface->cmdBuffer.getRead()->commands.pop_front();
             }
 
@@ -54,24 +60,23 @@ namespace gfn::core {
                 // update component list with usergraph and rebuild block cut tree (currently all)
                 structure.componentList.componentify();
                 usergraph.pendingUpdate = false;
-                interface->usergraph.getWriteRef() = usergraph;
+                interface->usergraph.getWrite() = usergraph;
             }
 
             // std::cerr << usergraph.getAdjList().size() << "\n";
             /// TODO: graph update stuff
 
-            if (interface->userprops.wantWrite()) {
+            if (interface->properties.wantWrite()) {
                 // assignment operator, writes the core content to the write buffer
-                // not the fastest way to do it, but whatever...
-                properties.exportToUserProps(interface->userprops.getWrite());
-                interface->userprops.writeDone();
+                interface->properties.getWrite() = properties;
+                interface->properties.writeDone();
             }
 
             if (interface->logBuffer.wantWrite()) {
                 // assignment operator, writes the core content to the write buffer
                 // interface->logBuffer.writeDone();
             }
-            interface->configs.getWriteRef() = configs;
+            interface->configs.getWrite() = configs;
             interface->configs.writeDone();
             interface->cmdBuffer.readDone();
             // std::cerr << "Write took " << writeTimer.getMicroseconds() << "us\n";

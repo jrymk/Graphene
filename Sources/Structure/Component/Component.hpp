@@ -36,7 +36,7 @@ namespace gfn::structure {
         std::unordered_set<Vertex*> getAdjacentVertices(Vertex* v) {
             auto vIt = adjList.find(v);
             if (vIt == adjList.end()) {
-                logMessage << "Component: Request to get adjacent vertices for vertex {" << v->props->uuid
+                logMessage << "Component: Request to get adjacent vertices for vertex {" << v->props->uuid.value
                            << "} in component {" << uuid << "} failed (vertex does not exist in component)";
                 logWarning;
                 return {};
@@ -48,8 +48,8 @@ namespace gfn::structure {
         bool isAdjacent(Vertex* u, Vertex* v) {
             auto uIt = adjList.find(u);
             if (uIt == adjList.end()) {
-                logMessage << "Component: Request to check adjacentivity for vertex {" << u->props->uuid << "} and {"
-                           << v->props->uuid << "} in component {" << uuid
+                logMessage << "Component: Request to check adjacentivity for vertex {"
+                           << u->props->uuid.value << "} and {" << v->props->uuid.value << "} in component {" << uuid
                            << "} failed (start vertex does not exist in component)";
                 logWarning;
                 return false;
