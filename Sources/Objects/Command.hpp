@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <queue>
+#include <regex>
 #include <sstream>
 
 namespace gfn {
@@ -13,49 +14,85 @@ namespace gfn {
         Command() = default;
 
         Command(const std::string& command) {
-            std::stringstream ss;
-            ss.str(command);
-            std::queue<std::string> q;
-            std::string temp;
-            while (ss >> temp)
-                q.push(temp);
-            if (q.empty())
-                return;
+            /*
+             * Command parser
+             *
+             *   Examples:
+             *     setprop vertex -name="vertex 5" -key=position -value=(-2,3.5)
+             *     would be parsed into
+             *     {
+             *        {"command", "setprop vertex"},
+             *        {"-name"  , "vertex 5"      },
+             *        {"-value" , "(-2,3.5)"      }
+             *     }
+             *
+             *   Simply put, the "command" entry is whatever comes before any '-' character,
+             *   Key or value that contain spaces need to be surrounded with double quotes
+             *   Extra spaces are allowed, spaces around '=' is not.
+             *
+             *   extra note: To set a prop you can do key(value) or keys(val,ues), for example rgba(0,0,0,255) or a(255)
+             *               rgba(0, 0, 0, 255) IS allowed, but remember to add quotes
+             */
 
-            // read the command part
-            // mkvertex -name="Police office"     setprop vertex -key=position -value=+(-5.0, 10.0)
-            // ^^^^^^^^                           ^^^^^^^^^^^^^^
-            std::string cmd;
-            while (!q.empty() && q.front()[0] != '-') {
-                if (!cmd.empty())
-                    cmd += " ";
-                cmd += q.front();
-                q.pop();
-            }
-            params.emplace_back("command", cmd);
+            params.emplace_back("command", "");
+            bool commandState = true;
+            bool quotesState = false;
+            bool paramKeyState = false;
+            bool paramValueState = false;
 
-            // read the command part
-            // mkvertex -name="Police office"     setprop vertex -key=position -value=+(-5.0, 10.0)
-            //          ^^^^^^^^^^^^^^^^^^^^^                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-            while (!q.empty()) {
-                auto s = q.front();
-                if (s[0] != '-') {
-                    // parse error, reached non - starting param
-                    std::cerr << command << "\n" << "PARSE_ERROR: did you forgot to add - before parameters\n";
-                    q.pop();
+            for (auto& c : command) {
+                if (c == '"') {
+                    quotesState = !quotesState;
                     continue;
                 }
-                auto equalPos = s.find('=');
-                std::string key = s.substr(0, equalPos); // does not include the - in the beginning -> -name
-                std::string value = s.substr(equalPos + 1, s.size() - equalPos - 1); // "Police office"
-                if (*value.begin() == '"' && *value.rbegin() == '"') {
-                    value.erase(value.begin());
-                    value.erase(value.end() - 1);
-                } // Police office
-
-                params.emplace_back(key, value);
-                q.pop();
+                if (quotesState) {
+                    if (paramKeyState)
+                        params[params.size() - 1].first.push_back(c);
+                    else if (paramValueState | commandState)
+                        params[params.size() - 1].second.push_back(c);
+                    continue;
+                }
+                if (c == ' ') { // space not in quotes
+                    paramKeyState = false;
+                    paramValueState = false;
+                }
+                if (c == '-' && !paramKeyState && !paramValueState) {
+                    if (commandState) {
+                        commandState = false;
+                        // remove trailing spaces
+                        while (params[params.size() - 1].second[params[params.size() - 1].second.size() - 1] == ' ')
+                            params[params.size() - 1].second.erase(params[params.size() - 1].second.end() - 1);
+                    }
+                    paramKeyState = true;
+                    while (params[params.size() - 1].first[params[params.size() - 1].first.size() - 1] == ' ')
+                        params[params.size() - 1].first.erase(params[params.size() - 1].first.end() - 1);
+                    while (params[params.size() - 1].second[params[params.size() - 1].second.size() - 1] == ' ')
+                        params[params.size() - 1].second.erase(params[params.size() - 1].second.end() - 1);
+                    params.emplace_back("-", "");
+                    continue;
+                }
+                if (commandState) {
+                    if (params[params.size() - 1].second.empty() && c == ' ')
+                        continue;
+                    params[params.size() - 1].second.push_back(c);
+                    continue;
+                }
+                if (c == '=') {
+                    paramKeyState = false;
+                    paramValueState = true;
+                    continue;
+                }
+                if (paramKeyState)
+                    params[params.size() - 1].first.push_back(c);
+                else if (paramValueState | commandState)
+                    params[params.size() - 1].second.push_back(c);
             }
+
+            /*std::cerr << "<BEGIN>\n";
+            for (auto& p : params) {
+                std::cerr << "[" << p.first << "] -> [" << p.second << "]\n";
+            }
+            std::cerr << "<END>\n";*/
         }
 
         std::string getParamValue(const std::string& paramKey) {
@@ -89,9 +126,16 @@ namespace gfn {
             for (auto& e : params) {
                 if (first) first = false;
                 else ss << " ";
-                if (e.first != "command")
-                    ss << e.first << "=";
-                ss << e.second;
+                if (e.first != "command") {
+                    if (e.second.find(' ') != std::basic_string<char>::npos)
+                        ss << "=\"" << e.first << "\"";
+                    else
+                        ss << "=" << e.first;
+                }
+                if (e.second.find(' ') != std::basic_string<char>::npos)
+                    ss << "\"" << e.second << "\"";
+                else
+                    ss << e.second;
             }
             return ss.str();
         }

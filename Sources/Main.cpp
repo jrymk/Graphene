@@ -20,7 +20,7 @@ int main() {
     gfn::editor::startup();
 
     {
-        gfn::editor::newFile("giraffe(fixed)");
+        gfn::editor::newFile("giraffe (fixed)");
         std::string testInput = {""
                                  "7 10 "
                                  "0 1 "
@@ -33,7 +33,7 @@ int main() {
                                  "3 6 "
                                  "4 5 "
                                  "5 6 "};
-        gfn::editor::execute("cd -d=giraffe(fixed)");
+        gfn::editor::execute("cd -d=\"giraffe (fixed)\"");
         std::stringstream ss(testInput);
         int v, e;
         ss >> v >> e;
@@ -46,9 +46,9 @@ int main() {
         }
     }
     {
-        gfn::editor::newFile("kangaroo(small_tree)");
+        gfn::editor::newFile("kangaroo (small tree)");
         int c = 64;
-        gfn::editor::execute("cd -d=kangaroo(small_tree)");
+        gfn::editor::execute("cd -d=\"kangaroo (small tree)\"");
         gfn::editor::execute("mkvertex -name=" + std::to_string(0));
         for (int j = 0; j < c; j++) {
             gfn::editor::execute("mkvertex -name=" + std::to_string(j + 1));
@@ -58,9 +58,9 @@ int main() {
         }
     }
     {
-        gfn::editor::newFile("elephant(donut)");
+        gfn::editor::newFile("elephant (donut)");
         int c = 32;
-        gfn::editor::execute("cd -d=elephant(donut)");
+        gfn::editor::execute("cd -d=\"elephant (donut)\"");
         for (int i = 0; i < c; i++) {
             for (int j = 0; j < c; j++)
                 gfn::editor::execute("mkvertex -name=" + std::to_string(i) + "*" + std::to_string(j));
@@ -81,9 +81,9 @@ int main() {
         }
     }
     {
-        gfn::editor::newFile("koala(big_ass_tree)");
+        gfn::editor::newFile("koala (big ass tree)");
         int c = 1024;
-        gfn::editor::execute("cd -d=koala(big_ass_tree)");
+        gfn::editor::execute("cd -d=\"koala (big ass tree)\"");
         gfn::editor::execute("mkvertex -name=" + std::to_string(0));
         for (int j = 0; j < c; j++) {
             gfn::editor::execute("mkvertex -name=" + std::to_string(j + 1));
@@ -112,7 +112,7 @@ int main() {
         }
     }
 
-    gfn::editor::newFile("Untitled(1)");
+    gfn::editor::newFile("Untitled (1)");
 
     while (!glfwWindowShouldClose(gfn::window::glfwWindow)) {
         gfn::window::preFrame();

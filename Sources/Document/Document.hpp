@@ -82,8 +82,8 @@ namespace gfn::document {
                         auto vId = gfn::uuid::createUuid();
                         execute("mkvertex -uuid=" + vId);
                         execute("setvertexprop -uuid=" + vId +
-                                " -key=position -value=(" + std::to_string(graphview.selection.cursorCoord.x)
-                                + "," + std::to_string(graphview.selection.cursorCoord.y) + ")");
+                                " -key=position -value=\"(" + std::to_string(graphview.selection.cursorCoord.x)
+                                + ", " + std::to_string(graphview.selection.cursorCoord.y) + "\")");
                     }
                 }
             }
