@@ -9,6 +9,7 @@
 
 namespace gfn::window {
     extern GLFWwindow* glfwWindow;
+    std::string dockBuildWindow;
 
     void preFrame() {
         glfwPollEvents();
@@ -23,14 +24,26 @@ namespace gfn::window {
         ImGui::SetNextWindowViewport(viewport->ID);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-        ImGuiWindowFlags window_flags =
+        ImGuiWindowFlags dockspaceWindowFlags =
                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
                 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus |
                 ImGuiWindowFlags_NoDocking;
-        ImGui::Begin("DockSpace Demo", nullptr, window_flags);
+        ImGui::Begin("ViewportDockspace", nullptr, dockspaceWindowFlags);
+        ImGuiID viewportDockspaceId = ImGui::GetID("ViewportDockspace");
+        ImGui::DockSpace(viewportDockspaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+
+        ImGuiWindowFlags documentWindowFlags = ImGuiWindowFlags_NoCollapse;
+        ImGui::Begin("Graph View", nullptr, documentWindowFlags);
         ImGui::PopStyleVar(2);
-        ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-        ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+        ImGuiID documentDockspaceId = ImGui::GetID("DocumentDockspace");
+        ImGui::DockSpace(documentDockspaceId, ImVec2(0.0f, 0.0f),
+                         ImGuiDockNodeFlags_PassthruCentralNode);
+        // default dock for new file
+        if (!dockBuildWindow.empty()) {
+            ImGui::DockBuilderDockWindow(dockBuildWindow.c_str(), documentDockspaceId);
+            dockBuildWindow.clear();
+        }
+
         ImGui::End();
     }
 
@@ -45,4 +58,5 @@ namespace gfn::window {
 
         glfwSwapBuffers(glfwWindow);
     }
+
 } // namespace gfn::window

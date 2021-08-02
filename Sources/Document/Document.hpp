@@ -64,8 +64,7 @@ namespace gfn::document {
         void update() {
             if (!closeDocument) {
                 ImGui::SetNextWindowSizeConstraints(ImVec2(200, 200), ImVec2(FLT_MAX, FLT_MAX));
-                ImGui::Begin(displayName.c_str(), &isDocumentWindowOpen, 0);
-
+                ImGui::Begin((displayName + "###" + docId).c_str(), &isDocumentWindowOpen,  0);
                 graphview.update();
 
                 isFocused = ImGui::IsWindowFocused();
@@ -139,12 +138,12 @@ namespace gfn::document {
                     ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.5f, ImGui::GetIO().DisplaySize.y
                                                                                         * 0.5f), ImGuiCond_Appearing,
                                             ImVec2(0.5f, 0.5f));
-                    ImGui::SetNextWindowSize(ImVec2(360, 200), ImGuiCond_Appearing);
+                    ImGui::SetNextWindowSize(ImVec2(360, 150), ImGuiCond_Appearing);
 
                     ImGui::OpenPopup("Confirmation");
 
                     ImGui::BeginPopupModal("Confirmation");
-                    ImGui::Text(("Do you want to save changes to " + getFileName() + "?").c_str());
+                    ImGui::Text(("Do you want to save changes to " + displayName + "?").c_str());
                     if (ImGui::Button("Save")) {
                         execute("save -f=\"" + filePath + "\"");
                         ImGui::CloseCurrentPopup();
