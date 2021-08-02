@@ -8,6 +8,7 @@
 extern std::queue<std::string> gfn::window::dockBuildWindow;
 namespace gfn::editor {
     extern void execute(const std::string& cmd);
+
     extern gfn::preferences::Preferences preferences;
 
     std::unordered_map<gfn::Uuid, gfn::document::Document*> documents;
@@ -78,11 +79,13 @@ namespace gfn::editor {
         auto docId = newFile();
         getDocumentFromUuid(docId)->displayName = path.substr(path.find_last_of('/') + 1);
         getDocumentFromUuid(docId)->filePath = path;
+        //getDocumentFromUuid(docId)->fileSaved = true;
         execute("select -uuid=" + docId);
         execute("open -f=\"" + path + "\"");
     }
 
     void saveFile() {
+        //getActiveDocument()->fileSaved = true;
         execute("select -uuid=" + activeDocumentUuid);
         execute("save -f=\"" + getActiveDocument()->filePath + "\"");
     }
@@ -101,18 +104,21 @@ namespace gfn::editor {
             auto path = fileDialog.selected_path;
             getDocumentFromUuid(docId)->displayName = path.substr(path.find_last_of('/') + 1);
             getDocumentFromUuid(docId)->filePath = path;
+            //getDocumentFromUuid(docId)->fileSaved = true;
             execute("select -uuid=" + docId);
             execute("open -f=\"" + path + "\"");
         }
         if (fileDialog.showFileDialog("Save As File", imgui_addons::ImGuiFileBrowser::DialogMode::SAVE,
                                       ImVec2(700, 310), ".gfn")) {
             isSavingAsFile = false;
-            auto docId = newFile();
+            execute("select -uuid=" + saveAsFileId);
+            execute("save -f=\"" + fileDialog.selected_path + "\"");
+
             auto path = fileDialog.selected_path;
-            getDocumentFromUuid(docId)->displayName = path.substr(path.find_last_of('/') + 1);
-            getDocumentFromUuid(docId)->filePath = path;
-            execute("select -uuid=" + docId);
-            execute("save -f=\"" + path + "\"");
+            getDocumentFromUuid(saveAsFileId)->displayName = path.substr(path.find_last_of('/') + 1);
+            getDocumentFromUuid(saveAsFileId)->filePath = path;
+            //getDocumentFromUuid(docId)->fileSaved = true;
+            execute("open -f=\"" + fileDialog.selected_path + "\"");
         }
     }
 
