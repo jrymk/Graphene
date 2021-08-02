@@ -114,6 +114,21 @@ namespace gfn::editor {
         }
     }
 
+    void loadDragAndDrop(int argc, char* argv[]) {
+        bool haveDragNDrop = false;
+        for (int f = 1; f < argc; f++) {
+            std::string arg(argv[f]);
+            std::replace(arg.begin(), arg.end(), '\\', '/');
+            if (arg.substr(arg.find_last_of('.')) == ".gfn") {
+                haveDragNDrop = true;
+                openFileWithPath(arg);
+            }
+        }
+        // if no files are dragged into the executable, open an untitled document
+        if (!haveDragNDrop)
+            gfn::editor::newFile();
+    }
+
     void terminate() {
         for (auto& d : documents)
             d.second->terminate();

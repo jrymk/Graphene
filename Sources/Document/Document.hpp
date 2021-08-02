@@ -71,6 +71,10 @@ namespace gfn::document {
                 isFocused = ImGui::IsWindowFocused();
 
                 if (isFocused) {
+                    ImGui::SetCursorPos(ImVec2(200, 200));
+                    ImGui::Text("Focused");
+                }
+                if (isFocused) {
                     if (!graphview.selection.leftMouseUpVertex.empty()) {
                         execute("mkedge -u=" + graphview.selection.leftMouseDownVertex + " -v=" +
                                 graphview.selection.leftMouseUpVertex);

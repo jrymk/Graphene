@@ -18,22 +18,8 @@
 
 int main(int argc, char* argv[]) {
     gfn::window::launchWindow();
-
     gfn::editor::startup();
-
-
-
-    bool haveDragNDrop = false;
-    for (int f = 1; f < argc; f++) {
-        std::string arg(argv[f]);
-        std::replace(arg.begin(), arg.end(), '\\', '/');
-        if (arg.substr(arg.find_last_of('.')) == ".gfn") {
-            haveDragNDrop = true;
-            gfn::editor::openFileWithPath(arg);
-        }
-    }
-    if (!haveDragNDrop)
-        gfn::editor::newFile();
+    gfn::editor::loadDragAndDrop(argc, argv);
 
     while (!glfwWindowShouldClose(gfn::window::glfwWindow)) {
         gfn::window::preFrame();
@@ -121,17 +107,17 @@ int main(int argc, char* argv[]) {
             ImGui::SliderFloat("c5", &c5, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
             ImGui::SliderFloat("c6", &c6, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
             if (c1p != c1)
-                gfn::editor::execute("constant -c1=" + std::to_string(c1));
+                gfn::editor::execute("configs -c1=" + std::to_string(c1));
             if (c2p != c2)
-                gfn::editor::execute("constant -c2=" + std::to_string(c2));
+                gfn::editor::execute("configs -c2=" + std::to_string(c2));
             if (c3p != c3)
-                gfn::editor::execute("constant -c3=" + std::to_string(c3));
+                gfn::editor::execute("configs -c3=" + std::to_string(c3));
             if (c4p != c4)
-                gfn::editor::execute("constant -c4=" + std::to_string(c4));
+                gfn::editor::execute("configs -c4=" + std::to_string(c4));
             if (c5p != c5)
-                gfn::editor::execute("constant -c5=" + std::to_string(c5));
+                gfn::editor::execute("configs -c5=" + std::to_string(c5));
             if (c6p != c6)
-                gfn::editor::execute("constant -c6=" + std::to_string(c6));
+                gfn::editor::execute("configs -c6=" + std::to_string(c6));
             c1p = c1;
             c2p = c2;
             c3p = c3;

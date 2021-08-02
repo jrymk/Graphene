@@ -25,7 +25,7 @@ namespace gfn::props {
                 endVertexUuid("endVertexUuid"),
                 endVertexPosition("endVertexPosition"),
                 edgeFillColor("edgeFillColor", IM_COL32(0, 0, 0, 255)),
-                thickness("thickness", 0.3) {
+                thickness("thickness", 3.0) {
         }
 
         ///@brief serializes edge props data into binary form, remember to free the buffer after read
