@@ -7,6 +7,7 @@
 
 namespace gfn::editor {
     extern void execute(const std::string& cmd);
+
     extern gfn::preferences::Preferences preferences;
 
     std::unordered_map<gfn::Uuid, gfn::document::Document*> documents;
@@ -35,13 +36,13 @@ namespace gfn::editor {
         // document focus
         _onFocusDocument = false;
         for (auto& d : documents) {
-            if (d.second->isFocused && activeDocumentUuid != d.second->docId) {
+            if (d.second->isFocused)
                 activeDocumentUuid = d.second->docId;
+            if (d.second->isFocused && activeDocumentUuid != d.second->docId)
                 _onFocusDocument = true;
-            }
-            if (getActiveDocument())
-                getActiveDocument()->isFocused = true;
         }
+        if (getActiveDocument())
+            getActiveDocument()->isFocused = true;
 
         // document close handling
         // the close confirmation and state is handled by the document itself
