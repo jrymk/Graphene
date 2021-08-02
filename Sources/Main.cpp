@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
     while (!glfwWindowShouldClose(gfn::window::glfwWindow)) {
         gfn::window::preFrame();
 
-        //ImGui::ShowDemoWindow();
+        ImGui::ShowDemoWindow();
         ImGui::ShowMetricsWindow();
 
         auto fDoc = gfn::editor::getActiveDocument();
@@ -33,13 +33,13 @@ int main(int argc, char* argv[]) {
 
         if (ImGui::Button("New file"))
             gfn::editor::newFile();
-
+        ImGui::SameLine();
         if (ImGui::Button("Open file")) {
             ImGui::OpenPopup("Open File");
             gfn::editor::openFile();
         }
-
         if (!gfn::editor::activeDocumentUuid.empty()) {
+            ImGui::SameLine();
             if (gfn::editor::getActiveDocument()->filePath.empty()) {
                 ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
                 ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(200, 200, 200, 255));
@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
                 ImGui::PopItemFlag();
                 ImGui::PopStyleColor(1);
             }
-
+            ImGui::SameLine();
             if (ImGui::Button("Save As File")) {
                 gfn::editor::saveAsFile(gfn::editor::activeDocumentUuid);
                 ImGui::OpenPopup("Save As File");
