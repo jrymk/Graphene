@@ -63,6 +63,7 @@ int main(int argc, char* argv[]) {
 
         //if (gfn::editor::isSavingAsFile)
 
+        static gfn::Uuid prevActiveDocId;
         if (fDoc) {
             static float c1p;
             static float c2p;
@@ -70,7 +71,8 @@ int main(int argc, char* argv[]) {
             static float c4p;
             static float c5p;
             static float c6p;
-            if (gfn::editor::_onFocusDocument) {
+            if (prevActiveDocId != fDoc->docId) {
+                prevActiveDocId = fDoc->docId;
                 c1p = float(fDoc->interface.configs.getRead()->c1.value);
                 c2p = float(fDoc->interface.configs.getRead()->c2.value);
                 c3p = float(fDoc->interface.configs.getRead()->c3.value);
