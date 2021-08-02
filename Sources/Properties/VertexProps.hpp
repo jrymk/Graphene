@@ -20,7 +20,7 @@ namespace gfn::props {
                         enabled("enabled", false),
                         position("position"),
                         vertexFillColor("vertexFillColor", IM_COL32(255, 211, 0, 255)),
-                        radius("radius", 5.0),
+                        radius("radius", 0.5),
                         force("force", gfn::Vec2f(0.0, 0.0)),
                         pauseUpdate("pauseUpdate", false),
                         component("component", ""),
