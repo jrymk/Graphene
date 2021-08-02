@@ -6,10 +6,11 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <queue>
 
 namespace gfn::window {
     extern GLFWwindow* glfwWindow;
-    std::string dockBuildWindow;
+    std::queue<std::string> dockBuildWindow;
 
     void preFrame() {
         glfwPollEvents();
@@ -39,9 +40,9 @@ namespace gfn::window {
         ImGui::DockSpace(documentDockspaceId, ImVec2(0.0f, 0.0f),
                          ImGuiDockNodeFlags_PassthruCentralNode);
         // default dock for new file
-        if (!dockBuildWindow.empty()) {
-            ImGui::DockBuilderDockWindow(dockBuildWindow.c_str(), documentDockspaceId);
-            dockBuildWindow.clear();
+        while (!dockBuildWindow.empty()) {
+            ImGui::DockBuilderDockWindow(dockBuildWindow.front().c_str(), documentDockspaceId);
+            dockBuildWindow.pop();
         }
 
         ImGui::End();

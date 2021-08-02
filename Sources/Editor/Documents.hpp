@@ -5,7 +5,7 @@
 #include <Objects/Uuid.hpp>
 #include <ImGuiFileBrowser.h>
 
-extern std::string gfn::window::dockBuildWindow;
+extern std::queue<std::string> gfn::window::dockBuildWindow;
 namespace gfn::editor {
     extern void execute(const std::string& cmd);
     extern gfn::preferences::Preferences preferences;
@@ -66,7 +66,7 @@ namespace gfn::editor {
         auto docId = gfn::uuid::createUuid();
         auto document = new gfn::document::Document("Untitled (" + std::to_string(untitledCounter) + ")",
                                                     docId, &preferences);
-        gfn::window::dockBuildWindow = "Untitled (" + std::to_string(untitledCounter) + ")" + "###" + docId;
+        gfn::window::dockBuildWindow.push("Untitled (" + std::to_string(untitledCounter) + ")" + "###" + docId);
         untitledCounter++;
         documents.insert({docId, document});
         return docId;

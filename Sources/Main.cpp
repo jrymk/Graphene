@@ -24,15 +24,6 @@ int main(int argc, char* argv[]) {
     while (!glfwWindowShouldClose(gfn::window::glfwWindow)) {
         gfn::window::preFrame();
 
-        ImGui::Begin("Dear ImGui Backend Checker");
-
-        ImGuiIO& io = ImGui::GetIO();
-        ImGui::Text("Dear ImGui %s Backend Checker", ImGui::GetVersion());
-        ImGui::Text("io.BackendPlatformName: %s", io.BackendPlatformName ? io.BackendPlatformName : "NULL");
-        ImGui::Text("io.BackendRendererName: %s", io.BackendRendererName ? io.BackendRendererName : "NULL");
-        ImGui::Separator();
-
-
         //ImGui::ShowDemoWindow();
         ImGui::ShowMetricsWindow();
 
@@ -47,7 +38,6 @@ int main(int argc, char* argv[]) {
             ImGui::OpenPopup("Open File");
             gfn::editor::openFile();
         }
-
 
         if (!gfn::editor::activeDocumentUuid.empty()) {
             if (gfn::editor::getActiveDocument()->filePath.empty()) {
@@ -67,16 +57,11 @@ int main(int argc, char* argv[]) {
             }
         }
 
+        ImGui::Separator();
+
         //if (gfn::editor::isOpeningFile)
 
         //if (gfn::editor::isSavingAsFile)
-
-        if (fDoc) {
-            ImGui::Text(("Focused document: " + fDoc->filePath).c_str());
-            ImGui::Text((fDoc->docId).c_str());
-        } else {
-            ImGui::Text("Focused document: NULL");
-        }
 
         if (fDoc) {
             static float c1p;
