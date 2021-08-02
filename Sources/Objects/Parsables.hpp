@@ -10,6 +10,7 @@
 #include <sstream>
 #include <iomanip>
 #include <json.hpp>
+#include <binn.h>
 
 // these are containers that can work with string keys and string values, for loading up save files and configs from
 // file or set and read from the command line
@@ -24,14 +25,6 @@ namespace gfn::parsables {
         Uuid(const std::string& key, const gfn::Uuid& value) : key(key), value(value) {}
 
         gfn::Uuid& get() { return value; }
-
-        void serialize(nlohmann::json& j) {
-            j[key] = value;
-        }
-
-        void deserialize(nlohmann::json& j) {
-            value = j[key].get<std::string>();
-        }
 
         void getValueStr(gfn::Command& output) {
             output.newParam("-value", value);
@@ -61,14 +54,6 @@ namespace gfn::parsables {
         Bool(const std::string& key, const bool& value) : key(key), value(value) {}
 
         bool& get() { return value; }
-
-        void serialize(nlohmann::json& j) {
-            j[key] = value;
-        }
-
-        void deserialize(nlohmann::json& j) {
-            value = j[key].get<bool>();
-        }
 
         void getValueStr(gfn::Command& output) {
             output.newParam("-value", (value ? "true" : "false"));
@@ -101,14 +86,6 @@ namespace gfn::parsables {
         Int(const std::string& key, const int& value) : key(key), value(value) {}
 
         int& get() { return value; }
-
-        void serialize(nlohmann::json& j) {
-            j[key] = value;
-        }
-
-        void deserialize(nlohmann::json& j) {
-            value = j[key].get<int>();
-        }
 
         void getValueStr(gfn::Command& output) {
             output.newParam("-value", std::to_string(value));
@@ -147,14 +124,6 @@ namespace gfn::parsables {
 
         double& get() { return value; }
 
-        void serialize(nlohmann::json& j) {
-            j[key] = value;
-        }
-
-        void deserialize(nlohmann::json& j) {
-            value = j[key].get<double>();
-        }
-
         void getValueStr(gfn::Command& output) {
             output.newParam("-value", std::to_string(value));
         }
@@ -191,16 +160,6 @@ namespace gfn::parsables {
         Vec2f(const std::string& key, const gfn::Vec2f& value) : key(key), value(value) {}
 
         gfn::Vec2f& get() { return value; }
-
-        void serialize(nlohmann::json& j) {
-            j[key]["x"] = value.x;
-            j[key]["y"] = value.y;
-        }
-
-        void deserialize(nlohmann::json& j) {
-            value.x = j[key]["x"].get<double>();
-            value.y = j[key]["y"].get<double>();
-        }
 
         void getValueStr(gfn::Command& output) {
             output.newParam("-value", "(" + std::to_string(value.x) + "," + std::to_string(value.y) + ")");
@@ -260,20 +219,6 @@ namespace gfn::parsables {
         Color(const std::string& key, const ImU32& value) : key(key), value(value) {}
 
         ImU32& get() { return value; }
-
-        void serialize(nlohmann::json& j) {
-            std::stringstream ss;
-            std::string hexStr;
-            ss << value;
-            ss >> std::setw(8) >> std::setfill('0') >> std::hex >> hexStr;
-            j[key] = hexStr;
-        }
-
-        void deserialize(nlohmann::json& j) {
-            std::stringstream ss;
-            ss << std::hex << j[key].get<std::string>();
-            ss >> value;
-        }
 
         void getValueStr(gfn::Command& output) {
             ImVec4 rgba = ImGui::ColorConvertU32ToFloat4(value);

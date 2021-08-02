@@ -108,11 +108,11 @@ namespace gfn::editor::graphview {
                 middleMousePosDelta = gfn::Vec2f(0.0, 0.0);
             }
             if (!leftMouseDownVertex.empty())
-                leftMousePosDelta = gfn::Vec2f(camera->rMap(io.MouseDelta.x), camera->rMap(io.MouseDelta.y));
+                leftMousePosDelta += gfn::Vec2f(camera->rMap(io.MouseDelta.x), -camera->rMap(io.MouseDelta.y));
             if (!rightMouseDownVertex.empty())
-                rightMousePosDelta = gfn::Vec2f(camera->rMap(io.MouseDelta.x), camera->rMap(io.MouseDelta.y));
+                rightMousePosDelta += gfn::Vec2f(camera->rMap(io.MouseDelta.x), -camera->rMap(io.MouseDelta.y));
             if (!middleMouseDownVertex.empty())
-                middleMousePosDelta = gfn::Vec2f(camera->rMap(io.MouseDelta.x), camera->rMap(io.MouseDelta.y));
+                middleMousePosDelta += gfn::Vec2f(camera->rMap(io.MouseDelta.x), -camera->rMap(io.MouseDelta.y));
 
             if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
                 leftMouseUpVertex = hoveredVertex;

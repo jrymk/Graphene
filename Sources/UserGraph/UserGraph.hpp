@@ -17,11 +17,11 @@ namespace gfn::usergraph {
         gfn::props::Properties* properties;
 
     public:
-        UserGraph() {}
+        UserGraph() = default;
 
         bool pendingUpdate = true;
 
-        void bindLogBuffer(gfn::logging::LogBuffer* logBuffer) { this->logBuffer = logBuffer; }
+        void bindLogBuffer(gfn::logging::LogBuffer* _logBuffer) {logBuffer = _logBuffer; }
 
         void bindProperties(gfn::props::Properties* _properties) { properties = _properties; }
 
@@ -29,22 +29,56 @@ namespace gfn::usergraph {
             return adjList;
         }
 
-        bool tryParse(gfn::Command command, gfn::Command& output) {
-            auto cmd = command.getParamValue("command");
-            if (cmd == "mkvertex") {
-                addVertex(command, output);
-                return true;
-            } else if (cmd == "rmvertex") {
-                removeVertex(command, output);
-                return true;
-            } else if (cmd == "mkedge") {
-                addEdge(command, output);
-                return true;
-            } else if (cmd == "rmedge") {
-                removeEdge(command, output);
-                return true;
+        void serialize(binn* document) {
+            binn* uList = binn_list();
+            for (const auto& u : adjList) {
+                binn* uObj = binn_object();
+                binn_object_set_str(uObj, "uUuid", std::string(u.first).data());
+                binn* vList = binn_list();
+                for (const auto& v : u.second) {
+                    binn* vObj = binn_object();
+                    binn_object_set_str(vObj, "vUuid", std::string(v.first).data());
+                    binn* eList = binn_list();
+                    for (auto e : v.second)
+                        binn_list_add_str(eList, e.data());
+                    binn_object_set_list(vObj, "edges", eList);
+                    binn_free(eList);
+                    binn_list_add_object(vList, vObj);
+                    binn_free(vObj);
+                }
+                binn_object_set_list(uObj, "adjV", vList);
+                binn_free(vList);
+                binn_list_add_object(uList, uObj);
+                binn_free(uObj);
             }
-            return false;
+            binn_object_set_list(document, "adjList", uList);
+            binn_free(uList);
+        }
+
+        void deserialize(void* document) {
+            adjList.clear();
+            void* uList = binn_object_list(document, "adjList");
+            auto uCount = binn_count(uList);
+            for (int u = 1; u <= uCount; u++) {
+                void* uObj = binn_list_object(uList, u);
+                std::pair<gfn::Uuid, std::unordered_map<gfn::Uuid, std::unordered_set<gfn::Uuid>>> uStruct;
+                uStruct.first = binn_object_str(uObj, "uUuid");
+                void* vList = binn_object_list(uObj, "adjV");
+                auto vCount = binn_count(vList);
+                for (int v = 1; v <= vCount; v++) {
+                    void* vObj = binn_list_object(vList, v);
+                    std::pair<gfn::Uuid, std::unordered_set<gfn::Uuid>> vStruct;
+                    vStruct.first = binn_object_str(vObj, "vUuid");
+                    void* eList = binn_object_list(vObj, "edges");
+                    auto eCount = binn_count(eList);
+                    for (int e = 1; e <= eCount; e++)
+                        vStruct.second.insert(binn_list_str(eList, e));
+                    uStruct.second.insert(vStruct);
+                }
+                adjList.insert(uStruct);
+            }
+            validateProps(true);
+            pendingUpdate = true;
         }
 
         ///@brief Recommended to be called upon graph update, this function checks for missing props from Properties

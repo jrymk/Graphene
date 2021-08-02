@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Objects/Parsables.hpp>
-#include <json.hpp>
+#include <binn.h>
 
 namespace gfn::props {
     ///@brief Edge properties that will be copied to the rendering thread / properties for the end user
@@ -28,28 +28,36 @@ namespace gfn::props {
                 thickness("thickness", 0.3) {
         }
 
-        void serialize(nlohmann::json& j) {
-            edgeUuid.serialize(j);
-            enabled.serialize(j);
-            position.serialize(j);
-            startVertexUuid.serialize(j);
-            startVertexPosition.serialize(j);
-            endVertexUuid.serialize(j);
-            endVertexPosition.serialize(j);
-            edgeFillColor.serialize(j);
-            thickness.serialize(j);
+        ///@brief serializes edge props data into binary form, remember to free the buffer after read
+        void serialize(binn* object) {
+            binn_object_set_str(object, edgeUuid.key.c_str(), edgeUuid.value.data());
+            binn_object_set_bool(object, enabled.key.c_str(), enabled.value);
+            binn_object_set_double(object, (position.key + ".x").c_str(), position.value.x);
+            binn_object_set_double(object, (position.key + ".y").c_str(), position.value.y);
+            binn_object_set_str(object, startVertexUuid.key.c_str(), startVertexUuid.value.data());
+            binn_object_set_double(object, (startVertexPosition.key + ".x").c_str(), startVertexPosition.value.x);
+            binn_object_set_double(object, (startVertexPosition.key + ".y").c_str(), startVertexPosition.value.y);
+            binn_object_set_str(object, endVertexUuid.key.c_str(), endVertexUuid.value.data());
+            binn_object_set_double(object, (endVertexPosition.key + ".x").c_str(), endVertexPosition.value.x);
+            binn_object_set_double(object, (endVertexPosition.key + ".y").c_str(), endVertexPosition.value.y);
+            binn_object_set_int32(object, edgeFillColor.key.c_str(), edgeFillColor.value);
+            binn_object_set_double(object, thickness.key.c_str(), thickness.value);
         }
 
-        void deserialize(nlohmann::json& j) {
-            edgeUuid.deserialize(j);
-            enabled.deserialize(j);
-            position.deserialize(j);
-            startVertexUuid.deserialize(j);
-            startVertexPosition.deserialize(j);
-            endVertexUuid.deserialize(j);
-            endVertexPosition.deserialize(j);
-            edgeFillColor.deserialize(j);
-            thickness.deserialize(j);
+        ///@brief deserializes binn binary data into edge props
+        void deserialize(void* object) {
+            edgeUuid.value = binn_object_str(object, edgeUuid.key.c_str());
+            enabled.value = binn_object_bool(object, enabled.key.c_str());
+            position.value.x = binn_object_double(object, (position.key + ".x").c_str());
+            position.value.y = binn_object_double(object, (position.key + ".y").c_str());
+            startVertexUuid.value = binn_object_str(object, startVertexUuid.key.c_str());
+            startVertexPosition.value.x = binn_object_double(object, (startVertexPosition.key + ".x").c_str());
+            startVertexPosition.value.y = binn_object_double(object, (startVertexPosition.key + ".y").c_str());
+            endVertexUuid.value = binn_object_str(object, endVertexUuid.key.c_str());
+            endVertexPosition.value.x = binn_object_double(object, (endVertexPosition.key + ".x").c_str());
+            endVertexPosition.value.y = binn_object_double(object, (endVertexPosition.key + ".y").c_str());
+            edgeFillColor.value = binn_object_int32(object, edgeFillColor.key.c_str());
+            thickness.value = binn_object_double(object, thickness.key.c_str());
         }
 
         void get(const std::string& key, gfn::Command& output) {

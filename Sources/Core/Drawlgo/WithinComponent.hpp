@@ -71,14 +71,18 @@ namespace gfn::core::drawlgo {
         /*for (auto& e : c->edges)
             e->props->force = gfn::Vec2f(0.0, 0.0);*/
 
-        for (auto& u : c->vertices)
-            updateVertex(configs, c, u);
+        for (auto& u : c->vertices) {
+            if (!u->props->pauseUpdate.value)
+                updateVertex(configs, c, u);
+        }
         /*for (auto& e : c->edges)
             updateEdge(configs, c, e);*/
 
         // flush move
-        for (auto& u : c->vertices)
-            u->props->position.value += u->props->force.value * configs->c4.value;
+        for (auto& u : c->vertices) {
+            if (!u->props->pauseUpdate.value)
+                u->props->position.value += u->props->force.value * configs->c4.value;
+        }
         /*for (auto& e : c->edges)
             e->props->position += e->props->force * configs->c4;*/
 
@@ -101,16 +105,20 @@ namespace gfn::core::drawlgo {
 
         thread_pool::ThreadPool thread_pool{};
         std::vector<std::future<void>> futures;
-        for (auto& u : c->vertices)
-            futures.emplace_back(thread_pool.Submit(updateVertex, configs, c, u));
+        for (auto& u : c->vertices) {
+            if (!u->props->pauseUpdate.value)
+                futures.emplace_back(thread_pool.Submit(updateVertex, configs, c, u));
+        }
         /* for (auto& e : c->edges)
-             futures.emplace_back(thread_pool.Submit(updateEdge, configs, c, e));*/
+         futures.emplace_back(thread_pool.Submit(updateEdge, configs, c, e));*/
         for (auto& it : futures)
             it.wait();
 
-        for (auto& u : c->vertices)
-            u->props->position.value += u->props->force.value * configs->c4.value;
-
+        for (auto& u : c->vertices) {
+            if (!u->props->pauseUpdate.value)
+                u->props->position.value += u->props->force.value * configs->c4.value;
+        }
+        
         for (auto& e : c->edges) {
             e->props->startVertexPosition = e->startVertex->props->position;
             e->props->endVertexPosition = e->endVertex->props->position;

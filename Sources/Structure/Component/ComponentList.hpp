@@ -27,6 +27,11 @@ namespace gfn::structure {
         std::unordered_set<Edge*> edges;
         std::unordered_set<Component*> components;
 
+        ComponentList(gfn::usergraph::UserGraph* _usergraph, gfn::props::Properties* _properties) :
+                usergraph(_usergraph),
+                properties(_properties) {
+        }
+
         ~ComponentList() {
             for (auto& v : vertices)
                 delete v;
@@ -36,17 +41,12 @@ namespace gfn::structure {
                 delete c;
         }
 
-        void bindSource(gfn::usergraph::UserGraph* _usergraph, gfn::props::Properties* _properties) {
-            usergraph = _usergraph;
-            properties = _properties;
-        }
-
         std::unordered_set<Component*>& getComponents() { return components; }
 
         /// @brief Constructs all components from UserGraph (must run in sync with core cycle)
         /// @param usergraph the source graph where the components are constructed from
         void componentify() {
-            std::cerr << "componentifying\n";
+            //std::cerr << "componentifying\n";
             // no props validation here, as this function is the one that actually creates props
             for (auto& v : vertices)
                 delete v;
@@ -161,17 +161,12 @@ namespace gfn::structure {
             for (auto& c : components) {
                 logMessage << "     {" << c->uuid << "}";
                 logVerbose;
-                c->root->props->componentCentroidPosition.value = gfn::Vec2f(0.0, 0.0);
                 for (auto& v : c->getAdjList()) {
                     logMessage << "        {" << v.first->props->uuid.value << "}";
                     logVerbose;
                     v.first->props->isComponentRoot.value = false;
                     v.first->props->component.value = c->uuid;
-                    c->root->props->componentCentroidPosition.value += v.first->props->position.value;
                 }
-                c->root->props->componentCentroidPosition.value /= double(c->getAdjList().size());
-                logMessage << "       at position " << c->root->props->componentCentroidPosition.value;
-                logVerbose;
                 c->root->props->isComponentRoot.value = true;
             }
 
@@ -206,7 +201,7 @@ namespace gfn::structure {
         }
 
         void updateEdgeStartEndPositions() {
-            for (auto &e : edges) {
+            for (auto& e : edges) {
 
             }
         }

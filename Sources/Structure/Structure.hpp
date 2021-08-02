@@ -18,6 +18,10 @@ namespace gfn::structure {
     class Structure {
     public:
         ComponentList componentList;
+
+        Structure(gfn::usergraph::UserGraph* usergraph, gfn::props::Properties* properties) :
+                componentList(usergraph, properties) {
+        }
     };
 
 } // namespace gfn::core::structure

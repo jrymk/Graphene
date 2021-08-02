@@ -14,14 +14,14 @@
 // updater is such a bad name, I need a new one
 namespace gfn::core::drawlgo {
     class Drawlgo {
-        // optimize performance by measuring four multithreading modes every 5 seconds
-        int multiThreadingMode = 3;
+        // optimize performance by measuring four multithreading modes every 30 seconds
+        int multiThreadingMode = 2;
         gfn::timer::Timer performanceCheckTimer;
 
     public:
         void update(gfn::configs::Configs* configs, gfn::structure::Structure* structure,
                     gfn::props::Properties* properties) {
-            if (performanceCheckTimer.getSeconds() >= 5.0) {
+            if (performanceCheckTimer.getSeconds() >= 60.0) {
                 // MULTITHREADING MODE 0
                 gfn::timer::Timer cMvM;
                 {

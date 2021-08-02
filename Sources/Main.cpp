@@ -1,3 +1,5 @@
+#define TSK_WIN32
+
 #include <stdio.h>
 #include <string>
 #include <iostream>
@@ -12,14 +14,14 @@
 #include <Document/Document.hpp>
 #include <Preferences/Preferences.hpp>
 #include <Editor/EditorManager.hpp>
-#include <json.hpp>
+#include <binn.h>
 
-int main() {
+int main(int argc, char* argv[]) {
     gfn::window::launchWindow();
 
     gfn::editor::startup();
 
-    {
+    /*{
         gfn::editor::newFile("giraffe (fixed)");
         std::string testInput = {""
                                  "7 10 "
@@ -33,7 +35,7 @@ int main() {
                                  "3 6 "
                                  "4 5 "
                                  "5 6 "};
-        gfn::editor::execute("cd -d=\"giraffe (fixed)\"");
+        gfn::editor::execute("cd -file=\"giraffe (fixed)\"");
         std::stringstream ss(testInput);
         int v, e;
         ss >> v >> e;
@@ -48,7 +50,7 @@ int main() {
     {
         gfn::editor::newFile("kangaroo (small tree)");
         int c = 64;
-        gfn::editor::execute("cd -d=\"kangaroo (small tree)\"");
+        gfn::editor::execute("cd -file=\"kangaroo (small tree)\"");
         gfn::editor::execute("mkvertex -name=" + std::to_string(0));
         for (int j = 0; j < c; j++) {
             gfn::editor::execute("mkvertex -name=" + std::to_string(j + 1));
@@ -60,7 +62,7 @@ int main() {
     {
         gfn::editor::newFile("elephant (donut)");
         int c = 32;
-        gfn::editor::execute("cd -d=\"elephant (donut)\"");
+        gfn::editor::execute("cd -file=\"elephant (donut)\"");
         for (int i = 0; i < c; i++) {
             for (int j = 0; j < c; j++)
                 gfn::editor::execute("mkvertex -name=" + std::to_string(i) + "*" + std::to_string(j));
@@ -83,7 +85,7 @@ int main() {
     {
         gfn::editor::newFile("koala (big ass tree)");
         int c = 1024;
-        gfn::editor::execute("cd -d=\"koala (big ass tree)\"");
+        gfn::editor::execute("cd -file=\"koala (big ass tree)\"");
         gfn::editor::execute("mkvertex -name=" + std::to_string(0));
         for (int j = 0; j < c; j++) {
             gfn::editor::execute("mkvertex -name=" + std::to_string(j + 1));
@@ -95,7 +97,7 @@ int main() {
     {
         gfn::editor::newFile("graphene");
         int c = 32;
-        gfn::editor::execute("cd -d=graphene");
+        gfn::editor::execute("cd -file=graphene");
         for (int i = 0; i < c; i++) {
             for (int j = 0; j < c; j++)
                 gfn::editor::execute("mkvertex -name=" + std::to_string(i) + "*" + std::to_string(j));
@@ -110,9 +112,19 @@ int main() {
                                      std::to_string(j + 1) + "*" + std::to_string(i));
             }
         }
-    }
+    }*/
 
-    gfn::editor::newFile("Untitled (1)");
+    bool haveDragNDrop = false;
+    for (int f = 1; f < argc; f++) {
+        std::string arg(argv[f]);
+        std::replace(arg.begin(), arg.end(), '\\', '/');
+        if (arg.substr(arg.find_last_of('.')) == ".gfn") {
+            haveDragNDrop = true;
+            gfn::editor::openFileWithPath(arg);
+        }
+    }
+    if (!haveDragNDrop)
+        gfn::editor::newFile();
 
     while (!glfwWindowShouldClose(gfn::window::glfwWindow)) {
         gfn::window::preFrame();
@@ -120,45 +132,49 @@ int main() {
         //ImGui::ShowDemoWindow();
         ImGui::ShowMetricsWindow();
 
-        gfn::editor::update();
-
-        // gfn::editor::logs::show();
-
-        // auto stat = interface.properties.getOutpaceStatistics();
-        // static int v;
-
-        // if (!interface.properties.isReadBufferRead())
-        //    v = stat.second - stat.first;
-        // preferences.getKeyBind().showEnrollPopup(gfn::keybind::ACTION_CAMERA_PAN);
+        auto fDoc = gfn::editor::docFind(gfn::editor::focusedDocument);
 
         ImGui::Begin("Command centre");
 
         if (ImGui::Button("New file"))
-            gfn::editor::newFile(gfn::uuid::createUuid());
+            gfn::editor::newFile();
 
-        if (gfn::editor::focusedDocument) {
-            if (ImGui::Button("Save file (output to terminal)"))
-                gfn::editor::saveFile(gfn::editor::focusedDocument);
+        if (ImGui::Button("Open file")) {
+            ImGui::OpenPopup("Open File");
+            gfn::editor::openFile();
         }
 
 
-        if (gfn::editor::focusedDocument)
-            ImGui::Text(("Focused document: " + gfn::editor::focusedDocument->documentUuid).c_str());
+        if (!gfn::editor::focusedDocument.empty()) {
+            if (gfn::editor::docFind(gfn::editor::focusedDocument)->filePath.empty()) {
+                ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+                ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(200, 200, 200, 255));
+            }
+            if (ImGui::Button("Save File"))
+                gfn::editor::saveFile();
+            if (gfn::editor::docFind(gfn::editor::focusedDocument)->filePath.empty()) {
+                ImGui::PopItemFlag();
+                ImGui::PopStyleColor(1);
+            }
 
-        /*ImGui::PushStyleColor(ImGuiCol_SliderGrab, IM_COL32(255, 255, 255, 255));
-        if (v > 0)
-            ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(200, 255, 200, 255));
-        else if (v == 0)
-            ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(255, 255, 200, 255));
-        else
-            ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(255, 200, 200, 255));
+            if (ImGui::Button("Save As File")) {
+                gfn::editor::saveAsFile(gfn::editor::focusedDocument);
+                ImGui::OpenPopup("Save As File");
+            }
+        }
 
-        ImGui::SliderInt("Thread outpace", &v, -10000000, 10000000, "%d",
-                         ImGuiSliderFlags_Logarithmic | ImGuiSliderFlags_NoInput);
+        //if (gfn::editor::isOpeningFile)
 
-        ImGui::PopStyleColor(2);*/
+        //if (gfn::editor::isSavingAsFile)
 
-        if (gfn::editor::focusedDocument) {
+        if (fDoc) {
+            ImGui::Text(("Focused document: " + fDoc->filePath).c_str());
+            ImGui::Text((fDoc->docId).c_str());
+        } else {
+            ImGui::Text("Focused document: NULL");
+        }
+
+        if (fDoc) {
             static float c1p;
             static float c2p;
             static float c3p;
@@ -166,14 +182,14 @@ int main() {
             static float c5p;
             static float c6p;
             if (gfn::editor::onFocusDocument) {
-                c1p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c1.value);
-                c2p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c2.value);
-                c3p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c3.value);
-                c4p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c4.value);
-                c5p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c5.value);
-                c6p = float(gfn::editor::focusedDocument->interface.configs.getRead()->c6.value);
+                c1p = float(fDoc->interface.configs.getRead()->c1.value);
+                c2p = float(fDoc->interface.configs.getRead()->c2.value);
+                c3p = float(fDoc->interface.configs.getRead()->c3.value);
+                c4p = float(fDoc->interface.configs.getRead()->c4.value);
+                c5p = float(fDoc->interface.configs.getRead()->c5.value);
+                c6p = float(fDoc->interface.configs.getRead()->c6.value);
             }
-            gfn::editor::focusedDocument->interface.configs.readDone();
+            fDoc->interface.configs.readDone();
             float c1 = c1p;
             float c2 = c2p;
             float c3 = c3p;
@@ -206,11 +222,10 @@ int main() {
             c6p = c6;
         }
 
-        auto doc = gfn::editor::focusedDocument;
-        if (doc) {
+        if (fDoc) {
             if (ImGui::TreeNode("UserGraph adjacency list")) {
                 if (ImGui::TreeNode("Vertices")) {
-                    auto g = doc->interface.usergraph.getRead();
+                    auto g = fDoc->interface.usergraph.getRead();
                     for (auto& u : g->getAdjList()) {
                         if (ImGui::TreeNode(u.first.c_str())) {
                             for (auto& v : u.second) {
@@ -230,7 +245,7 @@ int main() {
             }
             if (ImGui::TreeNode("Properties")) {
                 if (ImGui::TreeNode("Vertices")) {
-                    for (auto& v : doc->interface.properties.getRead()->getVertexPropList()) {
+                    for (auto& v : fDoc->interface.properties.getRead()->getVertexPropList()) {
                         if (ImGui::TreeNode(v.first.c_str())) {
                             ImGui::Text(("enabled: " + std::string(v.second.enabled.value ? "true" : "false")).c_str());
                             ImGui::TreePop();
@@ -239,7 +254,7 @@ int main() {
                     ImGui::TreePop();
                 }
                 if (ImGui::TreeNode("Edges")) {
-                    for (auto& v : doc->interface.properties.getRead()->getEdgePropList()) {
+                    for (auto& v : fDoc->interface.properties.getRead()->getEdgePropList()) {
                         if (ImGui::TreeNode(v.first.c_str())) {
                             ImGui::Text(("enabled: " + std::string(v.second.enabled.value ? "true" : "false")).c_str());
                             ImGui::Text(("start: " + v.second.startVertexUuid.value).c_str());
@@ -252,6 +267,8 @@ int main() {
                 ImGui::TreePop();
             }
         }
+
+        gfn::editor::update();
 
         // if (ImGui::Button("New vertex"))
         // core.parser.execute("graph new vertex"); // No, you can not run this here

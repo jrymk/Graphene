@@ -7,7 +7,7 @@
 #include <System/Random/Random.hpp>
 #include <Logging/Logging.hpp>
 #include <Objects/Command.hpp>
-#include <json.hpp>
+#include <binn.h>
 
 namespace gfn::props {
 /// @brief Stores all the properties such as positions, colors and force values for internal use
@@ -19,15 +19,50 @@ namespace gfn::props {
         std::unordered_map<gfn::Uuid, gfn::props::EdgeProps> edgePropsList;
 
     public:
-        void serialize(nlohmann::json& j) {
-            j["vertices"] = nullptr;
-            j["edges"] = nullptr;
-            for (auto &v : vertexPropsList)
-                v.second.serialize(j["vertices"][v.first]);
-            for (auto &e : edgePropsList)
-                e.second.serialize(j["edges"][e.first]);
+        Properties() = default;
+
+        ///@brief serializes vertices and edges props data into binary form, remember to free the buffer after read
+        void serialize(binn* document) {
+            binn* vertices = binn_list();
+            for (auto& v : vertexPropsList) {
+                binn* prop = binn_object();
+                v.second.serialize(prop);
+                binn_list_add_object(vertices, prop);
+                binn_free(prop);
+            }
+            binn* edges = binn_list();
+            for (auto& e : edgePropsList) {
+                binn* prop = binn_object();
+                e.second.serialize(prop);
+                binn_list_add_object(edges, prop);
+                binn_free(prop);
+            }
+            binn_object_set_list(document, "vProps", vertices);
+            binn_free(vertices);
+            binn_object_set_list(document, "eProps", edges);
+            binn_free(edges);
         }
 
+        void deserialize(void* document) {
+            vertexPropsList.clear();
+            edgePropsList.clear();
+            void* vertices = binn_object_list(document, "vProps");
+            auto vCount = binn_count(vertices);
+            for (int i = 1; i <= vCount; i++) {
+                VertexProps props;
+                void* buffer = binn_list_object(vertices, i);
+                props.deserialize(buffer);
+                vertexPropsList.insert({binn_object_str(buffer, "uuid"), props});
+            }
+            void* edges = binn_object_list(document, "eProps");
+            auto eCount = binn_count(edges);
+            for (int i = 1; i <= eCount; i++) {
+                EdgeProps props;
+                void* buffer = binn_list_object(edges, i);
+                props.deserialize(buffer);
+                edgePropsList.insert({binn_object_str(buffer, "uuid"), props});
+            }
+        }
 
         /// @brief uuids can be hard to type and read, user can assign custom names to every uuid for easy access
         bool assignAccessName(const std::string& accessName, const gfn::Uuid& uuid, bool overwrite = false) {
@@ -126,7 +161,8 @@ namespace gfn::props {
                 logVerbose;
                 return true;
             }
-            logMessage << "Properties: New core edge prop {" << edgeUuid << "} failed (unexpectedly already exists)";
+            logMessage << "Properties: New core edge prop {" << edgeUuid
+                       << "} failed (unexpectedly already exists)";
             logWarning;
             return false;
         }

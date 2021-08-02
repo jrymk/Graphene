@@ -39,14 +39,14 @@ namespace gfn::timer {
     };
 
     int getNowMillis() {
-        std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+        std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
         int ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() % 1000;
         return ms;
     }
 
     int getNowMicros() {
-        std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-        int us = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count() % 1000;
+        std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+        uint64_t us = (uint64_t)std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count() % 1000;
         return us;
     }
 

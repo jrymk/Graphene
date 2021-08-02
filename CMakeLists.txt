@@ -19,6 +19,8 @@ include_directories(Dependencies/stduuid/include)
 include_directories(Dependencies/stduuid/gsl)
 include_directories(Dependencies/thread_pool)
 include_directories(Dependencies/json)
+include_directories(Dependencies/binn/src)
+include_directories(Dependencies/ImGui-Addons/FileBrowser)
 include_directories(Sources/)
 
 
@@ -34,6 +36,8 @@ add_executable(Graphene
         Dependencies/imgui/imgui.cpp
         Dependencies/imgui/backends/imgui_impl_glfw.cpp
         Dependencies/imgui/backends/imgui_impl_opengl3.cpp
+        Dependencies/binn/src/binn.c
+        Dependencies/ImGui-Addons/FileBrowser/ImGuiFileBrowser.cpp
         Sources/Main.cpp)
 
 target_link_libraries(Graphene imm32.lib)
@@ -46,5 +50,6 @@ set(CMAKE_EXE_LINKER_FLAGS " -static")
 target_link_libraries(Graphene glfw)
 target_link_libraries(Graphene -static-libgcc -static-libstdc++)
 
-target_compile_features(Graphene PRIVATE cxx_std_20)
+add_definitions(-DNDEBUG)
 
+target_compile_features(Graphene PRIVATE cxx_std_20)

@@ -127,10 +127,10 @@ namespace gfn {
                 if (first) first = false;
                 else ss << " ";
                 if (e.first != "command") {
-                    if (e.second.find(' ') != std::basic_string<char>::npos)
-                        ss << "=\"" << e.first << "\"";
+                    if (e.first.find(' ') != std::basic_string<char>::npos)
+                        ss << "\"" << e.first << "\"=";
                     else
-                        ss << "=" << e.first;
+                        ss << e.first << "=";
                 }
                 if (e.second.find(' ') != std::basic_string<char>::npos)
                     ss << "\"" << e.second << "\"";

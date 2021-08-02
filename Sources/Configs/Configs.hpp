@@ -21,8 +21,8 @@ namespace gfn::configs {
                 c6("c6", 0.0001) {
         }
 
-        bool tryParse(gfn::Command command, gfn::Command& output) {
-            if (command.getParamValue("command") == "constant") {
+        bool parse(gfn::Command command, gfn::Command& output) {
+            if (command.getParamValue("command") == "configs") {
                 if (!command.getParamValue("-c1").empty())
                     c1.setValueStr(command.getParamValue("-c1"), output);
                 if (!command.getParamValue("-c2").empty())

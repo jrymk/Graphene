@@ -148,22 +148,4 @@ namespace gfn::props {
 
         p->get(key, output);
     }
-
-    bool tryParse(gfn::props::Properties* properties, gfn::Command command, gfn::Command& output) {
-        auto cmd = command.getParamValue("command");
-        if (cmd == "setvertexprop") {
-            setVertexProp(properties, command, output);
-            return true;
-        } else if (cmd == "getvertexprop") {
-            getVertexProp(properties, command, output);
-            return true;
-        } else if (cmd == "setedgeprop") {
-            setEdgeProp(properties, command, output);
-            return true;
-        } else if (cmd == "getedgeprop") {
-            getEdgeProp(properties, command, output);
-            return true;
-        }
-        return false;
-    }
 }
