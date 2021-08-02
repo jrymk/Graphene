@@ -127,8 +127,12 @@ namespace gfn::document {
                 // interface.cmdBuffer.getWrite()->commands.clear();
                 ImGui::End();
 
-                if (!isDocumentWindowOpen && !fileSaved)
-                    showCloseConfirmationDialog = true;
+                if (!isDocumentWindowOpen) {
+                    if (fileSaved)
+                        closeDocument = true;
+                    else
+                        showCloseConfirmationDialog = true;
+                }
 
                 if (showCloseConfirmationDialog) {
                     ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.5f, ImGui::GetIO().DisplaySize.y
