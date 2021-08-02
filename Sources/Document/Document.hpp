@@ -64,7 +64,7 @@ namespace gfn::document {
         void update() {
             if (!closeDocument) {
                 ImGui::SetNextWindowSizeConstraints(ImVec2(200, 200), ImVec2(FLT_MAX, FLT_MAX));
-                ImGui::Begin((displayName + "###" + docId).c_str(), &isDocumentWindowOpen,  0);
+                ImGui::Begin((displayName + "###" + docId).c_str(), &isDocumentWindowOpen, 0);
                 graphview.update();
 
                 isFocused = ImGui::IsWindowFocused();
@@ -136,9 +136,9 @@ namespace gfn::document {
                                             ImVec2(0.5f, 0.5f));
                     ImGui::SetNextWindowSize(ImVec2(360, 150), ImGuiCond_Appearing);
 
-                    ImGui::OpenPopup("Confirmation");
+                    ImGui::OpenPopup(("Close confirmation"));
 
-                    ImGui::BeginPopupModal("Confirmation");
+                    ImGui::BeginPopupModal(("Close confirmation"));
                     ImGui::Text(("Do you want to save changes to " + displayName + "?").c_str());
                     if (ImGui::Button("Save")) {
                         execute("save -f=\"" + filePath + "\"");
@@ -151,8 +151,9 @@ namespace gfn::document {
                     }
                     ImGui::SameLine();
                     if (ImGui::Button("Cancel")) {
-                        ImGui::CloseCurrentPopup();
                         showCloseConfirmationDialog = false;
+                        isDocumentWindowOpen = true;
+                        ImGui::CloseCurrentPopup();
                     }
                     ImGui::EndPopup();
                 }
