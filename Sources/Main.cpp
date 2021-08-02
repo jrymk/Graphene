@@ -19,10 +19,15 @@
 int main(int argc, char* argv[]) {
     gfn::window::launchWindow();
     gfn::editor::startup();
-    gfn::editor::loadDragAndDrop(argc, argv);
 
     while (!glfwWindowShouldClose(gfn::window::glfwWindow)) {
         gfn::window::preFrame();
+
+        static bool first = true;
+        if (first) {
+            gfn::editor::loadDragAndDrop(argc, argv);
+            first = false;
+        }
 
         ImGui::ShowDemoWindow();
         ImGui::ShowMetricsWindow();
