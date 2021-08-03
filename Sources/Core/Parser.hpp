@@ -6,7 +6,6 @@
 #include <UserGraph/UserGraph.hpp>
 #include <Structure/Structure.hpp>
 #include <Configs/Configs.hpp>
-
 #include <Core/File.hpp>
 
 namespace gfn::parser {
@@ -31,8 +30,8 @@ namespace gfn::parser {
         void parse(Command command, gfn::Command& output) {
             std::string cmd = command.getParamValue("command");
             if (cmd.empty()) return;
-            else if (cmd == "open") file::open(command, output, properties, usergraph);
-            else if (cmd == "save") file::save(command, output, properties, usergraph);
+            else if (cmd == "open") file::open(command, output, properties, usergraph, configs);
+            else if (cmd == "save") file::save(command, output, properties, usergraph, configs);
             else if (cmd == "configs") configs->parse(command, output);
             else if (cmd == "mkvertex") usergraph->addVertex(command, output);
             else if (cmd == "rmvertex") usergraph->removeVertex(command, output);

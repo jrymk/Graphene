@@ -1,20 +1,11 @@
 #define TSK_WIN32
 
-#include <stdio.h>
 #include <string>
-#include <iostream>
 #include <Core/Core.hpp>
 #include <System/Window/WindowManager.hpp>
-#include <Logging/Logging.hpp>
 #include <Editor/Logs.hpp>
-#include <Objects/Uuid.hpp>
-#include <Interface/Interface.hpp>
-#include <System/Random/Random.hpp>
-// #include <Editor/Logs.hpp>
 #include <Document/Document.hpp>
-#include <Preferences/Preferences.hpp>
 #include <Editor/Editor.hpp>
-#include <binn.h>
 
 int main(int argc, char* argv[]) {
     gfn::window::launchWindow();
@@ -76,15 +67,15 @@ int main(int argc, char* argv[]) {
             static float c4p;
             static float c5p;
             static float c6p;
-            if (prevActiveDocId != fDoc->docId) {
-                prevActiveDocId = fDoc->docId;
-                c1p = float(fDoc->interface.configs.getRead()->c1.value);
-                c2p = float(fDoc->interface.configs.getRead()->c2.value);
-                c3p = float(fDoc->interface.configs.getRead()->c3.value);
-                c4p = float(fDoc->interface.configs.getRead()->c4.value);
-                c5p = float(fDoc->interface.configs.getRead()->c5.value);
-                c6p = float(fDoc->interface.configs.getRead()->c6.value);
-            }
+            //if (prevActiveDocId != fDoc->docId) {
+            prevActiveDocId = fDoc->docId;
+            c1p = float(fDoc->interface.configs.getRead()->c1.value);
+            c2p = float(fDoc->interface.configs.getRead()->c2.value);
+            c3p = float(fDoc->interface.configs.getRead()->c3.value);
+            c4p = float(fDoc->interface.configs.getRead()->c4.value);
+            c5p = float(fDoc->interface.configs.getRead()->c5.value);
+            c6p = float(fDoc->interface.configs.getRead()->c6.value);
+            //}
             fDoc->interface.configs.readDone();
             float c1 = c1p;
             float c2 = c2p;

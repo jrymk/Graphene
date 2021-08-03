@@ -14,6 +14,12 @@
 
 // these are containers that can work with string keys and string values, for loading up save files and configs from
 // file or set and read from the command line
+
+// get(): obtain the actual value
+// getValueStr(): get the value in string form, for outputting to the console or display
+// setValueStr(): set the value with a predefined format, mainly for console input
+// serialize(): serialize the value into the given json entry (save value to json), for application configs
+// deserialize(): deserialize the value from the given json entry (get value from json), for application configs
 namespace gfn::parsables {
     class Uuid {
     public:
@@ -41,6 +47,14 @@ namespace gfn::parsables {
                 output.newParam("-fix", "Expected UUID with format ********-****-****-****-************");
             }
             return;
+        }
+
+        void serialize(nlohmann::json& j) {
+            j[key] = value;
+        }
+
+        void deserialize(nlohmann::json& j) {
+            value = j[key].get<std::string>();
         }
     };
 
@@ -73,6 +87,14 @@ namespace gfn::parsables {
             output.newParam("-successful", "true");
             getValueStr(output);
             return;
+        }
+
+        void serialize(nlohmann::json& j) {
+            j[key] = value;
+        }
+
+        void deserialize(nlohmann::json& j) {
+            value = j[key].get<bool>();
         }
     };
 
@@ -111,6 +133,14 @@ namespace gfn::parsables {
                 return;
             }
         }
+
+        void serialize(nlohmann::json& j) {
+            j[key] = value;
+        }
+
+        void deserialize(nlohmann::json& j) {
+            value = j[key].get<int>();
+        }
     };
 
     class Double {
@@ -147,6 +177,14 @@ namespace gfn::parsables {
                                         "To increment the value, add a + sign in the very beginning.");
                 return;
             }
+        }
+
+        void serialize(nlohmann::json& j) {
+            j[key] = value;
+        }
+
+        void deserialize(nlohmann::json& j) {
+            value = j[key].get<double>();
         }
     };
 
@@ -206,6 +244,16 @@ namespace gfn::parsables {
                                         "x(x) or y(y). To increment the value, add a + sign in the very beginning.");
                 return;
             }
+        }
+
+        void serialize(nlohmann::json& j) {
+            j[key]["x"] = value.x;
+            j[key]["y"] = value.y;
+        }
+
+        void deserialize(nlohmann::json& j) {
+            value.x = j[key]["x"].get<double>();
+            value.y = j[key]["y"].get<double>();
         }
     };
 
@@ -351,6 +399,20 @@ namespace gfn::parsables {
                                 "s and v from 0 to 100 (in percentage). Alternaltively, do for example 6ce813FF");
                 return;
             }
+        }
+
+        void serialize(nlohmann::json& j) {
+            std::stringstream ss;
+            std::string hexStr;
+            ss << value;
+            ss >> std::setw(8) >> std::setfill('0') >> std::hex >> hexStr;
+            j[key] = hexStr;
+        }
+
+        void deserialize(nlohmann::json& j) {
+            std::stringstream ss;
+            ss << std::hex << j[key].get<std::string>();
+            ss >> value;
         }
     };
 

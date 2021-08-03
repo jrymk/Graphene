@@ -4,6 +4,7 @@
 #include <deque>
 #include <string>
 #include <sstream>
+#include <iostream>
 #include <mutex>
 
 #undef ERROR
