@@ -34,6 +34,16 @@ namespace gfn::editor {
     bool _onFocusDocument = false; // whether a document is focused on this frame
 
     void updateDocManagement() {
+        // document close handling
+        // the close confirmation and state is handled by the document itself
+        for (auto dIt = documents.begin(); dIt != documents.end();) {
+            if (dIt->second->closeDocument) {
+                if (activeDocumentUuid == dIt->second->docId)
+                    activeDocumentUuid = "";
+                dIt = documents.erase(dIt);
+            } else dIt++;
+        }
+
         // document focus
         _onFocusDocument = false;
         for (auto& d : documents) {
@@ -44,16 +54,6 @@ namespace gfn::editor {
         }
         if (getActiveDocument())
             getActiveDocument()->isFocused = true;
-
-        // document close handling
-        // the close confirmation and state is handled by the document itself
-        for (auto dIt = documents.begin(); dIt != documents.end();) {
-            if (dIt->second->closeDocument) {
-                if (activeDocumentUuid == dIt->second->docId)
-                    activeDocumentUuid = "";
-                dIt = documents.erase(dIt);
-            } else dIt++;
-        }
     }
 
 
@@ -100,8 +100,14 @@ namespace gfn::editor {
         if (fileDialog.showFileDialog("Open File", imgui_addons::ImGuiFileBrowser::DialogMode::OPEN,
                                       ImVec2(700, 310), ".gfn")) {
             isOpeningFile = false;
-            auto docId = newFile();
             auto path = fileDialog.selected_path;
+            for (auto &d : documents) {
+                if (d.second->filePath == fileDialog.selected_path) {
+                    ImGui::SetWindowFocus((d.second->displayName + "###" + d.first).c_str());
+                    return;
+                }
+            }
+            auto docId = newFile();
             getDocumentFromUuid(docId)->displayName = path.substr(path.find_last_of('/') + 1);
             getDocumentFromUuid(docId)->filePath = path;
             //getDocumentFromUuid(docId)->fileSaved = true;

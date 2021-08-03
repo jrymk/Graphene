@@ -41,8 +41,11 @@ namespace gfn::window {
                          ImGuiDockNodeFlags_PassthruCentralNode);
         // default dock for new file
         while (!dockBuildWindow.empty()) {
-            ImGui::DockBuilderDockWindow(dockBuildWindow.front().c_str(), documentDockspaceId);
-            dockBuildWindow.pop();
+            if (ImGui::FindWindowByName(dockBuildWindow.front().c_str())) {
+                ImGui::DockBuilderDockWindow(dockBuildWindow.front().c_str(), documentDockspaceId);
+                dockBuildWindow.pop();
+            } else
+                break;
         }
 
         ImGui::End();
