@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include <imgui.h>
 #include <Interface/Interface.hpp>
 #include <Preferences/Preferences.hpp>
@@ -7,6 +8,7 @@
 #include <Document/GraphView/Camera.hpp>
 #include <Document/GraphView/Renderer.hpp>
 #include <Document/GraphView/Selection.hpp>
+#include <earcut.hpp>
 
 namespace gfn::editor::graphview {
 ///@brief renders and handles interaction to a specified interface
@@ -62,6 +64,15 @@ namespace gfn::editor::graphview {
                 }
             }
 
+            if (!selection.selectedVertices.empty()) {
+                for (auto& v : selection.selectedVertices) {
+                    auto props = interface->properties.getRead()->getVertexProps(v);
+                    ImGui::GetWindowDrawList()->AddCircleFilled(camera.map(props->position.value),
+                                                                camera.map(props->radius.value + preferences->glow_size),
+                                                                IM_COL32(0, 135, 255, 255), 0);
+                }
+            }
+
             if (!selection.hoveredVertex.empty()) {
                 auto props = interface->properties.getRead()->getVertexProps(selection.hoveredVertex);
                 ImGui::GetWindowDrawList()->AddCircleFilled(camera.map(props->position.value),
@@ -80,6 +91,8 @@ namespace gfn::editor::graphview {
 
             renderer.drawEdges();
             renderer.drawVertices();
+
+            selection.updateLassoSelection();
 
             // ImGui::PopStyleVar(1);
         }

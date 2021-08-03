@@ -101,19 +101,20 @@ namespace gfn::document {
                         }
                     }
 
-                    static gfn::Vec2f downPos;
-                    static gfn::Uuid mouseDownUuid;
                     if (!graphview.selection.middleMouseDownVertex.empty()) {
                         if (ImGui::GetIO().MouseClicked[ImGuiMouseButton_Middle]) {
-                            downPos = graphview.selection.cursorCoord;
-                            mouseDownUuid = graphview.selection.middleMouseDownVertex;
-                            execute("setvertexprops -uuid=" + mouseDownUuid + " -key=pauseUpdate -value=true");
+                            for (auto& v : graphview.selection.selectedVertices)
+                                execute("setvertexprops -uuid=" + v + " -key=pauseUpdate -value=true");
                         }
-                        execute("setvertexprops -uuid=" + mouseDownUuid + " -key=position -value=\"(" +
-                                std::to_string(downPos.x + graphview.selection.middleMousePosDelta.x)
-                                + ", " + std::to_string(downPos.y + graphview.selection.middleMousePosDelta.y) + "\")");
+                        for (auto& v : graphview.selection.selectedVertices) {
+                            execute("setvertexprops -uuid=" + v + " -key=position -value=\"+(" +
+                            std::to_string(/*downPos.x + */graphview.selection.middleMousePosDelta.x)
+                            + ", " + std::to_string(/*downPos.y + */graphview.selection.middleMousePosDelta.y) +
+                            "\")");
+                        }
                         if (ImGui::GetIO().MouseReleased[ImGuiMouseButton_Middle]) {
-                            execute("setvertexprops -uuid=" + mouseDownUuid + " -key=pauseUpdate -value=false");
+                            for (auto& v : graphview.selection.selectedVertices)
+                                execute("setvertexprops -uuid=" + v + " -key=pauseUpdate -value=false");
                         }
                     }
                 }

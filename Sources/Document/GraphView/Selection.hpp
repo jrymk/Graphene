@@ -3,6 +3,7 @@
 #include <cmath>
 #include <Interface/Interface.hpp>
 #include <Document/GraphView/Camera.hpp>
+#include <earcut.hpp>
 
 namespace gfn::editor::graphview {
     class Selection {
@@ -30,6 +31,11 @@ namespace gfn::editor::graphview {
         gfn::Uuid middleMouseUpVertex;
         gfn::Uuid middleMouseUpEdge;
         gfn::Vec2f cursorCoord;
+
+        std::unordered_set<gfn::Uuid> selectedVertices;
+        std::unordered_set<gfn::Uuid> selectedEdges;
+        std::vector<std::vector<std::pair<double, double>>> lassoSelectionVertices;
+        std::vector<int> lassoSelectionIndices;
 
         float distance(ImVec2 a, ImVec2 b) {
             float deltaX = b.x - a.x;
@@ -95,18 +101,18 @@ namespace gfn::editor::graphview {
             if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
                 leftMouseDownVertex = hoveredVertex;
                 leftMouseDownEdge = hoveredEdge;
-                leftMousePosDelta = gfn::Vec2f(0.0, 0.0);
             }
+            leftMousePosDelta = gfn::Vec2f(0.0, 0.0);
             if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
                 rightMouseDownVertex = hoveredVertex;
                 rightMouseDownEdge = hoveredEdge;
-                rightMousePosDelta = gfn::Vec2f(0.0, 0.0);
             }
+            rightMousePosDelta = gfn::Vec2f(0.0, 0.0);
             if (ImGui::IsMouseClicked(ImGuiMouseButton_Middle)) {
                 middleMouseDownVertex = hoveredVertex;
                 middleMouseDownEdge = hoveredEdge;
-                middleMousePosDelta = gfn::Vec2f(0.0, 0.0);
             }
+            middleMousePosDelta = gfn::Vec2f(0.0, 0.0);
             if (!leftMouseDownVertex.empty())
                 leftMousePosDelta += gfn::Vec2f(camera->rMap(io.MouseDelta.x), -camera->rMap(io.MouseDelta.y));
             if (!rightMouseDownVertex.empty())
@@ -143,6 +149,44 @@ namespace gfn::editor::graphview {
             }
 
             cursorCoord = camera->rMap(ImGui::GetMousePos());
+        }
+
+        void updateLassoSelection() {
+            if (ImGui::GetIO().MouseClicked[ImGuiMouseButton_Left] && hoveredVertex.empty()) {
+                lassoSelectionVertices.clear();
+                selectedVertices.clear();
+                selectedEdges.clear();
+                lassoSelectionVertices.emplace_back(std::vector<std::pair<double, double>>());
+            }
+            if (leftMouseDownVertex.empty() && ImGui::GetIO().MouseDown[ImGuiMouseButton_Left]) {
+                lassoSelectionVertices[lassoSelectionVertices.size() - 1].emplace_back(cursorCoord.x, cursorCoord.y);
+            }
+
+            if (!lassoSelectionVertices.empty() && ImGui::GetIO().MouseDown[ImGuiMouseButton_Left]) {
+                selectedVertices.clear();
+                lassoSelectionIndices = mapbox::earcut<int>(lassoSelectionVertices);
+                for (int i = 0; i < lassoSelectionIndices.size(); i += 3) {
+                    auto p1 = gfn::Vec2f(lassoSelectionVertices[0][lassoSelectionIndices[i]].first,
+                                         lassoSelectionVertices[0][lassoSelectionIndices[i]].second);
+                    auto p2 = gfn::Vec2f(lassoSelectionVertices[0][lassoSelectionIndices[i + 1]].first,
+                                         lassoSelectionVertices[0][lassoSelectionIndices[i + 1]].second);
+                    auto p3 = gfn::Vec2f(lassoSelectionVertices[0][lassoSelectionIndices[i + 2]].first,
+                                         lassoSelectionVertices[0][lassoSelectionIndices[i + 2]].second);
+                    bool in = false;
+                    for (auto& v : interface->properties.getRead()->getVertexPropList()) {
+                        auto p = v.second.position.get();
+                        double d1 = (p.x - p2.x) * (p1.y - p2.y) - (p1.x - p2.x) * (p.y - p2.y);
+                        double d2 = (p.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p.y - p3.y);
+                        double d3 = (p.x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (p.y - p1.y);
+                        if (!(((d1 < 0) || (d2 < 0) || (d3 < 0)) && ((d1 > 0) || (d2 > 0) || (d3 > 0)))) {
+                            selectedVertices.insert(v.first);
+                            in = true;
+                        }
+                    }
+                    ImGui::GetWindowDrawList()->AddTriangleFilled(camera->map(p1), camera->map(p2), camera->map(p3),
+                                                                  IM_COL32(3, 223, 252, 50));
+                }
+            }
         }
     };
 }

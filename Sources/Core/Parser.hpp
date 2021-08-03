@@ -51,16 +51,16 @@ namespace gfn::parser {
         void parseAll() {
             while (!interface->cmdBuffer.getRead()->commands.empty()) {
                 gfn::Command output;
-                std::cout << interface->cmdBuffer.getRead()->commands.front().getString() << "\n";
+                //std::cout << interface->cmdBuffer.getRead()->commands.front().getString() << "\n";
                 parse(interface->cmdBuffer.getRead()->commands.front(), output);
-                std::cout << output.getString() << "\n";
+                //std::cout << output.getString() << "\n";
                 interface->cmdBuffer.getRead()->commands.pop_front();
 
                 if (output.getParamValue("successful") == "false" || output.getFlag("-error")
                     || output.getFlag("-warning"))
                     std::cerr << output.getString() << "\n";
-                else
-                    std::cout << output.getString() << "\n";
+                /*else
+                    std::cout << output.getString() << "\n";*/
             }
             interface->cmdBuffer.readDone();
         }

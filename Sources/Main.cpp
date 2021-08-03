@@ -1,5 +1,3 @@
-#define TSK_WIN32
-
 #include <string>
 #include <Core/Core.hpp>
 #include <System/Window/WindowManager.hpp>

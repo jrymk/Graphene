@@ -21,6 +21,7 @@ include_directories(Dependencies/thread_pool)
 include_directories(Dependencies/json)
 include_directories(Dependencies/binn/src)
 include_directories(Dependencies/ImGui-Addons/FileBrowser)
+include_directories(Dependencies/earcut)
 include_directories(Sources/)
 
 
