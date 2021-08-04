@@ -251,6 +251,14 @@ namespace gfn::graphview {
         bool lassoSelecting = false;
 
         void updateLassoSelection() {
+            // DESELECT
+            if ((_hover_e && gfn::editor::hkPress(keybind::Actions::CLEAR_SELECTION_E))
+                || (_hover_u && gfn::editor::hkPress(keybind::Actions::CLEAR_SELECTION_U))
+                || (_hover_s && gfn::editor::hkPress(keybind::Actions::CLEAR_SELECTION_S))) {
+                vertexSelection.clear();
+                edgeSelection.clear();
+            }
+
             if (lassoSelecting) {
                 // undo previous lasso selection
                 onChangeSelection = true;
@@ -260,16 +268,13 @@ namespace gfn::graphview {
 
             /// LASSO BEGIN
             if (!lassoSelecting && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)
-                && ((_hover_e && ((vertexSelection.empty() && gfn::editor::hkPress(keybind::Actions::BEGIN_SELECT_LASSO_E)) ||
-                                  gfn::editor::hkPress(keybind::Actions::ADD_SELECT_LASSO_E) ||
+                && ((_hover_e && (gfn::editor::hkPress(keybind::Actions::ADD_SELECT_LASSO_E) ||
                                   gfn::editor::hkPress(keybind::Actions::SUBTRACT_SELECT_LASSO_E) ||
                                   gfn::editor::hkPress(keybind::Actions::INV_SELECT_LASSO_E)))
-                    || (_hover_u && ((vertexSelection.empty() && gfn::editor::hkPress(keybind::Actions::BEGIN_SELECT_LASSO_U)) ||
-                                     gfn::editor::hkPress(keybind::Actions::ADD_SELECT_LASSO_U) ||
+                    || (_hover_u && (gfn::editor::hkPress(keybind::Actions::ADD_SELECT_LASSO_U) ||
                                      gfn::editor::hkPress(keybind::Actions::SUBTRACT_SELECT_LASSO_U) ||
                                      gfn::editor::hkPress(keybind::Actions::INV_SELECT_LASSO_U)))
-                    || (_hover_s && ((vertexSelection.empty() && gfn::editor::hkPress(keybind::Actions::BEGIN_SELECT_LASSO_S)) ||
-                                     gfn::editor::hkPress(keybind::Actions::ADD_SELECT_LASSO_S) ||
+                    || (_hover_s && (gfn::editor::hkPress(keybind::Actions::ADD_SELECT_LASSO_S) ||
                                      gfn::editor::hkPress(keybind::Actions::SUBTRACT_SELECT_LASSO_S) ||
                                      gfn::editor::hkPress(keybind::Actions::INV_SELECT_LASSO_S))))) {
                 _lassoVertices.clear();
@@ -279,10 +284,7 @@ namespace gfn::graphview {
                 _start_hover_u = _hover_u;
                 _start_hover_s = _hover_s;
 
-                _lassoAddSelectMode = (_hover_e && gfn::editor::hkPress(keybind::Actions::BEGIN_SELECT_LASSO_E))
-                                      || (_hover_u && gfn::editor::hkPress(keybind::Actions::BEGIN_SELECT_LASSO_U))
-                                      || (_hover_s && gfn::editor::hkPress(keybind::Actions::BEGIN_SELECT_LASSO_S))
-                                      || (_hover_e && gfn::editor::hkPress(keybind::Actions::ADD_SELECT_LASSO_E))
+                _lassoAddSelectMode = (_hover_e && gfn::editor::hkPress(keybind::Actions::ADD_SELECT_LASSO_E))
                                       || (_hover_u && gfn::editor::hkPress(keybind::Actions::ADD_SELECT_LASSO_U))
                                       || (_hover_s && gfn::editor::hkPress(keybind::Actions::ADD_SELECT_LASSO_S));
                 _lassoSubtractSelectMode = (_hover_e && gfn::editor::hkPress(keybind::Actions::SUBTRACT_SELECT_LASSO_E))
@@ -368,16 +370,13 @@ namespace gfn::graphview {
 
             // end lasso selection
             // CRITERIA: released mouse button
-            if (lassoSelecting && ((_start_hover_e && !(gfn::editor::hkDown(keybind::Actions::BEGIN_SELECT_LASSO_E) ||
-                                                        gfn::editor::hkDown(keybind::Actions::ADD_SELECT_LASSO_E) ||
+            if (lassoSelecting && ((_start_hover_e && !(gfn::editor::hkDown(keybind::Actions::ADD_SELECT_LASSO_E) ||
                                                         gfn::editor::hkDown(keybind::Actions::SUBTRACT_SELECT_LASSO_E) ||
                                                         gfn::editor::hkDown(keybind::Actions::INV_SELECT_LASSO_E)))
-                                   || (_start_hover_u && !(gfn::editor::hkDown(keybind::Actions::BEGIN_SELECT_LASSO_U) ||
-                                                           gfn::editor::hkDown(keybind::Actions::ADD_SELECT_LASSO_U) ||
+                                   || (_start_hover_u && !(gfn::editor::hkDown(keybind::Actions::ADD_SELECT_LASSO_U) ||
                                                            gfn::editor::hkDown(keybind::Actions::SUBTRACT_SELECT_LASSO_U) ||
                                                            gfn::editor::hkDown(keybind::Actions::INV_SELECT_LASSO_U)))
-                                   || (_start_hover_s && !(gfn::editor::hkDown(keybind::Actions::BEGIN_SELECT_LASSO_S) ||
-                                                           gfn::editor::hkDown(keybind::Actions::ADD_SELECT_LASSO_S) ||
+                                   || (_start_hover_s && !(gfn::editor::hkDown(keybind::Actions::ADD_SELECT_LASSO_S) ||
                                                            gfn::editor::hkDown(keybind::Actions::SUBTRACT_SELECT_LASSO_S) ||
                                                            gfn::editor::hkDown(keybind::Actions::INV_SELECT_LASSO_S)))))
                 lassoSelecting = false;
@@ -390,13 +389,7 @@ namespace gfn::graphview {
 
     public:
         void updateClickSelection() {
-            // DESELECT
-            if ((_hover_e && gfn::editor::hkPress(keybind::Actions::CLEAR_SELECTION_E))
-                || (_hover_u && gfn::editor::hkPress(keybind::Actions::CLEAR_SELECTION_U))
-                || (_hover_s && gfn::editor::hkPress(keybind::Actions::CLEAR_SELECTION_S))) {
-                vertexSelection.clear();
-                edgeSelection.clear();
-            }
+
             // click to remove all selection and select one item
             // CRITERIA: when unshifted and clicking on a deselected vertex, mouse click selects it. (clicking on a selected vertex moves it)
             //           *dragging a vertex to create an edge DOES select the vertex

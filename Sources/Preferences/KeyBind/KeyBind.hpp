@@ -112,6 +112,7 @@ namespace gfn::keybind {
                     ImGui::SameLine();
                 }
             }
+            ImGui::Text("");
             ImGui::PopStyleColor(5);
             ImGui::PopItemFlag();
         }
@@ -138,7 +139,7 @@ namespace gfn::keybind {
 
     class KeyBind {
     private:
-        std::vector<Binding> bindings;
+        std::vector<std::vector<Binding>> bindings;
         Binding enrollBinding;
         int enrolling = -1;
 
@@ -151,19 +152,26 @@ namespace gfn::keybind {
         }
 
         void bind(int action, Binding binding) {
-            bindings[action] = binding;
+            bindings[action].push_back(binding);
         }
 
-        Binding& getBinding(int action) {
+        void clear(int action) {
+            bindings[action].clear();
+        }
+
+        std::vector<Binding>& getBinding(int action) {
             return bindings[action];
         }
 
         // Keys (including modifiers): STRICT MATCH    Mouse buttons: INCLUDE
         bool isBindingActive(int action) {
-            if (bindings[action].keyFlags.keyFlags.none() && bindings[action].mouseButtonFlags == 0)
-                return false;
-            return ((bindings[action].mouseButtonFlags & gfn::keybind::Binding::now().mouseButtonFlags) == bindings[action].mouseButtonFlags
-                    && gfn::keybind::Binding::now().keyFlags.keyFlags == bindings[action].keyFlags.keyFlags);
+            for (auto b : bindings[action]) {
+                if (!(b.keyFlags.keyFlags.none() && b.mouseButtonFlags == 0)
+                    && (b.mouseButtonFlags & gfn::keybind::Binding::now().mouseButtonFlags) == b.mouseButtonFlags
+                    && gfn::keybind::Binding::now().keyFlags.keyFlags == b.keyFlags.keyFlags)
+                    return true;
+            }
+            return false;
         }
 
         void showEnrollPopup(int action) {
@@ -225,14 +233,28 @@ namespace gfn::keybind {
 
                 ImGui::Separator();
                 ImGui::Text(actions[i].c_str());
-                if (isBindingActive(i)) {
-                    ImGui::SameLine(600.0f);
-                    ImGui::Text("ACTIVE");
-                }
                 ImGui::SameLine(675.0f);
-                //ImGui::Text(bindings[i].getKeyStr().c_str());
-                bindings[i].showKeysImGui();
-                ImGui::SameLine(ImGui::GetWindowWidth() - 70.0f);
+
+                int bId = 0;
+                for (auto it = bindings[i].begin(); it != bindings[i].end();) {
+                    if (isBindingActive(i)) {
+                        ImGui::SetCursorPosX(600.0f);
+                        ImGui::Text("ACTIVE");
+                    }
+                    //ImGui::Text(bindings[i].getKeyStr().c_str());
+                    ImGui::SetCursorPosX(675.0f);
+                    it->showKeysImGui();
+
+                    ImGui::SameLine(ImGui::GetWindowWidth() - 100.0f);
+                    if (ImGui::SmallButton(("-##" + std::to_string(i) + "/" + std::to_string(bId++)).c_str())) {
+                        it = bindings[i].erase(it);
+                        keyBindUpdated = true;
+                    }
+                    else
+                        it++;
+                }
+
+                ImGui::SetCursorPosX(ImGui::GetWindowWidth() - 70.0f);
                 if (ImGui::SmallButton(("Enroll##" + std::to_string(i)).c_str())) {
                     enrollBinding.mouseButtonFlags = MOUSEBUTTON_NONE;
                     enrollBinding.keyFlags.reset();
@@ -256,69 +278,71 @@ namespace gfn::keybind {
 
         void serialize(nlohmann::json& j) {
             for (int i = 0; i < actions.size(); i++) {
-                if (actions[i].empty())
-                    continue;
-                nlohmann::json binding = nlohmann::json::array();
-                for (int k = 0; k < 512; k++) {
-                    if (bindings[i].keyFlags.keyFlags[k])
-                        binding.push_back(keyNames[k]);
+                nlohmann::json hotkey = nlohmann::json::array();
+                for (auto b : bindings[i]) {
+                    nlohmann::json binding = nlohmann::json::array();
+                    for (int k = 0; k < 512; k++) {
+                        if (b.keyFlags.keyFlags[k])
+                            binding.push_back(keyNames[k]);
+                    }
+                    if (b.mouseButtonFlags & MOUSEBUTTON_LEFT)
+                        binding.push_back("left_mouse");
+                    if (b.mouseButtonFlags & MOUSEBUTTON_RIGHT)
+                        binding.push_back("right_mouse");
+                    if (b.mouseButtonFlags & MOUSEBUTTON_MIDDLE)
+                        binding.push_back("middle_mouse");
+                    if (b.mouseButtonFlags & MOUSEBUTTON_FOUR)
+                        binding.push_back("forth_mouse");
+                    if (b.mouseButtonFlags & MOUSEBUTTON_FIVE)
+                        binding.push_back("fifth_mouse");
+                    hotkey.push_back(binding);
                 }
-                if (bindings[i].mouseButtonFlags & MOUSEBUTTON_LEFT)
-                    binding.push_back("left_mouse");
-                if (bindings[i].mouseButtonFlags & MOUSEBUTTON_RIGHT)
-                    binding.push_back("right_mouse");
-                if (bindings[i].mouseButtonFlags & MOUSEBUTTON_MIDDLE)
-                    binding.push_back("middle_mouse");
-                if (bindings[i].mouseButtonFlags & MOUSEBUTTON_FOUR)
-                    binding.push_back("forth_mouse");
-                if (bindings[i].mouseButtonFlags & MOUSEBUTTON_FIVE)
-                    binding.push_back("fifth_mouse");
-
-                j[actions[i]] = binding;
+                j[actions[i]] = hotkey;
             }
         }
 
         void deserialize(nlohmann::json& j) {
             bindings.clear();
-            for (auto&[action, keys] : j.items()) {
-                if (action.empty())
-                    continue;
-                int actionId = -1;
-                for (int i = 0; i < actions.size(); i++) {
-                    if (actions[i] == action) {
-                        actionId = i;
-                        break;
-                    }
-                }
-                if (actionId == -1)
-                    continue;
-
-                gfn::keybind::Binding bd;
-                for (auto& key : keys) {
-                    if (key == "left_mouse")
-                        bd.mouseButtonFlags |= MOUSEBUTTON_LEFT;
-                    if (key == "right_mouse")
-                        bd.mouseButtonFlags |= MOUSEBUTTON_RIGHT;
-                    if (key == "middle_mouse")
-                        bd.mouseButtonFlags |= MOUSEBUTTON_MIDDLE;
-                    if (key == "forth_mouse")
-                        bd.mouseButtonFlags |= MOUSEBUTTON_FOUR;
-                    if (key == "fifth_mouse")
-                        bd.mouseButtonFlags |= MOUSEBUTTON_FIVE;
-                    if (bd.mouseButtonFlags)
-                        continue;
-                    int keyCode = -1;
-                    for (int i = 0; i < 512; i++) {
-                        if (keyNames[i] == key) {
-                            keyCode = i;
+            bindings.resize(actions.size());
+            for (auto&[action, bs] : j.items()) {
+                for (auto& b : bs) {
+                    int actionId = -1;
+                    for (int i = 0; i < actions.size(); i++) {
+                        if (actions[i] == action) {
+                            actionId = i;
                             break;
                         }
                     }
-                    if (keyCode != -1)
-                        bd.keyFlags.addKey(keyCode);
-                }
+                    if (actionId == -1)
+                        continue;
 
-                bindings[actionId] = bd;
+                    gfn::keybind::Binding bd;
+                    for (auto& key : b) {
+                        if (key == "left_mouse")
+                            bd.mouseButtonFlags |= MOUSEBUTTON_LEFT;
+                        if (key == "right_mouse")
+                            bd.mouseButtonFlags |= MOUSEBUTTON_RIGHT;
+                        if (key == "middle_mouse")
+                            bd.mouseButtonFlags |= MOUSEBUTTON_MIDDLE;
+                        if (key == "forth_mouse")
+                            bd.mouseButtonFlags |= MOUSEBUTTON_FOUR;
+                        if (key == "fifth_mouse")
+                            bd.mouseButtonFlags |= MOUSEBUTTON_FIVE;
+                        if (bd.mouseButtonFlags)
+                            continue;
+                        int keyCode = -1;
+                        for (int i = 0; i < 512; i++) {
+                            if (keyNames[i] == key) {
+                                keyCode = i;
+                                break;
+                            }
+                        }
+                        if (keyCode != -1)
+                            bd.keyFlags.addKey(keyCode);
+                    }
+
+                    bindings[actionId].push_back(bd);
+                }
             }
         }
     };

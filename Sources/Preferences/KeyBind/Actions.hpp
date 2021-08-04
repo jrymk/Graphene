@@ -21,26 +21,18 @@ namespace gfn::keybind {
             // 15
             "", "", "", "", "",
             // 20
-            "Clear selection (no hovered item)",
-            "Clear selection (hovered on unselected item)",
-            "Clear selection (hovered on selected item)",
-            "", "",
+            "", "", "", "", "",
             // 25
             "", "", "", "", "",
             // 30
             "", "", "", "", "",
             // 35
-            "Begin selection single item (hovered on unselected item)",
-            "Begin selection with rectangular selection tool (no hovered item)",
-            "Begin selection with rectangular selection tool (hovered on unselected item)",
-            "Begin selection with rectangular selection tool (hovered on selected item)",
-            "Begin selection with lasso selection tool (no hovered item)",
+            "", "", "", "", "",
             // 40
-            "Begin selection with lasso selection tool (hovered on unselected item)",
-            "Begin selection with lasso selection tool (hovered on selected item)",
-            "Begin selection all items (no hovered item)",
-            "Begin selection all items (hovered on unselected item)",
-            "Begin selection all items (hovered on selected item)",
+            "Clear selection (no hovered item)",
+            "Clear selection (hovered on unselected item)",
+            "Clear selection (hovered on selected item)",
+            "", "",
             // 45
             "", "", "", "", "",
             // 50
@@ -52,7 +44,9 @@ namespace gfn::keybind {
             // 55
             "Add item to selection with lasso selection tool (hovered on unselected item)",
             "Add item to selection with lasso selection tool (hovered on selected item)",
-            "", "", "",
+            "Add all items to selection (no hovered item)",
+            "Add all items to selection (hovered on unselected item)",
+            "Add all items to selection (hovered on selected item)",
             // 60
             "", "", "", "", "",
             // 65
@@ -64,7 +58,9 @@ namespace gfn::keybind {
             // 70
             "Subtract item from selection with lasso selection tool (hovered on unselected item)",
             "Subtract item from selection with lasso selection tool (hovered on selected item)",
-            "", "", "",
+            "Subtract all items from selection (no hovered item)",
+            "Subtract all items from selection (hovered on unselected item)",
+            "Subtract all items from selection (hovered on selected item)",
             // 75
             "", "", "", "", "",
             // 80
@@ -109,6 +105,7 @@ namespace gfn::keybind {
     };
 
     enum Actions {
+        /// VIEW CONTROL
         CAMERA_PAN_E = 0,
         CAMERA_PAN_U = 1,
         CAMERA_PAN_S = 2,
@@ -119,19 +116,10 @@ namespace gfn::keybind {
         ZOOM_OUT_U = 9,
         ZOOM_OUT_S = 10,
 
-        CLEAR_SELECTION_E = 20,//
-        CLEAR_SELECTION_U = 21,//
-        CLEAR_SELECTION_S = 22,//
-        SELECT_SINGLE_U = 35,
-        BEGIN_SELECT_RECT_E = 36,
-        BEGIN_SELECT_RECT_U = 37,
-        SELECT_RECT_S = 38,
-        BEGIN_SELECT_LASSO_E = 39,//
-        BEGIN_SELECT_LASSO_U = 40,//
-        BEGIN_SELECT_LASSO_S = 41,//
-        BEGIN_SELECT_ALL_E = 42,
-        BEGIN_SELECT_ALL_U = 43,
-        BEGIN_SELECT_ALL_S = 44,
+        /// SELECTION
+        CLEAR_SELECTION_E = 40,//
+        CLEAR_SELECTION_U = 41,//
+        CLEAR_SELECTION_S = 42,//
         ADD_SELECT_SINGLE_U = 50,
         ADD_SELECT_RECT_E = 51,
         ADD_SELECT_RECT_U = 52,
@@ -139,6 +127,9 @@ namespace gfn::keybind {
         ADD_SELECT_LASSO_E = 54,//
         ADD_SELECT_LASSO_U = 55,//
         ADD_SELECT_LASSO_S = 56,//
+        ADD_SELECT_ALL_E = 57,
+        ADD_SELECT_ALL_U = 58,
+        ADD_SELECT_ALL_S = 59,
         SUBTRACT_SELECT_SINGLE_S = 65,
         SUBTRACT_SELECT_RECT_E = 66,
         SUBTRACT_SELECT_RECT_U = 67,
@@ -146,6 +137,9 @@ namespace gfn::keybind {
         SUBTRACT_SELECT_LASSO_E = 69,//
         SUBTRACT_SELECT_LASSO_U = 70,//
         SUBTRACT_SELECT_LASSO_S = 71,//
+        SUBTRACT_SELECT_ALL_E = 72,
+        SUBTRACT_SELECT_ALL_U = 73,
+        SUBTRACT_SELECT_ALL_S = 74,
         INV_SELECT_SINGLE_U = 80,
         INV_SELECT_SINGLE_S = 81,
         INV_SELECT_RECT_E = 82,
@@ -158,6 +152,7 @@ namespace gfn::keybind {
         INV_SELECT_ALL_U = 89,
         INV_SELECT_ALL_S = 90,
 
+        /// GRAPH MANIPULATION (STRUCTURE)
         ADD_VERTEX_PREV_E = 100,
         ADD_VERTEX_PREV_U = 101,
         ADD_VERTEX_PREV_S = 102,

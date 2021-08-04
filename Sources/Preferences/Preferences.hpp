@@ -19,11 +19,11 @@ namespace gfn::preferences {
         float graph_view_lasso_selection_threshold = 5.0f;
 
         void serialize(nlohmann::json& j) {
-            keyBind->serialize(j["Key binds"]);
+            keyBind->serialize(j["Key Binds"]);
         }
 
         void deserialize(nlohmann::json& j) {
-            keyBind->deserialize(j["Key binds"]);
+            keyBind->deserialize(j["Key Binds"]);
         }
 
         void saveToFile() {
