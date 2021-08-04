@@ -23,7 +23,7 @@ namespace gfn::editor {
         }
     }
 
-    void startup() {
+    void cmdStartup() {
         std::thread inputThread(&terminalInputLoop);
         inputThread.detach();
     }

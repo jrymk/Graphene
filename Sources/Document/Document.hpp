@@ -11,7 +11,7 @@ namespace gfn::document {
     public:
         gfn::core::Core core;                        // updates vertex positions
         gfn::interface::Interface interface;         // to interact with the multithreaded core
-        gfn::editor::graphview::GraphView graphview; // handles graph rendering and interaction
+        gfn::graphview::GraphView graphview; // handles graph rendering and interaction
         gfn::preferences::Preferences* preferences;  // application preferences
 
         std::atomic<bool> _enableCoreUpdate = true;
@@ -65,14 +65,15 @@ namespace gfn::document {
             if (!closeDocument) {
                 ImGui::SetNextWindowSizeConstraints(ImVec2(200, 200), ImVec2(FLT_MAX, FLT_MAX));
                 ImGui::Begin((displayName + "###" + docId).c_str(), &isDocumentWindowOpen, 0);
+
                 graphview.update();
 
-                isFocused = ImGui::IsWindowFocused();
-
-                if (isFocused) {
-                    if (!graphview.selection.leftMouseUpVertex.empty()) {
-                        execute("mkedge -u=" + graphview.selection.leftMouseDownVertex + " -v=" +
-                                graphview.selection.leftMouseUpVertex);
+                if (ImGui::IsWindowFocused()) {
+                    if (graphview.selection.vertexSelection.empty() &&
+                        !graphview.selection.mouseClickVertex[ImGuiMouseButton_Left].empty() &&
+                        !graphview.selection.mouseOnReleaseVertex[ImGuiMouseButton_Left].empty()) {
+                        execute("mkedge -u=" + graphview.selection.mouseClickVertex[ImGuiMouseButton_Left] + " -v=" +
+                                graphview.selection.mouseOnReleaseVertex[ImGuiMouseButton_Left]);
                     }
                     if (!graphview.selection.hoveredVertex.empty()) {
                         if (ImGui::IsKeyPressed('D', false))
@@ -88,34 +89,34 @@ namespace gfn::document {
                             auto vId = gfn::uuid::createUuid();
                             execute("mkvertex -uuid=" + vId);
                             execute("setvertexprops -uuid=" + vId +
-                                    " -key=position -value=(" + std::to_string(graphview.selection.cursorCoord.x)
-                                    + "," + std::to_string(graphview.selection.cursorCoord.y));
+                                    " -key=position -value=(" + std::to_string(graphview.selection.mouseCoord.x)
+                                    + "," + std::to_string(graphview.selection.mouseCoord.y));
                             execute("mkedge -u=" + vId + " -v=" + eProp->startVertexUuid.value);
                             execute("mkedge -u=" + vId + " -v=" + eProp->endVertexUuid.value);
                         } else if (graphview.selection.hoveredVertex.empty()) {
                             auto vId = gfn::uuid::createUuid();
                             execute("mkvertex -uuid=" + vId);
                             execute("setvertexprops -uuid=" + vId +
-                                    " -key=position -value=\"(" + std::to_string(graphview.selection.cursorCoord.x)
-                                    + ", " + std::to_string(graphview.selection.cursorCoord.y) + "\")");
+                                    " -key=position -value=\"(" + std::to_string(graphview.selection.mouseCoord.x)
+                                    + ", " + std::to_string(graphview.selection.mouseCoord.y) + "\")");
                         }
                     }
 
-                    if (!graphview.selection.middleMouseDownVertex.empty()) {
-                        if (ImGui::GetIO().MouseClicked[ImGuiMouseButton_Middle]) {
-                            for (auto& v : graphview.selection.selectedVertices)
-                                execute("setvertexprops -uuid=" + v + " -key=pauseUpdate -value=true");
-                        }
-                        for (auto& v : graphview.selection.selectedVertices) {
+                    if (graphview.selection.moveStarted) {
+                        for (auto& v : graphview.selection.vertexSelection)
+                            execute("setvertexprops -uuid=" + v + " -key=pauseUpdate -value=true");
+                    }
+                    if (graphview.selection.moving) {
+                        for (auto& v : graphview.selection.vertexSelection) {
                             execute("setvertexprops -uuid=" + v + " -key=position -value=\"+(" +
-                            std::to_string(/*downPos.x + */graphview.selection.middleMousePosDelta.x)
-                            + ", " + std::to_string(/*downPos.y + */graphview.selection.middleMousePosDelta.y) +
-                            "\")");
+                                    std::to_string(graphview.selection.mouseDelta.x)
+                                    + ", " + std::to_string(graphview.selection.mouseDelta.y) +
+                                    "\")");
                         }
-                        if (ImGui::GetIO().MouseReleased[ImGuiMouseButton_Middle]) {
-                            for (auto& v : graphview.selection.selectedVertices)
-                                execute("setvertexprops -uuid=" + v + " -key=pauseUpdate -value=false");
-                        }
+                    }
+                    if (graphview.selection.moveEnded) {
+                        for (auto& v : graphview.selection.vertexSelection)
+                            execute("setvertexprops -uuid=" + v + " -key=pauseUpdate -value=false");
                     }
                 }
 

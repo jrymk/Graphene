@@ -4,7 +4,7 @@
 #include <Objects/Vec2f.hpp>
 #include <Preferences/Preferences.hpp>
 
-namespace gfn::editor::graphview {
+namespace gfn::graphview {
     class Camera {
         gfn::Vec2f targetCenterCoord;
         double targetZoom;

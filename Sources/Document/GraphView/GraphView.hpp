@@ -10,7 +10,7 @@
 #include <Document/GraphView/Selection.hpp>
 #include <earcut.hpp>
 
-namespace gfn::editor::graphview {
+namespace gfn::graphview {
 ///@brief renders and handles interaction to a specified interface
     class GraphView {
     public:
@@ -51,8 +51,10 @@ namespace gfn::editor::graphview {
             camera.update(preferences);
             selection.update();
 
-            if (!selection.leftMouseDownVertex.empty()) {
-                auto uProps = interface->properties.getRead()->getVertexProps(selection.leftMouseDownVertex);
+            if (!selection.mouseClickVertex[ImGuiMouseButton_Left].empty() &&
+                selection.vertexSelection.empty() && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+                auto uProps = interface->properties.getRead()->getVertexProps(
+                        selection.mouseClickVertex[ImGuiMouseButton_Left]);
                 if (!selection.hoveredVertex.empty()) {
                     auto vProps = interface->properties.getRead()->getVertexProps(selection.hoveredVertex);
                     ImGui::GetWindowDrawList()->AddLine(camera.map(uProps->position.value),
@@ -64,12 +66,16 @@ namespace gfn::editor::graphview {
                 }
             }
 
-            if (!selection.selectedVertices.empty()) {
-                for (auto& v : selection.selectedVertices) {
+            if (!selection.vertexSelection.empty()) {
+                for (auto& v : selection.vertexSelection) {
                     auto props = interface->properties.getRead()->getVertexProps(v);
-                    ImGui::GetWindowDrawList()->AddCircleFilled(camera.map(props->position.value),
-                                                                camera.map(props->radius.value + preferences->glow_size),
-                                                                IM_COL32(0, 135, 255, 255), 0);
+                    if (props) {
+                        ImGui::GetWindowDrawList()->AddCircleFilled(camera.map(props->position.value),
+                                                                    camera.map(
+                                                                            props->radius.value +
+                                                                            preferences->glow_size),
+                                                                    IM_COL32(0, 135, 255, 255), 0);
+                    }
                 }
             }
 
@@ -77,22 +83,20 @@ namespace gfn::editor::graphview {
                 auto props = interface->properties.getRead()->getVertexProps(selection.hoveredVertex);
                 ImGui::GetWindowDrawList()->AddCircleFilled(camera.map(props->position.value),
                                                             camera.map(props->radius.value + preferences->glow_size),
-                                                            IM_COL32(0, 255, 255, 255), 0);
+                                                            IM_COL32(0, 255, 255, 100), 0);
             } else if (!selection.hoveredEdge.empty()) {
                 auto edgeProps = interface->properties.getRead()->getEdgeProps(selection.hoveredEdge);
                 auto uProps = interface->properties.getRead()->getVertexProps(edgeProps->startVertexUuid.value);
                 auto vProps = interface->properties.getRead()->getVertexProps(edgeProps->endVertexUuid.value);
                 ImGui::GetWindowDrawList()->AddLine(camera.map(uProps->position.value),
                                                     camera.map(vProps->position.value),
-                                                    IM_COL32(0, 255, 255, 255),
+                                                    IM_COL32(0, 255, 255, 100),
                                                     camera.map(
                                                             edgeProps->thickness.value + preferences->glow_size * 2.0));
             }
 
             renderer.drawEdges();
             renderer.drawVertices();
-
-            selection.updateLassoSelection();
 
             // ImGui::PopStyleVar(1);
         }

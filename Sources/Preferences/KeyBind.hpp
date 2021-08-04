@@ -8,11 +8,11 @@ namespace gfn::keybind {
     // these are default key codes, can be modified with the Graphene.ini config file
     const std::pair<std::string, int> keyCodes[] = {
             {"space",           32},
-            {"apostrophe",      39},
-            {"comma",           44},
-            {"minus",           45},
-            {"period",          46},
-            {"slash",           47},
+            {"'",               39},
+            {",",               44},
+            {"-",               45},
+            {".",               46},
+            {"/",               47},
             {"0",               48},
             {"1",               49},
             {"2",               50},
@@ -23,8 +23,8 @@ namespace gfn::keybind {
             {"7",               55},
             {"8",               56},
             {"9",               57},
-            {"semicolon",       59},
-            {"equal",           61},
+            {";",               59},
+            {"=",               61},
             {"A",               65},
             {"B",               66},
             {"C",               67},
@@ -51,11 +51,11 @@ namespace gfn::keybind {
             {"X",               88},
             {"Y",               89},
             {"Z",               90},
-            {"left_bracket",    91},
-            {"backslash",       92},
-            {"right_bracket",   93},
-            {"grave",           96},
-            {"escape",          256},
+            {"[",               91},
+            {"\\",              92},
+            {"]",               93},
+            {"`",               96},
+            {"esc",             256},
             {"enter",           257},
             {"tab",             258},
             {"backspace",       259},
@@ -130,136 +130,193 @@ namespace gfn::keybind {
     struct KeyFlags {
         std::bitset<512> keyFlags;
 
-        KeyFlags() { keyFlags.reset(); }
+        KeyFlags() = default;
 
         void reset() { keyFlags.reset(); }
 
         void addKey(int key) { keyFlags.set(key); }
 
         void removeKey(int key) { keyFlags.reset(key); }
-
-        void now() {
-            for (int i = 0; i < 512; i++)
-                keyFlags.set(i, ImGui::GetIO().KeysDown[i]);
-        }
     };
 
-    struct Binding {
-        enum MouseButtons {
-            MOUSEBUTTON_NONE = 0,
-            MOUSEBUTTON_LEFT = 1 << 0,
-            MOUSEBUTTON_MIDDLE = 1 << 1,
-            MOUSEBUTTON_RIGHT = 1 << 2,
-        };
+    KeyFlags nowKeyFlags() {
+        KeyFlags kf;
+        for (int i = 0; i < 512; i++) {
+            if (ImGui::GetIO().KeysDown[i])
+                kf.addKey(i);
+        }
+        return kf;
+    }
 
+//    enum MouseButtons {
+//        MOUSEBUTTON_NONE = 0,
+//        MOUSEBUTTON_LEFT = 1 << 0,
+//        MOUSEBUTTON_RIGHT = 1 << 1,
+//        MOUSEBUTTON_MIDDLE = 1 << 2,
+//        MOUSEBUTTON_FOUR = 1 << 3,
+//        MOUSEBUTTON_FIVE = 1 << 4,
+//    };
+
+    struct HotKey {
         int mouseButtonFlags;
         KeyFlags keyFlags;
 
-        Binding() {
-            mouseButtonFlags = MOUSEBUTTON_NONE;
+        HotKey() {
+            keyFlags.reset();
+//            mouseButtonFlags = MOUSEBUTTON_NONE;
         }
+
+        HotKey(int _mouseButtonFlags, KeyFlags _keyFlags) {
+            keyFlags = _keyFlags;
+            mouseButtonFlags = _mouseButtonFlags;
+        }
+
+        std::string getKeyStr() {
+            std::string keysStr = "";
+            for (auto& i : keyCodes) {
+                if (keyFlags.keyFlags[i.second])
+                    keysStr += (" " + i.first + " ");
+            }
+//            if (mouseButtonFlags & MOUSEBUTTON_LEFT)
+//                keysStr += " left_mouse ";
+//            if (mouseButtonFlags & MOUSEBUTTON_RIGHT)
+//                keysStr += " right_mouse ";
+//            if (mouseButtonFlags & MOUSEBUTTON_MIDDLE)
+//                keysStr += " middle_mouse ";
+            return keysStr;
+        }
+    };
+
+    std::vector<std::string> actions = {
+            "save document",
+            "save as document",
+            "open document",
     };
 
     enum Actions {
         ACTION_CAMERA_PAN = 0,
-
+        ACTION_SELECTION_CLICK = 1,
+        ACTION_SELECTION_LASSO = 2,
     };
 
     class KeyBind {
     private:
-        std::vector<Binding> bindings;
+        std::vector<HotKey> bindings;
 
-        Binding enrollBinding;
+        HotKey enrollBinding;
+
+        int enrolling = -1;
 
     public:
+        bool showWindow = false;
+
         KeyBind() {
-            bindings.resize(1);
-            Binding binding;
-            binding.mouseButtonFlags |= Binding::MOUSEBUTTON_LEFT;
-            bindings[ACTION_CAMERA_PAN] = binding;
+            bindings.resize(actions.size());
         }
 
-        void bind(Actions action, Binding binding) {
+        void bind(int action, HotKey binding) {
             bindings[action] = binding;
         }
 
-        Binding& getBinding(Actions action) {
+        HotKey& getBinding(int action) {
             return bindings[action];
         }
 
-        static bool isBindingActive(const Binding& binding) {
-            if (ImGui::IsMouseDown(ImGuiMouseButton_Left) != (binding.mouseButtonFlags & Binding::MOUSEBUTTON_LEFT))
-                return false;
-            if (ImGui::IsMouseDown(ImGuiMouseButton_Right) != (binding.mouseButtonFlags & Binding::MOUSEBUTTON_RIGHT))
-                return false;
-            if (ImGui::IsMouseDown(ImGuiMouseButton_Middle) != (binding.mouseButtonFlags & Binding::MOUSEBUTTON_MIDDLE))
-                return false;
-            KeyFlags now;
-            now.now();
+        static bool isBindingActive(const KeyFlags& now, const HotKey& binding) {
+//            if (ImGui::IsMouseDown(ImGuiMouseButton_Left) != (binding.mouseButtonFlags & MOUSEBUTTON_LEFT))
+//                return false;
+//            if (ImGui::IsMouseDown(ImGuiMouseButton_Right) != (binding.mouseButtonFlags & MOUSEBUTTON_RIGHT))
+//                return false;
+//            if (ImGui::IsMouseDown(ImGuiMouseButton_Middle) != (binding.mouseButtonFlags & MOUSEBUTTON_MIDDLE))
+//                return false;
             if (now.keyFlags != binding.keyFlags.keyFlags)
                 return false;
             return true;
         }
 
-        void showKeybindSetup() {
-            ImGui::Begin("Keybinds");
-            
-            ImGui::End();
-        }
-
-        void showEnrollPopup(Actions action) {
-            ImGui::Begin("Enroll Action Binding");
+        void showEnrollPopup(int action) {
+            ImGui::BeginPopupModal("Enroll Action HotKey");
+            ImGui::Text((actions[action]).c_str());
             ImGui::BeginChildFrame(ImGui::GetID("enroll_area"),
-                                   ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y - ImGui::GetFrameHeightWithSpacing()),
+                                   ImVec2(ImGui::GetContentRegionAvail().x,
+                                          ImGui::GetContentRegionAvail().y - ImGui::GetFrameHeightWithSpacing()
+                                          - ImGui::GetStyle().ItemInnerSpacing.y * 2.0f),
                                    ImGuiWindowFlags_NoMove);
             if (ImGui::IsWindowHovered()) {
-                KeyFlags now;
-                now.now();
-                enrollBinding.keyFlags.keyFlags |= now.keyFlags;
+                enrollBinding.keyFlags.keyFlags |= nowKeyFlags().keyFlags;
 
-                if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
-                    enrollBinding.mouseButtonFlags |= Binding::MOUSEBUTTON_LEFT;
-                if (ImGui::IsMouseDown(ImGuiMouseButton_Right))
-                    enrollBinding.mouseButtonFlags |= Binding::MOUSEBUTTON_RIGHT;
-                if (ImGui::IsMouseDown(ImGuiMouseButton_Middle))
-                    enrollBinding.mouseButtonFlags |= Binding::MOUSEBUTTON_MIDDLE;
+//                if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
+//                    enrollBinding.mouseButtonFlags |= MOUSEBUTTON_LEFT;
+//                if (ImGui::IsMouseDown(ImGuiMouseButton_Right))
+//                    enrollBinding.mouseButtonFlags |= MOUSEBUTTON_RIGHT;
+//                if (ImGui::IsMouseDown(ImGuiMouseButton_Middle))
+//                    enrollBinding.mouseButtonFlags |= MOUSEBUTTON_MIDDLE;
             }
-            std::string keysStr = "";
-            for (auto& i : keyCodes) {
-                if (enrollBinding.keyFlags.keyFlags[i.second])
-                    keysStr += ("[" + i.first + "] ");
-            }
-            if (enrollBinding.mouseButtonFlags & Binding::MOUSEBUTTON_LEFT)
-                keysStr += "[left_mouse_button] ";
-            if (enrollBinding.mouseButtonFlags & Binding::MOUSEBUTTON_RIGHT)
-                keysStr += "[right_mouse_button] ";
-            if (enrollBinding.mouseButtonFlags & Binding::MOUSEBUTTON_MIDDLE)
-                keysStr += "[middle_mouse_button] ";
 
-            if (keysStr.empty()) {
+            std::string disp = enrollBinding.getKeyStr();
+
+            if (disp.empty()) {
                 if (!ImGui::IsWindowHovered())
-                    keysStr = "Hover here";
+                    disp = "Hover here";
                 else
-                    keysStr = "Press keys and/or mouse buttons";
+                    disp = "Press keys and/or mouse buttons";
             }
             ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 0, 0, 0));
-            ImGui::Text(keysStr.c_str());
+            ImGui::Text(disp.c_str());
             auto bbSize = ImGui::GetItemRectSize();
             ImGui::PopStyleColor(1);
             ImGui::SetCursorPos(ImVec2((ImGui::GetContentRegionAvail().x - bbSize.x) / 2.0f,
                                        (ImGui::GetContentRegionAvail().y - bbSize.y) / 2.0f));
-            ImGui::Text(keysStr.c_str());
+            ImGui::Text(disp.c_str());
 
             ImGui::EndChildFrame();
 
-            if (ImGui::Button("Reset", ImVec2(ImGui::GetContentRegionAvail().x / 2.0f, ImGui::GetContentRegionAvail().y))) {
-                enrollBinding.mouseButtonFlags = Binding::MOUSEBUTTON_NONE;
+            ImGui::PushItemWidth((ImGui::GetContentRegionAvailWidth() / 3.0f) - ImGui::GetStyle().ItemInnerSpacing.x);
+            if (ImGui::Button("Reset")) {
+//                enrollBinding.mouseButtonFlags = MOUSEBUTTON_NONE;
                 enrollBinding.keyFlags.reset();
             }
             ImGui::SameLine();
-            if (ImGui::Button("Done", ImGui::GetContentRegionAvail())) {
-                bind(action, enrollBinding);
+            if (ImGui::Button("Cancel")) {
+                enrolling = -1;
+                ImGui::CloseCurrentPopup();
             }
+            ImGui::SameLine();
+            if (ImGui::Button("Done")) {
+                bind(action, enrollBinding);
+                enrolling = -1;
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::PopItemWidth();
+
+            ImGui::End();
+        }
+
+        void showKeybindSetup() {
+            ImGui::BeginPopupModal("Key Binds");
+            for (int i = 0; i < actions.size(); i++) {
+                ImGui::Text(actions[i].c_str());
+                ImGui::SameLine(150.0f);
+                ImGui::Text(bindings[i].getKeyStr().c_str());
+                ImGui::SameLine(400.0f);
+                if (ImGui::Button(("Enroll...##" + std::to_string(i)).c_str())) {
+                    enrolling = i;
+//                    enrollBinding.mouseButtonFlags = MOUSEBUTTON_NONE;
+                    enrollBinding.keyFlags.reset();
+                    ImGui::OpenPopup("Enroll Action HotKey");
+                }
+            }
+            ImGui::SetCursorPos(
+                    ImVec2(ImGui::GetWindowSize().x - ImGui::GetItemRectSize().x
+                           - ImGui::GetStyle().ItemInnerSpacing.x,
+                           ImGui::GetWindowSize().y - ImGui::GetItemRectSize().y -
+                           ImGui::GetStyle().ItemInnerSpacing.y));
+            if (ImGui::Button("Close")) {
+                showWindow = false;
+                ImGui::CloseCurrentPopup();
+            }
+            if (enrolling >= 0)
+                showEnrollPopup(enrolling);
             ImGui::End();
         }
     };

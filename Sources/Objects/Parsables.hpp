@@ -279,7 +279,7 @@ namespace gfn::parsables {
 
         void setValueStr(const std::string& _value, gfn::Command& output) {
             float x, y, z, w;
-            int hex;
+            int u32;
             if (sscanf(_value.c_str(), "rgba(%f,%f,%f,%f)", &x, &y, &z, &w) == 4) {
                 x = std::min(255.0f, std::max(0.0f, x)) / 255.0f;
                 y = std::min(255.0f, std::max(0.0f, y)) / 255.0f;
@@ -318,8 +318,13 @@ namespace gfn::parsables {
                 output.newParam("-successful", "true");
                 getValueStr(output);
                 return;
-            } else if (sscanf(_value.c_str(), "%x", &hex) == 1) {
-                value = hex;
+            } else if (sscanf(_value.c_str(), "%x", &u32) == 1) {
+                value = u32;
+                output.newParam("-successful", "true");
+                getValueStr(output);
+                return;
+            } else if (sscanf(_value.c_str(), "d%d", &u32) == 1) {
+                value = u32;
                 output.newParam("-successful", "true");
                 getValueStr(output);
                 return;
@@ -393,10 +398,11 @@ namespace gfn::parsables {
                 output.newParam("-error", "ILLEGAL_VALUE");
                 output.newParam("-fix",
                                 "Expected rgba(r,g,b,a), rgb(r,g,b), hsva(h,s,v,a), hsv(h,s,v), "
-                                "r(r), g(g), b(b), a(a), h(h), s(s), v(v) or hexadecimal. "
+                                "r(r), g(g), b(b), a(a), h(h), s(s), v(v), hexadecimal or decimal. "
                                 "Floating numbers accepted for r, g, b, h, s, v, a. "
                                 "r, g, b, a ranging from 0 to 255, h from 0 to 360 (in degrees), "
-                                "s and v from 0 to 100 (in percentage). Alternaltively, do for example 6ce813FF");
+                                "s and v from 0 to 100 (in percentage). Alternaltively, do for example 6ce813FF"
+                                " or d1827148799");
                 return;
             }
         }

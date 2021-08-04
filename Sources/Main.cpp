@@ -7,7 +7,7 @@
 
 int main(int argc, char* argv[]) {
     gfn::window::launchWindow();
-    gfn::editor::startup();
+    gfn::editor::init();
 
     while (!glfwWindowShouldClose(gfn::window::glfwWindow)) {
         gfn::window::preFrame();
@@ -22,6 +22,24 @@ int main(int argc, char* argv[]) {
         ImGui::ShowMetricsWindow();
 
         auto fDoc = gfn::editor::getActiveDocument();
+
+        ImGui::Begin("Hot key debugger");
+        for (int i = 0; i < gfn::keybind::actions.size(); i++) {
+            ImGui::Text(gfn::keybind::actions[i].c_str());
+            if (gfn::editor::hotKeyPress[i]) {
+                ImGui::SameLine();
+                ImGui::Text("PRESS");
+            }
+            if (gfn::editor::hotKeyHold[i]) {
+                ImGui::SameLine();
+                ImGui::Text("HOLD");
+            }
+            if (gfn::editor::hotKeyRelease[i]) {
+                ImGui::SameLine();
+                ImGui::Text("RELEASE");
+            }
+        }
+        ImGui::End();
 
         ImGui::Begin("Command centre");
 
@@ -50,6 +68,16 @@ int main(int argc, char* argv[]) {
                 ImGui::OpenPopup("Save As File");
             }
         }
+
+        ImGui::Separator();
+
+        static bool showKeyBindWindow = false;
+        if (ImGui::Button("Key binds")) {
+            gfn::editor::keybind.showWindow = true;
+            ImGui::OpenPopup("Key Binds");
+        }
+        if (gfn::editor::keybind.showWindow)
+            gfn::editor::keybind.showKeybindSetup();
 
         ImGui::Separator();
 
@@ -152,12 +180,14 @@ int main(int argc, char* argv[]) {
                 ImGui::TreePop();
             }
         }
-
-        gfn::editor::update();
-
         // if (ImGui::Button("New vertex"))
         // core.parser.execute("graph new vertex"); // No, you can not run this here
+        gfn::editor::updateMainWindow();
         ImGui::End();
+
+        gfn::editor::showPropertiesPanel(); // must go before updateDocuments
+
+        gfn::editor::updateDocuments();
 
         gfn::window::postFrame();
     }

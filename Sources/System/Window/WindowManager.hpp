@@ -22,8 +22,9 @@ namespace gfn::window {
             return false;
 
         const char* glsl_version = "#version 330";
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // OpenGL 3.3 supports 32 bit indices
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_SAMPLES, 4); // 4x MSAA
         glfwWindowHint(GLFW_MAXIMIZED, true);
 
         glfwWindow = glfwCreateWindow(config::width, config::height, "Graphene", NULL, NULL);

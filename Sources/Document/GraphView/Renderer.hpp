@@ -4,10 +4,10 @@
 #include <Interface/Interface.hpp>
 #include <Document/GraphView/Camera.hpp>
 
-namespace gfn::editor::graphview {
+namespace gfn::graphview {
     class Renderer {
     public:
-        gfn::editor::graphview::Camera* camera;
+        Camera* camera;
         gfn::interface::Interface* interface;
 
         void drawEdges() {
