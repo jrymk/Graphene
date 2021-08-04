@@ -38,11 +38,12 @@ namespace gfn::document {
         /// DOCUMENT PROPERTIES
 
         /// WINDOW STATE
-        bool isFocused = false;             // updated each frame. will be maintained by editormanager
+        bool isFocused = false;             // updated each frame
         bool keepDocumentOpen = true;
 
         bool fileSaved = false;
         bool showCloseConfirmationDialog = false;
+        bool wantSaveAsAndClose = false;
         bool isDocumentWindowOpen = true;         // the p_open for the document main window
         bool closeDocument = false;               // the master switch to the document, one frame true and POOF
         /// WINDOW STATE
@@ -67,6 +68,8 @@ namespace gfn::document {
                 ImGui::Begin((displayName + "###" + docId).c_str(), &isDocumentWindowOpen, 0);
 
                 graphview.update();
+
+                isFocused = ImGui::IsWindowFocused();
 
                 if (ImGui::IsWindowFocused()) {
                     if (graphview.selection.vertexSelection.empty() &&
@@ -147,13 +150,18 @@ namespace gfn::document {
                     ImGui::BeginPopupModal(("Close confirmation"));
                     ImGui::Text(("Do you want to save changes to " + displayName + "?").c_str());
                     if (ImGui::Button("Save")) {
-                        execute("save -f=\"" + filePath + "\"");
+                        if (filePath.empty())
+                            wantSaveAsAndClose = true;
+                        else {
+                            execute("save -f=\"" + filePath + "\"");
+                            closeDocument = true;
+                        }
                         ImGui::CloseCurrentPopup();
                     }
                     ImGui::SameLine();
                     if (ImGui::Button("Don't save")) {
-                        ImGui::CloseCurrentPopup();
                         closeDocument = true;
+                        ImGui::CloseCurrentPopup();
                     }
                     ImGui::SameLine();
                     if (ImGui::Button("Cancel")) {
@@ -165,6 +173,5 @@ namespace gfn::document {
                 }
             }
         }
-
     };
 } // namespace gfn::document

@@ -279,7 +279,7 @@ namespace gfn::parsables {
 
         void setValueStr(const std::string& _value, gfn::Command& output) {
             float x, y, z, w;
-            int u32;
+            uint32_t u32;
             if (sscanf(_value.c_str(), "rgba(%f,%f,%f,%f)", &x, &y, &z, &w) == 4) {
                 x = std::min(255.0f, std::max(0.0f, x)) / 255.0f;
                 y = std::min(255.0f, std::max(0.0f, y)) / 255.0f;
@@ -287,6 +287,7 @@ namespace gfn::parsables {
                 w = std::min(255.0f, std::max(0.0f, w)) / 255.0f;
                 value = ImGui::ColorConvertFloat4ToU32(ImVec4(x, y, z, w));
                 output.newParam("-successful", "true");
+                output.newParam("-parse-mode", "rgba");
                 getValueStr(output);
                 return;
             } else if (sscanf(_value.c_str(), "rgb(%f,%f,%f)", &x, &y, &z) == 3) {
@@ -295,6 +296,7 @@ namespace gfn::parsables {
                 z = std::min(255.0f, std::max(0.0f, z)) / 255.0f;
                 value = ImGui::ColorConvertFloat4ToU32(ImVec4(x, y, z, ImGui::ColorConvertU32ToFloat4(value).w));
                 output.newParam("-successful", "true");
+                output.newParam("-parse-mode", "rgb");
                 getValueStr(output);
                 return;
             } else if (sscanf(_value.c_str(), "hsva(%f,%f,%f,%f)", &x, &y, &z, &w) == 4) {
@@ -306,6 +308,7 @@ namespace gfn::parsables {
                 ImGui::ColorConvertHSVtoRGB(tH, tS, tV, rgba.x, rgba.y, rgba.z);
                 value = ImGui::ColorConvertFloat4ToU32(rgba);
                 output.newParam("-successful", "true");
+                output.newParam("-parse-mode", "hsva");
                 getValueStr(output);
                 return;
             } else if (sscanf(_value.c_str(), "hsv(%f,%f,%f)", &x, &y, &z) == 3) {
@@ -316,16 +319,19 @@ namespace gfn::parsables {
                 ImGui::ColorConvertHSVtoRGB(tH, tS, tV, rgba.x, rgba.y, rgba.z);
                 value = ImGui::ColorConvertFloat4ToU32(rgba);
                 output.newParam("-successful", "true");
+                output.newParam("-parse-mode", "hsv");
+                getValueStr(output);
+                return;
+            } else if (sscanf(_value.c_str(), "d%u", &u32) == 1) {
+                value = u32;
+                output.newParam("-successful", "true");
+                output.newParam("-parse-mode", "dec");
                 getValueStr(output);
                 return;
             } else if (sscanf(_value.c_str(), "%x", &u32) == 1) {
                 value = u32;
                 output.newParam("-successful", "true");
-                getValueStr(output);
-                return;
-            } else if (sscanf(_value.c_str(), "d%d", &u32) == 1) {
-                value = u32;
-                output.newParam("-successful", "true");
+                output.newParam("-parse-mode", "hex");
                 getValueStr(output);
                 return;
             } else if (sscanf(_value.c_str(), "r(%f)", &x) == 1) {
@@ -334,6 +340,7 @@ namespace gfn::parsables {
                 rgba.x = r;
                 value = ImGui::ColorConvertFloat4ToU32(rgba);
                 output.newParam("-successful", "true");
+                output.newParam("-parse-mode", "r");
                 getValueStr(output);
                 return;
             } else if (sscanf(_value.c_str(), "g(%f)", &x) == 1) {
@@ -342,6 +349,7 @@ namespace gfn::parsables {
                 rgba.y = g;
                 value = ImGui::ColorConvertFloat4ToU32(rgba);
                 output.newParam("-successful", "true");
+                output.newParam("-parse-mode", "g");
                 getValueStr(output);
                 return;
             } else if (sscanf(_value.c_str(), "b(%f)", &x) == 1) {
@@ -350,6 +358,7 @@ namespace gfn::parsables {
                 rgba.z = b;
                 value = ImGui::ColorConvertFloat4ToU32(rgba);
                 output.newParam("-successful", "true");
+                output.newParam("-parse-mode", "b");
                 getValueStr(output);
                 return;
             } else if (sscanf(_value.c_str(), "a(%f)", &x) == 1) {
@@ -358,6 +367,7 @@ namespace gfn::parsables {
                 rgba.w = a;
                 value = ImGui::ColorConvertFloat4ToU32(rgba);
                 output.newParam("-successful", "true");
+                output.newParam("-parse-mode", "a");
                 getValueStr(output);
                 return;
             } else if (sscanf(_value.c_str(), "h(%f)", &x) == 1) {
@@ -369,6 +379,7 @@ namespace gfn::parsables {
                 ImGui::ColorConvertHSVtoRGB(hsva.x, hsva.y, hsva.z, rgba.x, rgba.y, rgba.z);
                 value = ImGui::ColorConvertFloat4ToU32(rgba);
                 output.newParam("-successful", "true");
+                output.newParam("-parse-mode", "h");
                 getValueStr(output);
                 return;
             } else if (sscanf(_value.c_str(), "s(%f)", &x) == 1) {
@@ -380,6 +391,7 @@ namespace gfn::parsables {
                 ImGui::ColorConvertHSVtoRGB(hsva.x, hsva.y, hsva.z, rgba.x, rgba.y, rgba.z);
                 value = ImGui::ColorConvertFloat4ToU32(rgba);
                 output.newParam("-successful", "true");
+                output.newParam("-parse-mode", "s");
                 getValueStr(output);
                 return;
             } else if (sscanf(_value.c_str(), "v(%f)", &x) == 1) {
@@ -391,6 +403,7 @@ namespace gfn::parsables {
                 ImGui::ColorConvertHSVtoRGB(hsva.x, hsva.y, hsva.z, rgba.x, rgba.y, rgba.z);
                 value = ImGui::ColorConvertFloat4ToU32(rgba);
                 output.newParam("-successful", "true");
+                output.newParam("-parse-mode", "v");
                 getValueStr(output);
                 return;
             } else {

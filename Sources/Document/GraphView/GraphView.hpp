@@ -74,7 +74,22 @@ namespace gfn::graphview {
                                                                     camera.map(
                                                                             props->radius.value +
                                                                             preferences->glow_size),
-                                                                    IM_COL32(0, 135, 255, 255), 0);
+                                                                    props->enabled.get() ? IM_COL32(0, 135, 255, 255) : IM_COL32(100, 100, 100, 120), 0);
+                    }
+                }
+            }
+            if (!selection.edgeSelection.empty()) {
+                for (auto& e : selection.edgeSelection) {
+                    auto props = interface->properties.getRead()->getEdgeProps(e);
+                    if (props) {
+                        auto edgeProps = interface->properties.getRead()->getEdgeProps(e);
+                        auto uProps = interface->properties.getRead()->getVertexProps(edgeProps->startVertexUuid.value);
+                        auto vProps = interface->properties.getRead()->getVertexProps(edgeProps->endVertexUuid.value);
+                        ImGui::GetWindowDrawList()->AddLine(camera.map(uProps->position.value),
+                                                            camera.map(vProps->position.value),
+                                                            props->enabled.get() ? IM_COL32(0, 135, 255, 255) : IM_COL32(100, 100, 100, 120),
+                                                            camera.map(
+                                                                    edgeProps->thickness.value + preferences->glow_size * 2.0));
                     }
                 }
             }
@@ -97,6 +112,14 @@ namespace gfn::graphview {
 
             renderer.drawEdges();
             renderer.drawVertices();
+
+//            if (selection.lassoSelecting) {
+//                for (auto& e : interface->properties.getRead()->getEdgePropsList()) {
+//                    ImGui::GetWindowDrawList()->AddCircleFilled(camera.map(e.second.position.get()),
+//                                                                camera.map(0.2f),
+//                                                                IM_COL32(255, 150, 150, 255), 0);
+//                }
+//            }
 
             // ImGui::PopStyleVar(1);
         }

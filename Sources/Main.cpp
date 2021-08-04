@@ -46,10 +46,9 @@ int main(int argc, char* argv[]) {
         if (ImGui::Button("New file"))
             gfn::editor::newFile();
         ImGui::SameLine();
-        if (ImGui::Button("Open file")) {
-            ImGui::OpenPopup("Open File");
+
+        if (ImGui::Button("Open file"))
             gfn::editor::openFile();
-        }
         if (!gfn::editor::activeDocumentUuid.empty()) {
             ImGui::SameLine();
             if (gfn::editor::getActiveDocument()->filePath.empty()) {
@@ -63,10 +62,8 @@ int main(int argc, char* argv[]) {
                 ImGui::PopStyleColor(1);
             }
             ImGui::SameLine();
-            if (ImGui::Button("Save As File")) {
+            if (ImGui::Button("Save As File"))
                 gfn::editor::saveAsFile(gfn::editor::activeDocumentUuid);
-                ImGui::OpenPopup("Save As File");
-            }
         }
 
         ImGui::Separator();
@@ -82,8 +79,20 @@ int main(int argc, char* argv[]) {
         ImGui::Separator();
 
         //if (gfn::editor::isOpeningFile)
-
+        ImGui::Text(gfn::editor::activeDocumentUuid.c_str());
+        ImGui::Text("Documents:");
         //if (gfn::editor::isSavingAsFile)
+        for (auto& d : gfn::editor::documents) {
+            ImGui::Text(d.first.c_str());
+            if (d.second->isFocused) {
+                ImGui::SameLine(300.0f);
+                ImGui::Text("focused");
+                ImGui::SameLine(380.0f);
+                ImGui::Text(d.second->getFileName().c_str());
+            }
+        }
+
+        ImGui::Separator();
 
         static gfn::Uuid prevActiveDocId;
         if (fDoc) {
@@ -158,7 +167,7 @@ int main(int argc, char* argv[]) {
             }
             if (ImGui::TreeNode("Properties")) {
                 if (ImGui::TreeNode("Vertices")) {
-                    for (auto& v : fDoc->interface.properties.getRead()->getVertexPropList()) {
+                    for (auto& v : fDoc->interface.properties.getRead()->getVertexPropsList()) {
                         if (ImGui::TreeNode(v.first.c_str())) {
                             ImGui::Text(("enabled: " + std::string(v.second.enabled.value ? "true" : "false")).c_str());
                             ImGui::TreePop();
@@ -167,7 +176,7 @@ int main(int argc, char* argv[]) {
                     ImGui::TreePop();
                 }
                 if (ImGui::TreeNode("Edges")) {
-                    for (auto& v : fDoc->interface.properties.getRead()->getEdgePropList()) {
+                    for (auto& v : fDoc->interface.properties.getRead()->getEdgePropsList()) {
                         if (ImGui::TreeNode(v.first.c_str())) {
                             ImGui::Text(("enabled: " + std::string(v.second.enabled.value ? "true" : "false")).c_str());
                             ImGui::Text(("start: " + v.second.startVertexUuid.value).c_str());
@@ -186,7 +195,6 @@ int main(int argc, char* argv[]) {
         ImGui::End();
 
         gfn::editor::showPropertiesPanel(); // must go before updateDocuments
-
         gfn::editor::updateDocuments();
 
         gfn::window::postFrame();

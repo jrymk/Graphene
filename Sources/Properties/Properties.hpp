@@ -198,12 +198,12 @@ namespace gfn::props {
         }
 
         ///@brief Returns the entire prop list, mainly for usergraph prop checkup
-        std::unordered_map<gfn::Uuid, gfn::props::VertexProps>& getVertexPropList() {
+        std::unordered_map<gfn::Uuid, gfn::props::VertexProps>& getVertexPropsList() {
             return vertexPropsList;
         }
 
         ///@brief Returns the entire prop list, mainly for usergraph prop checkup
         std::unordered_map<gfn::Uuid, gfn::props::EdgeProps>&
-        getEdgePropList() { return edgePropsList; }
+        getEdgePropsList() { return edgePropsList; }
     };
 } // namespace gfn::properties

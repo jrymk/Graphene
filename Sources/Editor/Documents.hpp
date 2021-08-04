@@ -33,6 +33,8 @@ namespace gfn::editor {
 
     bool _onFocusDocument = false; // whether a document is focused on this frame
 
+    void saveAsFile(const gfn::Uuid& docId);
+
     void updateDocManagement() {
         // document close handling
         // the close confirmation and state is handled by the document itself
@@ -44,16 +46,16 @@ namespace gfn::editor {
             } else dIt++;
         }
 
-        // document focus
+        // document focus & save as handling (untitled documents can not save as themselves)
         _onFocusDocument = false;
         for (auto& d : documents) {
             if (d.second->isFocused)
                 activeDocumentUuid = d.second->docId;
             if (d.second->isFocused && activeDocumentUuid != d.second->docId)
                 _onFocusDocument = true;
+            if (d.second->wantSaveAsAndClose)
+                saveAsFile(d.first);
         }
-        if (getActiveDocument())
-            getActiveDocument()->isFocused = true;
     }
 
 
@@ -73,7 +75,10 @@ namespace gfn::editor {
         return docId;
     }
 
-    void openFile() { isOpeningFile = true; }
+    void openFile() {
+        isOpeningFile = true;
+        ImGui::OpenPopup("Open File");
+    }
 
     void openFileWithPath(const std::string& path) {
         auto docId = newFile();
@@ -93,6 +98,7 @@ namespace gfn::editor {
     void saveAsFile(const gfn::Uuid& docId) {
         saveAsFileId = docId;
         isSavingAsFile = true;
+        ImGui::OpenPopup("Save As File");
     }
 
     void updateFileDialog() {
@@ -101,7 +107,7 @@ namespace gfn::editor {
                                       ImVec2(700, 310), ".gfn")) {
             isOpeningFile = false;
             auto path = fileDialog.selected_path;
-            for (auto &d : documents) {
+            for (auto& d : documents) {
                 if (d.second->filePath == fileDialog.selected_path) {
                     ImGui::SetWindowFocus((d.second->displayName + "###" + d.first).c_str());
                     return;
@@ -125,6 +131,9 @@ namespace gfn::editor {
             getDocumentFromUuid(saveAsFileId)->filePath = path;
             //getDocumentFromUuid(docId)->fileSaved = true;
             execute("open -f=\"" + fileDialog.selected_path + "\"");
+
+            if (getDocumentFromUuid(saveAsFileId)->wantSaveAsAndClose)
+                getDocumentFromUuid(saveAsFileId)->closeDocument = true;
         }
     }
 

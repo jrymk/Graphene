@@ -21,7 +21,7 @@ namespace gfn::usergraph {
 
         bool pendingUpdate = true;
 
-        void bindLogBuffer(gfn::logging::LogBuffer* _logBuffer) {logBuffer = _logBuffer; }
+        void bindLogBuffer(gfn::logging::LogBuffer* _logBuffer) { logBuffer = _logBuffer; }
 
         void bindProperties(gfn::props::Properties* _properties) { properties = _properties; }
 
@@ -87,8 +87,8 @@ namespace gfn::usergraph {
         bool validateProps(bool fix = true) {
             int problems = 0;
 
-            auto vertexPropList = properties->getVertexPropList();
-            auto edgePropList = properties->getEdgePropList();
+            auto vertexPropList = properties->getVertexPropsList();
+            auto edgePropList = properties->getEdgePropsList();
 
             for (auto& v : vertexPropList) {
                 if (v.second.uuid.value != v.first) {

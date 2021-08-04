@@ -13,7 +13,7 @@ namespace gfn::graphview {
         void drawEdges() {
             auto drawList = ImGui::GetWindowDrawList();
             auto userprops = interface->properties.getRead();
-            for (auto& ei : userprops->getEdgePropList()) {
+            for (auto& ei : userprops->getEdgePropsList()) {
                 auto e = ei.second;
                 if (!e.enabled.value)
                     continue;
@@ -30,7 +30,7 @@ namespace gfn::graphview {
         void drawVertices() {
             auto drawList = ImGui::GetWindowDrawList();
             auto userprops = interface->properties.getRead();
-            for (auto& vi : userprops->getVertexPropList()) {
+            for (auto& vi : userprops->getVertexPropsList()) {
                 auto v = vi.second;
                 if (!v.enabled.value)
                     continue;

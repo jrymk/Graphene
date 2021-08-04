@@ -47,6 +47,7 @@ namespace gfn::graphview {
 
         std::unordered_set<gfn::Uuid> vertexSelection;
         std::unordered_set<gfn::Uuid> edgeSelection;
+        bool onChangeSelection = false;
 
         // 0: subtract   1: invert   2: union
         bool lassoMultiSelectInvert = 1;
@@ -82,11 +83,16 @@ namespace gfn::graphview {
         }
 
         void update() {
+            onChangeSelection = false;
             updateMouse();
             updateLassoSelection();
             updateClickSelection();
 
             ImGui::Begin("Selection debugger");
+
+            ImGui::Text("On selection update");
+            ImGui::SameLine(100.0f);
+            ImGui::Text((onChangeSelection ? "true" : "false"));
 
             ImGui::Text("Lasso multi select mode");
             ImGui::Checkbox("INVERT", &lassoMultiSelectInvert);
@@ -102,7 +108,7 @@ namespace gfn::graphview {
             ImGui::Text(("mouse on double click: " + mouseOnDoubleClickVertex[ImGuiMouseButton_Left]).c_str());
 
             ImGui::Separator();
-            if (_lassoSelecting)
+            if (lassoSelecting)
                 ImGui::Text("lasso selecting");
             if (_moving)
                 ImGui::Text("moving");
@@ -131,7 +137,7 @@ namespace gfn::graphview {
             hoveredEdge.clear();
             // finds the vertex closest to the mouse cursor and meet the distance requirement
             float minDistance = FLT_MAX;
-            for (auto& vi : userprops->getVertexPropList()) {
+            for (auto& vi : userprops->getVertexPropsList()) {
                 auto v = vi.second;
                 if (!v.enabled.value)
                     continue;
@@ -144,28 +150,30 @@ namespace gfn::graphview {
                 }
             }
             // finds the edge closest to the mouse cursor and meet the distance requirement
-            minDistance = FLT_MAX;
-            for (auto& ei : userprops->getEdgePropList()) {
-                auto e = ei.second;
-                if (!e.enabled.value)
-                    continue;
-                float cursorDistance = distanceToALine(ImGui::GetMousePos(), camera->map(e.startVertexPosition.value),
-                                                       camera->map(e.endVertexPosition.value));
-                if (cursorDistance <=
-                    camera->map(e.thickness.value) / 2.0f + preferences->graphview_selection_tolerance &&
-                    cursorDistance < minDistance) {
-                    minDistance = cursorDistance;
-                    hoveredEdge = e.edgeUuid.value;
+            if (hoveredVertex.empty()) {
+                minDistance = FLT_MAX;
+                for (auto& ei : userprops->getEdgePropsList()) {
+                    auto e = ei.second;
+                    if (!e.enabled.value)
+                        continue;
+                    float cursorDistance = distanceToALine(ImGui::GetMousePos(), camera->map(e.startVertexPosition.value),
+                                                           camera->map(e.endVertexPosition.value));
+                    if (cursorDistance <=
+                        camera->map(e.thickness.value) / 2.0f + preferences->graphview_selection_tolerance &&
+                        cursorDistance < minDistance) {
+                        minDistance = cursorDistance;
+                        hoveredEdge = e.edgeUuid.value;
+                    }
                 }
             }
 
             for (int i = 0; i < ImGuiMouseButton_COUNT; i++) {
                 mouseOnClickVertex[i].clear();
-                mouseOnClickEdge[i].clear();
                 mouseOnReleaseVertex[i].clear();
+                mouseOnDoubleClickVertex[i].clear();
+                mouseOnClickEdge[i].clear();
+                mouseOnDoubleClickEdge[i].clear();
                 mouseOnReleaseEdge[i].clear();
-                mouseOnDoubleClickVertex[i].clear();
-                mouseOnDoubleClickVertex[i].clear();
 
                 mouseOnClick[i] = ImGui::GetIO().MouseClicked[i];
                 mouseDown[i] = ImGui::GetIO().MouseDown[i];
@@ -203,61 +211,49 @@ namespace gfn::graphview {
 
         /// LASSO SELECTION
     private:
-        bool _lassoSelecting = false;
-
         std::vector<std::vector<std::pair<double, double>>> _lassoVertices;
         std::vector<int> _lassoIndices;
         // to undo the selections every frame to properly perform the not operation
-        std::vector<gfn::Uuid> _prevLassoVertexSelection;
-        std::vector<gfn::Uuid> _prevLassoEdgeSelection;
+        std::unordered_set<gfn::Uuid> _vertexSelectionOnLasso;
+        std::unordered_set<gfn::Uuid> _edgeSelectionOnLasso;
         bool _myLassoMultiSelectInvert = lassoMultiSelectInvert;
 
     public:
+        bool lassoSelecting = false;
+
         void updateLassoSelection() {
-            // undo previous lasso selection
-            if (_lassoSelecting) {
-                for (auto& v : _prevLassoVertexSelection) {
-                    if (vertexSelection.find(v) == vertexSelection.end()) {
-                        vertexSelection.insert(v);
-                    } else {
-                        if (_myLassoMultiSelectInvert)
-                            vertexSelection.erase(v);
-                    }
-                }
-                for (auto& e : _prevLassoEdgeSelection) {
-                    if (edgeSelection.find(e) == edgeSelection.end()) {
-                        edgeSelection.insert(e);
-                    } else {
-                        if (_myLassoMultiSelectInvert)
-                            edgeSelection.erase(e);
-                    }
-                }
+            if (lassoSelecting) {
+                // undo previous lasso selection
+                onChangeSelection = true;
+                vertexSelection = _vertexSelectionOnLasso;
+                edgeSelection = _edgeSelectionOnLasso;
             }
             _myLassoMultiSelectInvert = lassoMultiSelectInvert;
 
             // start the lasso selection
             // CRITERIA: click at empty space
-            if (ImGui::IsWindowFocused() && mouseOnClick[selectBtn] && hoveredVertex.empty() && hoveredEdge.empty()) {
+            if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem) && mouseOnClick[selectBtn]
+                && hoveredVertex.empty() && hoveredEdge.empty()) {
                 _lassoVertices.clear();
                 _lassoVertices.emplace_back(std::vector<std::pair<double, double>>());
-                _lassoSelecting = true;
+                lassoSelecting = true;
                 // clear selection then starting lasso selection
                 // CRITERIA: shift not held
                 if (!(ImGui::IsKeyDown(GLFW_KEY_LEFT_SHIFT) || ImGui::IsKeyDown(GLFW_KEY_RIGHT_SHIFT))) {
                     vertexSelection.clear();
                     edgeSelection.clear();
                 }
+                _vertexSelectionOnLasso = vertexSelection;
+                _edgeSelectionOnLasso = edgeSelection;
             }
 
-            if (_lassoSelecting) {
+            if (lassoSelecting) {
                 if (!_lassoVertices[0].empty() && distance(camera->map(gfn::Vec2f(_lassoVertices[0][_lassoVertices[0].size() - 1].first,
-                                                    _lassoVertices[0][_lassoVertices[0].size() - 1].second)), ImGui::GetMousePos()) < 2.0f)
+                                                                                  _lassoVertices[0][_lassoVertices[0].size() - 1].second)),
+                                                           ImGui::GetMousePos()) < 2.0f)
                     _lassoVertices[0].pop_back();
                 _lassoVertices[0].emplace_back(camera->rMap(ImVec2(ImGui::GetMousePos().x, ImGui::GetMousePos().y)).x,
                                                camera->rMap(ImVec2(ImGui::GetMousePos().x, ImGui::GetMousePos().y)).y);
-
-                _prevLassoVertexSelection.clear();
-                //_prevLassoEdgeSelection.clear();
 
                 _lassoIndices = mapbox::earcut<int>(_lassoVertices);
 //                for (int i = 0; i < _lassoIndices.size(); i += 3) {
@@ -267,7 +263,7 @@ namespace gfn::graphview {
 //                                     _lassoVertices[0][_lassoIndices[i + 1]].second);
 //                    auto p3 = ImVec2(_lassoVertices[0][_lassoIndices[i + 2]].first,
 //                                     _lassoVertices[0][_lassoIndices[i + 2]].second);
-//                    for (auto& v : interface->properties.getRead()->getVertexPropList()) {
+//                    for (auto& v : interface->properties.getRead()->getVertexPropsList()) {
 //                        // checks if vertex is in the triangle
 //                        auto p1d = camera->rMap(p1);
 //                        auto p2d = camera->rMap(p2);
@@ -290,14 +286,36 @@ namespace gfn::graphview {
                                          _lassoVertices[0][_lassoIndices[i + 1]].second);
                     auto p3 = gfn::Vec2f(_lassoVertices[0][_lassoIndices[i + 2]].first,
                                          _lassoVertices[0][_lassoIndices[i + 2]].second);
-                    for (auto& v : interface->properties.getRead()->getVertexPropList()) {
+                    for (auto& v : interface->properties.getRead()->getVertexPropsList()) {
                         // checks if vertex is in the triangle
                         auto p = v.second.position.get();
                         double d1 = (p.x - p2.x) * (p1.y - p2.y) - (p1.x - p2.x) * (p.y - p2.y);
                         double d2 = (p.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p.y - p3.y);
                         double d3 = (p.x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (p.y - p1.y);
-                        if (!(((d1 < 0) || (d2 < 0) || (d3 < 0)) && ((d1 > 0) || (d2 > 0) || (d3 > 0))))
-                            _prevLassoVertexSelection.push_back(v.first);
+                        if (!(((d1 < 0) || (d2 < 0) || (d3 < 0)) && ((d1 > 0) || (d2 > 0) || (d3 > 0)))) {
+                            // commit to main selection
+                            if (vertexSelection.find(v.first) == vertexSelection.end()) {
+                                vertexSelection.insert(v.first);
+                            } else {
+                                if (_myLassoMultiSelectInvert)
+                                    vertexSelection.erase(v.first);
+                            }
+                        }
+                    }
+                    for (auto& e : interface->properties.getRead()->getEdgePropsList()) {
+                        // checks if edge is in the triangle
+                        auto p = e.second.position.get();
+                        double d1 = (p.x - p2.x) * (p1.y - p2.y) - (p1.x - p2.x) * (p.y - p2.y);
+                        double d2 = (p.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p.y - p3.y);
+                        double d3 = (p.x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (p.y - p1.y);
+                        if (!(((d1 < 0) || (d2 < 0) || (d3 < 0)) && ((d1 > 0) || (d2 > 0) || (d3 > 0)))) {
+                            if (edgeSelection.find(e.first) == edgeSelection.end()) {
+                                edgeSelection.insert(e.first);
+                            } else {
+                                if (_myLassoMultiSelectInvert)
+                                    edgeSelection.erase(e.first);
+                            }
+                        }
                     }
                     ImGui::GetWindowDrawList()->AddTriangleFilled(camera->map(p1), camera->map(p2), camera->map(p3),
                                                                   IM_COL32(214, 240, 255, 255));
@@ -307,30 +325,12 @@ namespace gfn::graphview {
                     polyVertices.emplace_back(camera->map(gfn::Vec2f(v.first, v.second)).x, camera->map(gfn::Vec2f(v.first, v.second)).y);
                 ImGui::GetWindowDrawList()->AddPolyline(polyVertices.data(), polyVertices.size(), IM_COL32(112, 203, 255, 255),
                                                         ImDrawListFlags_AntiAliasedLinesUseTex, 3.0f);
-
-                // commit to main selection
-                for (auto& v : _prevLassoVertexSelection) {
-                    if (vertexSelection.find(v) == vertexSelection.end()) {
-                        vertexSelection.insert(v);
-                    } else {
-                        if (_myLassoMultiSelectInvert)
-                            vertexSelection.erase(v);
-                    }
-                }
-                for (auto& e : _prevLassoEdgeSelection) {
-                    if (edgeSelection.find(e) == edgeSelection.end()) {
-                        edgeSelection.insert(e);
-                    } else {
-                        if (_myLassoMultiSelectInvert)
-                            edgeSelection.erase(e);
-                    }
-                }
             }
 
             // end lasso selection
             // CRITERIA: released mouse button
-            if (!mouseDown[selectBtn])
-                _lassoSelecting = false;
+            if (mouseOnRelease[selectBtn])
+                lassoSelecting = false;
         }
         /// LASSO SELECTION
 
@@ -345,25 +345,52 @@ namespace gfn::graphview {
             // click to remove all selection and select one item
             // CRITERIA: when unshifted and clicking on a deselected vertex, mouse click selects it. (clicking on a selected vertex moves it)
             //           *dragging a vertex to create an edge DOES select the vertex
-            auto clickVertex = mouseOnClickVertex[selectBtn];
-            if (!clickVertex.empty()) {
-                if (!(ImGui::IsKeyDown(GLFW_KEY_LEFT_SHIFT) || ImGui::IsKeyDown(GLFW_KEY_RIGHT_SHIFT))) {
-                    // unshifted
-                    if (vertexSelection.find(clickVertex) == vertexSelection.end()) {
-                        // deselected vertex
-                        vertexSelection.clear();
-                        edgeSelection.clear();
-                        vertexSelection.insert(clickVertex);
+            if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) {
+                auto clickVertex = mouseOnClickVertex[selectBtn];
+                if (!clickVertex.empty()) {
+                    if (!(ImGui::IsKeyDown(GLFW_KEY_LEFT_SHIFT) || ImGui::IsKeyDown(GLFW_KEY_RIGHT_SHIFT))) {
+                        // unshifted
+                        if (vertexSelection.find(clickVertex) == vertexSelection.end()) {
+                            // deselected vertex
+                            vertexSelection.clear();
+                            edgeSelection.clear();
+                            vertexSelection.insert(clickVertex);
+                            onChangeSelection = true;
+                        } else {
+                            // selected vertex
+                            _moving = true;
+                        }
                     } else {
-                        // selected vertex
-                        _moving = true;
+                        // shifted: invert selection
+                        if (vertexSelection.find(clickVertex) == vertexSelection.end())
+                            vertexSelection.insert(clickVertex);
+                        else
+                            vertexSelection.erase(clickVertex);
+                        onChangeSelection = true;
                     }
-                } else {
-                    // shifted: invert selection
-                    if (vertexSelection.find(clickVertex) == vertexSelection.end())
-                        vertexSelection.insert(clickVertex);
-                    else
-                        vertexSelection.erase(clickVertex);
+                }
+                auto clickEdge = mouseOnClickEdge[selectBtn];
+                if (!clickEdge.empty()) {
+                    if (!(ImGui::IsKeyDown(GLFW_KEY_LEFT_SHIFT) || ImGui::IsKeyDown(GLFW_KEY_RIGHT_SHIFT))) {
+                        // unshifted
+                        if (edgeSelection.find(clickEdge) == edgeSelection.end()) {
+                            // deselected vertex
+                            vertexSelection.clear();
+                            edgeSelection.clear();
+                            edgeSelection.insert(clickEdge);
+                            onChangeSelection = true;
+                        } else {
+                            // selected vertex
+                            _moving = true;
+                        }
+                    } else {
+                        // shifted: invert selection
+                        if (edgeSelection.find(clickEdge) == edgeSelection.end())
+                            edgeSelection.insert(clickEdge);
+                        else
+                            edgeSelection.erase(clickEdge);
+                        onChangeSelection = true;
+                    }
                 }
             }
 

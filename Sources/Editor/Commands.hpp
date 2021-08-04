@@ -68,7 +68,7 @@ namespace gfn::editor {
             gfn::Command command(fullCmd), output;
             commandQueue.pop();
             std::string cmd = command.getParamValue("command");
-            std::cout << fullCmd << "\n";
+            std::cout << "parsing: " << fullCmd << "\n";
             if (cmd == "select") parseSelect(command, output);
             else if (getActiveDocument()) getActiveDocument()->execute(fullCmd);
             else output.newParam("-error", "NO_DOCUMENT_FOCUSED");

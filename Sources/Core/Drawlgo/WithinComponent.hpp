@@ -122,6 +122,8 @@ namespace gfn::core::drawlgo {
         for (auto& e : c->edges) {
             e->props->startVertexPosition = e->startVertex->props->position;
             e->props->endVertexPosition = e->endVertex->props->position;
+            /// TODO
+            e->props->position.get() = (e->props->startVertexPosition.get() + e->props->endVertexPosition.get()) / 2.0;
         }
         /*for (auto& e : c->edges)
             e->props->position += e->props->force * configs->c4;*/
