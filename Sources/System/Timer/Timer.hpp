@@ -38,6 +38,38 @@ namespace gfn::timer {
         }
     };
 
+    class TimePoint {
+    public:
+        std::chrono::time_point<std::chrono::steady_clock> tp;
+
+        TimePoint() { tp = std::chrono::steady_clock::now(); }
+
+        void restart() { tp = std::chrono::steady_clock::now(); }
+
+        static double getSeconds(const TimePoint& baseline) {
+            std::chrono::duration<double> diff = std::chrono::steady_clock::now() - baseline.tp;
+            return diff.count();
+        }
+
+        static unsigned long long getMilliseconds(const TimePoint& baseline) {
+            std::chrono::milliseconds diff = std::chrono::duration_cast<std::chrono::milliseconds>(
+                    std::chrono::steady_clock::now() - baseline.tp);
+            return diff.count();
+        }
+
+        static unsigned long long getMicroseconds(const TimePoint& baseline) {
+            std::chrono::microseconds diff = std::chrono::duration_cast<std::chrono::microseconds>(
+                    std::chrono::steady_clock::now() - baseline.tp);
+            return diff.count();
+        }
+
+        static unsigned long long getNanoseconds(const TimePoint& baseline) {
+            std::chrono::nanoseconds diff = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                    std::chrono::steady_clock::now() - baseline.tp);
+            return diff.count();
+        }
+    };
+
     int getNowMillis() {
         std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
         int ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() % 1000;
@@ -46,7 +78,7 @@ namespace gfn::timer {
 
     int getNowMicros() {
         std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-        uint64_t us = (uint64_t)std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count() % 1000;
+        uint64_t us = (uint64_t) std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count() % 1000;
         return us;
     }
 

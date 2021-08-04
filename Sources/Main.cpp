@@ -9,12 +9,20 @@ int main(int argc, char* argv[]) {
     gfn::window::launchWindow();
     gfn::editor::init();
 
+    std::string path = "bagel.gfn";
+    auto docId = gfn::editor::newFile();
+    gfn::editor::getDocumentFromUuid(docId)->displayName = path.substr(path.find_last_of('/') + 1);
+    gfn::editor::getDocumentFromUuid(docId)->filePath = path;
+    //getDocumentFromUuid(docId)->fileSaved = true;
+    gfn::editor::execute("select -uuid=" + docId);
+    gfn::editor::execute("open -f=\"" + path + "\"");
+
     while (!glfwWindowShouldClose(gfn::window::glfwWindow)) {
         gfn::window::preFrame();
 
         static bool first = true;
         if (first) {
-            gfn::editor::loadDragAndDrop(argc, argv);
+            gfn::editor::loadDragAndDrop(argc, argv, true);
             first = false;
         }
 
@@ -22,24 +30,6 @@ int main(int argc, char* argv[]) {
         ImGui::ShowMetricsWindow();
 
         auto fDoc = gfn::editor::getActiveDocument();
-
-        ImGui::Begin("Hot key debugger");
-        for (int i = 0; i < gfn::keybind::actions.size(); i++) {
-            ImGui::Text(gfn::keybind::actions[i].c_str());
-            if (gfn::editor::hotKeyPress[i]) {
-                ImGui::SameLine();
-                ImGui::Text("PRESS");
-            }
-            if (gfn::editor::hotKeyHold[i]) {
-                ImGui::SameLine();
-                ImGui::Text("HOLD");
-            }
-            if (gfn::editor::hotKeyRelease[i]) {
-                ImGui::SameLine();
-                ImGui::Text("RELEASE");
-            }
-        }
-        ImGui::End();
 
         ImGui::Begin("Command centre");
 
@@ -68,13 +58,12 @@ int main(int argc, char* argv[]) {
 
         ImGui::Separator();
 
-        static bool showKeyBindWindow = false;
         if (ImGui::Button("Key binds")) {
-            gfn::editor::keybind.showWindow = true;
+            gfn::editor::keyBind.showBindingsWindow = true;
             ImGui::OpenPopup("Key Binds");
         }
-        if (gfn::editor::keybind.showWindow)
-            gfn::editor::keybind.showKeybindSetup();
+        if (gfn::editor::keyBind.showBindingsWindow)
+            gfn::editor::keyBind.showKeybindSetup();
 
         ImGui::Separator();
 
@@ -192,6 +181,7 @@ int main(int argc, char* argv[]) {
         // if (ImGui::Button("New vertex"))
         // core.parser.execute("graph new vertex"); // No, you can not run this here
         gfn::editor::updateMainWindow();
+
         ImGui::End();
 
         gfn::editor::showPropertiesPanel(); // must go before updateDocuments

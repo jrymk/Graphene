@@ -137,7 +137,7 @@ namespace gfn::editor {
         }
     }
 
-    void loadDragAndDrop(int argc, char* argv[]) {
+    void loadDragAndDrop(int argc, char* argv[], bool doNotCreateUntitle = false) {
         bool haveDragNDrop = false;
         for (int f = 1; f < argc; f++) {
             std::string arg(argv[f]);
@@ -148,7 +148,7 @@ namespace gfn::editor {
             }
         }
         // if no files are dragged into the executable, open an untitled document
-        if (!haveDragNDrop)
+        if (!haveDragNDrop && !doNotCreateUntitle)
             gfn::editor::newFile();
     }
 

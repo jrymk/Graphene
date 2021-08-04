@@ -19,6 +19,15 @@ namespace gfn::graphview {
         gfn::Vec2f mouseCoord;
         gfn::Vec2f mouseDelta;
         gfn::Vec2f _prevMouseCoord;
+        bool _hover_e = false; // empty selection
+        bool _hover_u = false; // hovered on unselected item
+        bool _hover_s = false; // hovered on selected item
+        bool _start_hover_e = false; // empty selection
+        bool _start_hover_u = false; // hovered on unselected item
+        bool _start_hover_s = false; // hovered on selected item
+        bool _lassoAddSelectMode;
+        bool _lassoSubtractSelectMode;
+        bool _lassoInvSelectMode;
 
         gfn::Uuid hoveredVertex;
         gfn::Uuid hoveredEdge;
@@ -48,9 +57,6 @@ namespace gfn::graphview {
         std::unordered_set<gfn::Uuid> vertexSelection;
         std::unordered_set<gfn::Uuid> edgeSelection;
         bool onChangeSelection = false;
-
-        // 0: subtract   1: invert   2: union
-        bool lassoMultiSelectInvert = 1;
 
         // output states
         bool moveStarted = false;
@@ -94,9 +100,6 @@ namespace gfn::graphview {
             ImGui::SameLine(100.0f);
             ImGui::Text((onChangeSelection ? "true" : "false"));
 
-            ImGui::Text("Lasso multi select mode");
-            ImGui::Checkbox("INVERT", &lassoMultiSelectInvert);
-
             ImGui::Separator();
             ImGui::Text("LEFT");
             ImGui::Text(("mouse click: " + mouseClickVertex[ImGuiMouseButton_Left]).c_str());
@@ -122,6 +125,28 @@ namespace gfn::graphview {
             ImGui::Text("EDGE SELECTION");
             for (auto& e : edgeSelection)
                 ImGui::Text(e.c_str());
+            ImGui::End();
+
+            ImGui::Begin("Hot key debugger");
+            if (_start_hover_e)
+                ImGui::Text("start E");
+            if (_start_hover_u)
+                ImGui::Text("start U");
+            if (_start_hover_s)
+                ImGui::Text("start S");
+            if (_lassoAddSelectMode)
+                ImGui::Text("SEL");
+            if (_lassoSubtractSelectMode)
+                ImGui::Text("DESEL");
+            if (_lassoInvSelectMode)
+                ImGui::Text("INVSEL");
+
+            ImGui::Separator();
+            ImGui::Text("ACTIONS");
+            for (int i = 0; i < gfn::keybind::actions.size(); i++) {
+                if (gfn::editor::hkDown(i))
+                    ImGui::Text(gfn::keybind::actions[i].c_str());
+            }
             ImGui::End();
         }
 
@@ -206,6 +231,11 @@ namespace gfn::graphview {
 
             mouseDelta = mouseCoord - _prevMouseCoord;
             _prevMouseCoord = mouseCoord;
+
+            _hover_e = hoveredVertex.empty() && hoveredEdge.empty();
+            _hover_s = (!hoveredVertex.empty() && vertexSelection.find(hoveredVertex) != vertexSelection.end())
+                       || (!hoveredEdge.empty() && edgeSelection.find(hoveredEdge) != edgeSelection.end());
+            _hover_u = !(_hover_e || _hover_s);
         }
         /// MOUSE UPDATE
 
@@ -216,7 +246,6 @@ namespace gfn::graphview {
         // to undo the selections every frame to properly perform the not operation
         std::unordered_set<gfn::Uuid> _vertexSelectionOnLasso;
         std::unordered_set<gfn::Uuid> _edgeSelectionOnLasso;
-        bool _myLassoMultiSelectInvert = lassoMultiSelectInvert;
 
     public:
         bool lassoSelecting = false;
@@ -228,56 +257,60 @@ namespace gfn::graphview {
                 vertexSelection = _vertexSelectionOnLasso;
                 edgeSelection = _edgeSelectionOnLasso;
             }
-            _myLassoMultiSelectInvert = lassoMultiSelectInvert;
 
-            // start the lasso selection
-            // CRITERIA: click at empty space
-            if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem) && mouseOnClick[selectBtn]
-                && hoveredVertex.empty() && hoveredEdge.empty()) {
+            /// LASSO BEGIN
+            if (!lassoSelecting && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)
+                && ((_hover_e && ((vertexSelection.empty() && gfn::editor::hkPress(keybind::Actions::BEGIN_SELECT_LASSO_E)) ||
+                                  gfn::editor::hkPress(keybind::Actions::ADD_SELECT_LASSO_E) ||
+                                  gfn::editor::hkPress(keybind::Actions::SUBTRACT_SELECT_LASSO_E) ||
+                                  gfn::editor::hkPress(keybind::Actions::INV_SELECT_LASSO_E)))
+                    || (_hover_u && ((vertexSelection.empty() && gfn::editor::hkPress(keybind::Actions::BEGIN_SELECT_LASSO_U)) ||
+                                     gfn::editor::hkPress(keybind::Actions::ADD_SELECT_LASSO_U) ||
+                                     gfn::editor::hkPress(keybind::Actions::SUBTRACT_SELECT_LASSO_U) ||
+                                     gfn::editor::hkPress(keybind::Actions::INV_SELECT_LASSO_U)))
+                    || (_hover_s && ((vertexSelection.empty() && gfn::editor::hkPress(keybind::Actions::BEGIN_SELECT_LASSO_S)) ||
+                                     gfn::editor::hkPress(keybind::Actions::ADD_SELECT_LASSO_S) ||
+                                     gfn::editor::hkPress(keybind::Actions::SUBTRACT_SELECT_LASSO_S) ||
+                                     gfn::editor::hkPress(keybind::Actions::INV_SELECT_LASSO_S))))) {
                 _lassoVertices.clear();
                 _lassoVertices.emplace_back(std::vector<std::pair<double, double>>());
-                lassoSelecting = true;
+
+                _start_hover_e = _hover_e;
+                _start_hover_u = _hover_u;
+                _start_hover_s = _hover_s;
+
+                _lassoAddSelectMode = (_hover_e && gfn::editor::hkPress(keybind::Actions::BEGIN_SELECT_LASSO_E))
+                                      || (_hover_u && gfn::editor::hkPress(keybind::Actions::BEGIN_SELECT_LASSO_U))
+                                      || (_hover_s && gfn::editor::hkPress(keybind::Actions::BEGIN_SELECT_LASSO_S))
+                                      || (_hover_e && gfn::editor::hkPress(keybind::Actions::ADD_SELECT_LASSO_E))
+                                      || (_hover_u && gfn::editor::hkPress(keybind::Actions::ADD_SELECT_LASSO_U))
+                                      || (_hover_s && gfn::editor::hkPress(keybind::Actions::ADD_SELECT_LASSO_S));
+                _lassoSubtractSelectMode = (_hover_e && gfn::editor::hkPress(keybind::Actions::SUBTRACT_SELECT_LASSO_E))
+                                           || (_hover_u && gfn::editor::hkPress(keybind::Actions::SUBTRACT_SELECT_LASSO_U))
+                                           || (_hover_s && gfn::editor::hkPress(keybind::Actions::SUBTRACT_SELECT_LASSO_S));
+                _lassoInvSelectMode = (_hover_e && gfn::editor::hkPress(keybind::Actions::INV_SELECT_LASSO_E))
+                                      || (_hover_u && gfn::editor::hkPress(keybind::Actions::INV_SELECT_LASSO_U))
+                                      || (_hover_s && gfn::editor::hkPress(keybind::Actions::INV_SELECT_LASSO_S));
+
                 // clear selection then starting lasso selection
                 // CRITERIA: shift not held
-                if (!(ImGui::IsKeyDown(GLFW_KEY_LEFT_SHIFT) || ImGui::IsKeyDown(GLFW_KEY_RIGHT_SHIFT))) {
-                    vertexSelection.clear();
-                    edgeSelection.clear();
-                }
                 _vertexSelectionOnLasso = vertexSelection;
                 _edgeSelectionOnLasso = edgeSelection;
+
+                lassoSelecting = true;
             }
 
             if (lassoSelecting) {
-                if (!_lassoVertices[0].empty() && distance(camera->map(gfn::Vec2f(_lassoVertices[0][_lassoVertices[0].size() - 1].first,
-                                                                                  _lassoVertices[0][_lassoVertices[0].size() - 1].second)),
-                                                           ImGui::GetMousePos()) < 2.0f)
+                if (!_lassoVertices[0].empty() && distance(
+                        camera->map(gfn::Vec2f(
+                                _lassoVertices[0][_lassoVertices[0].size() - 1].first,
+                                _lassoVertices[0][_lassoVertices[0].size() - 1].second)), ImGui::GetMousePos()) < 2.0f)
                     _lassoVertices[0].pop_back();
+
                 _lassoVertices[0].emplace_back(camera->rMap(ImVec2(ImGui::GetMousePos().x, ImGui::GetMousePos().y)).x,
                                                camera->rMap(ImVec2(ImGui::GetMousePos().x, ImGui::GetMousePos().y)).y);
 
                 _lassoIndices = mapbox::earcut<int>(_lassoVertices);
-//                for (int i = 0; i < _lassoIndices.size(); i += 3) {
-//                    auto p1 = ImVec2(_lassoVertices[0][_lassoIndices[i]].first,
-//                                     _lassoVertices[0][_lassoIndices[i]].second);
-//                    auto p2 = ImVec2(_lassoVertices[0][_lassoIndices[i + 1]].first,
-//                                     _lassoVertices[0][_lassoIndices[i + 1]].second);
-//                    auto p3 = ImVec2(_lassoVertices[0][_lassoIndices[i + 2]].first,
-//                                     _lassoVertices[0][_lassoIndices[i + 2]].second);
-//                    for (auto& v : interface->properties.getRead()->getVertexPropsList()) {
-//                        // checks if vertex is in the triangle
-//                        auto p1d = camera->rMap(p1);
-//                        auto p2d = camera->rMap(p2);
-//                        auto p3d = camera->rMap(p3);
-//                        auto pd = v.second.position.get();
-//                        double d1 = (pd.x - p2d.x) * (p1d.y - p2d.y) - (p1d.x - p2d.x) * (pd.y - p2d.y);
-//                        double d2 = (pd.x - p3d.x) * (p2d.y - p3d.y) - (p2d.x - p3d.x) * (pd.y - p3d.y);
-//                        double d3 = (pd.x - p1d.x) * (p3d.y - p1d.y) - (p3d.x - p1d.x) * (pd.y - p1d.y);
-//                        if (!(((d1 < 0) || (d2 < 0) || (d3 < 0)) && ((d1 > 0) || (d2 > 0) || (d3 > 0))))
-//                            _prevLassoVertexSelection.push_back(v.first);
-//                    }
-//                    ImGui::GetWindowDrawList()->AddTriangleFilled(p1, p2, p3,
-//                                                                  IM_COL32(3, 223, 252, 50));
-//                }
 
                 for (int i = 0; i < _lassoIndices.size(); i += 3) {
                     auto p1 = gfn::Vec2f(_lassoVertices[0][_lassoIndices[i]].first,
@@ -295,9 +328,12 @@ namespace gfn::graphview {
                         if (!(((d1 < 0) || (d2 < 0) || (d3 < 0)) && ((d1 > 0) || (d2 > 0) || (d3 > 0)))) {
                             // commit to main selection
                             if (vertexSelection.find(v.first) == vertexSelection.end()) {
-                                vertexSelection.insert(v.first);
+                                // not in selection
+                                if (_lassoAddSelectMode || _lassoInvSelectMode)
+                                    vertexSelection.insert(v.first);
                             } else {
-                                if (_myLassoMultiSelectInvert)
+                                // is in selection
+                                if (_lassoSubtractSelectMode || _lassoInvSelectMode)
                                     vertexSelection.erase(v.first);
                             }
                         }
@@ -310,9 +346,12 @@ namespace gfn::graphview {
                         double d3 = (p.x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (p.y - p1.y);
                         if (!(((d1 < 0) || (d2 < 0) || (d3 < 0)) && ((d1 > 0) || (d2 > 0) || (d3 > 0)))) {
                             if (edgeSelection.find(e.first) == edgeSelection.end()) {
-                                edgeSelection.insert(e.first);
+                                // not in selection
+                                if (_lassoAddSelectMode || _lassoInvSelectMode)
+                                    edgeSelection.insert(e.first);
                             } else {
-                                if (_myLassoMultiSelectInvert)
+                                // is in selection
+                                if (_lassoSubtractSelectMode || _lassoInvSelectMode)
                                     edgeSelection.erase(e.first);
                             }
                         }
@@ -329,7 +368,18 @@ namespace gfn::graphview {
 
             // end lasso selection
             // CRITERIA: released mouse button
-            if (mouseOnRelease[selectBtn])
+            if (lassoSelecting && ((_start_hover_e && !(gfn::editor::hkDown(keybind::Actions::BEGIN_SELECT_LASSO_E) ||
+                                                        gfn::editor::hkDown(keybind::Actions::ADD_SELECT_LASSO_E) ||
+                                                        gfn::editor::hkDown(keybind::Actions::SUBTRACT_SELECT_LASSO_E) ||
+                                                        gfn::editor::hkDown(keybind::Actions::INV_SELECT_LASSO_E)))
+                                   || (_start_hover_u && !(gfn::editor::hkDown(keybind::Actions::BEGIN_SELECT_LASSO_U) ||
+                                                           gfn::editor::hkDown(keybind::Actions::ADD_SELECT_LASSO_U) ||
+                                                           gfn::editor::hkDown(keybind::Actions::SUBTRACT_SELECT_LASSO_U) ||
+                                                           gfn::editor::hkDown(keybind::Actions::INV_SELECT_LASSO_U)))
+                                   || (_start_hover_s && !(gfn::editor::hkDown(keybind::Actions::BEGIN_SELECT_LASSO_S) ||
+                                                           gfn::editor::hkDown(keybind::Actions::ADD_SELECT_LASSO_S) ||
+                                                           gfn::editor::hkDown(keybind::Actions::SUBTRACT_SELECT_LASSO_S) ||
+                                                           gfn::editor::hkDown(keybind::Actions::INV_SELECT_LASSO_S)))))
                 lassoSelecting = false;
         }
         /// LASSO SELECTION
@@ -340,8 +390,13 @@ namespace gfn::graphview {
 
     public:
         void updateClickSelection() {
-            // click empty space to deselect all is handled by updateLassoSelection, as clicking empty space is starting a latto selection
-
+            // DESELECT
+            if ((_hover_e && gfn::editor::hkPress(keybind::Actions::CLEAR_SELECTION_E))
+                || (_hover_u && gfn::editor::hkPress(keybind::Actions::CLEAR_SELECTION_U))
+                || (_hover_s && gfn::editor::hkPress(keybind::Actions::CLEAR_SELECTION_S))) {
+                vertexSelection.clear();
+                edgeSelection.clear();
+            }
             // click to remove all selection and select one item
             // CRITERIA: when unshifted and clicking on a deselected vertex, mouse click selects it. (clicking on a selected vertex moves it)
             //           *dragging a vertex to create an edge DOES select the vertex

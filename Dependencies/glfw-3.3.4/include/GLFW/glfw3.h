@@ -2666,7 +2666,7 @@ GLFWAPI void glfwWindowHintString(int hint, const char* value);
  *  supported, or if the compositor prefers client-side decorations, a very
  *  simple fallback frame will be drawn using the wp_viewporter protocol.  A
  *  compositor can still emit close, maximize or fullscreen events, using for
- *  instance a keybind mechanism.  If neither of these protocols is supported,
+ *  instance a keyBind mechanism.  If neither of these protocols is supported,
  *  the window won't be decorated.
  *
  *  @remark @wayland A full screen window will not attempt to change the mode,

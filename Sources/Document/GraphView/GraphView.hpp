@@ -42,7 +42,7 @@ namespace gfn::graphview {
             assert(interface && preferences); // did you forget to bind interface or preferences?
 
             // ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
-            // auto binding = preferences->getKeyBind().getBinding(gfn::keybind::ACTION_CAMERA_PAN);
+            // auto binding = preferences->getKeyBind().getBinding(gfn::keyBind::ACTION_CAMERA_PAN);
             ImGui::InvisibleButton("graphview_canvas",
                                    ImVec2(std::max(ImGui::GetContentRegionAvail().x, 10.0f),
                                           std::max(ImGui::GetContentRegionAvail().y, 10.0f)),
