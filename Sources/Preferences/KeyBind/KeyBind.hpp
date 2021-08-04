@@ -174,6 +174,12 @@ namespace gfn::keybind {
             return false;
         }
 
+        bool isBindingActive(Binding& binding) {
+            return (!(binding.keyFlags.keyFlags.none() && binding.mouseButtonFlags == 0)
+                    && (binding.mouseButtonFlags & gfn::keybind::Binding::now().mouseButtonFlags) == binding.mouseButtonFlags
+                    && gfn::keybind::Binding::now().keyFlags.keyFlags == binding.keyFlags.keyFlags);
+        }
+
         void showEnrollPopup(int action) {
             ImGui::SetNextWindowSizeConstraints(ImVec2(200.0f, 200.0f), ImVec2(FLT_MAX, FLT_MAX));
             ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.5f, ImGui::GetIO().DisplaySize.y * 0.5f),
@@ -237,24 +243,25 @@ namespace gfn::keybind {
 
                 int bId = 0;
                 for (auto it = bindings[i].begin(); it != bindings[i].end();) {
-                    if (isBindingActive(i)) {
+                    if (isBindingActive(*it)) {
                         ImGui::SetCursorPosX(600.0f);
                         ImGui::Text("ACTIVE");
+                        ImGui::SameLine(675.0f);
                     }
-                    //ImGui::Text(bindings[i].getKeyStr().c_str());
+
                     ImGui::SetCursorPosX(675.0f);
+                    //ImGui::Text(bindings[i].getKeyStr().c_str());
                     it->showKeysImGui();
 
                     ImGui::SameLine(ImGui::GetWindowWidth() - 100.0f);
                     if (ImGui::SmallButton(("-##" + std::to_string(i) + "/" + std::to_string(bId++)).c_str())) {
                         it = bindings[i].erase(it);
                         keyBindUpdated = true;
-                    }
-                    else
+                    } else
                         it++;
                 }
 
-                ImGui::SetCursorPosX(ImGui::GetWindowWidth() - 70.0f);
+                ImGui::SameLine(ImGui::GetWindowWidth() - 70.0f);
                 if (ImGui::SmallButton(("Enroll##" + std::to_string(i)).c_str())) {
                     enrollBinding.mouseButtonFlags = MOUSEBUTTON_NONE;
                     enrollBinding.keyFlags.reset();
