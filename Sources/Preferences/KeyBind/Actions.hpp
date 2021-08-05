@@ -29,10 +29,7 @@ namespace gfn::keybind {
             // 35
             "", "", "", "", "",
             // 40
-            "Clear selection (no hovered item)",
-            "Clear selection (hovered on unselected item)",
-            "Clear selection (hovered on selected item)",
-            "", "",
+            "", "", "", "", "",
             // 45
             "", "", "", "", "",
             // 50
@@ -117,40 +114,37 @@ namespace gfn::keybind {
         ZOOM_OUT_S = 10,
 
         /// SELECTION
-        CLEAR_SELECTION_E = 40,//
-        CLEAR_SELECTION_U = 41,//
-        CLEAR_SELECTION_S = 42,//
-        ADD_SELECT_SINGLE_U = 50,
+        ADD_SELECT_SINGLE_U = 50,//
         ADD_SELECT_RECT_E = 51,
         ADD_SELECT_RECT_U = 52,
         ADD_SELECT_RECT_S = 53,
         ADD_SELECT_LASSO_E = 54,//
         ADD_SELECT_LASSO_U = 55,//
         ADD_SELECT_LASSO_S = 56,//
-        ADD_SELECT_ALL_E = 57,
-        ADD_SELECT_ALL_U = 58,
-        ADD_SELECT_ALL_S = 59,
-        SUBTRACT_SELECT_SINGLE_S = 65,
+        ADD_SELECT_ALL_E = 57,//
+        ADD_SELECT_ALL_U = 58,//
+        ADD_SELECT_ALL_S = 59,//
+        SUBTRACT_SELECT_SINGLE_S = 65,//
         SUBTRACT_SELECT_RECT_E = 66,
         SUBTRACT_SELECT_RECT_U = 67,
         SUBTRACT_SELECT_RECT_S = 68,
         SUBTRACT_SELECT_LASSO_E = 69,//
         SUBTRACT_SELECT_LASSO_U = 70,//
         SUBTRACT_SELECT_LASSO_S = 71,//
-        SUBTRACT_SELECT_ALL_E = 72,
-        SUBTRACT_SELECT_ALL_U = 73,
-        SUBTRACT_SELECT_ALL_S = 74,
-        INV_SELECT_SINGLE_U = 80,
-        INV_SELECT_SINGLE_S = 81,
+        SUBTRACT_SELECT_ALL_E = 72,//
+        SUBTRACT_SELECT_ALL_U = 73,//
+        SUBTRACT_SELECT_ALL_S = 74,//
+        INV_SELECT_SINGLE_U = 80,//
+        INV_SELECT_SINGLE_S = 81,//
         INV_SELECT_RECT_E = 82,
         INV_SELECT_RECT_U = 83,
         INV_SELECT_RECT_S = 84,
         INV_SELECT_LASSO_E = 85,//
         INV_SELECT_LASSO_U = 86,//
         INV_SELECT_LASSO_S = 87,//
-        INV_SELECT_ALL_E = 88,
-        INV_SELECT_ALL_U = 89,
-        INV_SELECT_ALL_S = 90,
+        INV_SELECT_ALL_E = 88,//
+        INV_SELECT_ALL_U = 89,//
+        INV_SELECT_ALL_S = 90,//
 
         /// GRAPH MANIPULATION (STRUCTURE)
         ADD_VERTEX_PREV_E = 100,

@@ -26,9 +26,9 @@ namespace gfn::editor {
 
         parseCommandQueue();
 
-        if (keyBind.keyBindUpdated) {
+        if (keyBind.saveKeyBinds) {
             preferences.saveToFile();
-            keyBind.keyBindUpdated = false;
+            keyBind.saveKeyBinds = false;
         }
     }
 

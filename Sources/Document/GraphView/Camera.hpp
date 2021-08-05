@@ -2,6 +2,7 @@
 
 #include <imgui.h>
 #include <Objects/Vec2f.hpp>
+#include <Editor/HotKey.hpp>
 #include <Preferences/Preferences.hpp>
 
 namespace gfn::graphview {
@@ -56,21 +57,68 @@ namespace gfn::graphview {
             return float(c * targetZoom);
         }*/
 
-        void update(gfn::preferences::Preferences* preferences) {
+        void update(gfn::preferences::Preferences *preferences, int mouseState) {
             auto io = ImGui::GetIO();
             if (ImGui::IsItemHovered()) {
-                zoom *= pow(preferences->graphview_zoom_speed, io.MouseWheel);
+                float zoomVelocity = 0;
 
-                if (ImGui::IsMouseDragging(ImGuiMouseButton_Right, 0.0f)) {
+                // determine mouse wheel velocity based on the cursor state from selection (one frame later)
+                if (mouseState & 0b1) {
+                    if (gfn::editor::hkDown(gfn::keybind::Actions::ZOOM_IN_E)) {
+                        if (gfn::editor::hkHasVelocity(gfn::keybind::Actions::ZOOM_IN_E))
+                            zoomVelocity = gfn::editor::hkVelocity(gfn::keybind::Actions::ZOOM_IN_E);
+                        else if (gfn::editor::hkPress(gfn::keybind::Actions::ZOOM_IN_E))
+                            zoomVelocity = 1;
+                    }
+                    if (gfn::editor::hkDown(gfn::keybind::Actions::ZOOM_OUT_E)) {
+                        if (gfn::editor::hkHasVelocity(gfn::keybind::Actions::ZOOM_OUT_E))
+                            zoomVelocity = -gfn::editor::hkVelocity(gfn::keybind::Actions::ZOOM_OUT_E);
+                        else if (gfn::editor::hkPress(gfn::keybind::Actions::ZOOM_OUT_E))
+                            zoomVelocity = -1;
+                    }
+                } else if (mouseState & 0b10) {
+                    if (gfn::editor::hkDown(gfn::keybind::Actions::ZOOM_IN_U)) {
+                        if (gfn::editor::hkHasVelocity(gfn::keybind::Actions::ZOOM_IN_U))
+                            zoomVelocity = gfn::editor::hkVelocity(gfn::keybind::Actions::ZOOM_IN_U);
+                        else if (gfn::editor::hkPress(gfn::keybind::Actions::ZOOM_IN_U))
+                            zoomVelocity = 1;
+                    }
+                    if (gfn::editor::hkDown(gfn::keybind::Actions::ZOOM_OUT_U)) {
+                        if (gfn::editor::hkHasVelocity(gfn::keybind::Actions::ZOOM_OUT_U))
+                            zoomVelocity = -gfn::editor::hkVelocity(gfn::keybind::Actions::ZOOM_OUT_U);
+                        else if (gfn::editor::hkPress(gfn::keybind::Actions::ZOOM_OUT_U))
+                            zoomVelocity = -1;
+                    }
+                } else if (mouseState & 0b100) {
+                    if (gfn::editor::hkDown(gfn::keybind::Actions::ZOOM_IN_S)) {
+                        if (gfn::editor::hkHasVelocity(gfn::keybind::Actions::ZOOM_IN_S))
+                            zoomVelocity = gfn::editor::hkVelocity(gfn::keybind::Actions::ZOOM_IN_S);
+                        else if (gfn::editor::hkPress(gfn::keybind::Actions::ZOOM_IN_S))
+                            zoomVelocity = 1;
+                    }
+                    if (gfn::editor::hkDown(gfn::keybind::Actions::ZOOM_OUT_S)) {
+                        if (gfn::editor::hkHasVelocity(gfn::keybind::Actions::ZOOM_OUT_S))
+                            zoomVelocity = -gfn::editor::hkVelocity(gfn::keybind::Actions::ZOOM_OUT_S);
+                        else if (gfn::editor::hkPress(gfn::keybind::Actions::ZOOM_OUT_S))
+                            zoomVelocity = -1;
+                    }
+                }
+
+                zoom *= pow(preferences->graphview_zoom_speed, zoomVelocity);
+
+                if (((mouseState & 0b1) && gfn::editor::hkDown(gfn::keybind::Actions::CAMERA_PAN_E))
+                    || ((mouseState & 0b10) && gfn::editor::hkDown(gfn::keybind::Actions::CAMERA_PAN_U))
+                    || ((mouseState & 0b100) && gfn::editor::hkDown(gfn::keybind::Actions::CAMERA_PAN_S))) {
                     centerCoord.x += -io.MouseDelta.x / zoom;
                     centerCoord.y -= -io.MouseDelta.y / zoom;
                 }
-                centerCoord.x += -(io.MousePos.x - canvasCoord().x + (canvasCoord().x - io.MousePos.x) *
-                                                                     (pow(preferences->graphview_zoom_speed,
-                                                                          io.MouseWheel))) / zoom;
-                centerCoord.y += (io.MousePos.y - canvasCoord().y + (canvasCoord().y - io.MousePos.y) *
-                                                                    (pow(preferences->graphview_zoom_speed,
-                                                                         io.MouseWheel))) / zoom;
+
+                centerCoord.x += -(io.MousePos.x - canvasCoord().x +
+                                   (canvasCoord().x - io.MousePos.x) *
+                                   (pow(preferences->graphview_zoom_speed, zoomVelocity))) / zoom;
+                centerCoord.y += (io.MousePos.y - canvasCoord().y +
+                                  (canvasCoord().y - io.MousePos.y) *
+                                  (pow(preferences->graphview_zoom_speed, zoomVelocity))) / zoom;
             }
             // smooth pan and zoom
             //zoom *= pow(targetZoom / zoom, preferences->graphview_smooth_zoom_speed);

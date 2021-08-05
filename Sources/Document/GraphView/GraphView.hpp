@@ -15,8 +15,8 @@ namespace gfn::graphview {
     class GraphView {
     public:
         gfn::Uuid documentUuid;
-        gfn::interface::Interface* interface = nullptr;
-        gfn::preferences::Preferences* preferences = nullptr;
+        gfn::interface::Interface *interface = nullptr;
+        gfn::preferences::Preferences *preferences = nullptr;
 
         Camera camera;
         Renderer renderer;
@@ -24,8 +24,8 @@ namespace gfn::graphview {
 
         GraphView() = default;
 
-        void init(const gfn::Uuid& _documentUuid, gfn::interface::Interface* _interface,
-                  gfn::preferences::Preferences* _preferences) {
+        void init(const gfn::Uuid &_documentUuid, gfn::interface::Interface *_interface,
+                  gfn::preferences::Preferences *_preferences) {
             documentUuid = _documentUuid;
             interface = _interface;
             preferences = _preferences;
@@ -48,7 +48,7 @@ namespace gfn::graphview {
                                           std::max(ImGui::GetContentRegionAvail().y, 10.0f)),
                                    ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
 
-            camera.update(preferences);
+            camera.update(preferences, selection.mouseHoverState);
             selection.update();
 
             if (!selection.mouseClickVertex[ImGuiMouseButton_Left].empty() &&
@@ -67,19 +67,21 @@ namespace gfn::graphview {
             }
 
             if (!selection.vertexSelection.empty()) {
-                for (auto& v : selection.vertexSelection) {
+                for (auto &v : selection.vertexSelection) {
                     auto props = interface->properties.getRead()->getVertexProps(v);
                     if (props) {
                         ImGui::GetWindowDrawList()->AddCircleFilled(camera.map(props->position.value),
                                                                     camera.map(
                                                                             props->radius.value +
                                                                             preferences->glow_size),
-                                                                    props->enabled.get() ? IM_COL32(0, 135, 255, 255) : IM_COL32(100, 100, 100, 120), 0);
+                                                                    props->enabled.get() ? IM_COL32(0, 135, 255, 255)
+                                                                                         : IM_COL32(100, 100, 100, 120),
+                                                                    0);
                     }
                 }
             }
             if (!selection.edgeSelection.empty()) {
-                for (auto& e : selection.edgeSelection) {
+                for (auto &e : selection.edgeSelection) {
                     auto props = interface->properties.getRead()->getEdgeProps(e);
                     if (props) {
                         auto edgeProps = interface->properties.getRead()->getEdgeProps(e);
@@ -87,9 +89,11 @@ namespace gfn::graphview {
                         auto vProps = interface->properties.getRead()->getVertexProps(edgeProps->endVertexUuid.value);
                         ImGui::GetWindowDrawList()->AddLine(camera.map(uProps->position.value),
                                                             camera.map(vProps->position.value),
-                                                            props->enabled.get() ? IM_COL32(0, 135, 255, 255) : IM_COL32(100, 100, 100, 120),
+                                                            props->enabled.get() ? IM_COL32(0, 135, 255, 255)
+                                                                                 : IM_COL32(100, 100, 100, 120),
                                                             camera.map(
-                                                                    edgeProps->thickness.value + preferences->glow_size * 2.0));
+                                                                    edgeProps->thickness.value +
+                                                                    preferences->glow_size * 2.0));
                     }
                 }
             }
