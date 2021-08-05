@@ -1,15 +1,15 @@
 #pragma once
 
 #include <imgui.h>
-#include <Preferences/KeyBind/KeyBind.hpp>
-#include <Objects/Parsables.hpp>
+#include <Preferences/KeyBinding/KeyBinding.h>
+#include <Objects/Serializable.h>
 #include <json.hpp>
 #include <fstream>
 
 namespace gfn::preferences {
     class Preferences {
     public:
-        gfn::keybind::KeyBind* keyBind;
+        gfn::Bindings* bindings;
 
         double graphview_zoom_speed = 1.1;
         double graphview_smooth_pan_speed = 0.3; // 1.0: disable smoothing
@@ -19,11 +19,11 @@ namespace gfn::preferences {
         float graph_view_lasso_selection_threshold = 5.0f;
 
         void serialize(nlohmann::json& j) {
-            keyBind->serialize(j["Key Binds"]);
+            bindings->serialize(j["Key Binds"]);
         }
 
         void deserialize(nlohmann::json& j) {
-            keyBind->deserialize(j["Key Binds"]);
+            bindings->deserialize(j["Key Binds"]);
         }
 
         void saveToFile() {

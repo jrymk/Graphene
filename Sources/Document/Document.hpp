@@ -1,16 +1,17 @@
 #pragma once
 
+#include <Core/Core.hpp>
 #include <thread>
 #include <atomic>
 #include <Document/GraphView/GraphView.hpp>
 #include <Preferences/Preferences.hpp>
-#include <Objects/Uuid.hpp>
+#include <Objects/Uuid.h>
 
 namespace gfn::document {
     class Document {
     public:
         gfn::core::Core core;                        // updates vertex positions
-        gfn::interface::Interface interface;         // to interact with the multithreaded core
+        gfn::Interface* itf;         // to interact with the multithreaded core
         gfn::graphview::GraphView graphview; // handles graph rendering and interaction
         gfn::preferences::Preferences* preferences;  // application preferences
 
@@ -25,12 +26,12 @@ namespace gfn::document {
         std::string getFileName() const { return filePath.substr(filePath.find_last_of('/') + 1); }
 
         Document(const std::string& _displayName, const gfn::Uuid& _docId,
-                 gfn::preferences::Preferences* _preferences) :
-                core(&interface) {
+                 gfn::preferences::Preferences* _preferences) {
             displayName = _displayName;
             docId = _docId;
             preferences = _preferences;
-            graphview.init(docId, &interface, preferences);
+            itf = core.getInterface();
+            graphview.init(docId, itf, preferences);
             // start up multithreaded core update
             std::thread coreThread(&Document::coreUpdate, this);
             coreThread.detach();
@@ -56,7 +57,7 @@ namespace gfn::document {
             }
         }
 
-        void execute(const std::string& cmd) { interface.cmdBuffer.getWrite().commands.emplace_back(cmd); }
+        void execute(const std::string& cmd) { itf->cmdBuf.getWrite().commands.emplace_back(cmd); }
 
         void terminate() { _terminateCoreUpdate = true; }
         /// CORE
@@ -87,9 +88,9 @@ namespace gfn::document {
                     }
                     if (ImGui::IsKeyPressed('V', false)) {
                         if (graphview.selection.hoveredVertex.empty() && !graphview.selection.hoveredEdge.empty()) {
-                            auto eProp = interface.properties.getRead()->getEdgeProps(graphview.selection.hoveredEdge);
+                            auto eProp = itf->props.getRead()->getEdgeProps(graphview.selection.hoveredEdge);
                             execute("rmedge -u=" + eProp->startVertexUuid.value + " -v=" + eProp->endVertexUuid.value);
-                            auto vId = gfn::uuid::createUuid();
+                            auto vId = gfn::createUuid();
                             execute("mkvertex -uuid=" + vId);
                             execute("setvertexprops -uuid=" + vId +
                                     " -key=position -value=(" + std::to_string(graphview.selection.mouseCoord.x)
@@ -97,7 +98,7 @@ namespace gfn::document {
                             execute("mkedge -u=" + vId + " -v=" + eProp->startVertexUuid.value);
                             execute("mkedge -u=" + vId + " -v=" + eProp->endVertexUuid.value);
                         } else if (graphview.selection.hoveredVertex.empty()) {
-                            auto vId = gfn::uuid::createUuid();
+                            auto vId = gfn::createUuid();
                             execute("mkvertex -uuid=" + vId);
                             execute("setvertexprops -uuid=" + vId +
                                     " -key=position -value=\"(" + std::to_string(graphview.selection.mouseCoord.x)
@@ -123,13 +124,13 @@ namespace gfn::document {
                     }
                 }
 
-                interface.usergraph.readDone();
-                interface.properties.readDone();
-                interface.configs.writeDone();
-                if (interface.cmdBuffer.wantWrite())
-                    interface.cmdBuffer.writeDone();
+                itf->graph.readDone();
+                itf->props.readDone();
+                itf->cfg.writeDone();
+                if (itf->cmdBuf.wantWrite())
+                    itf->cmdBuf.writeDone();
 
-                // interface.cmdBuffer.getWrite()->commands.clear();
+                // interface.cmdBuf.getWrite()->commands.clear();
                 ImGui::End();
 
                 if (!isDocumentWindowOpen) {

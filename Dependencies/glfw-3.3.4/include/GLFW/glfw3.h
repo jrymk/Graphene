@@ -93,7 +93,7 @@ extern "C" {
 /* If we are we on Windows, we want a single define for it.
  */
 #if !defined(_WIN32) && (defined(__WIN32__) || defined(WIN32) || defined(__MINGW32__))
- #define _WIN32
+#define _WIN32
 #endif /* _WIN32 */
 
 /* Include because most Windows GLU headers need wchar_t and
@@ -108,7 +108,7 @@ extern "C" {
 #include <stdint.h>
 
 #if defined(GLFW_INCLUDE_VULKAN)
-  #include <vulkan/vulkan.h>
+#include <vulkan/vulkan.h>
 #endif /* Vulkan header */
 
 /* The Vulkan header may have indirectly included windows.h (because of
@@ -119,95 +119,95 @@ extern "C" {
  * all platforms.  Additionally, the Windows OpenGL header needs APIENTRY.
  */
 #if !defined(APIENTRY)
- #if defined(_WIN32)
-  #define APIENTRY __stdcall
- #else
-  #define APIENTRY
- #endif
- #define GLFW_APIENTRY_DEFINED
+#if defined(_WIN32)
+#define APIENTRY __stdcall
+#else
+#define APIENTRY
+#endif
+#define GLFW_APIENTRY_DEFINED
 #endif /* APIENTRY */
 
 /* Some Windows OpenGL headers need this.
  */
 #if !defined(WINGDIAPI) && defined(_WIN32)
- #define WINGDIAPI __declspec(dllimport)
- #define GLFW_WINGDIAPI_DEFINED
+#define WINGDIAPI __declspec(dllimport)
+#define GLFW_WINGDIAPI_DEFINED
 #endif /* WINGDIAPI */
 
 /* Some Windows GLU headers need this.
  */
 #if !defined(CALLBACK) && defined(_WIN32)
- #define CALLBACK __stdcall
- #define GLFW_CALLBACK_DEFINED
+#define CALLBACK __stdcall
+#define GLFW_CALLBACK_DEFINED
 #endif /* CALLBACK */
 
 /* Include the chosen OpenGL or OpenGL ES headers.
  */
 #if defined(GLFW_INCLUDE_ES1)
 
- #include <GLES/gl.h>
- #if defined(GLFW_INCLUDE_GLEXT)
-  #include <GLES/glext.h>
- #endif
+#include <GLES/gl.h>
+#if defined(GLFW_INCLUDE_GLEXT)
+#include <GLES/glext.h>
+#endif
 
 #elif defined(GLFW_INCLUDE_ES2)
 
- #include <GLES2/gl2.h>
- #if defined(GLFW_INCLUDE_GLEXT)
-  #include <GLES2/gl2ext.h>
- #endif
+#include <GLES2/gl2.h>
+#if defined(GLFW_INCLUDE_GLEXT)
+#include <GLES2/gl2ext.h>
+#endif
 
 #elif defined(GLFW_INCLUDE_ES3)
 
- #include <GLES3/gl3.h>
- #if defined(GLFW_INCLUDE_GLEXT)
-  #include <GLES2/gl2ext.h>
- #endif
+#include <GLES3/gl3.h>
+#if defined(GLFW_INCLUDE_GLEXT)
+#include <GLES2/gl2ext.h>
+#endif
 
 #elif defined(GLFW_INCLUDE_ES31)
 
- #include <GLES3/gl31.h>
- #if defined(GLFW_INCLUDE_GLEXT)
-  #include <GLES2/gl2ext.h>
- #endif
+#include <GLES3/gl31.h>
+#if defined(GLFW_INCLUDE_GLEXT)
+#include <GLES2/gl2ext.h>
+#endif
 
 #elif defined(GLFW_INCLUDE_ES32)
 
- #include <GLES3/gl32.h>
- #if defined(GLFW_INCLUDE_GLEXT)
-  #include <GLES2/gl2ext.h>
- #endif
+#include <GLES3/gl32.h>
+#if defined(GLFW_INCLUDE_GLEXT)
+#include <GLES2/gl2ext.h>
+#endif
 
 #elif defined(GLFW_INCLUDE_GLCOREARB)
 
- #if defined(__APPLE__)
+#if defined(__APPLE__)
 
-  #include <OpenGL/gl3.h>
-  #if defined(GLFW_INCLUDE_GLEXT)
-   #include <OpenGL/gl3ext.h>
-  #endif /*GLFW_INCLUDE_GLEXT*/
+#include <OpenGL/gl3.h>
+#if defined(GLFW_INCLUDE_GLEXT)
+#include <OpenGL/gl3ext.h>
+#endif /*GLFW_INCLUDE_GLEXT*/
 
- #else /*__APPLE__*/
+#else /*__APPLE__*/
 
-  #include <GL/glcorearb.h>
+#include <GL/glcorearb.h>
 
- #endif /*__APPLE__*/
+#endif /*__APPLE__*/
 
 #elif defined(GLFW_INCLUDE_GLU)
 
- #if defined(__APPLE__)
+#if defined(__APPLE__)
 
-  #if defined(GLFW_INCLUDE_GLU)
-   #include <OpenGL/glu.h>
-  #endif
+#if defined(GLFW_INCLUDE_GLU)
+#include <OpenGL/glu.h>
+#endif
 
- #else /*__APPLE__*/
+#else /*__APPLE__*/
 
-  #if defined(GLFW_INCLUDE_GLU)
-   #include <GL/glu.h>
-  #endif
+#if defined(GLFW_INCLUDE_GLU)
+#include <GL/glu.h>
+#endif
 
- #endif /*__APPLE__*/
+#endif /*__APPLE__*/
 
 #elif !defined(GLFW_INCLUDE_NONE) && \
       !defined(__gl_h_) && \
@@ -226,47 +226,47 @@ extern "C" {
       !defined(__gltypes_h_) /*non-standard*/ && \
       !defined(__glee_h_) /*non-standard*/
 
- #if defined(__APPLE__)
+#if defined(__APPLE__)
 
-  #if !defined(GLFW_INCLUDE_GLEXT)
-   #define GL_GLEXT_LEGACY
-  #endif
-  #include <OpenGL/gl.h>
+#if !defined(GLFW_INCLUDE_GLEXT)
+#define GL_GLEXT_LEGACY
+#endif
+#include <OpenGL/gl.h>
 
- #else /*__APPLE__*/
+#else /*__APPLE__*/
 
-  #include <GL/gl.h>
-  #if defined(GLFW_INCLUDE_GLEXT)
-   #include <GL/glext.h>
-  #endif
+#include <GL/gl.h>
+#if defined(GLFW_INCLUDE_GLEXT)
+#include <GL/glext.h>
+#endif
 
- #endif /*__APPLE__*/
+#endif /*__APPLE__*/
 
 #endif /* OpenGL and OpenGL ES headers */
 
 #if defined(GLFW_DLL) && defined(_GLFW_BUILD_DLL)
- /* GLFW_DLL must be defined by applications that are linking against the DLL
-  * version of the GLFW library.  _GLFW_BUILD_DLL is defined by the GLFW
-  * configuration header when compiling the DLL version of the library.
-  */
- #error "You must not have both GLFW_DLL and _GLFW_BUILD_DLL defined"
+/* GLFW_DLL must be defined by applications that are linking against the DLL
+ * version of the GLFW library.  _GLFW_BUILD_DLL is defined by the GLFW
+ * configuration header when compiling the DLL version of the library.
+ */
+#error "You must not have both GLFW_DLL and _GLFW_BUILD_DLL defined"
 #endif
 
 /* GLFWAPI is used to declare public API functions for export
  * from the DLL / shared library / dynamic library.
  */
 #if defined(_WIN32) && defined(_GLFW_BUILD_DLL)
- /* We are building GLFW as a Win32 DLL */
- #define GLFWAPI __declspec(dllexport)
+/* We are building GLFW as a Win32 DLL */
+#define GLFWAPI __declspec(dllexport)
 #elif defined(_WIN32) && defined(GLFW_DLL)
- /* We are calling GLFW as a Win32 DLL */
- #define GLFWAPI __declspec(dllimport)
+/* We are calling GLFW as a Win32 DLL */
+#define GLFWAPI __declspec(dllimport)
 #elif defined(__GNUC__) && defined(_GLFW_BUILD_DLL)
- /* We are building GLFW as a shared / dynamic library */
- #define GLFWAPI __attribute__((visibility("default")))
+/* We are building GLFW as a shared / dynamic library */
+#define GLFWAPI __attribute__((visibility("default")))
 #else
- /* We are building or calling GLFW as a static library */
- #define GLFWAPI
+/* We are building or calling GLFW as a static library */
+#define GLFWAPI
 #endif
 
 
@@ -1141,7 +1141,7 @@ extern "C" {
  *
  *  @ingroup context
  */
-typedef void (*GLFWglproc)(void);
+typedef void (* GLFWglproc)(void);
 
 /*! @brief Vulkan API function pointer type.
  *
@@ -1155,7 +1155,7 @@ typedef void (*GLFWglproc)(void);
  *
  *  @ingroup vulkan
  */
-typedef void (*GLFWvkproc)(void);
+typedef void (* GLFWvkproc)(void);
 
 /*! @brief Opaque monitor object.
  *
@@ -1215,7 +1215,7 @@ typedef struct GLFWcursor GLFWcursor;
  *
  *  @ingroup init
  */
-typedef void (* GLFWerrorfun)(int,const char*);
+typedef void (* GLFWerrorfun)(int, const char*);
 
 /*! @brief The function pointer type for window position callbacks.
  *
@@ -1238,7 +1238,7 @@ typedef void (* GLFWerrorfun)(int,const char*);
  *
  *  @ingroup window
  */
-typedef void (* GLFWwindowposfun)(GLFWwindow*,int,int);
+typedef void (* GLFWwindowposfun)(GLFWwindow*, int, int);
 
 /*! @brief The function pointer type for window size callbacks.
  *
@@ -1260,7 +1260,7 @@ typedef void (* GLFWwindowposfun)(GLFWwindow*,int,int);
  *
  *  @ingroup window
  */
-typedef void (* GLFWwindowsizefun)(GLFWwindow*,int,int);
+typedef void (* GLFWwindowsizefun)(GLFWwindow*, int, int);
 
 /*! @brief The function pointer type for window close callbacks.
  *
@@ -1321,7 +1321,7 @@ typedef void (* GLFWwindowrefreshfun)(GLFWwindow*);
  *
  *  @ingroup window
  */
-typedef void (* GLFWwindowfocusfun)(GLFWwindow*,int);
+typedef void (* GLFWwindowfocusfun)(GLFWwindow*, int);
 
 /*! @brief The function pointer type for window iconify callbacks.
  *
@@ -1342,7 +1342,7 @@ typedef void (* GLFWwindowfocusfun)(GLFWwindow*,int);
  *
  *  @ingroup window
  */
-typedef void (* GLFWwindowiconifyfun)(GLFWwindow*,int);
+typedef void (* GLFWwindowiconifyfun)(GLFWwindow*, int);
 
 /*! @brief The function pointer type for window maximize callbacks.
  *
@@ -1363,7 +1363,7 @@ typedef void (* GLFWwindowiconifyfun)(GLFWwindow*,int);
  *
  *  @ingroup window
  */
-typedef void (* GLFWwindowmaximizefun)(GLFWwindow*,int);
+typedef void (* GLFWwindowmaximizefun)(GLFWwindow*, int);
 
 /*! @brief The function pointer type for framebuffer size callbacks.
  *
@@ -1384,7 +1384,7 @@ typedef void (* GLFWwindowmaximizefun)(GLFWwindow*,int);
  *
  *  @ingroup window
  */
-typedef void (* GLFWframebuffersizefun)(GLFWwindow*,int,int);
+typedef void (* GLFWframebuffersizefun)(GLFWwindow*, int, int);
 
 /*! @brief The function pointer type for window content scale callbacks.
  *
@@ -1405,7 +1405,7 @@ typedef void (* GLFWframebuffersizefun)(GLFWwindow*,int,int);
  *
  *  @ingroup window
  */
-typedef void (* GLFWwindowcontentscalefun)(GLFWwindow*,float,float);
+typedef void (* GLFWwindowcontentscalefun)(GLFWwindow*, float, float);
 
 /*! @brief The function pointer type for mouse button callbacks.
  *
@@ -1431,7 +1431,7 @@ typedef void (* GLFWwindowcontentscalefun)(GLFWwindow*,float,float);
  *
  *  @ingroup input
  */
-typedef void (* GLFWmousebuttonfun)(GLFWwindow*,int,int,int);
+typedef void (* GLFWmousebuttonfun)(GLFWwindow*, int, int, int);
 
 /*! @brief The function pointer type for cursor position callbacks.
  *
@@ -1454,7 +1454,7 @@ typedef void (* GLFWmousebuttonfun)(GLFWwindow*,int,int,int);
  *
  *  @ingroup input
  */
-typedef void (* GLFWcursorposfun)(GLFWwindow*,double,double);
+typedef void (* GLFWcursorposfun)(GLFWwindow*, double, double);
 
 /*! @brief The function pointer type for cursor enter/leave callbacks.
  *
@@ -1475,7 +1475,7 @@ typedef void (* GLFWcursorposfun)(GLFWwindow*,double,double);
  *
  *  @ingroup input
  */
-typedef void (* GLFWcursorenterfun)(GLFWwindow*,int);
+typedef void (* GLFWcursorenterfun)(GLFWwindow*, int);
 
 /*! @brief The function pointer type for scroll callbacks.
  *
@@ -1496,7 +1496,7 @@ typedef void (* GLFWcursorenterfun)(GLFWwindow*,int);
  *
  *  @ingroup input
  */
-typedef void (* GLFWscrollfun)(GLFWwindow*,double,double);
+typedef void (* GLFWscrollfun)(GLFWwindow*, double, double);
 
 /*! @brief The function pointer type for keyboard key callbacks.
  *
@@ -1522,7 +1522,7 @@ typedef void (* GLFWscrollfun)(GLFWwindow*,double,double);
  *
  *  @ingroup input
  */
-typedef void (* GLFWkeyfun)(GLFWwindow*,int,int,int,int);
+typedef void (* GLFWkeyfun)(GLFWwindow*, int, int, int, int);
 
 /*! @brief The function pointer type for Unicode character callbacks.
  *
@@ -1543,7 +1543,7 @@ typedef void (* GLFWkeyfun)(GLFWwindow*,int,int,int,int);
  *
  *  @ingroup input
  */
-typedef void (* GLFWcharfun)(GLFWwindow*,unsigned int);
+typedef void (* GLFWcharfun)(GLFWwindow*, unsigned int);
 
 /*! @brief The function pointer type for Unicode character with modifiers
  *  callbacks.
@@ -1570,7 +1570,7 @@ typedef void (* GLFWcharfun)(GLFWwindow*,unsigned int);
  *
  *  @ingroup input
  */
-typedef void (* GLFWcharmodsfun)(GLFWwindow*,unsigned int,int);
+typedef void (* GLFWcharmodsfun)(GLFWwindow*, unsigned int, int);
 
 /*! @brief The function pointer type for path drop callbacks.
  *
@@ -1594,7 +1594,7 @@ typedef void (* GLFWcharmodsfun)(GLFWwindow*,unsigned int,int);
  *
  *  @ingroup input
  */
-typedef void (* GLFWdropfun)(GLFWwindow*,int,const char*[]);
+typedef void (* GLFWdropfun)(GLFWwindow*, int, const char* []);
 
 /*! @brief The function pointer type for monitor configuration callbacks.
  *
@@ -1615,7 +1615,7 @@ typedef void (* GLFWdropfun)(GLFWwindow*,int,const char*[]);
  *
  *  @ingroup monitor
  */
-typedef void (* GLFWmonitorfun)(GLFWmonitor*,int);
+typedef void (* GLFWmonitorfun)(GLFWmonitor*, int);
 
 /*! @brief The function pointer type for joystick configuration callbacks.
  *
@@ -1636,7 +1636,7 @@ typedef void (* GLFWmonitorfun)(GLFWmonitor*,int);
  *
  *  @ingroup input
  */
-typedef void (* GLFWjoystickfun)(int,int);
+typedef void (* GLFWjoystickfun)(int, int);
 
 /*! @brief Video mode type.
  *
@@ -1651,8 +1651,7 @@ typedef void (* GLFWjoystickfun)(int,int);
  *
  *  @ingroup monitor
  */
-typedef struct GLFWvidmode
-{
+typedef struct GLFWvidmode {
     /*! The width, in screen coordinates, of the video mode.
      */
     int width;
@@ -1685,8 +1684,7 @@ typedef struct GLFWvidmode
  *
  *  @ingroup monitor
  */
-typedef struct GLFWgammaramp
-{
+typedef struct GLFWgammaramp {
     /*! An array of value describing the response of the red channel.
      */
     unsigned short* red;
@@ -1714,8 +1712,7 @@ typedef struct GLFWgammaramp
  *
  *  @ingroup window
  */
-typedef struct GLFWimage
-{
+typedef struct GLFWimage {
     /*! The width, in pixels, of this image.
      */
     int width;
@@ -1738,8 +1735,7 @@ typedef struct GLFWimage
  *
  *  @ingroup input
  */
-typedef struct GLFWgamepadstate
-{
+typedef struct GLFWgamepadstate {
     /*! The states of each [gamepad button](@ref gamepad_buttons), `GLFW_PRESS`
      *  or `GLFW_RELEASE`.
      */
@@ -2666,7 +2662,7 @@ GLFWAPI void glfwWindowHintString(int hint, const char* value);
  *  supported, or if the compositor prefers client-side decorations, a very
  *  simple fallback frame will be drawn using the wp_viewporter protocol.  A
  *  compositor can still emit close, maximize or fullscreen events, using for
- *  instance a keyBind mechanism.  If neither of these protocols is supported,
+ *  instance a bindings mechanism.  If neither of these protocols is supported,
  *  the window won't be decorated.
  *
  *  @remark @wayland A full screen window will not attempt to change the mode,
@@ -5878,20 +5874,20 @@ GLFWAPI VkResult glfwCreateWindowSurface(VkInstance instance, GLFWwindow* window
 /* ------------------- BEGIN SYSTEM/COMPILER SPECIFIC -------------------- */
 
 #ifdef GLFW_WINGDIAPI_DEFINED
- #undef WINGDIAPI
- #undef GLFW_WINGDIAPI_DEFINED
+#undef WINGDIAPI
+#undef GLFW_WINGDIAPI_DEFINED
 #endif
 
 #ifdef GLFW_CALLBACK_DEFINED
- #undef CALLBACK
- #undef GLFW_CALLBACK_DEFINED
+#undef CALLBACK
+#undef GLFW_CALLBACK_DEFINED
 #endif
 
 /* Some OpenGL related headers need GLAPIENTRY, but it is unconditionally
  * defined by some gl.h variants (OpenBSD) so define it after if needed.
  */
 #ifndef GLAPIENTRY
- #define GLAPIENTRY APIENTRY
+#define GLAPIENTRY APIENTRY
 #endif
 
 /* -------------------- END SYSTEM/COMPILER SPECIFIC --------------------- */

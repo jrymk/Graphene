@@ -2,7 +2,7 @@
 
 #include <unordered_map>
 #include <Document/Document.hpp>
-#include <Objects/Uuid.hpp>
+#include <Objects/Uuid.h>
 #include <ImGuiFileBrowser.h>
 
 extern std::queue<std::string> gfn::window::dockBuildWindow;
@@ -66,7 +66,7 @@ namespace gfn::editor {
     int untitledCounter = 1; // based on session
 
     gfn::Uuid newFile() {
-        auto docId = gfn::uuid::createUuid();
+        auto docId = gfn::createUuid();
         auto document = new gfn::document::Document("Untitled (" + std::to_string(untitledCounter) + ")",
                                                     docId, &preferences);
         gfn::window::dockBuildWindow.push("Untitled (" + std::to_string(untitledCounter) + ")" + "###" + docId);

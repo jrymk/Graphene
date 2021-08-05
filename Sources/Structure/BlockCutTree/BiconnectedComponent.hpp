@@ -2,10 +2,10 @@
 
 #include <unordered_map>
 #include <unordered_set>
-#include <Objects/Uuid.hpp>
+#include <Objects/Uuid.h>
 #include <Structure/Vertex.hpp>
 #include <Structure/Edge.hpp>
-#include <Properties/Properties.hpp>
+#include <Properties/Properties.h>
 
 namespace gfn::structure {
 /**

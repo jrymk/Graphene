@@ -1,16 +1,16 @@
 #pragma once
 
-#include <Objects/Uuid.hpp>
-#include <Properties/EdgeProps.hpp>
+#include <Objects/Uuid.h>
+#include <Properties/EdgeProps.h>
 #include <Structure/Vertex.hpp>
 
-namespace gfn::structure {
+namespace gfn {
 ///@brief the data structure used internally for faster and more versatile access
     class Edge {
     public:
-        gfn::props::EdgeProps* props;
+        gfn::EdgeProps* props;
 
-        gfn::structure::Vertex* startVertex;
-        gfn::structure::Vertex* endVertex;
+        gfn::Vertex* startVertex;
+        gfn::Vertex* endVertex;
     };
 } // namespace gfn::core::structure

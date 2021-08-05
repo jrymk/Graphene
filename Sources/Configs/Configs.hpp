@@ -1,17 +1,17 @@
 #pragma once
 
-#include <Objects/Parsables.hpp>
+#include <Objects/Serializable.h>
 #include <binn.h>
 
 namespace gfn::configs {
     class Configs {
     public:
-        gfn::parsables::Double c1;
-        gfn::parsables::Double c2;
-        gfn::parsables::Double c3;
-        gfn::parsables::Double c4;
-        gfn::parsables::Double c5;
-        gfn::parsables::Double c6;
+        gfn::serializable::Double c1;
+        gfn::serializable::Double c2;
+        gfn::serializable::Double c3;
+        gfn::serializable::Double c4;
+        gfn::serializable::Double c5;
+        gfn::serializable::Double c6;
 
         Configs() :
                 c1("c1", 2.0),

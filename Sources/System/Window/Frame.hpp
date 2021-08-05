@@ -5,8 +5,9 @@
 #include <imgui_impl_glfw.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
+#include <iosfwd>
 #include <queue>
+#include <minitrace.h>
 
 namespace gfn::window {
     extern GLFWwindow* glfwWindow;
@@ -29,9 +30,11 @@ namespace gfn::window {
                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
                 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus |
                 ImGuiWindowFlags_NoDocking;
+
         ImGui::Begin("ViewportDockspace", nullptr, dockspaceWindowFlags);
         ImGuiID viewportDockspaceId = ImGui::GetID("ViewportDockspace");
-        ImGui::DockSpace(viewportDockspaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+        ImGui::DockSpace(viewportDockspaceId, ImVec2(0.0f, 0.0f),
+                         ImGuiDockNodeFlags_PassthruCentralNode);
 
         ImGuiWindowFlags documentWindowFlags = ImGuiWindowFlags_NoCollapse;
         ImGui::Begin("Graph View", nullptr, documentWindowFlags);

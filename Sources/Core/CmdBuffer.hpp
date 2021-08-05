@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Objects/Command.hpp>
+#include <Objects/Command.h>
 #include <deque>
 
 namespace gfn::cmdbuffer {

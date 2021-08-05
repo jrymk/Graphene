@@ -3,7 +3,7 @@
 #include <Editor/Documents.hpp>
 #include <Editor/Commands.hpp>
 #include <Editor/PropertiesPanel/PropertiesPanel.hpp>
-#include <Preferences/KeyBind/KeyBind.hpp>
+#include <Preferences/KeyBinding/KeyBinding.h>
 
 /// Editor is the entire GUI application, with document system. Editor is in global scope under gfn::editor
 // namespace, handles application preferences, documents, graph view (real-time graph rendering) and more
@@ -15,7 +15,7 @@ namespace gfn::editor {
     void init() {
         cmdStartup();
         initHotKey();
-        preferences.keyBind = &keyBind;
+        preferences.bindings = &keyBind;
         preferences.loadFromFile();
     }
 
@@ -26,14 +26,16 @@ namespace gfn::editor {
 
         parseCommandQueue();
 
-        if (keyBind.saveKeyBinds) {
+        if (keyBind.wantSaveBindings) {
             preferences.saveToFile();
-            keyBind.saveKeyBinds = false;
+            keyBind.wantSaveBindings = false;
         }
     }
 
     void updateDocuments() {
-        for (auto& d : documents)
+        for (auto& d : documents) {
+            MTR_SCOPE("documents", "update document");
             d.second->update();
+        }
     }
 }

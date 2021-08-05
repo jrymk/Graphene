@@ -1,58 +1,56 @@
 #pragma once
 
-#include <Logging/Logging.hpp>
-#include <UserGraph/UserGraph.hpp>
-#include <Structure/Structure.hpp>
+#include <Graph/Graph.h>
+#include <Structure/Structure.h>
+
 #include <Configs/Configs.hpp>
-#include <Properties/Properties.hpp>
-#include <Properties/PropertiesCmd.hpp>
 #include <Interface/Interface.hpp>
 #include <Core/Drawlgo/Drawlgo.hpp>
 #include <Core/CmdBuffer.hpp>
 #include <atomic>
 #include <iomanip>
 #include <Core/Parser.hpp>
+#include <minitrace.h>
 
 namespace gfn::core {
     class Core {
     public:
-        gfn::interface::Interface* interface;
-        gfn::props::Properties properties;
-        gfn::usergraph::UserGraph usergraph;
-        gfn::structure::Structure structure;
-        gfn::configs::Configs configs;
+        gfn::Interface itf;
+        gfn::Structure structure;
         gfn::core::drawlgo::Drawlgo drawlgo;
         gfn::parser::Parser parser;
 
-        explicit Core(gfn::interface::Interface* _interface) :
-                interface(_interface),
-                properties(),
-                usergraph(),
-                structure(&usergraph, &properties),
-                parser(interface, &properties, &usergraph, &structure, &configs) {
-            usergraph.bindProperties(&properties);
+        explicit Core() :
+                itf(),
+                structure(&itf),
+                parser(&itf) {
+        }
+
+        gfn::Interface* getInterface() {
+            return &itf;
         }
 
         void coreCycle() {
+            MTR_META_PROCESS_NAME("graphene-core");
+            MTR_META_THREAD_NAME("core thread");
+            MTR_SCOPE("core", "core cycle");
+
             parser.parseAll();
 
-            if (usergraph.pendingUpdate) {
+            if (itf.graph.getWrite().pendingUpdate) {
                 // update component list with usergraph and rebuild block cut tree
-                structure.componentList.componentify();
-                usergraph.pendingUpdate = false;
-                interface->usergraph.getWrite() = usergraph;
+                structure.componentify();
+                itf.graph.getWrite().pendingUpdate = false;
                 /// TODO: partial update
             }
 
-            drawlgo.update(&configs, &structure, &properties);
+            drawlgo.update(&itf, &structure);
 
-            if (interface->properties.wantWrite()) {
-                interface->properties.getWrite() = properties;
-                interface->properties.writeDone();
+            if (itf.props.wantWrite()) {
+                itf.props.writeDone();
             }
 
-            interface->configs.getWrite() = configs;
-            interface->configs.writeDone();
+            itf.cfg.writeDone();
         }
     };
 } // namespace gfn::core

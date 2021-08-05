@@ -1,11 +1,12 @@
 #pragma once
 
-#include <Preferences/KeyBind/KeyBind.hpp>
-#include <System/Timer/Timer.hpp>
+#include <Preferences/KeyBinding/KeyBinding.h>
+#include <System/Timer.hpp>
 #include <vector>
+#include <minitrace.h>
 
 namespace gfn::editor {
-    gfn::keybind::KeyBind keyBind;
+    gfn::Bindings keyBind;
 
     int doubleClickThresholdMs = 200;
 
@@ -15,23 +16,25 @@ namespace gfn::editor {
     static std::vector<bool> _hotKeyDoubleClick;
     static std::vector<float> _hotKeyVelocity;
 
-    static std::vector<gfn::timer::TimePoint> _pressTp;
-    static std::vector<gfn::timer::TimePoint> _releaseTp;
+    static std::vector<gfn::TimePoint> _pressTp;
+    static std::vector<gfn::TimePoint> _releaseTp;
     static std::vector<int> _repeatCnt;
 
     void initHotKey() {
-        _hotKeyPress.resize(gfn::keybind::actions.size());
-        _hotKeyDown.resize(gfn::keybind::actions.size());
-        _hotKeyRelease.resize(gfn::keybind::actions.size());
-        _hotKeyDoubleClick.resize(gfn::keybind::actions.size());
-        _hotKeyVelocity.resize(gfn::keybind::actions.size());
-        _pressTp.resize(gfn::keybind::actions.size());
-        _releaseTp.resize(gfn::keybind::actions.size());
-        _repeatCnt.resize(gfn::keybind::actions.size());
+        _hotKeyPress.resize(gfn::Bindings::actionNames.size());
+        _hotKeyDown.resize(gfn::Bindings::actionNames.size());
+        _hotKeyRelease.resize(gfn::Bindings::actionNames.size());
+        _hotKeyDoubleClick.resize(gfn::Bindings::actionNames.size());
+        _hotKeyVelocity.resize(gfn::Bindings::actionNames.size());
+        _pressTp.resize(gfn::Bindings::actionNames.size());
+        _releaseTp.resize(gfn::Bindings::actionNames.size());
+        _repeatCnt.resize(gfn::Bindings::actionNames.size());
     }
 
     void updateHotKey() {
-        for (int i = 0; i < gfn::keybind::actions.size(); i++) {
+        MTR_SCOPE("main update", "update hotkey");
+
+        for (int i = 0; i < gfn::Bindings::actionNames.size(); i++) {
             bool prev = _hotKeyDown[i];
             // reset pulse states
             _hotKeyPress[i] = false;
@@ -39,20 +42,21 @@ namespace gfn::editor {
             _hotKeyDoubleClick[i] = false;
 
             auto active = keyBind.isBindingActive(i);
-            if (active.first) {
+
+            if (std::get<0>(active)) {
                 if (!prev) {
                     _hotKeyPress[i] = true;
                     _pressTp[i].restart();
                     _repeatCnt[i] = 0;
                     // detect double click
-                    if (gfn::timer::TimePoint::getMilliseconds(_releaseTp[i]) < doubleClickThresholdMs)
+                    if (gfn::TimePoint::getMilliseconds(_releaseTp[i]) < doubleClickThresholdMs)
                         _hotKeyDoubleClick[i] = true;
                 }
                 _hotKeyDown[i] = true;
-                _hotKeyVelocity[i] = std::get<0>(active.second);
+                _hotKeyVelocity[i] = std::get<1>(active);
 
-                if (std::get<1>(active.second) >= 0) { // 0: velocity, 1: start repeat 2: repeat rate
-                    if (gfn::timer::TimePoint::getMilliseconds(_pressTp[i]) >= std::get<1>(active.second) + std::get<2>(active.second) * _repeatCnt[i]) {
+                if (std::get<2>(active).repeatStartMs >= 0) {
+                    if (gfn::TimePoint::getMilliseconds(_pressTp[i]) >= std::get<2>(active).repeatStartMs + std::get<2>(active).repeatIntervalMs * _repeatCnt[i]) {
                         _hotKeyPress[i] = true;
                         _repeatCnt[i]++;
                     }
@@ -79,7 +83,7 @@ namespace gfn::editor {
 
     float hkVelocity(int action) { return _hotKeyVelocity[action]; }
 
-    unsigned long long hkTimeSincePressMs(int action) { return gfn::timer::TimePoint::getMilliseconds(_pressTp[action]); }
+    unsigned long long hkTimeSincePressMs(int action) { return gfn::TimePoint::getMilliseconds(_pressTp[action]); }
 
-    unsigned long long hkTimeSinceReleaseMs(int action) { return gfn::timer::TimePoint::getMilliseconds(_releaseTp[action]); }
+    unsigned long long hkTimeSinceReleaseMs(int action) { return gfn::TimePoint::getMilliseconds(_releaseTp[action]); }
 }

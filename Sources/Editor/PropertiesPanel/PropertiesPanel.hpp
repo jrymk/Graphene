@@ -2,7 +2,7 @@
 
 #include <unordered_map>
 #include <imgui.h>
-#include <Properties/Properties.hpp>
+#include <Properties/Properties.h>
 #include <Editor/Documents.hpp>
 #include <Editor/PropertiesPanel/PropsControls.hpp>
 
@@ -10,15 +10,15 @@ namespace gfn::editor {
     void showPropertiesPanel() {
         ImGui::Begin("Properties");
         if (getActiveDocument()) {
-            auto props = getActiveDocument()->interface.properties.getRead();
+            auto props = getActiveDocument()->itf->props.getRead();
             if (!getActiveDocument()->graphview.selection.vertexSelection.empty() || !getActiveDocument()->graphview.selection.edgeSelection.empty()) {
-                std::unordered_map<gfn::Uuid, gfn::props::VertexProps*> vertexProps;
+                std::unordered_map<gfn::Uuid, gfn::VertexProps*> vertexProps;
                 for (auto& s : getActiveDocument()->graphview.selection.vertexSelection) {
                     if (!props->getVertexProps(s))
                         assert(0);
                     vertexProps.insert({s, props->getVertexProps(s)});
                 }
-                std::unordered_map<gfn::Uuid, gfn::props::EdgeProps*> edgeProps;
+                std::unordered_map<gfn::Uuid, gfn::EdgeProps*> edgeProps;
                 for (auto& s : getActiveDocument()->graphview.selection.edgeSelection) {
                     if (!props->getEdgeProps(s))
                         assert(0);

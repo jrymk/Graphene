@@ -3,11 +3,10 @@
 #include <mutex>
 #include <atomic>
 #include <utility>
-#include <Logging/Logging.hpp>
 
 #undef interface
 
-namespace gfn::interface {
+namespace gfn {
     template<class T>
     class TripleBuffer {
     private:
@@ -60,7 +59,7 @@ namespace gfn::interface {
         }
 
         // writer interface
-        T& getWrite() {
+        T &getWrite() {
             // writer thread have complete ownership of this buffer
             return *writeBuffer;
         }
@@ -89,6 +88,11 @@ namespace gfn::interface {
             readOutpace = 0;
             writeOutpace = 0;
             return p;
+        }
+
+        /// DANGEROUS!! Only for interface constructor
+        T** getBuffers() {
+            return &buffers;
         }
     };
 } // namespace gfn::interface

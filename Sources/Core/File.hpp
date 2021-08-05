@@ -1,12 +1,12 @@
 #pragma once
 
-#include <fstream>
+#include <Interface/Interface.hpp>
 #include <iostream>
+#include <fstream>
 #include <binn.h>
 
 namespace gfn::parser::file {
-    void open(Command command, gfn::Command& output, gfn::props::Properties* properties,
-              gfn::usergraph::UserGraph* usergraph, gfn::configs::Configs* configs) {
+    void open(Command command, gfn::Command &output, gfn::Interface* itf) {
         std::string filePath = command.getParamValue("-f");
         std::ifstream gfnFile(filePath.c_str(), std::ios::in | std::ios::binary);
         if (gfnFile) {
@@ -27,9 +27,9 @@ namespace gfn::parser::file {
             }
             gfnFile.close();
             // deserialize
-            properties->deserialize(document);
-            usergraph->deserialize(document);
-            configs->deserialize(document);
+            itf->props.getWrite().deserialize(document);
+            itf->graph.getWrite().deserialize(document);
+            itf->cfg.getWrite().deserialize(document);
             // clean up
             binn_free(document);
             delete[] buffer;
@@ -40,17 +40,16 @@ namespace gfn::parser::file {
         }
     }
 
-    void save(Command command, gfn::Command& output, gfn::props::Properties* properties,
-              gfn::usergraph::UserGraph* usergraph, gfn::configs::Configs* configs) {
+    void save(Command command, gfn::Command &output, gfn::Interface* itf) {
         std::string filePath = command.getParamValue("-f");
         std::ofstream gfnFile(filePath.c_str(), std::ios::out | std::ios::binary);
         if (gfnFile) {
             // allocate memory
             binn* document = binn_object();
             // serialize
-            properties->serialize(document);
-            usergraph->serialize(document);
-            configs->serialize(document);
+            itf->props.getWrite().serialize(document);
+            itf->graph.getWrite().serialize(document);
+            itf->cfg.getWrite().serialize(document);
             output.newParam("-output", filePath + "  Output size: " + std::to_string(binn_size(document)) +
                                        " bytes");
             // write file and clean up

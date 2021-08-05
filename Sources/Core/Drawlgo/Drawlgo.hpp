@@ -2,60 +2,64 @@
 
 #include <thread_pool.hpp>
 #include <thread>
-#include <iostream>
 #include <cmath>
 #include <queue>
-#include <Structure/Structure.hpp>
-#include <Properties/Properties.hpp>
-#include <Configs/Configs.hpp>
+#include <Interface/Interface.hpp>
 #include <Core/Drawlgo/WithinComponent.hpp>
-#include <System/Timer/Timer.hpp>
+#include <System/Timer.hpp>
+#include <minitrace.h>
 
 // updater is such a bad name, I need a new one
 namespace gfn::core::drawlgo {
     class Drawlgo {
         // optimize performance by measuring four multithreading modes every 30 seconds
         int multiThreadingMode = 2;
-        gfn::timer::Timer performanceCheckTimer;
+        gfn::Timer performanceCheckTimer;
 
     public:
-        void update(gfn::configs::Configs* configs, gfn::structure::Structure* structure,
-                    gfn::props::Properties* properties) {
-            if (performanceCheckTimer.getSeconds() >= 60.0) {
+        void update(Interface* itf, gfn::Structure* structure) {
+            MTR_SCOPE("core", "drawlgo update");
+
+            if (performanceCheckTimer.getSeconds() >= 2.0) {
+                MTR_SCOPE("core", "drawlgo performance check");
                 // MULTITHREADING MODE 0
-                gfn::timer::Timer cMvM;
+                gfn::Timer cMvM;
                 {
+                    MTR_SCOPE("core", "CMVM");
                     thread_pool::ThreadPool thread_pool{};
                     std::vector<std::future<unsigned long long>> futures;
-                    for (auto& c : structure->componentList.getComponents())
-                        futures.emplace_back(thread_pool.Submit(updateComponentMultiThreaded, configs, c));
+                    for (auto& c : structure->getComponents())
+                        futures.emplace_back(thread_pool.Submit(updateComponentMultiThreaded, itf, c));
                     for (auto& it : futures)
                         it.get();
                 }
                 auto cMvMtime = std::make_pair(cMvM.getMicroseconds(), 0);
                 // MULTITHREADING MODE 1
-                gfn::timer::Timer cMvS;
+                gfn::Timer cMvS;
                 {
+                    MTR_SCOPE("core", "CMVS");
                     thread_pool::ThreadPool thread_pool{};
                     std::vector<std::future<unsigned long long>> futures;
-                    for (auto& c : structure->componentList.getComponents())
-                        futures.emplace_back(thread_pool.Submit(updateComponentSingleThreaded, configs, c));
+                    for (auto& c : structure->getComponents())
+                        futures.emplace_back(thread_pool.Submit(updateComponentSingleThreaded, itf, c));
                     for (auto& it : futures)
                         it.get();
                 }
                 auto cMvStime = std::make_pair(cMvS.getMicroseconds(), 1);
                 // MULTITHREADING MODE 2
-                gfn::timer::Timer cSvM;
+                gfn::Timer cSvM;
                 {
-                    for (auto& c : structure->componentList.getComponents())
-                        updateComponentMultiThreaded(configs, c);
+                    MTR_SCOPE("core", "CSVM");
+                    for (auto& c : structure->getComponents())
+                        updateComponentMultiThreaded(itf, c);
                 }
                 auto cSvMtime = std::make_pair(cSvM.getMicroseconds(), 2);
                 // MULTITHREADING MODE 3
-                gfn::timer::Timer cSvS;
+                gfn::Timer cSvS;
                 {
-                    for (auto& c : structure->componentList.getComponents())
-                        updateComponentSingleThreaded(configs, c);
+                    MTR_SCOPE("core", "CSVS");
+                    for (auto& c : structure->getComponents())
+                        updateComponentSingleThreaded(itf, c);
                 }
                 auto cSvStime = std::make_pair(cSvS.getMicroseconds(), 3);
 
@@ -69,31 +73,36 @@ namespace gfn::core::drawlgo {
             } else {
                 // MULTITHREADING MODE 0
                 if (multiThreadingMode == 0) {
+                    MTR_SCOPE("core", "CMVM");
                     thread_pool::ThreadPool thread_pool{};
                     std::vector<std::future<unsigned long long>> futures;
-                    for (auto& c : structure->componentList.getComponents())
-                        futures.emplace_back(thread_pool.Submit(updateComponentMultiThreaded, configs, c));
+                    for (auto& c : structure->getComponents())
+                        futures.emplace_back(thread_pool.Submit(updateComponentMultiThreaded, itf, c));
                     for (auto& it : futures)
                         it.get();
                 }
                 // MULTITHREADING MODE 1
                 if (multiThreadingMode == 1) {
+                    MTR_SCOPE("core", "CMVS");
                     thread_pool::ThreadPool thread_pool{};
                     std::vector<std::future<unsigned long long>> futures;
-                    for (auto& c : structure->componentList.getComponents())
-                        futures.emplace_back(thread_pool.Submit(updateComponentSingleThreaded, configs, c));
+                    for (auto& c : structure->getComponents())
+                        futures.emplace_back(thread_pool.Submit(updateComponentSingleThreaded, itf, c));
                     for (auto& it : futures)
                         it.get();
                 }
                 // MULTITHREADING MODE 2
                 if (multiThreadingMode == 2) {
-                    for (auto& c : structure->componentList.getComponents())
-                        updateComponentMultiThreaded(configs, c);
+                    MTR_SCOPE("core", "CSVM");
+
+                    for (auto& c : structure->getComponents())
+                        updateComponentMultiThreaded(itf, c);
                 }
                 // MULTITHREADING MODE 3
                 if (multiThreadingMode == 3) {
-                    for (auto& c : structure->componentList.getComponents())
-                        updateComponentSingleThreaded(configs, c);
+                    MTR_SCOPE("core", "CSVS");
+                    for (auto& c : structure->getComponents())
+                        updateComponentSingleThreaded(itf, c);
                 }
             }
         }

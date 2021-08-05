@@ -4,11 +4,10 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <Structure/Vertex.hpp>
-#include <Structure/Component/Component.hpp>
+#include <Structure/Component.h>
 #include <Structure/BlockCutTree/BlockCutTree.hpp>
 #include <Structure/BlockCutTree/BiconnectedComponent.hpp>
-#include <Properties/Properties.hpp>
-#include <Logging/Logging.hpp>
+#include <Properties/Properties.h>
 
 namespace gfn::structure {
 // each component owns one block cut tree, rebuilt upon graph update (componentifier)
@@ -36,14 +35,9 @@ namespace gfn::structure {
             while (!vertexStack.empty())
                 vertexStack.pop();
             if (component->getAdjList().empty()) {
-                logMessage << "BlockCutTreeBuilder: Component {" << component->uuid << "} adjacency list is empty";
-                logVerbose;
                 return true;
             }
             auto root = component->root;
-            logMessage << "BlockCutTreeBuilder: Component {" << component->uuid
-            << "} building block cut tree with root vertex {" << root->props->uuid.value << "}";
-            logVerbose;
             countChildren(root);
             dfs(root, root);
             // stores the bcc to vertices mapping (actual)

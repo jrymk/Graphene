@@ -5,7 +5,7 @@
 #include <Structure/Vertex.hpp>
 #include <Structure/Edge.hpp>
 #include <Structure/BlockCutTree/BiconnectedComponent.hpp>
-#include <Properties/Properties.hpp>
+#include <Properties/Properties.h>
 
 namespace gfn::structure {
 // each component owns one block cut tree, rebuilt upon graph update (componentifier)

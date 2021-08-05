@@ -8,11 +8,11 @@ namespace gfn::graphview {
     class Renderer {
     public:
         Camera* camera;
-        gfn::interface::Interface* interface;
+        gfn::Interface* itf;
 
         void drawEdges() {
             auto drawList = ImGui::GetWindowDrawList();
-            auto userprops = interface->properties.getRead();
+            auto userprops = itf->props.getRead();
             for (auto& ei : userprops->getEdgePropsList()) {
                 auto e = ei.second;
                 if (!e.enabled.value)
@@ -29,7 +29,7 @@ namespace gfn::graphview {
 
         void drawVertices() {
             auto drawList = ImGui::GetWindowDrawList();
-            auto userprops = interface->properties.getRead();
+            auto userprops = itf->props.getRead();
             for (auto& vi : userprops->getVertexPropsList()) {
                 auto v = vi.second;
                 if (!v.enabled.value)
