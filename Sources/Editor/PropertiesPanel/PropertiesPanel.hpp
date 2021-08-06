@@ -2,11 +2,10 @@
 
 #include <unordered_map>
 #include <imgui.h>
-#include <Properties/Properties.h>
-#include <Editor/Documents.hpp>
+#include <Core/Properties/Properties.h>
 #include <Editor/PropertiesPanel/PropsControls.hpp>
 
-namespace gfn::editor {
+namespace gfn {
     void showPropertiesPanel() {
         ImGui::Begin("Properties");
         if (getActiveDocument()) {

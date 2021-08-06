@@ -2,6 +2,6 @@
 
 #include <imgui.h>
 
-namespace gfn::editor {
+namespace gfn {
 
 }

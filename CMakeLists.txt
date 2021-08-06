@@ -17,7 +17,7 @@ add_definitions(-DNDEBUG -DMTR_ENABLED)
 #)
 #FetchContent_MakeAvailable(tracy)
 
-include_directories(cmake-build-debug/_deps/tracy-src)
+#include_directories(cmake-build-debug/_deps/tracy-src)
 include_directories(Dependencies/glad/include)
 include_directories(Dependencies/glad/include/glad)
 include_directories(Dependencies/glad/include/KHR)
@@ -56,23 +56,35 @@ add_executable(Graphene
         Dependencies/binn/src/binn.c
         Dependencies/ImGui-Addons/FileBrowser/ImGuiFileBrowser.cpp
         Dependencies/minitrace/minitrace.c
-        Sources/Objects/Uuid.cpp
-        Sources/Properties/Properties.cpp
-        Sources/Properties/PropertiesParser.cpp
-        Sources/Graph/Graph.cpp
-        Sources/Structure/Component.cpp
-        Sources/Structure/Componentifier.cpp
+        Sources/Core/Objects/Uuid.cpp
+        Sources/Core/Properties/Properties.cpp
+        Sources/Core/Properties/PropertiesParser.cpp
+        Sources/Core/Graph/Graph.cpp
+        Sources/Core/Structure/Component.cpp
+        Sources/Core/Structure/Componentifier.cpp
         Sources/Main.cpp
-        Sources/Properties/EdgeProps.cpp
-        Sources/Properties/VertexProps.cpp
-        Sources/Objects/Command.cpp
-        Sources/Objects/Serializable.cpp
-        Sources/Objects/Vec2.cpp
-        Sources/Preferences/KeyBinding/KeyNames.cpp
-        Sources/Preferences/KeyBinding/HotKey.cpp
-        Sources/Preferences/KeyBinding/Bindings.cpp
-        Sources/Preferences/KeyBinding/Actions.cpp
-        Sources/Preferences/KeyBinding/Actions.h)
+        Sources/Core/Properties/EdgeProps.cpp
+        Sources/Core/Properties/VertexProps.cpp
+        Sources/Core/Objects/Args.cpp
+        Sources/Core/Objects/Serializable.cpp
+        Sources/Core/Objects/Vec2.cpp
+        Sources/Editor/Preferences/KeyBindings/KeyNames.cpp
+        Sources/Editor/Preferences/KeyBindings/HotKey.cpp
+        Sources/Editor/Preferences/KeyBindings/Bindings.cpp
+        Sources/Editor/Preferences/KeyBindings/Actions.cpp
+        Sources/Core/Interface/TripleBuffer.tpp
+        Sources/Editor/Preferences/Preferences.cpp
+        Sources/Editor/HotKeyHandler.cpp
+        Sources/Editor/Document/Document.cpp
+        Sources/Editor/Editor.cpp
+        Sources/Editor/Console.cpp
+        Sources/Editor/DocsMgr.cpp
+        Sources/Core/Objects/Timer.cpp
+        Sources/Core/Placement/WithinComponent.cpp
+        Sources/Core/Core/Core.cpp
+        Sources/Core/Placement/Placement.cpp
+        Sources/Core/Core/File.cpp
+        Sources/Core/Core/Parser.cpp Sources/Core/Objects/Random.cpp Sources/Core/Core/Background.cpp Sources/Core/Interface/Interface.cpp Sources/Editor/Graphics/Graphics.cpp Sources/Core/Core/Meta.h Sources/Editor/Document/GraphView/Camera.cpp)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)

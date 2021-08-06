@@ -1,5 +1,5 @@
 For coding graph drawing algorithm, just ignore uuid and usergraph. All you need (perhaps) is in Components*
-The graph update cycle is in Core::coreCycle()
+The graph update cycle is in Core::update()
 The graph update function is gfn::core::drawlgo::update()  (sorry for the name)
 
 Note: It runs utterly slow in debug mode...

@@ -1,207 +1,40 @@
 #include <string>
-#include <System/Window/WindowManager.hpp>
-#include <Editor/Editor.hpp>
+#include <Editor/Editor.h>
 #include <minitrace.h>
 
 int main(int argc, char* argv[]) {
+    bool enableEditorGui = true;
+
+    for (int i = 1; i < argc; i++) {
+        std::string arg(argv[i]);
+        if (arg == "-no-gui")
+            enableEditorGui = false;
+    }
+
     mtr_init("trace.json");
+//    MTR_META_PROCESS_NAME("graphene");
+//    MTR_META_THREAD_NAME("main thread");
+//    MTR_SCOPE("main", "main");
 
-    MTR_SCOPE("application", "application");
-    MTR_META_PROCESS_NAME("graphene-gui");
-    MTR_META_THREAD_NAME("main thread");
+    if (enableEditorGui) {
+        MTR_SCOPE("main", "editor");
 
-    gfn::window::launchWindow();
-    gfn::editor::init();
+        gfn::Editor editor;
 
-    {
-        MTR_SCOPE("application", "load small tree");
-        std::string path = "bagel.gfn";
-        auto docId = gfn::editor::newFile();
-        gfn::editor::getDocumentFromUuid(docId)->displayName = path.substr(path.find_last_of('/') + 1);
-        gfn::editor::getDocumentFromUuid(docId)->filePath = path;
-        //getDocumentFromUuid(docId)->fileSaved = true;
-        gfn::editor::execute("select -uuid=" + docId);
-        gfn::editor::execute("open -f=\"" + path + "\"");
+        {
+            std::string path = "./bagel.gfn";
+            auto docId = editor.newDocument();
+            editor.getDoc(docId)->setFile(path);
+            editor.getDoc(docId)->execute("open");
+            editor.getDoc(docId)->fileSaved = true;
+        }
+
+        while (!editor.gfx.shouldClose()) {
+            MTR_SCOPE("main", "frame");
+            editor.update();
+        }
+        editor.terminate();
     }
-
-    while (!glfwWindowShouldClose(gfn::window::glfwWindow)) {
-        MTR_SCOPE("frame", "frame");
-
-        gfn::window::preFrame();
-
-        static bool first = true;
-        if (first) {
-            gfn::editor::loadDragAndDrop(argc, argv, true);
-            first = false;
-        }
-
-        ImGui::ShowDemoWindow();
-        ImGui::ShowMetricsWindow();
-
-        auto fDoc = gfn::editor::getActiveDocument();
-
-        ImGui::Begin("Command centre", nullptr, 0);
-
-        if (ImGui::Button("New file"))
-            gfn::editor::newFile();
-        ImGui::SameLine();
-
-        if (ImGui::Button("Open file"))
-            gfn::editor::openFile();
-        if (!gfn::editor::activeDocumentUuid.empty()) {
-            ImGui::SameLine();
-            if (gfn::editor::getActiveDocument()->filePath.empty()) {
-                ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
-                ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(200, 200, 200, 255));
-            }
-            if (ImGui::Button("Save File"))
-                gfn::editor::saveFile();
-            if (gfn::editor::getActiveDocument()->filePath.empty()) {
-                ImGui::PopItemFlag();
-                ImGui::PopStyleColor(1);
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("Save As File"))
-                gfn::editor::saveAsFile(gfn::editor::activeDocumentUuid);
-        }
-
-        ImGui::Separator();
-
-        if (ImGui::Button("Key binds")) {
-            gfn::editor::keyBind.showBindingsConfigWindow = true;
-            ImGui::OpenPopup("Key Binds");
-        }
-        /*if (gfn::editor::bindings.showBindingsConfigWindow)
-            gfn::editor::bindings.show();*/
-
-        ImGui::Separator();
-
-        //if (gfn::editor::isOpeningFile)
-        ImGui::Text(gfn::editor::activeDocumentUuid.c_str());
-        ImGui::Text("Documents:");
-        //if (gfn::editor::isSavingAsFile)
-        for (auto& d : gfn::editor::documents) {
-            ImGui::Text(d.first.c_str());
-            if (d.second->isFocused) {
-                ImGui::SameLine(300.0f);
-                ImGui::Text("focused");
-                ImGui::SameLine(380.0f);
-                ImGui::Text(d.second->getFileName().c_str());
-            }
-        }
-
-        ImGui::Separator();
-
-        static gfn::Uuid prevActiveDocId;
-        if (fDoc) {
-            static float c1p;
-            static float c2p;
-            static float c3p;
-            static float c4p;
-            static float c5p;
-            static float c6p;
-            //if (prevActiveDocId != fDoc->docId) {
-            prevActiveDocId = fDoc->docId;
-            c1p = float(fDoc->itf->cfg.getRead()->c1.value);
-            c2p = float(fDoc->itf->cfg.getRead()->c2.value);
-            c3p = float(fDoc->itf->cfg.getRead()->c3.value);
-            c4p = float(fDoc->itf->cfg.getRead()->c4.value);
-            c5p = float(fDoc->itf->cfg.getRead()->c5.value);
-            c6p = float(fDoc->itf->cfg.getRead()->c6.value);
-            //}
-            fDoc->itf->cfg.readDone();
-            float c1 = c1p;
-            float c2 = c2p;
-            float c3 = c3p;
-            float c4 = c4p;
-            float c5 = c5p;
-            float c6 = c6p;
-            ImGui::SliderFloat("c1", &c1, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
-            ImGui::SliderFloat("c2", &c2, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
-            ImGui::SliderFloat("c3", &c3, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
-            ImGui::SliderFloat("c4", &c4, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
-            ImGui::SliderFloat("c5", &c5, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
-            ImGui::SliderFloat("c6", &c6, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
-            if (c1p != c1)
-                gfn::editor::execute("configs -c1=" + std::to_string(c1));
-            if (c2p != c2)
-                gfn::editor::execute("configs -c2=" + std::to_string(c2));
-            if (c3p != c3)
-                gfn::editor::execute("configs -c3=" + std::to_string(c3));
-            if (c4p != c4)
-                gfn::editor::execute("configs -c4=" + std::to_string(c4));
-            if (c5p != c5)
-                gfn::editor::execute("configs -c5=" + std::to_string(c5));
-            if (c6p != c6)
-                gfn::editor::execute("configs -c6=" + std::to_string(c6));
-            c1p = c1;
-            c2p = c2;
-            c3p = c3;
-            c4p = c4;
-            c5p = c5;
-            c6p = c6;
-        }
-
-        if (fDoc) {
-            if (ImGui::TreeNode("Graph adjacency list")) {
-                if (ImGui::TreeNode("Vertices")) {
-                    auto g = fDoc->itf->graph.getRead();
-                    for (auto& u : g->getAdjList()) {
-                        if (ImGui::TreeNode(u.first.c_str())) {
-                            for (auto& v : u.second) {
-                                ImGui::TreeNode(v.first.c_str());
-                                for (auto& e : v.second) {
-                                    ImGui::Text(e.c_str());
-                                }
-                                ImGui::TreePop();
-                            }
-                            ImGui::TreePop();
-                        }
-                    }
-
-                    ImGui::TreePop();
-                }
-                ImGui::TreePop();
-            }
-            if (ImGui::TreeNode("Properties")) {
-                if (ImGui::TreeNode("Vertices")) {
-                    for (auto& v : fDoc->itf->props.getRead()->getVertexPropsList()) {
-                        if (ImGui::TreeNode(v.first.c_str())) {
-                            ImGui::Text(("enabled: " + std::string(v.second.enabled.value ? "true" : "false")).c_str());
-                            ImGui::TreePop();
-                        }
-                    }
-                    ImGui::TreePop();
-                }
-                if (ImGui::TreeNode("Edges")) {
-                    for (auto& v : fDoc->itf->props.getRead()->getEdgePropsList()) {
-                        if (ImGui::TreeNode(v.first.c_str())) {
-                            ImGui::Text(("enabled: " + std::string(v.second.enabled.value ? "true" : "false")).c_str());
-                            ImGui::Text(("start: " + v.second.startVertexUuid.value).c_str());
-                            ImGui::Text(("end: " + v.second.endVertexUuid.value).c_str());
-                            ImGui::TreePop();
-                        }
-                    }
-                    ImGui::TreePop();
-                }
-                ImGui::TreePop();
-            }
-        }
-        // if (ImGui::Button("New vertex"))
-        // core.parser.execute("graph new vertex"); // No, you can not run this here
-        gfn::editor::updateMainWindow();
-
-        ImGui::End();
-
-        gfn::editor::showPropertiesPanel(); // must go before updateDocuments
-        gfn::editor::updateDocuments();
-
-        gfn::window::postFrame();
-    }
-
-    gfn::editor::terminate();
-
-    gfn::window::closeWindow();
     mtr_shutdown();
     return 0;
 }
