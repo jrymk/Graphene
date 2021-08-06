@@ -1,5 +1,6 @@
 #include "Editor.h"
 #include <Editor/Theme/Theme.hpp> /// TODO
+#include <ImGuiFileBrowser.h> /// TODO
 
 namespace gfn {
     Editor::Editor() :
@@ -34,9 +35,51 @@ namespace gfn {
             newDocument();
         ImGui::SameLine();
 
-        /*if (ImGui::Button("Open file"))
-            gfn::openFile();
-        if (!gfn::activeDocumentUuid.empty()) {
+        static bool openin = false;
+        if (ImGui::Button("Open file")) {
+            openin = true;
+            ImGui::OpenPopup("Open File");
+        }
+
+        static imgui_addons::ImGuiFileBrowser fileDialog;
+        if (fileDialog.showFileDialog("Open File", imgui_addons::ImGuiFileBrowser::DialogMode::OPEN,
+                                      ImVec2(700, 310), ".gfn")) {
+            openin = false;
+            auto path = fileDialog.selected_path;
+            for (auto& d : documents) {
+                if (d.second->file == fileDialog.selected_path) {
+                    ImGui::SetWindowFocus((d.second->docName + "###" + d.first).c_str());
+                    return;
+                }
+            }
+            auto docId = newDocument();
+            getDoc(docId)->docName = path.substr(path.find_last_of('/') + 1);
+            getDoc(docId)->setFile(path);
+            //getDocumentFromUuid(docId)->fileSaved = true;
+            getDoc(docId)->execute("open");
+        }
+        /*if (fileDialog.showFileDialog("Save As File", imgui_addons::ImGuiFileBrowser::DialogMode::SAVE,
+                                      ImVec2(700, 310), ".gfn")) {
+            isSavingAsFile = false;
+            execute("select -uuid=" + saveAsFileId);
+            execute("save -f=\"" + fileDialog.selected_path + "\"");
+            auto path = fileDialog.selected_path;
+            getDocumentFromUuid(saveAsFileId)->displayName = path.substr(path.find_last_of('/') + 1);
+            getDocumentFromUuid(saveAsFileId)->filePath = path;
+            //getDocumentFromUuid(docId)->fileSaved = true;
+            execute("open -f=\"" + fileDialog.selected_path + "\"");
+            if (getDocumentFromUuid(saveAsFileId)->wantSaveAsAndClose)
+                getDocumentFromUuid(saveAsFileId)->closeDocument = true;
+        }*/
+
+
+
+
+
+
+
+
+        /*if (!gfn::activeDocumentUuid.empty()) {
             ImGui::SameLine();
             if (gfn::getActiveDocument()->file.empty()) {
                 ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
@@ -136,7 +179,7 @@ namespace gfn {
         ImGui::End();
 
 
-                //gfn::showPropertiesPanel(); // must go before updateDocuments
+        //gfn::showPropertiesPanel(); // must go before updateDocuments
 
         updateDocuments();
 
