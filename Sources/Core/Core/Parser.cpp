@@ -1,7 +1,10 @@
 #include "Core.h"
+#include <Tracy.hpp>
 
 namespace gfn {
     void Core::parse(Args command, gfn::Args& output) {
+        ZoneScoped
+
         std::string cmd = command.getParamValue("command");
         if (cmd.empty()) return;
         else if (cmd == "open") openFile(command, output);
@@ -22,8 +25,8 @@ namespace gfn {
         }
     }
 
-    void Core::parseAll() {
-        MTR_SCOPE("core", "parse commands");
+    void Core::parseCommands() {
+        ZoneScoped
 
         while (!itf.commands.getRead()->buffer.empty()) {
             std::cout << "Parsing: " << itf.commands.getRead()->buffer.front().getString() << "\n";

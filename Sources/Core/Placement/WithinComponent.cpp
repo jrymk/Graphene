@@ -1,4 +1,6 @@
 #include "Placement.h"
+#include <thread_pool.hpp>
+#include <Tracy.hpp>
 
 namespace gfn {
     gfn::Vec2 Placement::repelForce(gfn::Interface* itf, gfn::Vec2 u, gfn::Vec2 v) {
@@ -18,7 +20,7 @@ namespace gfn {
     }
 
     void Placement::updateVertex(gfn::Interface* itf, gfn::Component* c, gfn::Vertex* u) {
-        MTR_SCOPE("core", "drawlgo update vertex");
+        ZoneScoped
 
         for (auto& v : c->getAdjacentVertices(u))
             u->props->force.value += attractForce(itf, u->props->position.value, v->props->position.value);
@@ -55,7 +57,8 @@ namespace gfn {
     }*/
 
     void Placement::updateComponentSingleThreaded(gfn::Interface* itf, gfn::Component* c) {
-        MTR_SCOPE("core", "drawlgo update single thread");
+        ZoneScoped
+
         gfn::Timer timer;
         for (auto& u : c->vertices)
             u->props->force.value = gfn::Vec2(0.0, 0.0);
@@ -87,30 +90,20 @@ namespace gfn {
     }
 
     void Placement::updateComponentMultiThreaded(gfn::Interface* itf, gfn::Component* c) {
-        MTR_META_PROCESS_NAME("graphene-core");
-        MTR_META_THREAD_NAME("drawlgo worker");
-        MTR_SCOPE("core", "drawlgo update multi thread");
+        ZoneScoped
 
         gfn::Timer timer;
         for (auto& u : c->vertices)
             u->props->force.value = gfn::Vec2(0.0, 0.0);
         /*for (auto& e : c->edges)
             e->props->force = gfn::Vec2f(0.0, 0.0);*/
-
-        thread_pool::ThreadPool thread_pool{};
-        std::vector<std::future<void>> futures;
         for (auto& u : c->vertices) {
             if (!u->props->pauseUpdate.value)
-                futures.emplace_back(thread_pool.Submit(&Placement::updateVertex, this, itf, c, u));
+                pool.push_task(&Placement::updateVertex, itf, c, u);
         }
         /* for (auto& e : c->edges)
          futures.emplace_back(thread_pool.Submit(updateEdge, itf->graph.getWrite().cfg.c, e));*/
-        {
-            MTR_SCOPE("core", "graph update wait");
-            for (auto& it : futures)
-                it.wait();
-        }
-
+        pool.wait_for_tasks();
         for (auto& u : c->vertices) {
             if (!u->props->pauseUpdate.value)
                 u->props->position.value += u->props->force.value * itf->graph.getWrite().cfg.c4.value;

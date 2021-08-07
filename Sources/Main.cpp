@@ -1,6 +1,6 @@
 #include <string>
 #include <Editor/Editor.h>
-#include <minitrace.h>
+#include <Tracy.hpp>
 
 int main(int argc, char* argv[]) {
     bool enableEditorGui = true;
@@ -11,13 +11,10 @@ int main(int argc, char* argv[]) {
             enableEditorGui = false;
     }
 
-    mtr_init("trace.json");
 //    MTR_META_PROCESS_NAME("graphene");
 //    MTR_META_THREAD_NAME("main thread");
-//    MTR_SCOPE("main", "main");
 
     if (enableEditorGui) {
-        MTR_SCOPE("main", "editor");
 
         gfn::Editor editor;
 
@@ -30,11 +27,9 @@ int main(int argc, char* argv[]) {
         }
 
         while (!editor.gfx.shouldClose()) {
-            MTR_SCOPE("main", "frame");
             editor.update();
         }
         editor.terminate();
     }
-    mtr_shutdown();
     return 0;
 }

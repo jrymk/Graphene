@@ -1,4 +1,6 @@
 #include "Serializable.h"
+#include <sstream>
+#include <iomanip>
 
 namespace gfn::serializable {
     Uuid::Uuid(std::string key) : key(std::move(key)), value() {}
@@ -372,7 +374,9 @@ namespace gfn::serializable {
         std::stringstream ss;
         std::string hexStr;
         ss << value;
-        ss >> std::setw(8) >> std::setfill('0') >> std::hex >> hexStr;
+        ss >> std::setw(8) >> std::hex >> hexStr;
+        while (hexStr.size() < 6)
+            hexStr = "0" + hexStr; // setfill doesn't work for some reason... //TODO
         j[key] = hexStr;
     }
 

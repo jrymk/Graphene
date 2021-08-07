@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include <minitrace.h>
+#include <Tracy.hpp>
 
 namespace gfn {
     Camera::Camera(gfn::HKHandler* hk, gfn::Preferences* prefs) :
@@ -32,85 +32,43 @@ namespace gfn {
         return c / zoom;
     }
 
-    void Camera::update(int mouseState) {
-        MTR_SCOPE("graphview", "update camera");
-
-        if (ImGui::IsItemHovered()
-            && (((mouseState & 0b1) && hk->press(gfn::Actions::CAMERA_PAN_E))
-                || ((mouseState & 0b10) && hk->press(gfn::Actions::CAMERA_PAN_U))
-                || ((mouseState & 0b100) && hk->press(gfn::Actions::CAMERA_PAN_S)))) {
-            // pan will only be enabled if camera pan binding is active AND window(invis button) is hovered
-            // after that, if the pan hot key is satisfied, keep the latch on so panning will be kept on even
-            // if the cursor is out of the graphview window
-            std::cerr << "on pan\n";
-            panLatch = true;
-            onPanMouseState = mouseState;
-        }
+    void Camera::update() {
+        ZoneScoped
 
         /// ZOOM
-        if (ImGui::IsItemHovered()) {
-            float zoomVelocity = 0;
+        if (_canZoomIn) {
             // determine mouse wheel velocity based on the cursor state from selection (one frame later)
-            if (mouseState & 0b1) {
-                if (hk->down(gfn::Actions::ZOOM_IN_E)) {
-                    if (hk->hasVelocity(gfn::Actions::ZOOM_IN_E))
-                        zoomVelocity = hk->velocity(gfn::Actions::ZOOM_IN_E);
-                    else if (hk->press(gfn::Actions::ZOOM_IN_E))
-                        zoomVelocity = 1;
-                }
-                if (hk->down(gfn::Actions::ZOOM_OUT_E)) {
-                    if (hk->hasVelocity(gfn::Actions::ZOOM_OUT_E))
-                        zoomVelocity = -hk->velocity(gfn::Actions::ZOOM_OUT_E);
-                    else if (hk->press(gfn::Actions::ZOOM_OUT_E))
-                        zoomVelocity = -1;
-                }
-            } else if (mouseState & 0b10) {
-                if (hk->down(gfn::Actions::ZOOM_IN_U)) {
-                    if (hk->hasVelocity(gfn::Actions::ZOOM_IN_U))
-                        zoomVelocity = hk->velocity(gfn::Actions::ZOOM_IN_U);
-                    else if (hk->press(gfn::Actions::ZOOM_IN_U))
-                        zoomVelocity = 1;
-                }
-                if (hk->down(gfn::Actions::ZOOM_OUT_U)) {
-                    if (hk->hasVelocity(gfn::Actions::ZOOM_OUT_U))
-                        zoomVelocity = -hk->velocity(gfn::Actions::ZOOM_OUT_U);
-                    else if (hk->press(gfn::Actions::ZOOM_OUT_U))
-                        zoomVelocity = -1;
-                }
-            } else if (mouseState & 0b100) {
-                if (hk->down(gfn::Actions::ZOOM_IN_S)) {
-                    if (hk->hasVelocity(gfn::Actions::ZOOM_IN_S))
-                        zoomVelocity = hk->velocity(gfn::Actions::ZOOM_IN_S);
-                    else if (hk->press(gfn::Actions::ZOOM_IN_S))
-                        zoomVelocity = 1;
-                }
-                if (hk->down(gfn::Actions::ZOOM_OUT_S)) {
-                    if (hk->hasVelocity(gfn::Actions::ZOOM_OUT_S))
-                        zoomVelocity = -hk->velocity(gfn::Actions::ZOOM_OUT_S);
-                    else if (hk->press(gfn::Actions::ZOOM_OUT_S))
-                        zoomVelocity = -1;
-                }
-            }
-            zoom *= pow(prefs->graphview_zoom_speed, zoomVelocity);
+            // (handled by selection)
+            zoom *= pow(prefs->graphview_zoom_speed, (_zoomInVelocity < 0 ? 1 : _zoomInVelocity));
+
+            centerCoord.x += -(ImGui::GetIO().MousePos.x - canvasCoord().x +
+                               (canvasCoord().x - ImGui::GetIO().MousePos.x) *
+                               (pow(prefs->graphview_zoom_speed, (_zoomInVelocity < 0 ? 1 : _zoomInVelocity)))) / zoom;
+            centerCoord.y += (ImGui::GetIO().MousePos.y - canvasCoord().y +
+                              (canvasCoord().y - ImGui::GetIO().MousePos.y) *
+                              (pow(prefs->graphview_zoom_speed, (_zoomInVelocity < 0 ? 1 : _zoomInVelocity)))) / zoom;
+        }
+
+        if (_canZoomOut) {
+            // determine mouse wheel velocity based on the cursor state from selection (one frame later)
+            // (handled by selection)
+            zoom /= pow(prefs->graphview_zoom_speed, (_zoomOutVelocity < 0 ? 1 : _zoomOutVelocity));
 
             centerCoord.x += -(ImGui::GetIO().MousePos.x - canvasCoord().x +
                     (canvasCoord().x - ImGui::GetIO().MousePos.x) *
-                    (pow(prefs->graphview_zoom_speed, zoomVelocity))) / zoom;
+                    (pow(prefs->graphview_zoom_speed, -(_zoomOutVelocity < 0 ? 1 : _zoomOutVelocity)))) / zoom;
             centerCoord.y += (ImGui::GetIO().MousePos.y - canvasCoord().y +
                     (canvasCoord().y - ImGui::GetIO().MousePos.y) *
-                    (pow(prefs->graphview_zoom_speed, zoomVelocity))) / zoom;
+                    (pow(prefs->graphview_zoom_speed, -(_zoomOutVelocity < 0 ? 1 : _zoomOutVelocity)))) / zoom;
         }
 
-        if (panLatch) {
-            /// PAN
-            //panLatch = false;
-            if (((onPanMouseState & 0b1) && hk->down(gfn::Actions::CAMERA_PAN_E))
-                || ((onPanMouseState & 0b10) && hk->down(gfn::Actions::CAMERA_PAN_U))
-                || ((onPanMouseState & 0b100) && hk->down(gfn::Actions::CAMERA_PAN_S))) {
-                centerCoord.x += -ImGui::GetIO().MouseDelta.x / zoom;
-                centerCoord.y -= -ImGui::GetIO().MouseDelta.y / zoom;
-                panLatch = true;
-            }
+        if (_canPan) {
+            // pan will only be enabled if camera pan binding is active AND window(invis button) is hovered
+            // after that, if the pan hot key is satisfied, keep the latch on so panning will be kept on even
+            // if the cursor is out of the graphview window
+            // (handled by selection)
+            centerCoord.x += -ImGui::GetIO().MouseDelta.x / zoom;
+            centerCoord.y -= -ImGui::GetIO().MouseDelta.y / zoom;
         }
     }
 }

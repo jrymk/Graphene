@@ -1,4 +1,5 @@
 #include "Core.h"
+#include <Tracy.hpp>
 
 namespace gfn {
     Core::Core() :
@@ -12,11 +13,9 @@ namespace gfn {
     }
 
     void Core::update() {
-        MTR_META_PROCESS_NAME("graphene-core");
-        MTR_META_THREAD_NAME("core thread");
-        MTR_SCOPE("core", "core cycle");
-
-        parseAll();
+        FrameMarkNamed("Core update")
+        ZoneScoped
+        parseCommands();
 
         if (itf.graph.getWrite().pendingUpdate) {
             // update component list with usergraph and rebuild block cut tree

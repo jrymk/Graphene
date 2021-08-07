@@ -1,72 +1,107 @@
 #include "HotKeyHandler.h"
-#include <minitrace.h>
+#include <iostream>
+#include <Tracy.hpp>
 
 namespace gfn {
-    HKHandler::HKHandler(gfn::Preferences* prefs) : prefs(prefs) {
-        _hotKeyPress.resize(gfn::Bindings::actionNames.size());
-        _hotKeyDown.resize(gfn::Bindings::actionNames.size());
-        _hotKeyRelease.resize(gfn::Bindings::actionNames.size());
-        _hotKeyDoubleClick.resize(gfn::Bindings::actionNames.size());
-        _hotKeyVelocity.resize(gfn::Bindings::actionNames.size());
-        _pressTp.resize(gfn::Bindings::actionNames.size());
-        _releaseTp.resize(gfn::Bindings::actionNames.size());
-        _repeatCnt.resize(gfn::Bindings::actionNames.size());
+    HKHandler::HKHandler(gfn::Preferences* prefs) :
+            prefs(prefs),
+            _hotKeyPress(gfn::Bindings::actions.size(), std::vector<bool>(5)),
+            _hotKeyDown(gfn::Bindings::actions.size(), std::vector<bool>(5)),
+            _hotKeyRelease(gfn::Bindings::actions.size(), std::vector<bool>(5)),
+            _hotKeyDoubleClick(gfn::Bindings::actions.size(), std::vector<bool>(5)),
+            _hotKeyVelocity(gfn::Bindings::actions.size(), std::vector<float>(5)),
+            _pressTp(gfn::Bindings::actions.size(), std::vector<gfn::TimePoint>(5)),
+            _releaseTp(gfn::Bindings::actions.size(), std::vector<gfn::TimePoint>(5)),
+            _repeatCnt(gfn::Bindings::actions.size(), std::vector<int>(5)) {
     }
 
-    void HKHandler::update() {
-        MTR_SCOPE("main update", "update hotkey");
+    void HKHandler::updateHotKeyState() {
+        ZoneScoped
+        for (int a = 0; a < gfn::Bindings::actions.size(); a++) {
+            for (int c = 0; c < 5; c++) {
+                bool prev = _hotKeyDown[a][c];
+                // reset pulse states
+                _hotKeyPress[a][c] = false;
+                _hotKeyRelease[a][c] = false;
+                _hotKeyDoubleClick[a][c] = false;
 
-        for (int i = 0; i < gfn::Bindings::actionNames.size(); i++) {
-            bool prev = _hotKeyDown[i];
-            // reset pulse states
-            _hotKeyPress[i] = false;
-            _hotKeyRelease[i] = false;
-            _hotKeyDoubleClick[i] = false;
+                auto active = prefs->bindings.isBindingActive(a, c);
 
-            auto active = prefs->bindings.isBindingActive(i);
-
-            if (std::get<0>(active)) {
-                if (!prev) {
-                    _hotKeyPress[i] = true;
-                    _pressTp[i].restart();
-                    _repeatCnt[i] = 0;
-                    // detect double click
-                    if (gfn::TimePoint::getMilliseconds(_releaseTp[i]) < doubleClickThresholdMs)
-                        _hotKeyDoubleClick[i] = true;
-                }
-                _hotKeyDown[i] = true;
-                _hotKeyVelocity[i] = std::get<1>(active);
-
-                if (std::get<2>(active).repeatStartMs >= 0) {
-                    if (gfn::TimePoint::getMilliseconds(_pressTp[i]) >=
-                        std::get<2>(active).repeatStartMs + std::get<2>(active).repeatIntervalMs * _repeatCnt[i]) {
-                        _hotKeyPress[i] = true;
-                        _repeatCnt[i]++;
+                if (std::get<0>(active)) { // really active
+                    if (!prev) {
+                        _hotKeyPress[a][c] = true;
+                        _pressTp[a][c].restart();
+                        _repeatCnt[a][c] = 0;
+                        // detect double click
+                        if (gfn::TimePoint::getMilliseconds(_releaseTp[a][c]) < doubleClickThresholdMs)
+                            _hotKeyDoubleClick[a][c] = true;
                     }
-                }
-            } else {
-                _hotKeyDown[i] = false;
-                if (prev) {
-                    _hotKeyRelease[i] = true;
-                    _releaseTp[i].restart();
+                    _hotKeyDown[a][c] = true;
+                    _hotKeyVelocity[a][c] = std::get<1>(active);
+
+                    if (std::get<2>(active).repeatStartMs >= 0) {
+                        if (gfn::TimePoint::getMilliseconds(_pressTp[a][c]) >=
+                            std::get<2>(active).repeatStartMs + std::get<2>(active).repeatIntervalMs * _repeatCnt[a][c]) {
+                            _hotKeyPress[a][c] = true;
+                            _repeatCnt[a][c]++;
+                        }
+                    }
+                } else {
+                    _hotKeyDown[a][c] = false;
+                    if (prev) {
+                        _hotKeyRelease[a][c] = true;
+                        _releaseTp[a][c].restart();
+                    }
                 }
             }
         }
     }
 
-    bool HKHandler::press(int actionId) { return _hotKeyPress[actionId]; }
+    bool HKHandler::press(int actionId, int condition) {
+        if (condition < 0) {
+            for (int i = 0; i < 5; i++)
+                if (_hotKeyPress[actionId][i])
+                    return true;
+            return false;
+        }
+        return _hotKeyPress[actionId][condition];
+    }
 
-    bool HKHandler::down(int actionId) { return _hotKeyDown[actionId]; }
+    bool HKHandler::down(int actionId, int condition) {
+        if (condition < 0) {
+            for (int i = 0; i < 5; i++)
+                if (_hotKeyDown[actionId][i])
+                    return true;
+            return false;
+        }
+        return _hotKeyDown[actionId][condition];
+    }
 
-    bool HKHandler::release(int actionId) { return _hotKeyRelease[actionId]; }
+    bool HKHandler::release(int actionId, int condition) {
+        if (condition < 0) {
+            for (int i = 0; i < 5; i++)
+                if (_hotKeyRelease[actionId][i])
+                    return true;
+            return false;
+        }
+        return _hotKeyRelease[actionId][condition];
+    }
 
-    bool HKHandler::doubleClick(int actionId) { return _hotKeyDoubleClick[actionId]; }
+    bool HKHandler::doubleClick(int actionId, int condition) {
+        if (condition < 0) {
+            for (int i = 0; i < 5; i++)
+                if (_hotKeyDoubleClick[actionId][i])
+                    return true;
+            return false;
+        }
+        return _hotKeyDoubleClick[actionId][condition];
+    }
 
-    bool HKHandler::hasVelocity(int actionId) { return _hotKeyVelocity[actionId] >= 0; }
+    bool HKHandler::hasVelocity(int actionId, int condition) { return _hotKeyVelocity[actionId][condition] >= 0; }
 
-    float HKHandler::velocity(int actionId) { return _hotKeyVelocity[actionId]; }
+    float HKHandler::velocity(int actionId, int condition) { return _hotKeyVelocity[actionId][condition]; }
 
-    unsigned long long HKHandler::timeSincePressMs(int actionId) { return gfn::TimePoint::getMilliseconds(_pressTp[actionId]); }
+    unsigned long long HKHandler::timeSincePressMs(int actionId, int condition) { return gfn::TimePoint::getMilliseconds(_pressTp[actionId][condition]); }
 
-    unsigned long long HKHandler::timeSinceReleaseMs(int actionId) { return gfn::TimePoint::getMilliseconds(_releaseTp[actionId]); }
+    unsigned long long HKHandler::timeSinceReleaseMs(int actionId, int condition) { return gfn::TimePoint::getMilliseconds(_releaseTp[actionId][condition]); }
 }

@@ -10,10 +10,15 @@ namespace gfn {
     class Camera {
         gfn::HKHandler* hk;
         gfn::Preferences* prefs;
-        bool panLatch = false;
-        bool onPanMouseState;
 
     public:
+        int hoverState = 0; // updated by selection
+        bool _canPan = false;
+        bool _canZoomIn = false;
+        bool _canZoomOut = false;
+        float _zoomInVelocity = 0.0f;
+        float _zoomOutVelocity = 0.0f;
+
         gfn::Vec2 centerCoord;
         double zoom;
 
@@ -29,7 +34,7 @@ namespace gfn {
 
         double rMap(float c);
 
-        void update(int mouseState);
+        void update();
     };
 }
 

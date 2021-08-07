@@ -1,30 +1,31 @@
 #ifndef PLACEMENT_H
 #define PLACEMENT_H
 
-#include <thread_pool.hpp>
-#include <thread>
 #include <cmath>
 #include <queue>
 #include <Core/Interface/Interface.h>
 #include <Core/Structure/Structure.h>
 #include <Core/Objects/Timer.h>
-#include <minitrace.h>
+#include <thread_pool.hpp>
+#include <thread>
 
 // updater is such a bad name, I need a new one
 namespace gfn {
     class Placement {
+
         // optimize performance by measuring four multithreading modes every 30 seconds
         int multiThreadingMode = 2;
         gfn::Timer performanceCheckTimer;
+        thread_pool pool;
 
     public:
         void update(Interface* itf, gfn::Structure* structure);
 
-        gfn::Vec2 repelForce(gfn::Interface* itf, gfn::Vec2 u, gfn::Vec2 v);
+        static gfn::Vec2 repelForce(gfn::Interface* itf, gfn::Vec2 u, gfn::Vec2 v);
 
-        gfn::Vec2 attractForce(gfn::Interface* itf, gfn::Vec2 u, gfn::Vec2 v);
+        static gfn::Vec2 attractForce(gfn::Interface* itf, gfn::Vec2 u, gfn::Vec2 v);
 
-        void updateVertex(gfn::Interface* itf, gfn::Component* c, gfn::Vertex* u);
+        static void updateVertex(gfn::Interface* itf, gfn::Component* c, gfn::Vertex* u);
 
         void updateComponentSingleThreaded(gfn::Interface* itf, gfn::Component* c);
 

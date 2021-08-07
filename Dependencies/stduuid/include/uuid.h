@@ -46,7 +46,7 @@ namespace uuids
 {
 #ifdef __cpp_lib_span
    template <class ElementType, std::size_t Extent>
-   using span = std::span<ElementType, Extent>;
+   using span = gsl::span<ElementType, Extent>;
 #else
    template <class ElementType, std::ptrdiff_t Extent>
    using span = gsl::span<ElementType, Extent>;

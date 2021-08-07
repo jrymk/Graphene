@@ -2,7 +2,7 @@
 #define DOCUMENT_H
 
 #include <Core/Core/Core.h>
-#include <Editor/Document/GraphView/GraphView.hpp>
+#include <Editor/Document/GraphView/GraphView.h>
 #include <Core/Objects/Uuid.h>
 
 namespace gfn {
@@ -11,7 +11,6 @@ namespace gfn {
     private:
         gfn::Core core;                        // updates vertex positions
         gfn::Interface* itf;         // to interact with the multithreaded core
-        gfn::GraphView graphview; // handles graph rendering and interaction
         gfn::HKHandler* hk;                 // get hot key states from preferences.bindings
         gfn::Preferences* prefs;  // application preferences
 
@@ -21,6 +20,8 @@ namespace gfn {
         static int untitledCounter;
 
     public:
+        gfn::GraphView graphview; // handles graph rendering and interaction
+
         // obtain preferences from Editor
         Document(gfn::Uuid docId, gfn::HKHandler* hk , gfn::Preferences* prefs);
 

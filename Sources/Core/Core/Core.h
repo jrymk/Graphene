@@ -5,6 +5,7 @@
 #include <Core/Structure/Structure.h>
 #include <Core/Placement/Placement.h>
 #include <Core/Objects/Args.h>
+#include <thread_pool.hpp>
 #include <thread>
 
 namespace gfn {
@@ -37,7 +38,7 @@ namespace gfn {
 
         void parse(Args command, gfn::Args& output);
 
-        void parseAll();
+        void parseCommands();
 
         void openFile(Args command, gfn::Args& output);
 

@@ -1,7 +1,9 @@
 #include "Graphics.h"
+#include "Font.cpp"
 #include <imgui.h>
-#include <imgui_impl_opengl3.h>
+#include <imgui_internal.h>
 #include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 #include <Core/Core/Meta.h>
 
 namespace gfn {
@@ -42,7 +44,7 @@ namespace gfn {
 
         ImGui::GetIO().IniFilename = "Graphene.ini";
         ImGui::GetIO().IniSavingRate = 1;
-        ImGui::GetIO().Fonts->AddFontFromFileTTF(prefs->graphics_default_font.c_str(), prefs->graphics_font_size);
+        ImGui::GetIO().Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_BR, 16.0f, 0, 0);
 
         return true;
     }
@@ -79,20 +81,20 @@ namespace gfn {
         ImGui::DockSpace(viewportDockspaceId, ImVec2(0.0f, 0.0f),
                          ImGuiDockNodeFlags_PassthruCentralNode);
 
-        ImGuiWindowFlags documentWindowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
+        ImGuiWindowFlags documentWindowFlags = ImGuiWindowFlags_NoCollapse;
         ImGui::Begin("Graph View", nullptr, documentWindowFlags);
         ImGui::PopStyleVar(2);
         ImGuiID documentDockspaceId = ImGui::GetID("DocumentDockspace");
         ImGui::DockSpace(documentDockspaceId, ImVec2(0.0f, 0.0f),
                          ImGuiDockNodeFlags_PassthruCentralNode);
         // default dock for new file
-        /*while (!dockBuildWindow.empty()) {
+        while (!dockBuildWindow.empty()) {
             if (ImGui::FindWindowByName(dockBuildWindow.front().c_str())) {
                 ImGui::DockBuilderDockWindow(dockBuildWindow.front().c_str(), documentDockspaceId);
                 dockBuildWindow.pop();
             } else
                 break;
-        }*/
+        }
 
         ImGui::End();
     }

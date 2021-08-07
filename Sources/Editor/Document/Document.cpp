@@ -1,4 +1,5 @@
 #include "Document.h"
+#include <Tracy.hpp>
 
 namespace gfn {
     int Document::untitledCounter = 1;
@@ -38,12 +39,12 @@ namespace gfn {
             isFocused = ImGui::IsWindowFocused();
 
             if (ImGui::IsWindowFocused()) {
-                if (graphview.selection.vertexSelection.empty() &&
+                /*if (graphview.selection.vertexSelection.empty() &&
                     !graphview.selection.mouseClickVertex[ImGuiMouseButton_Left].empty() &&
                     !graphview.selection.mouseOnReleaseVertex[ImGuiMouseButton_Left].empty()) {
                     execute("mkedge -u=" + graphview.selection.mouseClickVertex[ImGuiMouseButton_Left] + " -v=" +
                             graphview.selection.mouseOnReleaseVertex[ImGuiMouseButton_Left]);
-                }
+                }*/
                 if (!graphview.selection.hoveredVertex.empty()) {
                     if (ImGui::IsKeyPressed('D', false))
                         execute("rmvertex -uuid=" + graphview.selection.hoveredVertex);
@@ -51,7 +52,9 @@ namespace gfn {
                     if (ImGui::IsKeyPressed('D', false))
                         execute("rmedge -uuid=" + graphview.selection.hoveredEdge);
                 }
-                if (ImGui::IsKeyPressed('V', false)) {
+                if (graphview.selection.press(Actions::ADD_VERTEX)) {
+                    ZoneScoped
+
                     if (graphview.selection.hoveredVertex.empty() && !graphview.selection.hoveredEdge.empty()) {
                         auto eProp = itf->graph.getRead()->props.getEdgeProps(graphview.selection.hoveredEdge);
                         execute("rmedge -u=" + eProp->startVertexUuid.value + " -v=" + eProp->endVertexUuid.value);

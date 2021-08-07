@@ -3,7 +3,7 @@
 
 #define BUILD_MAJOR 0
 #define BUILD_MIDDLE 2
-#define BUILD_MINOR 1
+#define BUILD_MINOR 2
 
 const char buildVersion[] = {
         'G', 'r', 'a', 'p', 'h', 'e', 'n', 'e', ' ',

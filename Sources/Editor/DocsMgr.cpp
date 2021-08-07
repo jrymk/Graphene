@@ -11,7 +11,9 @@ namespace gfn {
 
     gfn::Uuid Editor::newDocument() {
         gfn::Uuid docId = gfn::createUuid();
-        documents.insert({docId, new Document(docId, &hk, &prefs)});
+        auto doc =  new Document(docId, &hk, &prefs);
+        documents.insert({docId, doc});
+        gfx.dockBuildWindow.push(doc->docName + "###" + docId);
         return docId;
     }
 

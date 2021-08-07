@@ -7,6 +7,7 @@
 namespace gfn {
     class Preferences {
     public:
+        bool themes_use_dark_theme = true;
         std::string graphics_default_font = ".\\Barlow-Regular.ttf";
         float graphics_font_size = 16.0f;
         bool graphics_launch_maximized = false;

@@ -1,6 +1,7 @@
 #include "Editor.h"
-#include <Editor/Theme/Theme.hpp> /// TODO
+#include <Editor/Theme/Theme.h> /// TODO
 #include <ImGuiFileBrowser.h> /// TODO
+#include <Tracy.hpp>
 
 namespace gfn {
     Editor::Editor() :
@@ -8,12 +9,200 @@ namespace gfn {
         //cmdStartup();
         prefs.loadFromFile();
         gfx.launchWindow(&prefs);
-        gfn::theme::setTheme(); /// TODO
+        gfn::setTheme(&prefs);
+        prefs.saveToFile();
     }
 
     void Editor::update() {
         gfx.preFrame();
-        hk.update();
+
+        hk.updateHotKeyState();
+
+        //gfn::setColorLight();
+        /*ImGui::Begin("LIGHT THEME");
+        gfn::text("BORDER ON", (gfn::Hue) HUE_DEFAULT);
+        for (int i = 0; i < 17; i++) {
+            for (int j = 0; j < 17; j++) {
+                int text =
+                        (i == 0 ? HUE_DEFAULT :
+                         (i == 1 ? HUE_CONTRAST :
+                          (i == 2 ? HUE_TRANSPARENT :
+                           (i == 3 ? HUE_RED :
+                            (i == 4 ? HUE_ORANGE :
+                             (i == 5 ? HUE_YELLOW :
+                              (i == 6 ? HUE_GREEN :
+                               (i == 7 ? HUE_CYAN :
+                                (i == 8 ? HUE_BLUE :
+                                 (i == 9 ? HUE_PURPLE :
+                                  (i == 10 ? HUE_RED_CONTRAST :
+                                   (i == 11 ? HUE_ORANGE_CONTRAST :
+                                    (i == 12 ? HUE_YELLOW_CONTRAST :
+                                     (i == 13 ? HUE_GREEN_CONTRAST :
+                                      (i == 14 ? HUE_CYAN_CONTRAST :
+                                       (i == 15 ? HUE_BLUE_CONTRAST :
+                                        HUE_PURPLE_CONTRAST))))))))))))))));
+                int button =
+                        (j == 0 ? HUE_DEFAULT :
+                         (j == 1 ? HUE_CONTRAST :
+                          (j == 2 ? HUE_TRANSPARENT :
+                           (j == 3 ? HUE_RED :
+                            (j == 4 ? HUE_ORANGE :
+                             (j == 5 ? HUE_YELLOW :
+                              (j == 6 ? HUE_GREEN :
+                               (j == 7 ? HUE_CYAN :
+                                (j == 8 ? HUE_BLUE :
+                                 (j == 9 ? HUE_PURPLE :
+                                  (j == 10 ? HUE_RED_CONTRAST :
+                                   (j == 11 ? HUE_ORANGE_CONTRAST :
+                                    (j == 12 ? HUE_YELLOW_CONTRAST :
+                                     (j == 13 ? HUE_GREEN_CONTRAST :
+                                      (j == 14 ? HUE_CYAN_CONTRAST :
+                                       (j == 15 ? HUE_BLUE_CONTRAST :
+                                        HUE_PURPLE_CONTRAST))))))))))))))));
+                gfn::button("Theme", (gfn::Hue) text, (gfn::Hue) button, true, 0, 0);
+                if (j != 16)
+                    ImGui::SameLine();
+            }
+        }
+        gfn::text("BORDER OFF", (gfn::Hue) HUE_DEFAULT);
+        for (int i = 0; i < 17; i++) {
+            for (int j = 0; j < 17; j++) {
+                int text =
+                        (i == 0 ? HUE_DEFAULT :
+                         (i == 1 ? HUE_CONTRAST :
+                          (i == 2 ? HUE_TRANSPARENT :
+                           (i == 3 ? HUE_RED :
+                            (i == 4 ? HUE_ORANGE :
+                             (i == 5 ? HUE_YELLOW :
+                              (i == 6 ? HUE_GREEN :
+                               (i == 7 ? HUE_CYAN :
+                                (i == 8 ? HUE_BLUE :
+                                 (i == 9 ? HUE_PURPLE :
+                                  (i == 10 ? HUE_RED_CONTRAST :
+                                   (i == 11 ? HUE_ORANGE_CONTRAST :
+                                    (i == 12 ? HUE_YELLOW_CONTRAST :
+                                     (i == 13 ? HUE_GREEN_CONTRAST :
+                                      (i == 14 ? HUE_CYAN_CONTRAST :
+                                       (i == 15 ? HUE_BLUE_CONTRAST :
+                                        HUE_PURPLE_CONTRAST))))))))))))))));
+                int button =
+                        (j == 0 ? HUE_DEFAULT :
+                         (j == 1 ? HUE_CONTRAST :
+                          (j == 2 ? HUE_TRANSPARENT :
+                           (j == 3 ? HUE_RED :
+                            (j == 4 ? HUE_ORANGE :
+                             (j == 5 ? HUE_YELLOW :
+                              (j == 6 ? HUE_GREEN :
+                               (j == 7 ? HUE_CYAN :
+                                (j == 8 ? HUE_BLUE :
+                                 (j == 9 ? HUE_PURPLE :
+                                  (j == 10 ? HUE_RED_CONTRAST :
+                                   (j == 11 ? HUE_ORANGE_CONTRAST :
+                                    (j == 12 ? HUE_YELLOW_CONTRAST :
+                                     (j == 13 ? HUE_GREEN_CONTRAST :
+                                      (j == 14 ? HUE_CYAN_CONTRAST :
+                                       (j == 15 ? HUE_BLUE_CONTRAST :
+                                        HUE_PURPLE_CONTRAST))))))))))))))));
+                gfn::button("Theme", (gfn::Hue) text, (gfn::Hue) button, false, 0, 0);
+                if (j != 16)
+                    ImGui::SameLine();
+            }
+        }
+        ImGui::End();
+
+        //gfn::setColorDark();
+        ImGui::Begin("DARK THEME");
+        gfn::text("BORDER ON", (gfn::Hue) HUE_DEFAULT);
+        for (int i = 0; i < 17; i++) {
+            for (int j = 0; j < 17; j++) {
+                int text =
+                        (i == 0 ? HUE_DEFAULT :
+                         (i == 1 ? HUE_CONTRAST :
+                          (i == 2 ? HUE_TRANSPARENT :
+                           (i == 3 ? HUE_RED :
+                            (i == 4 ? HUE_ORANGE :
+                             (i == 5 ? HUE_YELLOW :
+                              (i == 6 ? HUE_GREEN :
+                               (i == 7 ? HUE_CYAN :
+                                (i == 8 ? HUE_BLUE :
+                                 (i == 9 ? HUE_PURPLE :
+                                  (i == 10 ? HUE_RED_CONTRAST :
+                                   (i == 11 ? HUE_ORANGE_CONTRAST :
+                                    (i == 12 ? HUE_YELLOW_CONTRAST :
+                                     (i == 13 ? HUE_GREEN_CONTRAST :
+                                      (i == 14 ? HUE_CYAN_CONTRAST :
+                                       (i == 15 ? HUE_BLUE_CONTRAST :
+                                        HUE_PURPLE_CONTRAST))))))))))))))));
+                int button =
+                        (j == 0 ? HUE_DEFAULT :
+                         (j == 1 ? HUE_CONTRAST :
+                          (j == 2 ? HUE_TRANSPARENT :
+                           (j == 3 ? HUE_RED :
+                            (j == 4 ? HUE_ORANGE :
+                             (j == 5 ? HUE_YELLOW :
+                              (j == 6 ? HUE_GREEN :
+                               (j == 7 ? HUE_CYAN :
+                                (j == 8 ? HUE_BLUE :
+                                 (j == 9 ? HUE_PURPLE :
+                                  (j == 10 ? HUE_RED_CONTRAST :
+                                   (j == 11 ? HUE_ORANGE_CONTRAST :
+                                    (j == 12 ? HUE_YELLOW_CONTRAST :
+                                     (j == 13 ? HUE_GREEN_CONTRAST :
+                                      (j == 14 ? HUE_CYAN_CONTRAST :
+                                       (j == 15 ? HUE_BLUE_CONTRAST :
+                                        HUE_PURPLE_CONTRAST))))))))))))))));
+                gfn::button("Theme", (gfn::Hue) text, (gfn::Hue) button, true, 0, 0);
+                if (j != 16)
+                    ImGui::SameLine();
+            }
+        }
+        gfn::text("BORDER OFF", (gfn::Hue) HUE_DEFAULT);
+        for (int i = 0; i < 17; i++) {
+            for (int j = 0; j < 17; j++) {
+                int text =
+                        (i == 0 ? HUE_DEFAULT :
+                         (i == 1 ? HUE_CONTRAST :
+                          (i == 2 ? HUE_TRANSPARENT :
+                           (i == 3 ? HUE_RED :
+                            (i == 4 ? HUE_ORANGE :
+                             (i == 5 ? HUE_YELLOW :
+                              (i == 6 ? HUE_GREEN :
+                               (i == 7 ? HUE_CYAN :
+                                (i == 8 ? HUE_BLUE :
+                                 (i == 9 ? HUE_PURPLE :
+                                  (i == 10 ? HUE_RED_CONTRAST :
+                                   (i == 11 ? HUE_ORANGE_CONTRAST :
+                                    (i == 12 ? HUE_YELLOW_CONTRAST :
+                                     (i == 13 ? HUE_GREEN_CONTRAST :
+                                      (i == 14 ? HUE_CYAN_CONTRAST :
+                                       (i == 15 ? HUE_BLUE_CONTRAST :
+                                        HUE_PURPLE_CONTRAST))))))))))))))));
+                int button =
+                        (j == 0 ? HUE_DEFAULT :
+                         (j == 1 ? HUE_CONTRAST :
+                          (j == 2 ? HUE_TRANSPARENT :
+                           (j == 3 ? HUE_RED :
+                            (j == 4 ? HUE_ORANGE :
+                             (j == 5 ? HUE_YELLOW :
+                              (j == 6 ? HUE_GREEN :
+                               (j == 7 ? HUE_CYAN :
+                                (j == 8 ? HUE_BLUE :
+                                 (j == 9 ? HUE_PURPLE :
+                                  (j == 10 ? HUE_RED_CONTRAST :
+                                   (j == 11 ? HUE_ORANGE_CONTRAST :
+                                    (j == 12 ? HUE_YELLOW_CONTRAST :
+                                     (j == 13 ? HUE_GREEN_CONTRAST :
+                                      (j == 14 ? HUE_CYAN_CONTRAST :
+                                       (j == 15 ? HUE_BLUE_CONTRAST :
+                                        HUE_PURPLE_CONTRAST))))))))))))))));
+                gfn::button("Theme", (gfn::Hue) text, (gfn::Hue) button, false, 0, 0);
+                if (j != 16)
+                    ImGui::SameLine();
+            }
+        }
+        ImGui::End();
+
+        //gfn::setColorDark();*/
 
         //parseCommandQueue();
 
@@ -29,22 +218,44 @@ namespace gfn {
 
         /*auto fDoc = gfn::getActiveDocument();*/
 
+        ImGui::Begin("Hot keys 2.0");
+        if (getDoc(activeDoc)) {
+            gfn::text(getDoc(activeDoc)->docName + ": " + std::to_string(getDoc(activeDoc)->graphview.camera.hoverState), HUE_DEFAULT);
+            for (int i = 0; i < gfn::Bindings::actions.size(); i++) {
+                if (hk.timeSincePressMs(i, getDoc(activeDoc)->graphview.camera.hoverState) < 100)
+                    gfn::text(gfn::Bindings::actions[i].first + " PRESSED", HUE_RED);
+                if (hk.down(i, getDoc(activeDoc)->graphview.camera.hoverState))
+                    gfn::text(gfn::Bindings::actions[i].first + " DOWN", HUE_YELLOW);
+                if (hk.timeSinceReleaseMs(i, getDoc(activeDoc)->graphview.camera.hoverState) < 100)
+                    gfn::text(gfn::Bindings::actions[i].first + " RELEASED", HUE_BLUE);
+            }
+        } else
+            gfn::text("No active document", HUE_RED);
+
+        ImGui::End();
+
         ImGui::Begin("Args centre", nullptr, 0);
 
         if (ImGui::Button("New file"))
             newDocument();
         ImGui::SameLine();
 
-        static bool openin = false;
+        static bool opening = false;
         if (ImGui::Button("Open file")) {
-            openin = true;
+            opening = true;
             ImGui::OpenPopup("Open File");
+        }
+
+        if (getDoc(activeDoc)) {
+            ImGui::SameLine();
+            if (ImGui::Button("Save file"))
+                getDoc(activeDoc)->execute("save");
         }
 
         static imgui_addons::ImGuiFileBrowser fileDialog;
         if (fileDialog.showFileDialog("Open File", imgui_addons::ImGuiFileBrowser::DialogMode::OPEN,
                                       ImVec2(700, 310), ".gfn")) {
-            openin = false;
+            opening = false;
             auto path = fileDialog.selected_path;
             for (auto& d : documents) {
                 if (d.second->file == fileDialog.selected_path) {
@@ -186,6 +397,7 @@ namespace gfn {
         prefs.checkSave();
 
         gfx.postFrame();
+        FrameMark
     }
 
     void Editor::updateDocuments() {

@@ -1,23 +1,12 @@
 cmake_minimum_required(VERSION 3.15)
 include(GenerateExportHeader)
-include(FetchContent)
 project(Graphene)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_definitions(-DNDEBUG -DMTR_ENABLED)
+add_definitions(-DNDEBUG -DTRACY_ENABLE)
 
-
-#FetchContent_Declare(
-#        tracy
-#        GIT_REPOSITORY https://github.com/wolfpld/tracy.git
-#        GIT_TAG master
-#        GIT_SHALLOW TRUE
-#        GIT_PROGRESS TRUE
-#)
-#FetchContent_MakeAvailable(tracy)
-
-#include_directories(cmake-build-debug/_deps/tracy-src)
+include_directories(Dependencies/tracy)
 include_directories(Dependencies/glad/include)
 include_directories(Dependencies/glad/include/glad)
 include_directories(Dependencies/glad/include/KHR)
@@ -31,12 +20,11 @@ include_directories(Dependencies/imgui/misc/freetype)
 include_directories(Dependencies/imgui/misc/single_file)
 include_directories(Dependencies/stduuid/include)
 include_directories(Dependencies/stduuid/gsl)
-include_directories(Dependencies/thread_pool)
+include_directories(Dependencies/thread-pool)
 include_directories(Dependencies/json)
 include_directories(Dependencies/binn/src)
 include_directories(Dependencies/ImGui-Addons/FileBrowser)
 include_directories(Dependencies/earcut)
-include_directories(Dependencies/minitrace)
 include_directories(Sources/)
 
 
@@ -44,7 +32,7 @@ find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
 
 add_executable(Graphene
-        #        cmake-build-debug/_deps/tracy-src/TracyClient.cpp
+        Dependencies/tracy/TracyClient.cpp
         Dependencies/glad/src/glad.c
         Dependencies/imgui/imgui_demo.cpp
         Dependencies/imgui/imgui_draw.cpp
@@ -55,7 +43,6 @@ add_executable(Graphene
         Dependencies/imgui/backends/imgui_impl_opengl3.cpp
         Dependencies/binn/src/binn.c
         Dependencies/ImGui-Addons/FileBrowser/ImGuiFileBrowser.cpp
-        Dependencies/minitrace/minitrace.c
         Sources/Core/Objects/Uuid.cpp
         Sources/Core/Properties/Properties.cpp
         Sources/Core/Properties/PropertiesParser.cpp
@@ -84,20 +71,46 @@ add_executable(Graphene
         Sources/Core/Core/Core.cpp
         Sources/Core/Placement/Placement.cpp
         Sources/Core/Core/File.cpp
-        Sources/Core/Core/Parser.cpp Sources/Core/Objects/Random.cpp Sources/Core/Core/Background.cpp Sources/Core/Interface/Interface.cpp Sources/Editor/Graphics/Graphics.cpp Sources/Core/Core/Meta.h Sources/Editor/Document/GraphView/Camera.cpp)
+        Sources/Core/Core/Parser.cpp
+        Sources/Core/Objects/Random.cpp
+        Sources/Core/Core/Background.cpp
+        Sources/Core/Interface/Interface.cpp
+        Sources/Editor/Graphics/Graphics.cpp
+        Sources/Core/Core/Meta.h
+        Sources/Editor/Document/GraphView/Camera.cpp
+        Sources/Editor/Document/GraphView/Selection.cpp
+        Sources/Editor/Document/GraphView/GraphView.cpp
+        Sources/Editor/Theme/Theme.cpp
+        Sources/Editor/Theme/Styles.cpp
+        Sources/Editor/Graphics/Font.cpp
+        Sources/Editor/Preferences/KeyBindings/KeyBindDialog.cpp)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(Dependencies/glfw-3.3.4)
+
+option(TRACY_ENABLE "" ON)
+option(TRACY_ON_DEMAND "" ON)
+add_subdirectory(Dependencies/tracy)
+
 set(CMAKE_EXE_LINKER_FLAGS " -static")
 
 target_link_libraries(Graphene
-        #        PUBLIC Tracy::TracyClient
+        PUBLIC TracyClient
         imm32.lib
         glfw
         -static-libgcc
         -static-libstdc++
+        ws2_32.lib
+        dbghelp.lib
+        advapi32.lib
+        user32.lib
         )
 
 target_compile_features(Graphene PRIVATE cxx_std_20)
+
+add_custom_target(file_toucher
+        COMMAND ${CMAKE_COMMAND} -E touch_nocreate Sources/Core/Core/Meta.h)
+
+add_dependencies(Graphene file_toucher)

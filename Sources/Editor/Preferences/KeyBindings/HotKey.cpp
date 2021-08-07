@@ -148,14 +148,14 @@ namespace gfn {
                 ImGui::SameLine();
             }
         }
-        ImGui::PopStyleColor(6);
+        ImGui::PopStyleColor(5);
         ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(0, 0, 0, 0));
         ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(9, 132, 227, 255));
         if (repeatStartMs >= 0) {
             ImGui::SmallButton("repeat");
             ImGui::SameLine();
         }
-        ImGui::PopStyleColor(2);
+        ImGui::PopStyleColor(3);
         ImGui::PopItemFlag();
         ImGui::Text("");
     }

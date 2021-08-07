@@ -1,4 +1,5 @@
 #include "Graph.h"
+#include <Tracy.hpp>
 
 namespace gfn {
 
@@ -12,6 +13,8 @@ namespace gfn {
     }
 
     void Graph::serialize(binn* document) {
+        ZoneScoped
+
         binn* uList = binn_list();
         for (const auto& u : adjList) {
             binn* uObj = binn_object();
@@ -38,6 +41,8 @@ namespace gfn {
     }
 
     void Graph::deserialize(void* document) {
+        ZoneScoped
+
         adjList.clear();
         void* uList = binn_object_list(document, "adjList");
         auto uCount = binn_count(uList);
@@ -64,6 +69,8 @@ namespace gfn {
     }
 
     bool Graph::validateProps(bool fix) {
+        ZoneScoped
+
         int problems = 0;
 
         auto vertexPropList = props.getVertexPropsList();
@@ -140,6 +147,8 @@ namespace gfn {
     }
 
     void Graph::addVertex(gfn::Args command, gfn::Args& output) {
+        ZoneScoped
+
         pendingUpdate = true;
 
         gfn::Uuid uuid;
@@ -180,6 +189,8 @@ namespace gfn {
 /// removeAllAdjacentEdges remove edges that points to the vertex getting deleted
 /// @returns if the deleting was successful
     void Graph::removeVertex(gfn::Args command, gfn::Args& output) {
+        ZoneScoped
+
         pendingUpdate = true;
         gfn::Uuid uuid;
         if (!command.getParamValue("-uuid").empty()) {
@@ -246,6 +257,8 @@ namespace gfn {
     }
 
     void Graph::addEdge(gfn::Args command, gfn::Args& output) {
+        ZoneScoped
+
         pendingUpdate = true;
 
         gfn::Uuid startUuid;
@@ -348,6 +361,8 @@ namespace gfn {
     }
 
     void Graph::removeEdge(gfn::Args command, gfn::Args& output) {
+        ZoneScoped
+
         pendingUpdate = true;
 
         gfn::Uuid edgeUuid;

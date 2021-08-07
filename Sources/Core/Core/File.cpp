@@ -32,6 +32,7 @@ namespace gfn {
             itf.graph.getWrite().cfg.deserialize(document);
             /// DESERIALIZE
             // clean up
+            output.newParam("-message", "Read " + std::to_string(binn_size(document)) + " bytes from " + filePath);
             binn_free(document);
             delete[] buffer;
             output.newParam("-successful", "true");
@@ -59,6 +60,7 @@ namespace gfn {
             // write file and clean up
             gfnFile.write((char*) binn_ptr(document), binn_size(document));
             gfnFile.close();
+            output.newParam("-message", "Writen " + std::to_string(binn_size(document)) + " bytes to " + filePath);
             binn_free(document);
             output.newParam("-successful", "true");
         } else {
