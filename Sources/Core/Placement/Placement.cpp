@@ -3,7 +3,7 @@
 
 namespace gfn {
     Placement::Placement() :
-            pool(std::thread::hardware_concurrency()) {
+            pool(std::thread::hardware_concurrency() - 1) {
 
     }
 

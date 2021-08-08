@@ -37,7 +37,7 @@ namespace gfn {
                             if (mask == 3)
                                 ImGui::PushItemFlag(ImGuiItemFlags_MixedValue, true);
                             bool checkbox = (mask == 2);
-                            ImGui::Checkbox("\ue53c Enabled", &checkbox);
+                            ImGui::Checkbox("\ue53b Enabled", &checkbox);
                             if (mask == 3)
                                 ImGui::PopItemFlag();
                             if (ImGui::IsItemEdited()) {
@@ -52,7 +52,7 @@ namespace gfn {
                         {
                             static float widget[2];
                             static float widgetPrev[2];
-                            ImGui::DragFloat2("\ue56b Position", (float*) &widget, 1.0, -FLT_MAX, FLT_MAX, "%.6f", 0);
+                            ImGui::DragFloat2("\ue89f Position", (float*) &widget, 1.0, -FLT_MAX, FLT_MAX, "%.6f", 0);
                             if (ImGui::IsItemEdited()) {
                                 for (auto& s : vertexProps) {
                                     getDoc(activeDoc)->execute("setvertexprops -uuid=" + s.first + " -key=position -value=+(" +
@@ -155,7 +155,7 @@ namespace gfn {
                             if (mask == 3)
                                 ImGui::PushItemFlag(ImGuiItemFlags_MixedValue, true);
                             bool checkbox = (mask == 2);
-                            ImGui::Checkbox("\ue53c Enabled", &checkbox);
+                            ImGui::Checkbox("\ue53b Enabled", &checkbox);
                             if (mask == 3)
                                 ImGui::PopItemFlag();
                             if (ImGui::IsItemEdited()) {
@@ -170,7 +170,7 @@ namespace gfn {
                         {
                             static float widget[2];
                             static float widgetPrev[2];
-                            ImGui::DragFloat2("\uea49 Position", (float*) &widget, 1.0, -FLT_MAX, FLT_MAX, "%.6f", 0);
+                            ImGui::DragFloat2("\ue89f Position", (float*) &widget, 1.0, -FLT_MAX, FLT_MAX, "%.6f", 0);
                             if (ImGui::IsItemEdited()) {
                                 for (auto& s : edgeProps) {
                                     getDoc(activeDoc)->execute("setedgeprops -uuid=" + s.first + " -key=position -value=+(" +

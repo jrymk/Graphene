@@ -8,10 +8,8 @@
 
 namespace gfn {
     class Graphics {
-    private:
-        GLFWwindow* glfwWindow;
-
     public:
+        GLFWwindow* glfwWindow;
         std::queue<std::string> dockBuildWindow;
 
         bool launchWindow(Preferences* prefs);

@@ -45,44 +45,6 @@ namespace gfn {
 
             isFocused = ImGui::IsWindowFocused();
 
-            if (ImGui::IsWindowFocused()) {
-                /*if (graphview.selection.vertexSelection.empty() &&
-                    !graphview.selection.mouseClickVertex[ImGuiMouseButton_Left].empty() &&
-                    !graphview.selection.mouseOnReleaseVertex[ImGuiMouseButton_Left].empty()) {
-                    execute("mkedge -u=" + graphview.selection.mouseClickVertex[ImGuiMouseButton_Left] + " -v=" +
-                            graphview.selection.mouseOnReleaseVertex[ImGuiMouseButton_Left]);
-                }*/
-                if (!graphview.selection.hoveredVertex.empty()) {
-                    if (ImGui::IsKeyPressed('D', false))
-                        execute("rmvertex -uuid=" + graphview.selection.hoveredVertex);
-                } else if (!graphview.selection.hoveredEdge.empty()) {
-                    if (ImGui::IsKeyPressed('D', false))
-                        execute("rmedge -uuid=" + graphview.selection.hoveredEdge);
-                }
-
-
-
-
-
-                ///
-                if (graphview.selection.moveStarted) {
-                    for (auto& v : graphview.selection.vertexSelection)
-                        execute("setvertexprops -uuid=" + v + " -key=pauseUpdate -value=true");
-                }
-                if (graphview.selection.moving) {
-                    for (auto& v : graphview.selection.vertexSelection) {
-                        execute("setvertexprops -uuid=" + v + " -key=position -value=\"+(" +
-                                std::to_string(graphview.selection.mouseDelta.x)
-                                + ", " + std::to_string(graphview.selection.mouseDelta.y) +
-                                "\")");
-                    }
-                }
-                if (graphview.selection.moveEnded) {
-                    for (auto& v : graphview.selection.vertexSelection)
-                        execute("setvertexprops -uuid=" + v + " -key=pauseUpdate -value=false");
-                }
-            }
-
             itf->graph.readDone();
             if (itf->commands.wantWrite())
                 itf->commands.writeDone();

@@ -8,7 +8,6 @@
 #include <Core/Objects/Timer.h>
 #include <ThreadPool.h>
 #include <thread>
-#include <ThreadPool/header/CThreadPool.hpp>
 
 // updater is such a bad name, I need a new one
 namespace gfn {

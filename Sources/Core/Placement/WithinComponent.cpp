@@ -100,12 +100,12 @@ namespace gfn {
         for (auto& u : c->vertices) {
             if (!u->props->pauseUpdate.value)
                 results.emplace_back(pool.enqueue(&Placement::updateVertex, itf, c, u));
-            //    tp.add_and_detach(&Placement::updateVertex, itf, c, u);
         }
-        //tp.wait_until_all_usable();
+
         for (auto& f : results)
             f.get();
 
+        bool stablized = true;
         for (auto& u : c->vertices) {
             if (!u->props->pauseUpdate.value)
                 u->props->position.value += u->props->force.value * itf->graph.getWrite().cfg.c4.value;

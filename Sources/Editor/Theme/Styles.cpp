@@ -164,7 +164,7 @@ namespace gfn {
         colors[ImGuiCol_PlotLinesHovered] = ImVec4(1.00f, 0.43f, 0.35f, 1.00f);
         colors[ImGuiCol_PlotHistogram] = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
         colors[ImGuiCol_PlotHistogramHovered] = ImVec4(1.00f, 0.45f, 0.00f, 1.00f);
-        colors[ImGuiCol_TableHeaderBg] = ImVec4(0.74f, 0.90f, 1.00f, 1.00f);
+        colors[ImGuiCol_TableHeaderBg] = ImVec4(0.32f, 0.32f, 0.32f, 1.00f);
         colors[ImGuiCol_TableBorderStrong] = ImVec4(0.69f, 0.69f, 0.69f, 1.00f);
         colors[ImGuiCol_TableBorderLight] = ImVec4(0.80f, 0.80f, 0.80f, 1.00f);
         colors[ImGuiCol_TableRowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);

@@ -19,5 +19,9 @@ const char buildVersion[] = {
 
 // more responsive move selection and config changing with echo -off
 // fully working properties panel (functional)
+// added delete (finally)
+// added temporary reset and aggressive c4
+// added file hotkeys
+// fix octet nonsense
 
 #endif

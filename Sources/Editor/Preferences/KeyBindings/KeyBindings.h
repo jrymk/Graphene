@@ -53,6 +53,7 @@ namespace gfn {
         int _enroll_target_action = -1;
 
     public:
+        static int nonCondActionStartsAt;
         static std::vector<std::pair<std::string, int>> actions;
 
         bool showBindingsConfigWindow = false;

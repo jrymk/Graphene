@@ -24,7 +24,7 @@ include_directories(Dependencies/ThreadPool)
 include_directories(Dependencies/lib)
 include_directories(Dependencies/json)
 include_directories(Dependencies/binn/src)
-include_directories(Dependencies/ImGui-Addons/FileBrowser)
+include_directories(Dependencies/ImGuiFileDialog)
 include_directories(Dependencies/earcut)
 include_directories(Sources/)
 
@@ -34,11 +34,6 @@ include_directories(${OPENGL_INCLUDE_DIRS})
 
 add_executable(Graphene
         Dependencies/tracy/TracyClient.cpp
-        Dependencies/lib/src/Scope_guard.cpp
-        Dependencies/lib/ThreadPool/src/CThreadPool.cpp
-        Dependencies/lib/ThreadPool/src/CThreadPoolItem.cpp
-        Dependencies/lib/ThreadPool/src/IThreadPoolItemBase.cpp
-        Dependencies/lib/ThreadPool/src/IThreadPoolItemExecutor.cpp
         Dependencies/glad/src/glad.c
         Dependencies/imgui/imgui_demo.cpp
         Dependencies/imgui/imgui_draw.cpp
@@ -48,7 +43,7 @@ add_executable(Graphene
         Dependencies/imgui/backends/imgui_impl_glfw.cpp
         Dependencies/imgui/backends/imgui_impl_opengl3.cpp
         Dependencies/binn/src/binn.c
-        Dependencies/ImGui-Addons/FileBrowser/ImGuiFileBrowser.cpp
+        Dependencies/ImGuiFileDialog/ImGuiFileDialog.cpp
         Sources/Core/Objects/Uuid.cpp
         Sources/Core/Properties/Properties.cpp
         Sources/Core/Properties/PropertiesParser.cpp
@@ -90,7 +85,8 @@ add_executable(Graphene
         Sources/Editor/Theme/Styles.cpp
         Sources/Editor/Graphics/Barlow.cpp
         Sources/Editor/Graphics/Material.cpp
-        Sources/Editor/Preferences/KeyBindings/KeyBindDialog.cpp Sources/Editor/PropertiesPanel.cpp)
+        Sources/Editor/Preferences/KeyBindings/KeyBindDialog.cpp
+        Sources/Editor/PropertiesPanel.cpp)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)

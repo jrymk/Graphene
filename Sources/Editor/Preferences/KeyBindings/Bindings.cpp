@@ -66,6 +66,8 @@ namespace gfn {
             nlohmann::json condition;
             for (int c = 0; c < 5; c++) {
                 std::string condName = condNames[c];
+                if (a < nonCondActionStartsAt)
+                    condName = "Always";
                 for (auto h : bindings[a][c]) {
                     nlohmann::json hotkey;
                     nlohmann::json keys = nlohmann::json::array();
@@ -97,6 +99,8 @@ namespace gfn {
 
                     condition[condName].push_back(hotkey);
                 }
+                if (a < nonCondActionStartsAt)
+                    break;
             }
             j[actions[a].first] = condition;
         }
@@ -128,6 +132,8 @@ namespace gfn {
                 for (int i = 0; i < 5; i++)
                     if (condName == condNames[i])
                         condId = i;
+                if (actionId < nonCondActionStartsAt)
+                    condId = 0;
                 if (condId == -1)
                     continue;
                 for (auto& cHk : hkList) {

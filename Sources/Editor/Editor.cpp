@@ -1,6 +1,7 @@
 #include "Editor.h"
+#include <Core/Objects/Random.h>
 #include <Editor/Theme/Theme.h> /// TODO
-#include <ImGuiFileBrowser.h> /// TODO
+#include <ImGuiFileDialog.h> /// TODO
 #include <Tracy.hpp>
 
 namespace gfn {
@@ -11,6 +12,9 @@ namespace gfn {
         gfx.launchWindow(&prefs);
         gfn::setTheme(&prefs);
         prefs.saveToFile();
+        ImGuiFileDialog::Instance()->SetExtentionInfos(".gfn",
+                                                       ImGui::ColorConvertU32ToFloat4(IM_COL32(255, 192, 66, 255)),
+                                                       "\uea0d");
     }
 
     void Editor::update() {
@@ -236,97 +240,128 @@ namespace gfn {
 
         ImGui::Begin("Args centre", nullptr, 0);
 
-        if (ImGui::Button("\ue24d New file"))
-            newDocument();
-        ImGui::SameLine();
 
-        static bool opening = false;
-        if (ImGui::Button("\ue2c7 Open file")) {
-            opening = true;
-            ImGui::OpenPopup("Open File");
+        bool actionNewFile = hk.press(Actions::NEW_FILE, -1);
+        bool actionOpenFile = hk.press(Actions::OPEN_FILE, -1);
+        bool actionSaveFile = hk.press(Actions::SAVE_FILE, -1);
+        bool actionSaveAsFile = hk.press(Actions::SAVE_AS_FILE, -1);
+        bool actionKeyBindings = hk.press(Actions::KEY_BINDINGS, -1);
+        bool actionQuit = hk.press(Actions::QUIT, -1);
+
+        ImGui::BeginMainMenuBar();
+        if (ImGui::BeginMenu("File")) {
+            if (ImGui::MenuItem("\ue24d New file", nullptr, false, true))
+                actionNewFile = true;
+            if (ImGui::MenuItem("\ue2c7 Open file", nullptr, false, true))
+                actionOpenFile = true;
+            if (ImGui::MenuItem("\ue161 Save file", nullptr, false, getDoc(activeDoc)))
+                actionSaveFile = true;
+            if (ImGui::MenuItem("\ue161 Save as file", nullptr, false, getDoc(activeDoc)))
+                actionSaveAsFile = true;
+            ImGui::Separator();
+            if (ImGui::MenuItem("\ue312 Key bindings", nullptr, false, true))
+                actionKeyBindings = true;
+            ImGui::Separator();
+            if (ImGui::MenuItem("\ue5cd Quit", nullptr, false))
+                actionQuit = true;
+            ImGui::EndMenu();
+        }
+        ImGui::EndMainMenuBar();
+
+        if (actionNewFile)
+            newDocument();
+        if (actionOpenFile)
+            ImGuiFileDialog::Instance()->OpenDialog("OpenFile", "\ue2c7 Open file", ".gfn,.*", ".", 0, nullptr, 0);
+        if (actionSaveFile)
+            getDoc(activeDoc)->execute("save");
+        if (actionSaveAsFile) {
+            ImGuiFileDialog::Instance()->OpenDialog("SaveAsFile", "\ue2c7 Save as file", ".gfn,.*", ".", 0, nullptr,
+                                                    ImGuiFileDialogFlags_IsSave | ImGuiFileDialogFlags_ConfirmOverwrite);
+        }
+        if (actionKeyBindings) {
+            prefs.loadFromFile();
+            prefs.bindings.showBindingsConfigWindow = true;
+        }
+        if (actionQuit)
+            glfwSetWindowShouldClose(gfx.glfwWindow, true);
+
+        if (ImGuiFileDialog::Instance()->Display("OpenFile")) {
+            if (ImGuiFileDialog::Instance()->IsOk()) {
+                std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+                std::replace(filePathName.begin(), filePathName.end(), '\\', '/');
+                bool exists = false;
+                for (auto& d : documents) {
+                    if (d.second->file == filePathName) {
+                        ImGui::SetWindowFocus((d.second->docName + "###" + d.first).c_str());
+                        exists = true;
+                        break;
+                    }
+                }
+                if (!exists) {
+                    auto docId = newDocument();
+                    getDoc(docId)->docName = filePathName.substr(filePathName.find_last_of('/') + 1);
+                    getDoc(docId)->setFile(filePathName);
+                    getDoc(docId)->execute("open");
+                }
+            }
+            ImGuiFileDialog::Instance()->Close();
+        }
+
+
+        // FILE DIALOG
+        if (ImGuiFileDialog::Instance()->Display("SaveAsFile")) {
+            if (ImGuiFileDialog::Instance()->IsOk()) {
+                std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+                std::replace(filePathName.begin(), filePathName.end(), '\\', '/');
+
+                getDoc(activeDoc)->docName = filePathName.substr(filePathName.find_last_of('/') + 1);
+                getDoc(activeDoc)->setFile(filePathName);
+                getDoc(activeDoc)->execute("save");
+            }
+            ImGuiFileDialog::Instance()->Close();
         }
 
         if (getDoc(activeDoc)) {
-            ImGui::SameLine();
-            if (ImGui::Button("\ue161 Save file"))
-                getDoc(activeDoc)->execute("save");
-        }
-
-        static imgui_addons::ImGuiFileBrowser fileDialog;
-        if (fileDialog.showFileDialog("\ue2c7 Open File", imgui_addons::ImGuiFileBrowser::DialogMode::OPEN,
-                                      ImVec2(700, 310), ".gfn")) {
-            opening = false;
-            auto path = fileDialog.selected_path;
-            for (auto& d : documents) {
-                if (d.second->file == fileDialog.selected_path) {
-                    ImGui::SetWindowFocus((d.second->docName + "###" + d.first).c_str());
-                    return;
+            if (gfn::button("\ue028 RESET", HUE_CONTRAST, HUE_RED_CONTRAST, false,
+                            ImGui::GetContentRegionAvailWidth(), 30.0f, false)) {
+                for (auto& v:getDoc(activeDoc)->getItf()->graph.getRead()->props.getVertexPropsList()) {
+                    std::uniform_real_distribution dis(-20.0, 20.0);
+                    auto randX = dis(gfn::getRng());
+                    auto randY = dis(gfn::getRng());
+                    getDoc(activeDoc)->execute(
+                            "setvertexprops -uuid=" + v.first + " -key=position -value=(" + std::to_string(randX) + "," + std::to_string(randY) + ")");
                 }
             }
-            auto docId = newDocument();
-            getDoc(docId)->docName = path.substr(path.find_last_of('/') + 1);
-            getDoc(docId)->setFile(path);
-            //getDocumentFromUuid(docId)->fileSaved = true;
-            getDoc(docId)->execute("open");
         }
-        /*if (fileDialog.showFileDialog("Save As File", imgui_addons::ImGuiFileBrowser::DialogMode::SAVE,
-                                      ImVec2(700, 310), ".gfn")) {
-            isSavingAsFile = false;
-            execute("select -uuid=" + saveAsFileId);
-            execute("save -f=\"" + fileDialog.selected_path + "\"");
-            auto path = fileDialog.selected_path;
-            getDocumentFromUuid(saveAsFileId)->displayName = path.substr(path.find_last_of('/') + 1);
-            getDocumentFromUuid(saveAsFileId)->filePath = path;
-            //getDocumentFromUuid(docId)->fileSaved = true;
-            execute("open -f=\"" + fileDialog.selected_path + "\"");
-            if (getDocumentFromUuid(saveAsFileId)->wantSaveAsAndClose)
-                getDocumentFromUuid(saveAsFileId)->closeDocument = true;
-        }*/
 
+/*if (!gfn::activeDocumentUuid.empty()) {
+    ImGui::SameLine();
+    if (gfn::getActiveDocument()->file.empty()) {
+        ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+        ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(200, 200, 200, 255));
+    }
+    if (ImGui::Button("Save File"))
+        gfn::saveFile();
+    if (gfn::getActiveDocument()->file.empty()) {
+        ImGui::PopItemFlag();
+        ImGui::PopStyleColor(1);
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Save As File"))
+        gfn::saveAsFile(gfn::activeDocumentUuid);
+}*/
 
-
-
-
-
-
-
-        /*if (!gfn::activeDocumentUuid.empty()) {
-            ImGui::SameLine();
-            if (gfn::getActiveDocument()->file.empty()) {
-                ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
-                ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(200, 200, 200, 255));
-            }
-            if (ImGui::Button("Save File"))
-                gfn::saveFile();
-            if (gfn::getActiveDocument()->file.empty()) {
-                ImGui::PopItemFlag();
-                ImGui::PopStyleColor(1);
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("Save As File"))
-                gfn::saveAsFile(gfn::activeDocumentUuid);
-        }*/
-
-        ImGui::Separator();
-
-        if (gfn::button("\ue312 Key binds", HUE_CONTRAST, HUE_CONTRAST, false, 0, 0, false)) {
-            prefs.loadFromFile();
-            prefs.bindings.showBindingsConfigWindow = true;
-            ImGui::OpenPopup("\ue312 Key Binds");
-        }
-        if (prefs.bindings.showBindingsConfigWindow)
-            prefs.bindings.showKeybindSetup();
 
         ImGui::Separator();
 
         gfn::Document* fDoc = getDoc(activeDoc);
 
         if (fDoc) {
-            //if (gfn::isOpeningFile)
+//if (gfn::isOpeningFile)
             ImGui::Text(fDoc->docName.c_str());
             ImGui::Text("Documents:");
-            //if (gfn::isSavingAsFile)
-            for (auto& d : documents) {
+//if (gfn::isSavingAsFile)
+            for (auto& d                    : documents) {
                 ImGui::Text(d.first.c_str());
                 if (d.second->isFocused) {
                     ImGui::SameLine(300.0f);
@@ -347,7 +382,7 @@ namespace gfn {
             static float c4p;
             static float c5p;
             static float c6p;
-            //if (prevActiveDocId != fDoc->docId) {
+//if (prevActiveDocId != fDoc->docId) {
             prevActiveDocId = fDoc->docId;
             c1p = float(fDoc->getItf()->graph.getRead()->cfg.c1.value);
             c2p = float(fDoc->getItf()->graph.getRead()->cfg.c2.value);
@@ -355,7 +390,7 @@ namespace gfn {
             c4p = float(fDoc->getItf()->graph.getRead()->cfg.c4.value);
             c5p = float(fDoc->getItf()->graph.getRead()->cfg.c5.value);
             c6p = float(fDoc->getItf()->graph.getRead()->cfg.c6.value);
-            //}
+//}
             float c1 = c1p;
             float c2 = c2p;
             float c3 = c3p;
@@ -369,17 +404,29 @@ namespace gfn {
             ImGui::SliderFloat("c5", &c5, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
             ImGui::SliderFloat("c6", &c6, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
             if (c1p != c1)
-                fDoc->execute("configs -c1=" + std::to_string(c1));
+                fDoc->execute("configs -c1=" +
+                              std::to_string(c1)
+                );
             if (c2p != c2)
-                fDoc->execute("configs -c2=" + std::to_string(c2));
+                fDoc->execute("configs -c2=" +
+                              std::to_string(c2)
+                );
             if (c3p != c3)
-                fDoc->execute("configs -c3=" + std::to_string(c3));
+                fDoc->execute("configs -c3=" +
+                              std::to_string(c3)
+                );
             if (c4p != c4)
-                fDoc->execute("configs -c4=" + std::to_string(c4));
+                fDoc->execute("configs -c4=" +
+                              std::to_string(c4)
+                );
             if (c5p != c5)
-                fDoc->execute("configs -c5=" + std::to_string(c5));
+                fDoc->execute("configs -c5=" +
+                              std::to_string(c5)
+                );
             if (c6p != c6)
-                fDoc->execute("configs -c6=" + std::to_string(c6));
+                fDoc->execute("configs -c6=" +
+                              std::to_string(c6)
+                );
             c1p = c1;
             c2p = c2;
             c3p = c3;
@@ -392,13 +439,17 @@ namespace gfn {
 
         showPropertiesPanel();
 
-        //gfn::showPropertiesPanel(); // must go before updateDocuments
+        if (prefs.bindings.showBindingsConfigWindow) {
+            ImGui::OpenPopup("\ue312 Key Binds##KEYBIND_ENROLL");
+            prefs.bindings.showKeybindSetup();
+        }
 
         updateDocuments();
 
         prefs.checkSave();
 
         gfx.postFrame();
+
         FrameMark
     }
 
@@ -433,4 +484,5 @@ namespace gfn {
             delete d.second;
         gfx.closeWindow();
     }
+
 }

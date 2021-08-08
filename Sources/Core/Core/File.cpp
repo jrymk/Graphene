@@ -47,26 +47,26 @@ namespace gfn {
         if (filePath.empty())
             filePath = file;
         std::ofstream gfnFile(filePath.c_str(), std::ios::out | std::ios::binary);
-        if (gfnFile) {
-            // allocate memory
-            binn* document = binn_object();
-            /// SERIALIZE
-            itf.graph.getWrite().props.serialize(document);
-            itf.graph.getWrite().serialize(document);
-            itf.graph.getWrite().cfg.serialize(document);
-            /// SERIALIZE
-            output.newParam("-output", filePath + "  Output size: " +
-                                       std::to_string(binn_size(document)) + " bytes");
-            // write file and clean up
-            gfnFile.write((char*) binn_ptr(document), binn_size(document));
-            gfnFile.close();
-            output.newParam("-message", "Writen " + std::to_string(binn_size(document)) + " bytes to " + filePath);
-            binn_free(document);
-            output.newParam("-successful", "true");
-        } else {
-            output.newParam("-successful", "false");
-            output.newParam("-error", "READ_FILE_FAIL");
-        }
+        //if (gfnFile) {
+        // allocate memory
+        binn* document = binn_object();
+        /// SERIALIZE
+        itf.graph.getWrite().props.serialize(document);
+        itf.graph.getWrite().serialize(document);
+        itf.graph.getWrite().cfg.serialize(document);
+        /// SERIALIZE
+        output.newParam("-output", filePath + "  Output size: " +
+                                   std::to_string(binn_size(document)) + " bytes");
+        // write file and clean up
+        gfnFile.write((char*) binn_ptr(document), binn_size(document));
+        gfnFile.close();
+        output.newParam("-message", "Writen " + std::to_string(binn_size(document)) + " bytes to " + filePath);
+        binn_free(document);
+        output.newParam("-successful", "true");
+        //} else {
+        //    output.newParam("-successful", "false");
+        //    output.newParam("-error", "READ_FILE_FAIL");
+        //}
     }
 }
 

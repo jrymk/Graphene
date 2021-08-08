@@ -1,5 +1,6 @@
 #include "GraphView.h"
 #include <Editor/Theme/Theme.h>
+#include <Core/Objects/Random.h>
 #include <Tracy.hpp>
 
 namespace gfn {
@@ -19,6 +20,7 @@ namespace gfn {
         ImGui::InvisibleButton("graphview_canvas",
                                ImGui::GetContentRegionAvail(),
                                0b11111); // accept all mouse buttons
+
         ImGui::GetWindowDrawList()->AddRectFilled(ImGui::GetWindowPos(),
                                                   ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowWidth(),
                                                          ImGui::GetWindowPos().y + ImGui::GetWindowHeight()),
@@ -119,8 +121,35 @@ namespace gfn {
         if (movingSelection && !hk->down(Actions::MOVE_SELECTION, onMoveSelectionState))
             movingSelection = false;
 
+        /// DELETE HOVERED VERTEX
+        if (selection.press(Actions::DELETE_HOVERED_VERTEX)) {
+            if (!selection.hoveredVertex.empty())
+                execute("rmvertex -uuid=" + selection.hoveredVertex);
+        }
 
+        /// DELETE SELECTED VERTICES
+        if (selection.press(Actions::DELETE_VERTICES)) {
+            if (!selection.vertexSelection.empty()) {
+                for (auto& v : selection.vertexSelection)
+                    execute("rmvertex -uuid=" + v);
+            }
+            /// TODO
+        }
 
+        /// DELETE HOVERED EDGE
+        if (selection.press(Actions::DELETE_HOVERED_EDGE)) {
+            if (!selection.hoveredEdge.empty())
+                execute("rmedge -uuid=" + selection.hoveredEdge);
+        }
+
+        /// DELETE SELECTED VERTICES
+        if (selection.press(Actions::DELETE_EDGES)) {
+            if (!selection.edgeSelection.empty()) {
+                for (auto& e : selection.edgeSelection)
+                    execute("rmedge -uuid=" + e);
+            }
+            /// TODO
+        }
 
         /*if (!selection.mouseClickVertex[ImGuiMouseButton_Left].empty() &&
             selection.vertexSelection.empty() && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
@@ -133,108 +162,43 @@ namespace gfn {
             for (auto& v: selection.vertexSelection) {
                 auto props = itf->graph.getRead()->props.getVertexProps(v);
                 if (props) {
-                    ImGui::GetWindowDrawList()->
-                            AddCircleFilled(camera
-                                                    .
-                                                            map(props
-                                                                        ->position.value),
-                                            camera.
-                                                    map(
-                                                    props
-                                                            ->radius.value +
-                                                    prefs->glow_size),
-                                            props->enabled.
-
-                                                    get()
-
-                                            ? IM_COL32(0, 135, 255, 255)
-                                            : IM_COL32(100, 100, 100, 120),
-                                            0);
+                    ImGui::GetWindowDrawList()->AddCircleFilled(
+                            camera.map(props->position.value), camera.map(props->radius.value + prefs->glow_size),
+                            props->enabled.get() ? IM_COL32(0, 135, 255, 255) : IM_COL32(100, 100, 100, 120),
+                            0);
                 }
             }
         }
 
-        if (!selection.edgeSelection.
-
-                empty()
-
-                ) {
-            for (
-                auto& e
-                    : selection.edgeSelection) {
+        if (!selection.edgeSelection.empty()) {
+            for (auto& e       : selection.edgeSelection) {
                 auto props = itf->graph.getRead()->props.getEdgeProps(e);
                 if (props) {
                     auto edgeProps = itf->graph.getRead()->props.getEdgeProps(e);
                     auto uProps = itf->graph.getRead()->props.getVertexProps(edgeProps->startVertexUuid.value);
                     auto vProps = itf->graph.getRead()->props.getVertexProps(edgeProps->endVertexUuid.value);
-                    ImGui::GetWindowDrawList()->
-                            AddLine(camera
-                                            .
-                                                    map(uProps
-                                                                ->position.value),
-                                    camera.
-                                            map(vProps
-                                                        ->position.value),
-                                    props->enabled.
-
-                                            get()
-
-                                    ? IM_COL32(0, 135, 255, 255)
-                                    : IM_COL32(100, 100, 100, 120),
-                                    camera.
-                                            map(
-                                            edgeProps
-                                                    ->thickness.value +
-                                            prefs->glow_size * 2.0));
+                    ImGui::GetWindowDrawList()->AddLine(camera.map(uProps->position.value), camera.map(vProps->position.value),
+                                                        props->enabled.get() ? IM_COL32(0, 135, 255, 255) : IM_COL32(100, 100, 100, 120),
+                                                        camera.map(edgeProps->thickness.value + prefs->glow_size * 2.0));
                 }
             }
         }
 
-        if (!selection.hoveredVertex.
-
-                empty()
-
-                ) {
+        if (!selection.hoveredVertex.empty()) {
             auto props = itf->graph.getRead()->props.getVertexProps(selection.hoveredVertex);
-            ImGui::GetWindowDrawList()->
-                    AddCircleFilled(camera
-                                            .
-                                                    map(props
-                                                                ->position.value),
-                                    camera.
-                                            map(props
-                                                        ->radius.value + prefs->glow_size),
-                                    IM_COL32(0, 255, 255, 100), 0);
-        } else if (!selection.hoveredEdge.
-
-                empty()
-
-                ) {
+            ImGui::GetWindowDrawList()->AddCircleFilled(camera.map(props->position.value), camera.map(props->radius.value + prefs->glow_size),
+                                                        IM_COL32(0, 255, 255, 100), 0);
+        } else if (!selection.hoveredEdge.empty()) {
             auto edgeProps = itf->graph.getRead()->props.getEdgeProps(selection.hoveredEdge);
             auto uProps = itf->graph.getRead()->props.getVertexProps(edgeProps->startVertexUuid.value);
             auto vProps = itf->graph.getRead()->props.getVertexProps(edgeProps->endVertexUuid.value);
-            ImGui::GetWindowDrawList()->
-                    AddLine(camera
-                                    .
-                                            map(uProps
-                                                        ->position.value),
-                            camera.
-                                    map(vProps
-                                                ->position.value),
-                            IM_COL32(0, 255, 255, 100),
-                            camera.
-                                    map(
-                                    edgeProps
-                                            ->thickness.value + prefs->glow_size * 2.0));
+            ImGui::GetWindowDrawList()->AddLine(camera.map(uProps->position.value), camera.map(vProps->position.value),
+                                                IM_COL32(0, 255, 255, 100),
+                                                camera.map(edgeProps->thickness.value + prefs->glow_size * 2.0));
         }
 
-        renderer.
-
-                drawEdges();
-
-        renderer.
-
-                drawVertices();
+        renderer.drawEdges();
+        renderer.drawVertices();
 
     }
 
