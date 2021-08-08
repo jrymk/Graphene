@@ -1,13 +1,17 @@
 #include "Graphics.h"
-#include "Font.cpp"
+#include "Barlow.cpp"
+#include "Material.cpp"
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <Core/Core/Meta.h>
+#include <Tracy.hpp>
 
 namespace gfn {
     bool Graphics::launchWindow(Preferences* prefs) {
+        ZoneScoped
+
         if (!glfwInit())
             return false;
 
@@ -42,14 +46,24 @@ namespace gfn {
         ImGui_ImplGlfw_InitForOpenGL(glfwWindow, true);
         ImGui_ImplOpenGL3_Init(glslVersion);
 
+        ImFontConfig config;
+        config.OversampleH = 3;
+        config.OversampleV = 1;
+        config.GlyphOffset = ImVec2(0.0f, -1.0f);
+        ImGui::GetIO().Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_BR, 16.0f, &config, ImGui::GetIO().Fonts->GetGlyphRangesDefault());
+        config.MergeMode = true;
+        config.GlyphOffset = ImVec2(0.0f, 3.0f);
+        static const ImWchar materialRanges[] = {0x0030, 0xf23b, 0,};
+        ImGui::GetIO().Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_MIR, 18.0f, &config, &materialRanges[0]);
+
         ImGui::GetIO().IniFilename = "Graphene.ini";
         ImGui::GetIO().IniSavingRate = 1;
-        ImGui::GetIO().Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_BR, 16.0f, 0, 0);
 
         return true;
     }
 
     void Graphics::closeWindow() {
+        ZoneScoped
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
@@ -59,6 +73,8 @@ namespace gfn {
     }
 
     void Graphics::preFrame() {
+        ZoneScoped
+
         glfwPollEvents();
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -100,6 +116,8 @@ namespace gfn {
     }
 
     void Graphics::postFrame() {
+        ZoneScoped
+
         ImGui::Render();
         int display_w, display_h;
         glfwGetFramebufferSize(glfwWindow, &display_w, &display_h);

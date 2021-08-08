@@ -5,7 +5,6 @@
 #include <Core/Structure/Structure.h>
 #include <Core/Placement/Placement.h>
 #include <Core/Objects/Args.h>
-#include <thread_pool.hpp>
 #include <thread>
 
 namespace gfn {

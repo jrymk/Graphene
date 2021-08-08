@@ -1,5 +1,4 @@
 #include "Placement.h"
-#include <thread_pool.hpp>
 #include <Tracy.hpp>
 
 namespace gfn {
@@ -97,13 +96,16 @@ namespace gfn {
             u->props->force.value = gfn::Vec2(0.0, 0.0);
         /*for (auto& e : c->edges)
             e->props->force = gfn::Vec2f(0.0, 0.0);*/
+        std::vector<std::future<void> > results;
         for (auto& u : c->vertices) {
             if (!u->props->pauseUpdate.value)
-                pool.push_task(&Placement::updateVertex, itf, c, u);
+                results.emplace_back(pool.enqueue(&Placement::updateVertex, itf, c, u));
+            //    tp.add_and_detach(&Placement::updateVertex, itf, c, u);
         }
-        /* for (auto& e : c->edges)
-         futures.emplace_back(thread_pool.Submit(updateEdge, itf->graph.getWrite().cfg.c, e));*/
-        pool.wait_for_tasks();
+        //tp.wait_until_all_usable();
+        for (auto& f : results)
+            f.get();
+
         for (auto& u : c->vertices) {
             if (!u->props->pauseUpdate.value)
                 u->props->position.value += u->props->force.value * itf->graph.getWrite().cfg.c4.value;

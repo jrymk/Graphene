@@ -75,7 +75,7 @@ namespace gfn {
         ImGui::PopStyleColor(1);
     }
 
-    void button(const std::string& label, Hue text, Hue fill, bool border, float width, float height, bool small) {
+    bool button(const std::string& label, Hue text, Hue fill, bool border, float width, float height, bool small) {
         if (!border)
             ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
 
@@ -155,10 +155,10 @@ namespace gfn {
                                     buttonColActiveHSV.x, buttonColActiveHSV.y, buttonColActiveHSV.z);
 
         if (fill & 0b10) { // contrast
-            borderColHSV.z = 0.5f + (0.5f - borderColHSV.z);
-            buttonColHSV.z = 0.5f + (0.5f - buttonColHSV.z);
-            buttonColHoveredHSV.z = 0.5f + (0.5f - buttonColHoveredHSV.z);
-            buttonColActiveHSV.z = 0.5f + (0.5f - buttonColActiveHSV.z);
+            borderColHSV.z = 0.5f + (0.5f - borderColHSV.z) * 1.0f;
+            buttonColHSV.z = 0.5f + (0.5f - buttonColHSV.z) * 1.0f;
+            buttonColHoveredHSV.z = 0.5f + (0.5f - buttonColHoveredHSV.z) * 1.0f;
+            buttonColActiveHSV.z = 0.5f + (0.5f - buttonColActiveHSV.z) * 1.0f;
         }
 
         if (fill & 0b01) { // transparent
@@ -227,14 +227,16 @@ namespace gfn {
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, buttonColHovered);
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, buttonColActive);
 
+        bool press;
         if (small)
-            ImGui::SmallButton(label.c_str());
+            press = ImGui::SmallButton(label.c_str());
         else
-            ImGui::Button(label.c_str(), ImVec2(width, height));
+            press = ImGui::Button(label.c_str(), ImVec2(width, height));
 
         ImGui::PopStyleColor(4);
         ImGui::PopStyleColor(1);
         if (!border)
             ImGui::PopStyleVar();
+        return press;
     }
 }

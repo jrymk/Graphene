@@ -30,11 +30,17 @@ namespace gfn {
     void Document::execute(const std::string& cmd) { itf->commands.getWrite().buffer.emplace_back(cmd); }
 
     void Document::update() {
+        ZoneScoped
+
         if (!closeDocument) {
             ImGui::SetNextWindowSizeConstraints(ImVec2(200, 200), ImVec2(FLT_MAX, FLT_MAX));
             ImGui::Begin((docName + "###" + docId).c_str(), &isDocumentWindowOpen, ImGuiWindowFlags_UnsavedDocument);
 
             graphview.update();
+            while (!graphview.commands.empty()) {
+                execute(graphview.commands.front());
+                graphview.commands.pop();
+            }
 
             isFocused = ImGui::IsWindowFocused();
 
@@ -52,28 +58,12 @@ namespace gfn {
                     if (ImGui::IsKeyPressed('D', false))
                         execute("rmedge -uuid=" + graphview.selection.hoveredEdge);
                 }
-                if (graphview.selection.press(Actions::ADD_VERTEX)) {
-                    ZoneScoped
 
-                    if (graphview.selection.hoveredVertex.empty() && !graphview.selection.hoveredEdge.empty()) {
-                        auto eProp = itf->graph.getRead()->props.getEdgeProps(graphview.selection.hoveredEdge);
-                        execute("rmedge -u=" + eProp->startVertexUuid.value + " -v=" + eProp->endVertexUuid.value);
-                        auto vId = gfn::createUuid();
-                        execute("mkvertex -uuid=" + vId);
-                        execute("setvertexprops -uuid=" + vId +
-                                " -key=position -value=(" + std::to_string(graphview.selection.mouseCoord.x)
-                                + "," + std::to_string(graphview.selection.mouseCoord.y));
-                        execute("mkedge -u=" + vId + " -v=" + eProp->startVertexUuid.value);
-                        execute("mkedge -u=" + vId + " -v=" + eProp->endVertexUuid.value);
-                    } else if (graphview.selection.hoveredVertex.empty()) {
-                        auto vId = gfn::createUuid();
-                        execute("mkvertex -uuid=" + vId);
-                        execute("setvertexprops -uuid=" + vId +
-                                " -key=position -value=\"(" + std::to_string(graphview.selection.mouseCoord.x)
-                                + ", " + std::to_string(graphview.selection.mouseCoord.y) + "\")");
-                    }
-                }
 
+
+
+
+                ///
                 if (graphview.selection.moveStarted) {
                     for (auto& v : graphview.selection.vertexSelection)
                         execute("setvertexprops -uuid=" + v + " -key=pauseUpdate -value=true");

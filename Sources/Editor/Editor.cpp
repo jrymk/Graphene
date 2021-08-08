@@ -236,24 +236,24 @@ namespace gfn {
 
         ImGui::Begin("Args centre", nullptr, 0);
 
-        if (ImGui::Button("New file"))
+        if (ImGui::Button("\ue24d New file"))
             newDocument();
         ImGui::SameLine();
 
         static bool opening = false;
-        if (ImGui::Button("Open file")) {
+        if (ImGui::Button("\ue2c7 Open file")) {
             opening = true;
             ImGui::OpenPopup("Open File");
         }
 
         if (getDoc(activeDoc)) {
             ImGui::SameLine();
-            if (ImGui::Button("Save file"))
+            if (ImGui::Button("\ue161 Save file"))
                 getDoc(activeDoc)->execute("save");
         }
 
         static imgui_addons::ImGuiFileBrowser fileDialog;
-        if (fileDialog.showFileDialog("Open File", imgui_addons::ImGuiFileBrowser::DialogMode::OPEN,
+        if (fileDialog.showFileDialog("\ue2c7 Open File", imgui_addons::ImGuiFileBrowser::DialogMode::OPEN,
                                       ImVec2(700, 310), ".gfn")) {
             opening = false;
             auto path = fileDialog.selected_path;
@@ -309,9 +309,9 @@ namespace gfn {
 
         ImGui::Separator();
 
-        if (ImGui::Button("Key binds")) {
+        if (gfn::button("\ue312 Key binds", HUE_CONTRAST, HUE_CONTRAST, false, 0, 0, false)) {
             prefs.bindings.showBindingsConfigWindow = true;
-            ImGui::OpenPopup("Key Binds");
+            ImGui::OpenPopup("\ue312 Key Binds");
         }
         if (prefs.bindings.showBindingsConfigWindow)
             prefs.bindings.showKeybindSetup();
@@ -401,6 +401,7 @@ namespace gfn {
     }
 
     void Editor::updateDocuments() {
+        ZoneScoped
         // document close handling
         // the close confirmation and state is handled by the document itself
         for (auto dIt = documents.begin(); dIt != documents.end();) {

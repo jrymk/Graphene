@@ -3,7 +3,7 @@
 
 #define BUILD_MAJOR 0
 #define BUILD_MIDDLE 2
-#define BUILD_MINOR 2
+#define BUILD_MINOR 3
 
 const char buildVersion[] = {
         'G', 'r', 'a', 'p', 'h', 'e', 'n', 'e', ' ',
@@ -16,5 +16,7 @@ const char buildVersion[] = {
         __TIME__[0], __TIME__[1], __TIME__[2], __TIME__[3],
         __TIME__[4], __TIME__[5], __TIME__[6], __TIME__[7], ']', '\0'
 };
+
+// asdf
 
 #endif

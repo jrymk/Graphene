@@ -1,4 +1,5 @@
 #include "KeyBindings.h"
+#include <Editor/Theme/Theme.h>
 #include <imgui.h>
 #include <imgui_internal.h>
 
@@ -36,126 +37,114 @@ namespace gfn {
     }
 
     void HotKey::showKeysImGui(bool allowDelete) {
-        ImGui::PushStyleColor(ImGuiCol_Border, IM_COL32(0, 0, 0, 0));
         ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
         if (keyboard.none() && mouse == 0) {
-            ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(223, 230, 233, 255));
-            ImGui::SmallButton("No bindings");
-            ImGui::PopStyleColor(2);
+            gfn::button("No bindings", HUE_RED, HUE_TRANSPARENT, false, 0, 0, true);
             ImGui::PopItemFlag();
             return;
         }
         ImGui::PopItemFlag();
         ImGui::PushItemFlag(ImGuiItemFlags_Disabled, !allowDelete);
-        ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(255, 234, 167, 255));
         for (int i = 340; i <= 348; i++) {
             if (keyboard[i]) {
-                if (ImGui::SmallButton(gfn::HotKey::keyNames[i].c_str()) && allowDelete)
+                if (gfn::button(gfn::HotKey::keyNames[i], HUE_CONTRAST, HUE_YELLOW_CONTRAST, false, 0, 0, true) && allowDelete)
                     keyboard.reset(i);
                 if (ImGui::IsItemHovered() && allowDelete)
                     ImGui::SetTooltip("Remove");
                 ImGui::SameLine();
             }
         }
-        ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(162, 155, 254, 255));
         for (int i = 256; i <= 339; i++) {
             if (keyboard[i]) {
-                if (ImGui::SmallButton(gfn::HotKey::keyNames[i].c_str()) && allowDelete)
+                if (gfn::button(gfn::HotKey::keyNames[i], HUE_CONTRAST, HUE_PURPLE_CONTRAST, false, 0, 0, true) && allowDelete)
                     keyboard.reset(i);
                 if (ImGui::IsItemHovered() && allowDelete)
                     ImGui::SetTooltip("Remove");
                 ImGui::SameLine();
             }
         }
-        ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(129, 236, 236, 255));
         for (int i = 0; i <= 255; i++) {
             if (keyboard[i]) {
-                if (ImGui::SmallButton(gfn::HotKey::keyNames[i].c_str()) && allowDelete)
+                if (gfn::button(gfn::HotKey::keyNames[i], HUE_CONTRAST, HUE_CYAN_CONTRAST, false, 0, 0, true) && allowDelete)
                     keyboard.reset(i);
                 if (ImGui::IsItemHovered() && allowDelete)
                     ImGui::SetTooltip("Remove");
                 ImGui::SameLine();
             }
         }
-        ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(250, 177, 160, 255));
         if (mouse & MOUSE_BUTTON_LEFT) {
-            if (ImGui::SmallButton("left mouse") && allowDelete)
+            if (gfn::button("left mouse", HUE_CONTRAST, HUE_RED_CONTRAST, false, 0, 0, true) && allowDelete)
                 mouse &= ~MOUSE_BUTTON_LEFT;
             if (ImGui::IsItemHovered() && allowDelete)
                 ImGui::SetTooltip("Remove");
             ImGui::SameLine();
         }
         if (mouse & MOUSE_BUTTON_RIGHT) {
-            if (ImGui::SmallButton("right mouse") && allowDelete)
+            if (gfn::button("right mouse", HUE_CONTRAST, HUE_RED_CONTRAST, false, 0, 0, true) && allowDelete)
                 mouse &= ~MOUSE_BUTTON_LEFT;
             if (ImGui::IsItemHovered() && allowDelete)
                 ImGui::SetTooltip("Remove");
             ImGui::SameLine();
         }
         if (mouse & MOUSE_BUTTON_MIDDLE) {
-            if (ImGui::SmallButton("middle mouse") && allowDelete)
+            if (gfn::button("middle mouse", HUE_CONTRAST, HUE_RED_CONTRAST, false, 0, 0, true) && allowDelete)
                 mouse &= ~MOUSE_BUTTON_LEFT;
             if (ImGui::IsItemHovered() && allowDelete)
                 ImGui::SetTooltip("Remove");
             ImGui::SameLine();
         }
         if (mouse & MOUSE_BUTTON_FOUR) {
-            if (ImGui::SmallButton("forth mouse") && allowDelete)
+            if (gfn::button("fourth mouse", HUE_CONTRAST, HUE_RED_CONTRAST, false, 0, 0, true) && allowDelete)
                 mouse &= ~MOUSE_BUTTON_LEFT;
             if (ImGui::IsItemHovered() && allowDelete)
                 ImGui::SetTooltip("Remove");
             ImGui::SameLine();
         }
         if (mouse & MOUSE_BUTTON_FIVE) {
-            if (ImGui::SmallButton("fifth mouse") && allowDelete)
+            if (gfn::button("fifth mouse", HUE_CONTRAST, HUE_RED_CONTRAST, false, 0, 0, true) && allowDelete)
                 mouse &= ~MOUSE_BUTTON_LEFT;
             if (ImGui::IsItemHovered() && allowDelete)
                 ImGui::SetTooltip("Remove");
             ImGui::SameLine();
         }
         if (mouse & MOUSE_SCROLL_UP) {
-            if (ImGui::SmallButton("scroll up") && allowDelete)
+            if (gfn::button("scroll up", HUE_CONTRAST, HUE_RED_CONTRAST, false, 0, 0, true) && allowDelete)
                 mouse &= ~MOUSE_BUTTON_LEFT;
             if (ImGui::IsItemHovered() && allowDelete)
                 ImGui::SetTooltip("Remove");
             ImGui::SameLine();
         }
         if (mouse & MOUSE_SCROLL_DOWN) {
-            if (ImGui::SmallButton("scroll down") && allowDelete)
+            if (gfn::button("scroll down", HUE_CONTRAST, HUE_RED_CONTRAST, false, 0, 0, true) && allowDelete)
                 mouse &= ~MOUSE_BUTTON_LEFT;
             if (ImGui::IsItemHovered() && allowDelete)
                 ImGui::SetTooltip("Remove");
             ImGui::SameLine();
         }
         if (mouse & MOUSE_SCROLL_LEFT) {
-            if (ImGui::SmallButton("scroll left") && allowDelete)
+            if (gfn::button("scroll left", HUE_CONTRAST, HUE_RED_CONTRAST, false, 0, 0, true) && allowDelete)
                 mouse &= ~MOUSE_BUTTON_LEFT;
             if (ImGui::IsItemHovered() && allowDelete)
                 ImGui::SetTooltip("Remove");
             ImGui::SameLine();
         }
         if (mouse & MOUSE_SCROLL_RIGHT) {
-            if (ImGui::SmallButton("scroll right") && allowDelete)
+            if (gfn::button("scroll right", HUE_CONTRAST, HUE_RED_CONTRAST, false, 0, 0, true) && allowDelete)
                 mouse &= ~MOUSE_BUTTON_LEFT;
             if (ImGui::IsItemHovered() && allowDelete)
                 ImGui::SetTooltip("Remove");
             ImGui::SameLine();
         }
-        ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(99, 110, 114, 255));
         for (int i = 349; i <= 511; i++) {
             if (keyboard[i]) {
                 ImGui::SmallButton(gfn::HotKey::keyNames[i].c_str());
                 ImGui::SameLine();
             }
         }
-        ImGui::PopStyleColor(5);
-        ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(0, 0, 0, 0));
-        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(9, 132, 227, 255));
         if (repeatStartMs >= 0) {
-            ImGui::SmallButton("repeat");
+            gfn::button("\ue040 repeat", HUE_BLUE, HUE_TRANSPARENT, true, 0, 0, true);
             ImGui::SameLine();
         }
-        ImGui::PopStyleColor(3);
         ImGui::PopItemFlag();
         ImGui::Text("");
     }

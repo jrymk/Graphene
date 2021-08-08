@@ -1,4 +1,5 @@
 #include "KeyBindings.h"
+#include <Editor/Theme/Theme.h>
 
 namespace gfn {
     void Bindings::showEnrollPopup() {
@@ -7,7 +8,7 @@ namespace gfn {
                                 ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
         ImGui::SetNextWindowSize(ImVec2(std::max(400.0f, 200.0f), std::max(360.0f, 170.0f)), ImGuiCond_Appearing);
 
-        ImGui::BeginPopupModal("Enroll Action Binding");
+        ImGui::BeginPopupModal("\ue157 Enroll Action Binding");
         ImGui::Text(("Action: " + actions[_enroll_target_action].first).c_str());
         ImGui::BeginChildFrame(ImGui::GetID("enroll_area"),
                                ImVec2(ImGui::GetContentRegionAvail().x,
@@ -46,14 +47,14 @@ namespace gfn {
         ImGui::EndChildFrame();
 
         ImGui::PushItemWidth((ImGui::GetContentRegionAvailWidth() / 3.0f) - ImGui::GetStyle().ItemInnerSpacing.x);
-        if (ImGui::Button("Reset")) {
+        if (ImGui::Button("\ue042 Reset")) {
             _enroll_temp_hk.mouse = MOUSE_BUTTON_NONE;
             _enroll_temp_hk.keyboard.reset();
         }
         ImGui::SameLine();
         static bool repeat = false;
         repeat = _enroll_temp_hk.repeatStartMs >= 0;
-        ImGui::Checkbox("Repeat", &repeat);
+        ImGui::Checkbox("\ue040 Repeat", &repeat);
         _enroll_temp_hk.repeatStartMs = repeat ? 250 : -1;
         /*if (repeat) {
             // show repeat sliders
@@ -67,14 +68,14 @@ namespace gfn {
                            1.0f, 0, 10000, "%dms", ImGuiSliderFlags_AlwaysClamp);
         }*/
 
-        ImGui::SameLine(ImGui::GetWindowWidth() - 124.0f);
-        if (ImGui::Button("Cancel")) {
+        ImGui::SameLine(ImGui::GetWindowWidth() - 144.0f);
+        if (ImGui::Button("\ue5cd Cancel")) {
             _enroll_target_action = -1;
             ImGui::CloseCurrentPopup();
         }
 
-        ImGui::SameLine(ImGui::GetWindowWidth() - 65.0f);
-        if (ImGui::Button("Done")) {
+        ImGui::SameLine();
+        if (gfn::button("\ue5ca Done", HUE_CONTRAST, HUE_GREEN_CONTRAST, false, 0, 0, false)) {
             if (!(_enroll_temp_hk.keyboard.none() && _enroll_temp_hk.mouse == 0))
                 *_enroll_target_hk = _enroll_temp_hk;
             _enroll_target_action = -1;
@@ -95,7 +96,7 @@ namespace gfn {
                                 ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
         ImGui::SetNextWindowSize(ImVec2(std::max(800.0f, 100.0f), std::max(400.0f, 100.0f)), ImGuiCond_Appearing);
 
-        ImGui::BeginPopupModal("Key Binds");
+        ImGui::BeginPopupModal("\ue312 Key Binds");
 
         ImGui::BeginChild("ActionList",
                           ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y - 28.0f), true,
@@ -128,16 +129,19 @@ namespace gfn {
                     //ImGui::Text(bindings[i].getKeyStr().c_str());
                     it->showKeysImGui();
 
-                    ImGui::SameLine(ImGui::GetWindowWidth() - 132.0f);
-                    if (ImGui::SmallButton(("Edit##" + std::to_string(a) + "/" + std::to_string(c) + "/" + std::to_string(bId++)).c_str())) {
+                    ImGui::SameLine(ImGui::GetWindowWidth() - 175.0f);
+                    if (gfn::button("\ue150 Edit##" + std::to_string(a) + "/" + std::to_string(c) + "/" + std::to_string(bId++),
+                                    HUE_BLUE, HUE_DEFAULT, false, 0, 0, true)) {
                         _enroll_temp_hk = *it;
                         _enroll_target_hk = &*it;
                         _enroll_target_action = a;
-                        ImGui::OpenPopup("Enroll Action Binding");
+                        ImGui::OpenPopup("\ue157 Enroll Action Binding");
                     }
 
                     ImGui::SameLine();
-                    if (ImGui::SmallButton(("-##" + std::to_string(a) + "/" + std::to_string(c) + "/" + std::to_string(bId++)).c_str())) {
+                    if ((it->keyboard.none() && it->mouse == 0 && _enroll_target_action < 0) || // clear no bindings
+                    gfn::button("\ue872##" + std::to_string(a) + "/" + std::to_string(c) + "/" + std::to_string(bId++),
+                            HUE_RED, HUE_DEFAULT, false, 0, 0, true)) {
                         it = bindings[a][c].erase(it);
                         bindingsUpdated = true;
                     } else
@@ -173,14 +177,15 @@ namespace gfn {
                     }
                 }
 
-                ImGui::SameLine(ImGui::GetWindowWidth() - 70.0f);
-                if (ImGui::SmallButton(("Enroll##" + std::to_string(a) + "/" + std::to_string(c)).c_str())) {
+                ImGui::SameLine(ImGui::GetWindowWidth() - 80.0f);
+                if (gfn::button("\ue157 Enroll##" + std::to_string(a) + "/" + std::to_string(c),
+                                HUE_CONTRAST, HUE_CONTRAST, false, 0, 0, true)) {
                     bindings[a][c].push_back(HotKey());
                     _enroll_temp_hk.keyboard.reset();
                     _enroll_temp_hk.mouse = MOUSE_BUTTON_NONE;
                     _enroll_target_hk = &bindings[a][c][bindings[a][c].size() - 1];
                     _enroll_target_action = a;
-                    ImGui::OpenPopup("Enroll Action Binding");
+                    ImGui::OpenPopup("\ue157 Enroll Action Binding");
                 }
             }
         }
@@ -189,13 +194,13 @@ namespace gfn {
 
         ImGui::EndChild();
 
-        ImGui::SetCursorPosX(ImGui::GetWindowWidth() - 140.0f);
-        if (ImGui::Button("Cancel")) {
+        ImGui::SetCursorPosX(ImGui::GetWindowWidth() - 155.0f);
+        if (gfn::button("\ue5cd Cancel", HUE_CONTRAST, HUE_RED_CONTRAST, false, 0, 0, false)) {
             showBindingsConfigWindow = false;
             ImGui::CloseCurrentPopup();
         }
         ImGui::SameLine(ImGui::GetWindowWidth() - 80.0f);
-        if (ImGui::Button("Save")) {
+        if (gfn::button("\ue161 Save", HUE_CONTRAST, HUE_BLUE_CONTRAST, false, 0, 0, false)) {
             wantSaveBindings = true;
             showBindingsConfigWindow = false;
             ImGui::CloseCurrentPopup();

@@ -35,7 +35,7 @@ namespace gfn {
 
     void text(const std::string& label, Hue text);
 
-    void button(const std::string& label, Hue text, Hue fill, bool border, float width, float height, bool small = true);
+    bool button(const std::string& label, Hue text, Hue fill, bool border, float width, float height, bool small = true);
 }
 
 #endif

@@ -20,7 +20,8 @@ include_directories(Dependencies/imgui/misc/freetype)
 include_directories(Dependencies/imgui/misc/single_file)
 include_directories(Dependencies/stduuid/include)
 include_directories(Dependencies/stduuid/gsl)
-include_directories(Dependencies/thread-pool)
+include_directories(Dependencies/ThreadPool)
+include_directories(Dependencies/lib)
 include_directories(Dependencies/json)
 include_directories(Dependencies/binn/src)
 include_directories(Dependencies/ImGui-Addons/FileBrowser)
@@ -33,6 +34,11 @@ include_directories(${OPENGL_INCLUDE_DIRS})
 
 add_executable(Graphene
         Dependencies/tracy/TracyClient.cpp
+        Dependencies/lib/src/Scope_guard.cpp
+        Dependencies/lib/ThreadPool/src/CThreadPool.cpp
+        Dependencies/lib/ThreadPool/src/CThreadPoolItem.cpp
+        Dependencies/lib/ThreadPool/src/IThreadPoolItemBase.cpp
+        Dependencies/lib/ThreadPool/src/IThreadPoolItemExecutor.cpp
         Dependencies/glad/src/glad.c
         Dependencies/imgui/imgui_demo.cpp
         Dependencies/imgui/imgui_draw.cpp
@@ -82,7 +88,8 @@ add_executable(Graphene
         Sources/Editor/Document/GraphView/GraphView.cpp
         Sources/Editor/Theme/Theme.cpp
         Sources/Editor/Theme/Styles.cpp
-        Sources/Editor/Graphics/Font.cpp
+        Sources/Editor/Graphics/Barlow.cpp
+        Sources/Editor/Graphics/Material.cpp
         Sources/Editor/Preferences/KeyBindings/KeyBindDialog.cpp)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)

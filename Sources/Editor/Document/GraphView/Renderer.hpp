@@ -3,6 +3,7 @@
 #include <imgui.h>
 #include <Core/Interface/Interface.h>
 #include <Editor/Document/GraphView/Camera.h>
+#include <Tracy.hpp>
 
 namespace gfn {
     class Renderer {
@@ -18,6 +19,8 @@ namespace gfn {
         }
 
         void drawEdges() {
+            ZoneScoped
+
             auto drawList = ImGui::GetWindowDrawList();
             auto userprops = itf->graph.getRead()->props;
             for (auto& ei : userprops.getEdgePropsList()) {
@@ -35,6 +38,8 @@ namespace gfn {
         }
 
         void drawVertices() {
+            ZoneScoped
+
             auto drawList = ImGui::GetWindowDrawList();
             auto userprops = itf->graph.getRead()->props;
             for (auto& vi : userprops.getVertexPropsList()) {
