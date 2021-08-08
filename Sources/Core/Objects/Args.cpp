@@ -68,7 +68,11 @@ namespace gfn {
     }
 
     bool Args::getFlag(const std::string& paramKey) {
-        return !getParamValue(paramKey).empty();
+        for (auto& e : params) {
+            if (e.first == paramKey)
+                return true;
+        }
+        return false;
     }
 
     void Args::newParam(const std::string& key, const std::string& value) {
@@ -93,8 +97,10 @@ namespace gfn {
             if (e.first != "command") {
                 if (e.first.find(' ') != std::basic_string<char>::npos)
                     ss << "\"" << e.first << "\"=";
-                else
+                else if (!e.second.empty())
                     ss << e.first << "=";
+                else
+                    ss << e.first;
             }
             if (e.second.find(' ') != std::basic_string<char>::npos)
                 ss << "\"" << e.second << "\"";

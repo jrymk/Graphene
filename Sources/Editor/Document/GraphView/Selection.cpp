@@ -246,9 +246,9 @@ namespace gfn {
             && (press(ADD_SELECT_SINGLE_VERTEX)) ||
             press(SUBTRACT_SELECT_SINGLE_VERTEX) ||
             press(INV_SELECT_SINGLE_VERTEX) ||
-            press(ADD_SELECT_SINGLE_VERTEX) ||
-            press(SUBTRACT_SELECT_SINGLE_VERTEX) ||
-            press(INV_SELECT_SINGLE_VERTEX)) {
+            press(ADD_SELECT_SINGLE_EDGE) ||
+            press(SUBTRACT_SELECT_SINGLE_EDGE) ||
+            press(INV_SELECT_SINGLE_EDGE)) {
             if (!hoveredVertex.empty()) {
                 if (vertexSelection.find(hoveredVertex) == vertexSelection.end()) {
                     // not in selection

@@ -1,27 +1,25 @@
-#pragma once
-
-#include <unordered_map>
+#include "Editor.h"
 #include <imgui.h>
-#include <Core/Properties/Properties.h>
-#include <Editor/PropertiesPanel/PropsControls.hpp>
+#include <imgui_internal.h>
 
 namespace gfn {
-    void showPropertiesPanel() {
-        ImGui::Begin("Properties");
-        if (getActiveDocument()) {
-            auto props = getActiveDocument()->itf->props.getRead();
-            if (!getActiveDocument()->graphview.selection.vertexSelection.empty() || !getActiveDocument()->graphview.selection.edgeSelection.empty()) {
+    void Editor::showPropertiesPanel() {
+        ImGui::Begin("\ue8b8 Properties");
+        if (getDoc(activeDoc)) {
+            auto props = getDoc(activeDoc)->getItf()->graph.getRead()->props;
+            if (!(getDoc(activeDoc)->graphview.selection.vertexSelection.empty() &&
+                  getDoc(activeDoc)->graphview.selection.edgeSelection.empty())) {
                 std::unordered_map<gfn::Uuid, gfn::VertexProps*> vertexProps;
-                for (auto& s : getActiveDocument()->graphview.selection.vertexSelection) {
-                    if (!props->getVertexProps(s))
+                for (auto& s : getDoc(activeDoc)->graphview.selection.vertexSelection) {
+                    if (!props.getVertexProps(s))
                         assert(0);
-                    vertexProps.insert({s, props->getVertexProps(s)});
+                    vertexProps.insert({s, props.getVertexProps(s)});
                 }
                 std::unordered_map<gfn::Uuid, gfn::EdgeProps*> edgeProps;
-                for (auto& s : getActiveDocument()->graphview.selection.edgeSelection) {
-                    if (!props->getEdgeProps(s))
+                for (auto& s : getDoc(activeDoc)->graphview.selection.edgeSelection) {
+                    if (!props.getEdgeProps(s))
                         assert(0);
-                    edgeProps.insert({s, props->getEdgeProps(s)});
+                    edgeProps.insert({s, props.getEdgeProps(s)});
                 }
                 if (ImGui::BeginTabBar("PropsTabBar", 0)) {
 
@@ -29,7 +27,7 @@ namespace gfn {
                         // uuid
                         {
                             if (vertexProps.size() == 1)
-                                ImGui::Text(props->getVertexProps(vertexProps.begin()->first)->uuid.get().c_str());
+                                ImGui::Text(props.getVertexProps(vertexProps.begin()->first)->uuid.get().c_str());
                         }
                         // enabled
                         {
@@ -39,13 +37,13 @@ namespace gfn {
                             if (mask == 3)
                                 ImGui::PushItemFlag(ImGuiItemFlags_MixedValue, true);
                             bool checkbox = (mask == 2);
-                            ImGui::Checkbox("Enabled", &checkbox);
+                            ImGui::Checkbox("\ue53c Enabled", &checkbox);
                             if (mask == 3)
                                 ImGui::PopItemFlag();
                             if (ImGui::IsItemEdited()) {
                                 for (auto& s : vertexProps) {
-                                    getActiveDocument()->execute("setvertexprops -uuid=" + s.first + " -key=enabled -value="
-                                                                 + (mask == 2 ? "false" : "true"));
+                                    getDoc(activeDoc)->execute("setvertexprops -uuid=" + s.first + " -key=enabled -value="
+                                                               + (mask == 2 ? "false" : "true"));
                                 }
                             }
                         }
@@ -54,15 +52,15 @@ namespace gfn {
                         {
                             static float widget[2];
                             static float widgetPrev[2];
-                            ImGui::DragFloat2("Position", (float*) &widget, 1.0, -FLT_MAX, FLT_MAX, "%.6f", 0);
+                            ImGui::DragFloat2("\ue56b Position", (float*) &widget, 1.0, -FLT_MAX, FLT_MAX, "%.6f", 0);
                             if (ImGui::IsItemEdited()) {
                                 for (auto& s : vertexProps) {
-                                    getActiveDocument()->execute("setvertexprops -uuid=" + s.first + " -key=position -value=+(" +
-                                                                 std::to_string(widget[0] - widgetPrev[0]) + "," + std::to_string(widget[1] - widgetPrev[1]) +
-                                                                 ")");
+                                    getDoc(activeDoc)->execute("setvertexprops -uuid=" + s.first + " -key=position -value=+(" +
+                                                               std::to_string(widget[0] - widgetPrev[0]) + "," + std::to_string(widget[1] - widgetPrev[1]) +
+                                                               ")");
                                 }
                             }
-                            //if (getActiveDocument()->graphview.selection.onChangeSelection) {
+                            //if (getDoc(activeDoc)->graphview.selection.onChangeSelection) {
                             double sx = 0, sy = 0;
                             for (auto& p : vertexProps) {
                                 sx += p.second->position.get().x;
@@ -79,9 +77,9 @@ namespace gfn {
                         {
                             static ImVec4 widget(0.5f, 0.5f, 0.5f, 1.0f);
                             ImGui::PushItemWidth(200.0f);
-                            ImGui::ColorPicker3("Vertex fill color", (float*) &widget,
+                            ImGui::ColorPicker3("\ue3b7 Vertex fill color", (float*) &widget,
                                                 ImGuiColorEditFlags_AlphaPreview | ImGuiColorEditFlags_PickerHueWheel);
-                            if (getActiveDocument()->graphview.selection.onChangeSelection) {
+                            if (getDoc(activeDoc)->graphview.selection.onChangeSelection) {
                                 ImU32 c = vertexProps.begin()->second->vertexFillColor.get();
                                 bool mixed = false;
                                 for (auto& p : vertexProps) {
@@ -93,8 +91,8 @@ namespace gfn {
                             }
                             if (ImGui::IsItemEdited()) {
                                 for (auto& s : vertexProps) {
-                                    getActiveDocument()->execute("setvertexprops -uuid=" + s.first + " -key=vertexFillColor -value=d" +
-                                                                 std::to_string(ImGui::ColorConvertFloat4ToU32(widget)));
+                                    getDoc(activeDoc)->execute("setvertexprops -uuid=" + s.first + " -key=vertexFillColor -value=d" +
+                                                               std::to_string(ImGui::ColorConvertFloat4ToU32(widget)));
                                 }
                             }
                         }
@@ -102,8 +100,8 @@ namespace gfn {
                         // radius
                         {
                             static float widget;
-                            ImGui::DragFloat("Radius", (float*) &widget, 0.01, FLT_MIN, FLT_MAX, "%.6f", 0);
-                            if (getActiveDocument()->graphview.selection.onChangeSelection) {
+                            ImGui::DragFloat("\ue837 Radius", (float*) &widget, 0.01, FLT_MIN, FLT_MAX, "%.6f", 0);
+                            if (getDoc(activeDoc)->graphview.selection.onChangeSelection) {
                                 double r = vertexProps.begin()->second->radius.get();
                                 bool mixed = false;
                                 for (auto& p : vertexProps) {
@@ -115,7 +113,7 @@ namespace gfn {
                             }
                             if (ImGui::IsItemEdited()) {
                                 for (auto& s : vertexProps)
-                                    getActiveDocument()->execute("setvertexprops -uuid=" + s.first + " -key=radius -value=" + std::to_string(widget));
+                                    getDoc(activeDoc)->execute("setvertexprops -uuid=" + s.first + " -key=radius -value=" + std::to_string(widget));
                             }
                         }
                         ImGui::Separator();
@@ -127,13 +125,13 @@ namespace gfn {
                             if (mask == 3)
                                 ImGui::PushItemFlag(ImGuiItemFlags_MixedValue, true);
                             bool checkbox = (mask == 2);
-                            ImGui::Checkbox("Lock", &checkbox);
+                            ImGui::Checkbox("\ue88d Lock", &checkbox);
                             if (mask == 3)
                                 ImGui::PopItemFlag();
                             if (ImGui::IsItemEdited()) {
                                 for (auto& s : vertexProps) {
-                                    getActiveDocument()->execute("setvertexprops -uuid=" + s.first + " -key=pauseUpdate -value="
-                                                                 + (mask == 2 ? "false" : "true"));
+                                    getDoc(activeDoc)->execute("setvertexprops -uuid=" + s.first + " -key=pauseUpdate -value="
+                                                               + (mask == 2 ? "false" : "true"));
                                 }
                             }
                         }
@@ -144,9 +142,9 @@ namespace gfn {
                         // uuid
                         {
                             if (edgeProps.size() == 1) {
-                                ImGui::Text(("Edge: " + props->getEdgeProps(edgeProps.begin()->first)->edgeUuid.get()).c_str());
-                                ImGui::Text(("Start vertex: " + props->getEdgeProps(edgeProps.begin()->first)->startVertexUuid.get()).c_str());
-                                ImGui::Text(("End vertex: " + props->getEdgeProps(edgeProps.begin()->first)->endVertexUuid.get()).c_str());
+                                ImGui::Text(("Edge: " + props.getEdgeProps(edgeProps.begin()->first)->edgeUuid.get()).c_str());
+                                ImGui::Text(("Start vertex: " + props.getEdgeProps(edgeProps.begin()->first)->startVertexUuid.get()).c_str());
+                                ImGui::Text(("End vertex: " + props.getEdgeProps(edgeProps.begin()->first)->endVertexUuid.get()).c_str());
                             }
                         }
                         // enabled
@@ -157,13 +155,13 @@ namespace gfn {
                             if (mask == 3)
                                 ImGui::PushItemFlag(ImGuiItemFlags_MixedValue, true);
                             bool checkbox = (mask == 2);
-                            ImGui::Checkbox("Enabled", &checkbox);
+                            ImGui::Checkbox("\ue53c Enabled", &checkbox);
                             if (mask == 3)
                                 ImGui::PopItemFlag();
                             if (ImGui::IsItemEdited()) {
                                 for (auto& s : edgeProps) {
-                                    getActiveDocument()->execute("setedgeprops -uuid=" + s.first + " -key=enabled -value="
-                                                                 + (mask == 2 ? "false" : "true"));
+                                    getDoc(activeDoc)->execute("setedgeprops -uuid=" + s.first + " -key=enabled -value="
+                                                               + (mask == 2 ? "false" : "true"));
                                 }
                             }
                         }
@@ -172,15 +170,15 @@ namespace gfn {
                         {
                             static float widget[2];
                             static float widgetPrev[2];
-                            ImGui::DragFloat2("Position", (float*) &widget, 1.0, -FLT_MAX, FLT_MAX, "%.6f", 0);
+                            ImGui::DragFloat2("\uea49 Position", (float*) &widget, 1.0, -FLT_MAX, FLT_MAX, "%.6f", 0);
                             if (ImGui::IsItemEdited()) {
                                 for (auto& s : edgeProps) {
-                                    getActiveDocument()->execute("setedgeprops -uuid=" + s.first + " -key=position -value=+(" +
-                                                                 std::to_string(widget[0] - widgetPrev[0]) + "," + std::to_string(widget[1] - widgetPrev[1]) +
-                                                                 ")");
+                                    getDoc(activeDoc)->execute("setedgeprops -uuid=" + s.first + " -key=position -value=+(" +
+                                                               std::to_string(widget[0] - widgetPrev[0]) + "," + std::to_string(widget[1] - widgetPrev[1]) +
+                                                               ")");
                                 }
                             }
-                            //if (getActiveDocument()->graphview.selection.onChangeSelection) {
+                            //if (getDoc(activeDoc)->graphview.selection.onChangeSelection) {
                             double sx = 0, sy = 0;
                             for (auto& p : edgeProps) {
                                 sx += p.second->position.get().x;
@@ -197,9 +195,9 @@ namespace gfn {
                         {
                             static ImVec4 widget(0.5f, 0.5f, 0.5f, 1.0f);
                             ImGui::PushItemWidth(200.0f);
-                            ImGui::ColorPicker3("Edge fill color", (float*) &widget,
+                            ImGui::ColorPicker3("\ue3b7 Edge fill color", (float*) &widget,
                                                 ImGuiColorEditFlags_AlphaPreview | ImGuiColorEditFlags_PickerHueWheel);
-                            if (getActiveDocument()->graphview.selection.onChangeSelection) {
+                            if (getDoc(activeDoc)->graphview.selection.onChangeSelection) {
                                 ImU32 c = edgeProps.begin()->second->edgeFillColor.get();
                                 bool mixed = false;
                                 for (auto& p : edgeProps) {
@@ -211,8 +209,8 @@ namespace gfn {
                             }
                             if (ImGui::IsItemEdited()) {
                                 for (auto& s : edgeProps) {
-                                    getActiveDocument()->execute("setedgeprops -uuid=" + s.first + " -key=edgeFillColor -value=d" +
-                                                                 std::to_string(ImGui::ColorConvertFloat4ToU32(widget)));
+                                    getDoc(activeDoc)->execute("setedgeprops -uuid=" + s.first + " -key=edgeFillColor -value=d" +
+                                                               std::to_string(ImGui::ColorConvertFloat4ToU32(widget)));
                                 }
                             }
                         }
@@ -220,8 +218,8 @@ namespace gfn {
                         // thickness
                         {
                             static float widget;
-                            ImGui::DragFloat("Thickness", (float*) &widget, 0.01, FLT_MIN, FLT_MAX, "%.6f", 0);
-                            if (getActiveDocument()->graphview.selection.onChangeSelection) {
+                            ImGui::DragFloat("\ue947 Thickness", (float*) &widget, 0.01, FLT_MIN, FLT_MAX, "%.6f", 0);
+                            if (getDoc(activeDoc)->graphview.selection.onChangeSelection) {
                                 double r = edgeProps.begin()->second->thickness.get();
                                 bool mixed = false;
                                 for (auto& p : edgeProps) {
@@ -233,7 +231,7 @@ namespace gfn {
                             }
                             if (ImGui::IsItemEdited()) {
                                 for (auto& s : edgeProps)
-                                    getActiveDocument()->execute("setedgeprops -uuid=" + s.first + " -key=thickness -value=" + std::to_string(widget));
+                                    getDoc(activeDoc)->execute("setedgeprops -uuid=" + s.first + " -key=thickness -value=" + std::to_string(widget));
                             }
                         }
                         ImGui::EndTabItem();
@@ -249,3 +247,4 @@ namespace gfn {
         ImGui::End();
     }
 }
+

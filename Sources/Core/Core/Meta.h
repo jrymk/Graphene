@@ -3,7 +3,7 @@
 
 #define BUILD_MAJOR 0
 #define BUILD_MIDDLE 2
-#define BUILD_MINOR 3
+#define BUILD_MINOR 4
 
 const char buildVersion[] = {
         'G', 'r', 'a', 'p', 'h', 'e', 'n', 'e', ' ',
@@ -17,6 +17,7 @@ const char buildVersion[] = {
         __TIME__[4], __TIME__[5], __TIME__[6], __TIME__[7], ']', '\0'
 };
 
-// asdf
+// more responsive move selection and config changing with echo -off
+// fully working properties panel (functional)
 
 #endif

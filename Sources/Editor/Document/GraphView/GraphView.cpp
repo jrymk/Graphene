@@ -87,10 +87,40 @@ namespace gfn {
         }
         if (addingEdge && !hk->down(Actions::ADD_EDGE, onAddEdgeState) && !addEdgeVertex.empty()) {
             addingEdge = false;
-            if (!selection.hoveredVertex.empty()) {
+            if (!selection.hoveredVertex.empty())
                 execute("mkedge -u=" + addEdgeVertex + " -v=" + selection.hoveredVertex);
+        }
+
+        /// MOVE VERTEX
+        if (selection.press(Actions::MOVE_VERTEX)) {
+            if (!selection.hoveredVertex.empty()) {
+                movingVertex = true;
+                onMoveVertexState = camera.hoverState;
+                moveVertex = selection.hoveredVertex;
             }
         }
+        if (movingVertex) {
+            execute("setvertexprops -uuid=" + moveVertex + " -key=position -value=+(" +
+                    std::to_string(selection.mouseDelta.x) + "," + std::to_string(selection.mouseDelta.y) + ")");
+        }
+        if (movingVertex && !hk->down(Actions::MOVE_VERTEX, onMoveVertexState))
+            movingVertex = false;
+
+        /// MOVE SELECTION
+        if (selection.press(Actions::MOVE_SELECTION)) {
+            movingSelection = true;
+            onMoveSelectionState = camera.hoverState;
+        }
+        if (movingSelection) {
+            for (auto& v : selection.vertexSelection)
+                execute("setvertexprops -uuid=" + v + " -key=position -value=+(" +
+                        std::to_string(selection.mouseDelta.x) + "," + std::to_string(selection.mouseDelta.y) + ")");
+        }
+        if (movingSelection && !hk->down(Actions::MOVE_SELECTION, onMoveSelectionState))
+            movingSelection = false;
+
+
+
 
         /*if (!selection.mouseClickVertex[ImGuiMouseButton_Left].empty() &&
             selection.vertexSelection.empty() && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {

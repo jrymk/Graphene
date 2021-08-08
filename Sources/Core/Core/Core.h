@@ -10,6 +10,8 @@
 namespace gfn {
     class Core {
     private:
+        int echo = 2;
+        int echoPrev = 2;
         int bgState = 0; // 0: STOPPING  1: RUNNING  2: TERMINATED
         void bgFunction(int& state);
 

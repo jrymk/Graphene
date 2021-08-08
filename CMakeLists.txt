@@ -90,7 +90,7 @@ add_executable(Graphene
         Sources/Editor/Theme/Styles.cpp
         Sources/Editor/Graphics/Barlow.cpp
         Sources/Editor/Graphics/Material.cpp
-        Sources/Editor/Preferences/KeyBindings/KeyBindDialog.cpp)
+        Sources/Editor/Preferences/KeyBindings/KeyBindDialog.cpp Sources/Editor/PropertiesPanel.cpp)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)

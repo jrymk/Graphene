@@ -17,6 +17,7 @@ namespace gfn {
         untitledCounter++;
         // start core background update loop
         core.startBackground();
+        execute("echo -off");
     };
 
     void Document::setFile(const std::string& _file, bool doNotSetDocName) {

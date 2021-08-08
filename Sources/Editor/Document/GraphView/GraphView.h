@@ -13,6 +13,11 @@ namespace gfn {
         bool addingEdge = false;
         int onAddEdgeState = 0;
         gfn::Uuid addEdgeVertex;
+        bool movingVertex = false;
+        int onMoveVertexState = 0;
+        gfn::Uuid moveVertex;
+        bool movingSelection = false;
+        int onMoveSelectionState = 0;
 
     public:
         gfn::Uuid docId;

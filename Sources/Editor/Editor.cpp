@@ -18,8 +18,8 @@ namespace gfn {
 
         hk.updateHotKeyState();
 
-        //gfn::setColorLight();
-        /*ImGui::Begin("LIGHT THEME");
+        /*gfn::setColorLight();
+        ImGui::Begin("LIGHT THEME");
         gfn::text("BORDER ON", (gfn::Hue) HUE_DEFAULT);
         for (int i = 0; i < 17; i++) {
             for (int j = 0; j < 17; j++) {
@@ -110,7 +110,7 @@ namespace gfn {
         }
         ImGui::End();
 
-        //gfn::setColorDark();
+        gfn::setColorDark();
         ImGui::Begin("DARK THEME");
         gfn::text("BORDER ON", (gfn::Hue) HUE_DEFAULT);
         for (int i = 0; i < 17; i++) {
@@ -202,7 +202,7 @@ namespace gfn {
         }
         ImGui::End();
 
-        //gfn::setColorDark();*/
+        gfn::setColorDark();*/
 
         //parseCommandQueue();
 
@@ -310,6 +310,7 @@ namespace gfn {
         ImGui::Separator();
 
         if (gfn::button("\ue312 Key binds", HUE_CONTRAST, HUE_CONTRAST, false, 0, 0, false)) {
+            prefs.loadFromFile();
             prefs.bindings.showBindingsConfigWindow = true;
             ImGui::OpenPopup("\ue312 Key Binds");
         }
@@ -389,6 +390,7 @@ namespace gfn {
 
         ImGui::End();
 
+        showPropertiesPanel();
 
         //gfn::showPropertiesPanel(); // must go before updateDocuments
 

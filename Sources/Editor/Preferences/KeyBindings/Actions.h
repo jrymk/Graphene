@@ -42,6 +42,10 @@ namespace gfn {
 
         ADD_EDGE_PREVIEW = 110,
         ADD_EDGE = 115,
+
+        /// GRAPH MANIPULATION (PROPERTIES)
+        MOVE_VERTEX = 150,
+        MOVE_SELECTION = 151,
     };
 }
 

@@ -33,6 +33,9 @@ namespace gfn {
 
         void loadDocsFromArgs(int argc, char* argv[], bool doNotCreateUntitled);
 
+        /// PANELS
+        void showPropertiesPanel();
+
         // stops all core instances
         void terminate();
 
