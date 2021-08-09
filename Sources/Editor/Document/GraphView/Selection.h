@@ -12,7 +12,6 @@ namespace gfn {
         gfn::Interface* itf;
         Camera* camera;
         gfn::HKHandler* hk;
-        gfn::Preferences* prefs;
 
         int _lassoPressState = 0;
         bool _lassoAddVertexMode = false;
@@ -30,9 +29,7 @@ namespace gfn {
         std::unordered_set<gfn::Uuid> _vertexSelectionOnLasso;
         std::unordered_set<gfn::Uuid> _edgeSelectionOnLasso;
 
-        float distance(ImVec2 a, ImVec2 b);
 
-        float distanceToALine(ImVec2 p, ImVec2 a, ImVec2 b);
 
         void updateClearSelection();
 
@@ -43,6 +40,9 @@ namespace gfn {
         void updateSelectAll();
 
     public:
+        gfn::Preferences* prefs;
+        float distance(ImVec2 a, ImVec2 b);
+        float distanceToALine(ImVec2 p, ImVec2 a, ImVec2 b);
         Selection(gfn::Interface* itf, Camera* camera, gfn::HKHandler* hk, gfn::Preferences* prefs);
 
         // these can be both active, usually we prioritize hoveredVertex, if it is null, take edge

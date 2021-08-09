@@ -22,7 +22,7 @@ namespace gfn {
             textColHSV.z = 0.5f - (0.5f - textColHSV.z);
 
         if (text & 0b01) { // transparent
-            textColHSV.w = 0.0f;
+            textCol.w = 0.0f;
         }
 
         float hue = 0.0;
@@ -89,7 +89,7 @@ namespace gfn {
             textColHSV.z = 0.5f + (0.5f - textColHSV.z);
 
         if (text & 0b01) { // transparent
-            textColHSV.w = 0.0f;
+            textCol.w = 0.0f;
         }
 
         float hue = 0.0;
@@ -162,10 +162,9 @@ namespace gfn {
         }
 
         if (fill & 0b01) { // transparent
-            borderColHSV.w = 0.0f;
-            buttonColHSV.w = 0.0f;
-            buttonColHoveredHSV.w = 0.0f;
-            buttonColActiveHSV.w = 0.0f;
+            buttonCol.w = 0.0f;
+            buttonColHovered.w *= 0.4f;
+            buttonColActive.w *= 0.4f;
         }
 
         hue = 0.0;

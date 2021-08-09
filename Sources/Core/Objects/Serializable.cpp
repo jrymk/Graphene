@@ -33,6 +33,30 @@ namespace gfn::serializable {
         value = j[key].get<std::string>();
     }
 
+    String::String(std::string key) : key(std::move(key)), value() {}
+
+    String::String(std::string key, std::string value) : key(std::move(key)), value(std::move(value)) {}
+
+    std::string& String::get() { return value; }
+
+    void String::getValueStr(gfn::Args& output) const {
+        output.newParam("-value", value);
+    }
+
+    void String::setValueStr(const std::string& _value, gfn::Args& output) {
+        value = _value;
+        output.newParam("-successful", "true");
+        getValueStr(output);
+    }
+
+    void String::serialize(nlohmann::json& j) {
+        j[key] = value;
+    }
+
+    void String::deserialize(nlohmann::json& j) {
+        value = j[key].get<std::string>();
+    }
+
 
     Bool::Bool(std::string key) : key(std::move(key)), value(false) {}
 

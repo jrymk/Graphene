@@ -11,6 +11,8 @@ namespace gfn {
     public:
         GLFWwindow* glfwWindow;
         std::queue<std::string> dockBuildWindow;
+        ImFont* smallDefault;
+        ImFont* bigFont;
 
         bool launchWindow(Preferences* prefs);
 

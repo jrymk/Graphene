@@ -66,6 +66,17 @@ bool Properties::assignAccessName(const std::string& accessName, const gfn::Uuid
     return true;
 }
 
+bool Properties::revokeAccessName(const std::string& accessName) {
+    if (convertAccessName(accessName).empty()) {
+        // does not exist
+        return false;
+    } else {
+        if (getVertexProps(convertAccessName(accessName)))
+            return true;
+    }
+    return false;
+}
+
 gfn::Uuid Properties::convertAccessName(const std::string& accessName) {
     auto f = accessNames.find(accessName);
     if (f != accessNames.end())
@@ -104,7 +115,7 @@ bool Properties::newVertexProps(const gfn::Uuid& uuid, bool clearExisting) {
     if (result.second) {
         std::uniform_real_distribution dis(-20.0, 20.0);
         result.first->second.position.value = gfn::Vec2(dis(gfn::getRng()),
-                                                         dis(gfn::getRng()));
+                                                        dis(gfn::getRng()));
         getVertexProps(uuid)->uuid.value = uuid;
         return true;
     }

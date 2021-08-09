@@ -37,6 +37,26 @@ namespace gfn::serializable {
         void deserialize(nlohmann::json& j);
     };
 
+    class String {
+    public:
+        std::string key;
+        gfn::Uuid value;
+
+        explicit String(std::string key);
+
+        String(std::string key, std::string value);
+
+        std::string& get();
+
+        void getValueStr(gfn::Args& output) const;
+
+        void setValueStr(const std::string& _value, gfn::Args& output);
+
+        void serialize(nlohmann::json& j);
+
+        void deserialize(nlohmann::json& j);
+    };
+
     class Bool {
     public:
         std::string key;

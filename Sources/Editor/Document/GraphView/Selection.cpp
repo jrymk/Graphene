@@ -23,7 +23,7 @@ namespace gfn {
         float minDistance = FLT_MAX;
         for (auto& vi : userprops.getVertexPropsList()) {
             auto v = vi.second;
-            if (!v.enabled.value)
+            if (!v.enabled.get())
                 continue;
             ImVec2 center = camera->map(v.position.value);
             float cursorDistance = distance(ImGui::GetMousePos(), center);
@@ -38,7 +38,7 @@ namespace gfn {
             minDistance = FLT_MAX;
             for (auto& ei : userprops.getEdgePropsList()) {
                 auto e = ei.second;
-                if (!e.enabled.value)
+                if (!e.enabled.get())
                     continue;
                 float cursorDistance = distanceToALine(ImGui::GetMousePos(),
                                                        camera->map(e.startVertexPosition.value),
@@ -155,10 +155,9 @@ namespace gfn {
         }
 
         if (lassoSelecting) {
-            if (!_lassoVertices[0].empty() && distance(
-                    camera->map(gfn::Vec2(
-                            _lassoVertices[0][_lassoVertices[0].size() - 1].first,
-                            _lassoVertices[0][_lassoVertices[0].size() - 1].second)), ImGui::GetMousePos()) < 2.0f)
+            if (!_lassoVertices[0].empty() && distance(camera->map(gfn::Vec2(
+                    _lassoVertices[0][_lassoVertices[0].size() - 1].first,
+                    _lassoVertices[0][_lassoVertices[0].size() - 1].second)), ImGui::GetMousePos()) < 2.0f)
                 _lassoVertices[0].pop_back();
 
             _lassoVertices[0].emplace_back(camera->rMap(ImVec2(ImGui::GetMousePos().x, ImGui::GetMousePos().y)).x,
@@ -174,12 +173,14 @@ namespace gfn {
                 auto p3 = gfn::Vec2(_lassoVertices[0][_lassoIndices[i + 2]].first,
                                     _lassoVertices[0][_lassoIndices[i + 2]].second);
                 for (auto& v : itf->graph.getRead()->props.getVertexPropsList()) {
+                    if (!v.second.enabled.get())
+                        continue;
                     // checks if vertex is in the triangle
                     auto p = v.second.position.get();
                     double d1 = (p.x - p2.x) * (p1.y - p2.y) - (p1.x - p2.x) * (p.y - p2.y);
                     double d2 = (p.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p.y - p3.y);
                     double d3 = (p.x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (p.y - p1.y);
-                    if (!(((d1 < 0) || (d2 < 0) || (d3 < 0)) && ((d1 > 0) || (d2 > 0) || (d3 > 0)))) {
+                    if ((d1 < 0 == d2 < 0) && (d1 < 0 == d3 < 0)) {
                         // commit to main selection
                         if (vertexSelection.find(v.first) == vertexSelection.end()) {
                             // not in selection
@@ -192,30 +193,29 @@ namespace gfn {
                         }
                     }
                 }
-                for (auto& e : itf->graph.getRead()->props.getEdgePropsList()) {
-                    // checks if edge is in the triangle
-                    auto p = e.second.position.get();
-                    double d1 = (p.x - p2.x) * (p1.y - p2.y) - (p1.x - p2.x) * (p.y - p2.y);
-                    double d2 = (p.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p.y - p3.y);
-                    double d3 = (p.x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (p.y - p1.y);
-                    if (!(((d1 < 0) || (d2 < 0) || (d3 < 0)) && ((d1 > 0) || (d2 > 0) || (d3 > 0)))) {
-                        if (edgeSelection.find(e.first) == edgeSelection.end()) {
-                            // not in selection
-                            if (_lassoAddEdgeMode || _lassoInvEdgeMode)
-                                edgeSelection.insert(e.first);
-                        } else {
-                            // is in selection
-                            if (_lassoSubtractEdgeMode || _lassoInvEdgeMode)
-                                edgeSelection.erase(e.first);
-                        }
-                    }
-                }
                 ImVec2 r1 = camera->map(p1);
                 ImVec2 r2 = camera->map(p2);
                 ImVec2 r3 = camera->map(p3);
                 ImGui::GetWindowDrawList()->AddTriangleFilled(r1, r2, r3,
                                                               IM_COL32(214, 240, 255, 255));//214, 240, 255, 50
             }
+            for (auto& e : itf->graph.getRead()->props.getEdgePropsList()) {
+                // checks if edge's both ends are in selection
+                if (!e.second.enabled.get() ||
+                vertexSelection.find(e.second.startVertexUuid.get()) == vertexSelection.end() ||
+                vertexSelection.find(e.second.endVertexUuid.get()) == vertexSelection.end())
+                    continue;
+                if (edgeSelection.find(e.first) == edgeSelection.end()) {
+                    // not in selection
+                    if (_lassoAddEdgeMode || _lassoInvEdgeMode)
+                        edgeSelection.insert(e.first);
+                } else {
+                    // is in selection
+                    if (_lassoSubtractEdgeMode || _lassoInvEdgeMode)
+                        edgeSelection.erase(e.first);
+                }
+            }
+
             std::vector<ImVec2> polyVertices;
             for (auto& v : _lassoVertices[0])
                 polyVertices.emplace_back(camera->map(gfn::Vec2(v.first, v.second)).x,
@@ -281,27 +281,35 @@ namespace gfn {
 
     void Selection::updateSelectAll() {
         ZoneScoped
-        if (press(ADD_SELECT_ALL_VERTEX))
-            for (auto& v : itf->graph.getRead()->props.getVertexPropsList())
-                vertexSelection.insert(v.first);
-        if (press(ADD_SELECT_ALL_EDGE))
-            for (auto& e : itf->graph.getRead()->props.getEdgePropsList())
-                edgeSelection.insert(e.first);
 
-        if (press(INV_SELECT_ALL_VERTEX)) {
-            for (auto& v : itf->graph.getRead()->props.getVertexPropsList()) {
-                if (vertexSelection.find(v.first) == vertexSelection.end())
+        if (ImGui::IsWindowFocused()) {
+            if (press(ADD_SELECT_ALL_VERTEX)) {
+                for (auto& v : itf->graph.getRead()->props.getVertexPropsList())
                     vertexSelection.insert(v.first);
-                else
-                    vertexSelection.erase(v.first);
+                onChangeSelection = true;
             }
-        }
-        if (press(INV_SELECT_ALL_EDGE)) {
-            for (auto& e : itf->graph.getRead()->props.getEdgePropsList()) {
-                if (edgeSelection.find(e.first) == edgeSelection.end())
+            if (press(ADD_SELECT_ALL_EDGE)) {
+                for (auto& e : itf->graph.getRead()->props.getEdgePropsList())
                     edgeSelection.insert(e.first);
-                else
-                    edgeSelection.erase(e.first);
+                onChangeSelection = true;
+            }
+            if (press(INV_SELECT_ALL_VERTEX)) {
+                for (auto& v : itf->graph.getRead()->props.getVertexPropsList()) {
+                    if (vertexSelection.find(v.first) == vertexSelection.end())
+                        vertexSelection.insert(v.first);
+                    else
+                        vertexSelection.erase(v.first);
+                }
+                onChangeSelection = true;
+            }
+            if (press(INV_SELECT_ALL_EDGE)) {
+                for (auto& e : itf->graph.getRead()->props.getEdgePropsList()) {
+                    if (edgeSelection.find(e.first) == edgeSelection.end())
+                        edgeSelection.insert(e.first);
+                    else
+                        edgeSelection.erase(e.first);
+                }
+                onChangeSelection = true;
             }
         }
     }

@@ -8,6 +8,7 @@ namespace gfn {
     ///@brief Vertex properties that will be copied to the rendering thread / properties for the end user
     struct VertexProps {
         gfn::serializable::Uuid uuid;
+        gfn::serializable::String label;
         gfn::serializable::Bool enabled;
         gfn::serializable::Vec2f position;
         gfn::serializable::Color vertexFillColor;

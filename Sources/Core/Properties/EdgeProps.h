@@ -8,6 +8,7 @@ namespace gfn {
     ///@brief Edge properties that will be copied to the rendering thread / properties for the end user
     struct EdgeProps {
         gfn::serializable::Uuid edgeUuid;
+        gfn::serializable::String label;
         gfn::serializable::Bool enabled;
         gfn::serializable::Vec2f position;
         gfn::serializable::Uuid startVertexUuid;

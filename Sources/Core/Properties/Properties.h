@@ -28,6 +28,8 @@ namespace gfn {
         /// @brief uuids can be hard to type and read, user can assign custom names to every uuid for easy access
         bool assignAccessName(const std::string& accessName, const gfn::Uuid& uuid, bool overwrite = false);
 
+        bool revokeAccessName(const std::string& accessName);
+
         gfn::Uuid convertAccessName(const std::string& accessName);
 
         /// @brief retrieve the properties object of the given vertex

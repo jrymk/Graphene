@@ -6,7 +6,7 @@ namespace gfn {
         double dis = (u - v).length();
         if (dis == 0.0)
             return {0.0, 0.0};
-        double coeff = -itf->graph.getWrite().cfg.c3.value / dis / dis;
+        double coeff = std::max(-itf->graph.getWrite().cfg.c3.value / dis / dis, -100.0);
         return (v - u).normalize() * coeff;
     }
 

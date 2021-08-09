@@ -10,17 +10,18 @@ namespace gfn {
     private:
         gfn::Interface* itf;
         Camera* camera;
+        Selection* selection;
 
     public:
-        Renderer(gfn::Interface* itf, Camera* camera) :
+        Renderer(gfn::Interface* itf, Camera* camera, Selection* selection) :
                 itf(itf),
-                camera(camera) {
+                camera(camera),
+                selection(selection) {
 
         }
 
         void drawEdges() {
             ZoneScoped
-
             auto drawList = ImGui::GetWindowDrawList();
             auto userprops = itf->graph.getRead()->props;
             for (auto& ei : userprops.getEdgePropsList()) {
@@ -39,7 +40,6 @@ namespace gfn {
 
         void drawVertices() {
             ZoneScoped
-
             auto drawList = ImGui::GetWindowDrawList();
             auto userprops = itf->graph.getRead()->props;
             for (auto& vi : userprops.getVertexPropsList()) {

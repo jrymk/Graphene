@@ -241,23 +241,26 @@ namespace gfn {
         ImGui::Begin("Args centre", nullptr, 0);
 
 
-        bool actionNewFile = hk.press(Actions::NEW_FILE, -1);
+        bool actionNewDocument = hk.press(Actions::NEW_DOCUMENT, -1);
         bool actionOpenFile = hk.press(Actions::OPEN_FILE, -1);
         bool actionSaveFile = hk.press(Actions::SAVE_FILE, -1);
         bool actionSaveAsFile = hk.press(Actions::SAVE_AS_FILE, -1);
+        bool actionCloseDocument = hk.press(Actions::CLOSE_DOCUMENT, -1);
         bool actionKeyBindings = hk.press(Actions::KEY_BINDINGS, -1);
         bool actionQuit = hk.press(Actions::QUIT, -1);
 
         ImGui::BeginMainMenuBar();
         if (ImGui::BeginMenu("File")) {
-            if (ImGui::MenuItem("\ue24d New file", nullptr, false, true))
-                actionNewFile = true;
+            if (ImGui::MenuItem("\ue24d New document", nullptr, false, true))
+                actionNewDocument = true;
             if (ImGui::MenuItem("\ue2c7 Open file", nullptr, false, true))
                 actionOpenFile = true;
             if (ImGui::MenuItem("\ue161 Save file", nullptr, false, getDoc(activeDoc)))
                 actionSaveFile = true;
             if (ImGui::MenuItem("\ue161 Save as file", nullptr, false, getDoc(activeDoc)))
                 actionSaveAsFile = true;
+            if (ImGui::MenuItem("\ue5cd Close document", nullptr, false, getDoc(activeDoc)))
+                actionCloseDocument = true;
             ImGui::Separator();
             if (ImGui::MenuItem("\ue312 Key bindings", nullptr, false, true))
                 actionKeyBindings = true;
@@ -268,16 +271,21 @@ namespace gfn {
         }
         ImGui::EndMainMenuBar();
 
-        if (actionNewFile)
+        if (actionNewDocument)
             newDocument();
         if (actionOpenFile)
             ImGuiFileDialog::Instance()->OpenDialog("OpenFile", "\ue2c7 Open file", ".gfn,.*", ".", 0, nullptr, 0);
-        if (actionSaveFile)
+        if (actionSaveFile && getDoc(activeDoc))
             getDoc(activeDoc)->execute("save");
-        if (actionSaveAsFile) {
+        if (actionSaveAsFile && getDoc(activeDoc)) {
             ImGuiFileDialog::Instance()->OpenDialog("SaveAsFile", "\ue2c7 Save as file", ".gfn,.*", ".", 0, nullptr,
                                                     ImGuiFileDialogFlags_IsSave | ImGuiFileDialogFlags_ConfirmOverwrite);
         }
+        if (actionCloseDocument && getDoc(activeDoc)) {
+            getDoc(activeDoc)->showCloseConfirmationDialog = true;
+            getDoc(activeDoc)->closeDocument = true;
+        }
+
         if (actionKeyBindings) {
             prefs.loadFromFile();
             prefs.bindings.showBindingsConfigWindow = true;

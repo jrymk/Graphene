@@ -6,7 +6,7 @@ namespace gfn {
 
     std::vector<std::pair<std::string, int>> Bindings::actions = {
             // 0
-            {"New file",                                                         0},
+            {"New document",                                                     0},
             {"",                                                                 0},
             {"",                                                                 0},
             {"",                                                                 0},
@@ -19,12 +19,12 @@ namespace gfn {
             {"",                                                                 0},
             // 10
             {"Save file",                                                        0},
-            {"",                                                                 0},
+            {"Save as file",                                                     0},
             {"",                                                                 0},
             {"",                                                                 0},
             {"",                                                                 0},
             // 15
-            {"Save as file",                                                     0},
+            {"Close document",                                                   0},
             {"",                                                                 0},
             {"",                                                                 0},
             {"",                                                                 0},

@@ -127,8 +127,8 @@ namespace gfn {
         colors[ImGuiCol_PopupBg] = ImVec4(0.24f, 0.24f, 0.24f, 0.98f);
         colors[ImGuiCol_Border] = ImVec4(0.44f, 0.44f, 0.44f, 0.43f);
         colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-        colors[ImGuiCol_FrameBg] = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
-        colors[ImGuiCol_FrameBgHovered] = ImVec4(0.18f, 0.18f, 0.18f, 1.00f);
+        colors[ImGuiCol_FrameBg] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
+        colors[ImGuiCol_FrameBgHovered] = ImVec4(0.26f, 0.26f, 0.26f, 1.00f);
         colors[ImGuiCol_FrameBgActive] = ImVec4(0.19f, 0.19f, 0.19f, 1.00f);
         colors[ImGuiCol_TitleBg] = ImVec4(0.09f, 0.09f, 0.09f, 1.00f);
         colors[ImGuiCol_TitleBgActive] = ImVec4(0.09f, 0.09f, 0.09f, 1.00f);
@@ -165,11 +165,11 @@ namespace gfn {
         colors[ImGuiCol_PlotHistogram] = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
         colors[ImGuiCol_PlotHistogramHovered] = ImVec4(1.00f, 0.45f, 0.00f, 1.00f);
         colors[ImGuiCol_TableHeaderBg] = ImVec4(0.32f, 0.32f, 0.32f, 1.00f);
-        colors[ImGuiCol_TableBorderStrong] = ImVec4(0.69f, 0.69f, 0.69f, 1.00f);
-        colors[ImGuiCol_TableBorderLight] = ImVec4(0.80f, 0.80f, 0.80f, 1.00f);
+        colors[ImGuiCol_TableBorderStrong] = ImVec4(0.27f, 0.27f, 0.27f, 1.00f);
+        colors[ImGuiCol_TableBorderLight] = ImVec4(0.27f, 0.27f, 0.27f, 1.00f);
         colors[ImGuiCol_TableRowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
         colors[ImGuiCol_TableRowBgAlt] = ImVec4(0.30f, 0.30f, 0.30f, 0.09f);
-        colors[ImGuiCol_TextSelectedBg] = ImVec4(0.81f, 0.92f, 1.00f, 1.00f);
+        colors[ImGuiCol_TextSelectedBg] = ImVec4(0.23f, 0.36f, 0.45f, 1.00f);
         colors[ImGuiCol_DragDropTarget] = ImVec4(0.06f, 0.41f, 0.65f, 1.00f);
         colors[ImGuiCol_NavHighlight] = ImVec4(0.06f, 0.38f, 0.60f, 1.00f);
         colors[ImGuiCol_NavWindowingHighlight] = ImVec4(0.70f, 0.70f, 0.70f, 0.70f);

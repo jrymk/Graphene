@@ -11,7 +11,7 @@ namespace gfn {
             prefs(prefs),
             camera(hk, prefs),
             selection(itf, &camera, hk, prefs),
-            renderer(itf, &camera) {
+            renderer(itf, &camera, &selection) {
     }
 
     void GraphView::update() {
@@ -39,7 +39,7 @@ namespace gfn {
         }
 
         /// ADD VERTEX
-        if (selection.press(Actions::ADD_VERTEX)) {
+        if (ImGui::IsItemHovered() && selection.press(Actions::ADD_VERTEX)) {
             if (selection.hoveredVertex.empty() && !selection.hoveredEdge.empty()) {
                 auto eProp = itf->graph.getRead()->props.getEdgeProps(selection.hoveredEdge);
                 execute("rmedge -u=" + eProp->startVertexUuid.value + " -v=" + eProp->endVertexUuid.value);
@@ -68,7 +68,7 @@ namespace gfn {
         }
 
         /// ADD EDGE
-        if (selection.press(Actions::ADD_EDGE)) {
+        if (ImGui::IsItemHovered() && selection.press(Actions::ADD_EDGE)) {
             addingEdge = true;
             onAddEdgeState = camera.hoverState;
             addEdgeVertex.clear();
@@ -94,61 +94,70 @@ namespace gfn {
         }
 
         /// MOVE VERTEX
-        if (selection.press(Actions::MOVE_VERTEX)) {
+        if (ImGui::IsItemHovered() && selection.press(Actions::MOVE_VERTEX)) {
             if (!selection.hoveredVertex.empty()) {
                 movingVertex = true;
                 onMoveVertexState = camera.hoverState;
                 moveVertex = selection.hoveredVertex;
+                execute("setvertexprops -uuid=" + moveVertex + " -key=pauseUpdate -value=true");
             }
         }
         if (movingVertex) {
             execute("setvertexprops -uuid=" + moveVertex + " -key=position -value=+(" +
                     std::to_string(selection.mouseDelta.x) + "," + std::to_string(selection.mouseDelta.y) + ")");
         }
-        if (movingVertex && !hk->down(Actions::MOVE_VERTEX, onMoveVertexState))
+        if (movingVertex && !hk->down(Actions::MOVE_VERTEX, onMoveVertexState)) {
             movingVertex = false;
+            execute("setvertexprops -uuid=" + moveVertex + " -key=pauseUpdate -value=false");
+        }
 
         /// MOVE SELECTION
         if (selection.press(Actions::MOVE_SELECTION)) {
             movingSelection = true;
             onMoveSelectionState = camera.hoverState;
+            for (auto& v : selection.vertexSelection)
+                execute("setvertexprops -uuid=" + v + " -key=pauseUpdate -value=true");
         }
         if (movingSelection) {
             for (auto& v : selection.vertexSelection)
                 execute("setvertexprops -uuid=" + v + " -key=position -value=+(" +
                         std::to_string(selection.mouseDelta.x) + "," + std::to_string(selection.mouseDelta.y) + ")");
         }
-        if (movingSelection && !hk->down(Actions::MOVE_SELECTION, onMoveSelectionState))
+        if (movingSelection && !hk->down(Actions::MOVE_SELECTION, onMoveSelectionState)) {
             movingSelection = false;
-
-        /// DELETE HOVERED VERTEX
-        if (selection.press(Actions::DELETE_HOVERED_VERTEX)) {
-            if (!selection.hoveredVertex.empty())
-                execute("rmvertex -uuid=" + selection.hoveredVertex);
+            for (auto& v : selection.vertexSelection)
+                execute("setvertexprops -uuid=" + v + " -key=pauseUpdate -value=false");
         }
 
-        /// DELETE SELECTED VERTICES
-        if (selection.press(Actions::DELETE_VERTICES)) {
-            if (!selection.vertexSelection.empty()) {
-                for (auto& v : selection.vertexSelection)
-                    execute("rmvertex -uuid=" + v);
+        if (ImGui::IsWindowFocused()) {
+            /// DELETE HOVERED EDGE
+            if (selection.press(Actions::DELETE_HOVERED_EDGE)) {
+                if (!selection.hoveredEdge.empty())
+                    execute("rmedge -uuid=" + selection.hoveredEdge);
             }
-            /// TODO
-        }
 
-        /// DELETE HOVERED EDGE
-        if (selection.press(Actions::DELETE_HOVERED_EDGE)) {
-            if (!selection.hoveredEdge.empty())
-                execute("rmedge -uuid=" + selection.hoveredEdge);
-        }
-
-        /// DELETE SELECTED VERTICES
-        if (selection.press(Actions::DELETE_EDGES)) {
-            if (!selection.edgeSelection.empty()) {
-                for (auto& e : selection.edgeSelection)
-                    execute("rmedge -uuid=" + e);
+            /// DELETE SELECTED VERTICES
+            if (selection.press(Actions::DELETE_EDGES)) {
+                if (!selection.edgeSelection.empty()) {
+                    for (auto& e : selection.edgeSelection)
+                        execute("rmedge -uuid=" + e);
+                }
+                /// TODO
             }
-            /// TODO
+
+            /// DELETE HOVERED VERTEX
+            if (selection.press(Actions::DELETE_HOVERED_VERTEX)) {
+                if (!selection.hoveredVertex.empty())
+                    execute("rmvertex -uuid=" + selection.hoveredVertex);
+            }
+
+            /// DELETE SELECTED VERTICES
+            if (selection.press(Actions::DELETE_VERTICES)) {
+                if (!selection.vertexSelection.empty()) {
+                    for (auto& v : selection.vertexSelection)
+                        execute("rmvertex -uuid=" + v);
+                }
+            }
         }
 
         /*if (!selection.mouseClickVertex[ImGuiMouseButton_Left].empty() &&
@@ -161,25 +170,25 @@ namespace gfn {
         if (!selection.vertexSelection.empty()) {
             for (auto& v: selection.vertexSelection) {
                 auto props = itf->graph.getRead()->props.getVertexProps(v);
-                if (props) {
+                if (props && props->enabled.get()) {
                     ImGui::GetWindowDrawList()->AddCircleFilled(
                             camera.map(props->position.value), camera.map(props->radius.value + prefs->glow_size),
-                            props->enabled.get() ? IM_COL32(0, 135, 255, 255) : IM_COL32(100, 100, 100, 120),
+                            IM_COL32(0, 135, 255, 255),
                             0);
                 }
             }
         }
 
         if (!selection.edgeSelection.empty()) {
-            for (auto& e       : selection.edgeSelection) {
-                auto props = itf->graph.getRead()->props.getEdgeProps(e);
-                if (props) {
-                    auto edgeProps = itf->graph.getRead()->props.getEdgeProps(e);
+            for (auto& e : selection.edgeSelection) {
+                auto edgeProps = itf->graph.getRead()->props.getEdgeProps(e);
+                if (edgeProps) {
                     auto uProps = itf->graph.getRead()->props.getVertexProps(edgeProps->startVertexUuid.value);
                     auto vProps = itf->graph.getRead()->props.getVertexProps(edgeProps->endVertexUuid.value);
-                    ImGui::GetWindowDrawList()->AddLine(camera.map(uProps->position.value), camera.map(vProps->position.value),
-                                                        props->enabled.get() ? IM_COL32(0, 135, 255, 255) : IM_COL32(100, 100, 100, 120),
-                                                        camera.map(edgeProps->thickness.value + prefs->glow_size * 2.0));
+                    if (uProps && vProps && edgeProps->enabled.get())
+                        ImGui::GetWindowDrawList()->AddLine(camera.map(uProps->position.value), camera.map(vProps->position.value),
+                                                            IM_COL32(0, 135, 255, 255),
+                                                            camera.map(edgeProps->thickness.value + prefs->glow_size * 2.0));
                 }
             }
         }

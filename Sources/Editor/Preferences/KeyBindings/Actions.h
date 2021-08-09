@@ -3,10 +3,11 @@
 
 namespace gfn {
     enum Actions {
-        NEW_FILE = 0,
+        NEW_DOCUMENT = 0,
         OPEN_FILE = 5,
         SAVE_FILE = 10,
-        SAVE_AS_FILE = 15,
+        SAVE_AS_FILE = 11,
+        CLOSE_DOCUMENT = 15,
         KEY_BINDINGS = 20,
         QUIT = 25,
 
