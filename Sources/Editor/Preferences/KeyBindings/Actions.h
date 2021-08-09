@@ -11,6 +11,10 @@ namespace gfn {
         KEY_BINDINGS = 20,
         QUIT = 25,
 
+        COPY_SELECTION = 50,
+        CUT_SELECTION = 51,
+        PASTE_SELECTION = 52,
+
         /// VIEW CONTROL
         CAMERA_PAN = 100,
         ZOOM_IN = 105,

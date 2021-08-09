@@ -52,6 +52,32 @@ namespace gfn {
         }
     }
 
+    void EdgeProps::serializeJson(nlohmann::json& j) {
+        edgeUuid.serialize(j);
+        label.serialize(j);
+        enabled.serialize(j);
+        position.serialize(j);
+        startVertexUuid.serialize(j);
+        startVertexPosition.serialize(j);
+        endVertexUuid.serialize(j);
+        endVertexPosition.serialize(j);
+        edgeFillColor.serialize(j);
+        thickness.serialize(j);
+    }
+
+    void EdgeProps::deserializeJson(nlohmann::json& j) {
+        edgeUuid.deserialize(j);
+        label.deserialize(j);
+        enabled.deserialize(j);
+        position.deserialize(j);
+        startVertexUuid.deserialize(j);
+        startVertexPosition.deserialize(j);
+        endVertexUuid.deserialize(j);
+        endVertexPosition.deserialize(j);
+        edgeFillColor.deserialize(j);
+        thickness.deserialize(j);
+    }
+
     void EdgeProps::get(const std::string& key, gfn::Args& output) {
         if (key == edgeUuid.key) edgeUuid.getValueStr(output);
         else if (key == label.key) label.getValueStr(output);

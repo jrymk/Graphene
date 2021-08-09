@@ -66,9 +66,9 @@ namespace gfn {
             {"",                                                                 0},
             {"",                                                                 0},
             // 50
-            {"",                                                                 0},
-            {"",                                                                 0},
-            {"",                                                                 0},
+            {"Copy selection",                                                                 0},
+            {"Cut selection",                                                                 0},
+            {"Paste selection",                                                                 0},
             {"",                                                                 0},
             {"",                                                                 0},
             // 55

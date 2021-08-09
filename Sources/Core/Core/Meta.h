@@ -23,5 +23,6 @@ const char buildVersion[] = {
 // added temporary reset and aggressive c4
 // added file hotkeys
 // fix octet nonsense
+// Updated selection, refreshed properties
 
 #endif

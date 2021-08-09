@@ -68,65 +68,82 @@ namespace gfn {
         }
 
         /// ADD EDGE
-        if (ImGui::IsItemHovered() && selection.press(Actions::ADD_EDGE)) {
-            addingEdge = true;
-            onAddEdgeState = camera.hoverState;
-            addEdgeVertex.clear();
-            if (!selection.hoveredVertex.empty())
-                addEdgeVertex = selection.hoveredVertex;
-        }
-        if (addingEdge && !addEdgeVertex.empty()) {
-            auto uProps = itf->graph.getRead()->props.getVertexProps(addEdgeVertex);
-            if (!selection.hoveredVertex.empty()) {
-                auto vProps = itf->graph.getRead()->props.getVertexProps(selection.hoveredVertex);
-                ImGui::GetWindowDrawList()->AddLine(camera.map(uProps->position.value),
-                                                    camera.map(vProps->position.value),
-                                                    IM_COL32(0, 255, 0, 100), camera.map(0.2f));
-            } else {
-                ImGui::GetWindowDrawList()->AddLine(camera.map(uProps->position.value), ImGui::GetMousePos(),
-                                                    IM_COL32(0, 255, 0, 100), camera.map(0.2f));
+        {
+            static bool addingEdge = false;
+            static int onAddEdgeState = 0;
+            static gfn::Uuid addEdgeVertex;
+
+            if (ImGui::IsItemHovered() && selection.press(Actions::ADD_EDGE)) {
+                addingEdge = true;
+                onAddEdgeState = camera.hoverState;
+                addEdgeVertex.clear();
+                if (!selection.hoveredVertex.empty())
+                    addEdgeVertex = selection.hoveredVertex;
             }
-        }
-        if (addingEdge && !hk->down(Actions::ADD_EDGE, onAddEdgeState) && !addEdgeVertex.empty()) {
-            addingEdge = false;
-            if (!selection.hoveredVertex.empty())
-                execute("mkedge -u=" + addEdgeVertex + " -v=" + selection.hoveredVertex);
+            if (addingEdge && !addEdgeVertex.empty()) {
+                auto uProps = itf->graph.getRead()->props.getVertexProps(addEdgeVertex);
+                if (!selection.hoveredVertex.empty()) {
+                    auto vProps = itf->graph.getRead()->props.getVertexProps(selection.hoveredVertex);
+                    ImGui::GetWindowDrawList()->AddLine(camera.map(uProps->position.value),
+                                                        camera.map(vProps->position.value),
+                                                        IM_COL32(0, 255, 0, 100), camera.map(0.2f));
+                } else {
+                    ImGui::GetWindowDrawList()->AddLine(camera.map(uProps->position.value), ImGui::GetMousePos(),
+                                                        IM_COL32(0, 255, 0, 100), camera.map(0.2f));
+                }
+            }
+            if (addingEdge && !hk->down(Actions::ADD_EDGE, onAddEdgeState) && !addEdgeVertex.empty()) {
+                addingEdge = false;
+                if (!selection.hoveredVertex.empty())
+                    execute("mkedge -u=" + addEdgeVertex + " -v=" + selection.hoveredVertex);
+            }
         }
 
         /// MOVE VERTEX
-        if (ImGui::IsItemHovered() && selection.press(Actions::MOVE_VERTEX)) {
-            if (!selection.hoveredVertex.empty()) {
-                movingVertex = true;
-                onMoveVertexState = camera.hoverState;
-                moveVertex = selection.hoveredVertex;
-                execute("setvertexprops -uuid=" + moveVertex + " -key=pauseUpdate -value=true");
+        {
+            static bool movingVertex = false;
+            static int onMoveVertexState = 0;
+            static gfn::Uuid moveVertex;
+
+            if (ImGui::IsItemHovered() && selection.press(Actions::MOVE_VERTEX)) {
+                if (!selection.hoveredVertex.empty()) {
+                    movingVertex = true;
+                    onMoveVertexState = camera.hoverState;
+                    moveVertex = selection.hoveredVertex;
+                    execute("setvertexprops -uuid=" + moveVertex + " -key=pauseUpdate -value=true");
+                }
             }
-        }
-        if (movingVertex) {
-            execute("setvertexprops -uuid=" + moveVertex + " -key=position -value=+(" +
-                    std::to_string(selection.mouseDelta.x) + "," + std::to_string(selection.mouseDelta.y) + ")");
-        }
-        if (movingVertex && !hk->down(Actions::MOVE_VERTEX, onMoveVertexState)) {
-            movingVertex = false;
-            execute("setvertexprops -uuid=" + moveVertex + " -key=pauseUpdate -value=false");
+            if (movingVertex) {
+                execute("setvertexprops -uuid=" + moveVertex + " -key=position -value=+(" +
+                        std::to_string(selection.mouseDelta.x) + "," + std::to_string(selection.mouseDelta.y) + ")");
+            }
+            if (movingVertex && !hk->down(Actions::MOVE_VERTEX, onMoveVertexState)) {
+                movingVertex = false;
+                execute("setvertexprops -uuid=" + moveVertex + " -key=pauseUpdate -value=false");
+            }
         }
 
         /// MOVE SELECTION
-        if (selection.press(Actions::MOVE_SELECTION)) {
-            movingSelection = true;
-            onMoveSelectionState = camera.hoverState;
-            for (auto& v : selection.vertexSelection)
-                execute("setvertexprops -uuid=" + v + " -key=pauseUpdate -value=true");
-        }
-        if (movingSelection) {
-            for (auto& v : selection.vertexSelection)
-                execute("setvertexprops -uuid=" + v + " -key=position -value=+(" +
-                        std::to_string(selection.mouseDelta.x) + "," + std::to_string(selection.mouseDelta.y) + ")");
-        }
-        if (movingSelection && !hk->down(Actions::MOVE_SELECTION, onMoveSelectionState)) {
-            movingSelection = false;
-            for (auto& v : selection.vertexSelection)
-                execute("setvertexprops -uuid=" + v + " -key=pauseUpdate -value=false");
+        {
+            static bool movingSelection = false;
+            static int onMoveSelectionState = 0;
+
+            if (selection.press(Actions::MOVE_SELECTION)) {
+                movingSelection = true;
+                onMoveSelectionState = camera.hoverState;
+                for (auto& v : selection.vertexSelection)
+                    execute("setvertexprops -uuid=" + v + " -key=pauseUpdate -value=true");
+            }
+            if (movingSelection) {
+                for (auto& v : selection.vertexSelection)
+                    execute("setvertexprops -uuid=" + v + " -key=position -value=+(" +
+                            std::to_string(selection.mouseDelta.x) + "," + std::to_string(selection.mouseDelta.y) + ")");
+            }
+            if (movingSelection && !hk->down(Actions::MOVE_SELECTION, onMoveSelectionState)) {
+                movingSelection = false;
+                for (auto& v : selection.vertexSelection)
+                    execute("setvertexprops -uuid=" + v + " -key=pauseUpdate -value=false");
+            }
         }
 
         if (ImGui::IsWindowFocused()) {
@@ -159,6 +176,121 @@ namespace gfn {
                 }
             }
         }
+
+        /// COPY
+        {
+            if (ImGui::IsWindowFocused() && selection.press(Actions::COPY_SELECTION)) {
+                nlohmann::json clipJ;
+                auto vertexProps = nlohmann::json::array();
+                auto edgeProps = nlohmann::json::array();
+                auto structure = nlohmann::json::array();
+                std::vector<nlohmann::json> vEntry;
+                std::unordered_map<gfn::Uuid, int> vertexMapping;
+                int vId = 0;
+
+                for (auto& v : selection.vertexSelection) {
+                    auto findV = itf->graph.getRead()->props.getVertexProps(v);
+                    if (!findV)
+                        continue;
+
+                    nlohmann::json vProp;
+                    findV->serializeJson(vProp);
+                    vertexProps.push_back({std::to_string(vId), vProp});
+                    vertexMapping.insert({v, vId});
+                    vEntry.push_back(nlohmann::json::array());
+                    vId++;
+                }
+                int eId = 0;
+                for (auto& e : selection.edgeSelection) {
+                    auto findE = itf->graph.getRead()->props.getEdgeProps(e);
+                    if (!findE)
+                        continue;
+                    auto findU = vertexMapping.find(findE->startVertexUuid.get());
+                    auto findV = vertexMapping.find(findE->endVertexUuid.get());
+                    if (findU == vertexMapping.end() || findV == vertexMapping.end())
+                        continue;
+                    nlohmann::json eProp;
+                    findE->serializeJson(eProp);
+                    edgeProps.push_back({std::to_string(eId), eProp});
+                    vEntry[findU->second].push_back({std::to_string(findV->second), std::to_string(eId)});
+                    eId++;
+                }
+                clipJ["vertex props"] = vertexProps;
+                clipJ["edge props"] = edgeProps;
+                for (int i = 0; i < vEntry.size(); i++)
+                    clipJ["structure"].push_back({std::to_string(i), vEntry[i]});
+
+                ImGui::SetClipboardText(clipJ.dump(-1, ' ', true).c_str());
+                std::cout << "Copied to clipboard\n";
+            }
+        }
+
+        /// CUT
+        {
+            if (ImGui::IsWindowFocused() && selection.press(Actions::CUT_SELECTION)) {
+                nlohmann::json clipJ;
+                auto vertexProps = nlohmann::json::array();
+                auto edgeProps = nlohmann::json::array();
+                auto structure = nlohmann::json::array();
+                std::vector<nlohmann::json> vEntry;
+                std::unordered_map<gfn::Uuid, int> vertexMapping;
+                int vId = 0;
+
+                for (auto& v : selection.vertexSelection) {
+                    auto findV = itf->graph.getRead()->props.getVertexProps(v);
+                    if (!findV)
+                        continue;
+
+                    nlohmann::json vProp;
+                    findV->serializeJson(vProp);
+                    vertexProps.push_back({std::to_string(vId), vProp});
+                    vertexMapping.insert({v, vId});
+                    vEntry.push_back(nlohmann::json::array());
+                    vId++;
+                }
+                int eId = 0;
+                for (auto& e : selection.edgeSelection) {
+                    auto findE = itf->graph.getRead()->props.getEdgeProps(e);
+                    if (!findE)
+                        continue;
+                    auto findU = vertexMapping.find(findE->startVertexUuid.get());
+                    auto findV = vertexMapping.find(findE->endVertexUuid.get());
+                    if (findU == vertexMapping.end() || findV == vertexMapping.end())
+                        continue;
+                    nlohmann::json eProp;
+                    findE->serializeJson(eProp);
+                    edgeProps.push_back({std::to_string(eId), eProp});
+                    vEntry[findU->second].push_back({std::to_string(findV->second), std::to_string(eId)});
+                    eId++;
+                }
+                clipJ["vertex props"] = vertexProps;
+                clipJ["edge props"] = edgeProps;
+                for (int i = 0; i < vEntry.size(); i++)
+                    clipJ["structure"].push_back({std::to_string(i), vEntry[i]});
+
+                ImGui::SetClipboardText(clipJ.dump(-1, ' ', true).c_str());
+                std::cout << "Copied to clipboard\n";
+
+                if (!selection.edgeSelection.empty()) {
+                    for (auto& e : selection.edgeSelection)
+                        execute("rmedge -uuid=" + e);
+                }
+                if (!selection.vertexSelection.empty()) {
+                    for (auto& v : selection.vertexSelection)
+                        execute("rmvertex -uuid=" + v);
+                }
+            }
+        }
+
+        /// PASTE
+        {
+            if (ImGui::IsWindowFocused() && selection.press(Actions::PASTE_SELECTION)) {
+                /// paste will be done in core, send the json to core through commands
+                /// TODO
+            }
+        }
+
+
 
         /*if (!selection.mouseClickVertex[ImGuiMouseButton_Left].empty() &&
             selection.vertexSelection.empty() && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {

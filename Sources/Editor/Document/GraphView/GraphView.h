@@ -9,16 +9,6 @@
 namespace gfn {
 ///@brief renders and handles interaction to a specified interface
     class GraphView {
-    private:
-        bool addingEdge = false;
-        int onAddEdgeState = 0;
-        gfn::Uuid addEdgeVertex;
-        bool movingVertex = false;
-        int onMoveVertexState = 0;
-        gfn::Uuid moveVertex;
-        bool movingSelection = false;
-        int onMoveSelectionState = 0;
-
     public:
         gfn::Uuid docId;
         gfn::Interface* itf;

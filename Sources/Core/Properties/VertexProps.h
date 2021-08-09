@@ -26,6 +26,12 @@ namespace gfn {
         ///@brief deserializes binn binary data into vertex props
         void deserialize(void* object);
 
+        ///@brief serializes vertex props data into json form (for clipboard)
+        void serializeJson(nlohmann::json& j);
+
+        ///@brief deserializes json data into vertex props (for clipboard)
+        void deserializeJson(nlohmann::json& j);
+
         void get(const std::string& key, gfn::Args& output);
 
         void set(const std::string& key, const std::string& value, gfn::Args& output);

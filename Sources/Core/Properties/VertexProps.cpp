@@ -51,6 +51,32 @@ namespace gfn {
         }
     }
 
+    void VertexProps::serializeJson(nlohmann::json& j) {
+        uuid.serialize(j);
+        label.serialize(j);
+        enabled.serialize(j);
+        position.serialize(j);
+        vertexFillColor.serialize(j);
+        radius.serialize(j);
+        force.serialize(j);
+        pauseUpdate.serialize(j);
+        component.serialize(j);
+        isComponentRoot.serialize(j);
+    }
+
+    void VertexProps::deserializeJson(nlohmann::json& j) {
+        uuid.deserialize(j);
+        label.deserialize(j);
+        enabled.deserialize(j);
+        position.deserialize(j);
+        vertexFillColor.deserialize(j);
+        radius.deserialize(j);
+        force.deserialize(j);
+        pauseUpdate.deserialize(j);
+        component.deserialize(j);
+        isComponentRoot.deserialize(j);
+    }
+
     void VertexProps::get(const std::string& key, gfn::Args& output) {
         if (key == uuid.key) uuid.getValueStr(output);
         else if (key == label.key) label.getValueStr(output);
