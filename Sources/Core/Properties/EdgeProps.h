@@ -9,13 +9,15 @@ namespace gfn {
     struct EdgeProps {
         gfn::serializable::Uuid edgeUuid;
         gfn::serializable::String label;
+        gfn::serializable::Double labelSize;
+        gfn::serializable::Color labelColor;
         gfn::serializable::Bool enabled;
         gfn::serializable::Vec2f position;
         gfn::serializable::Uuid startVertexUuid;
         gfn::serializable::Vec2f startVertexPosition;
         gfn::serializable::Uuid endVertexUuid;
         gfn::serializable::Vec2f endVertexPosition;
-        gfn::serializable::Color edgeFillColor;
+        gfn::serializable::Color edgeColor;
         gfn::serializable::Double thickness;
 
         EdgeProps();

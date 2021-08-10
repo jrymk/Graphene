@@ -6,7 +6,7 @@ namespace gfn {
     VertexProps::VertexProps() :
             uuid("uuid"),
             label("label"),
-            labelSize("labelSize", 0.5),
+            labelSize("labelSize", -1),
             labelColor("labelColor", IM_COL32(0, 0, 0, 255)),
             enabled("enabled", false),
             position("position"),

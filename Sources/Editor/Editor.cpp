@@ -329,9 +329,20 @@ namespace gfn {
             ImGuiFileDialog::Instance()->Close();
         }
 
+
         if (getDoc(activeDoc)) {
-            if (gfn::button("\ue028 RESET", HUE_CONTRAST, HUE_RED_CONTRAST, false,
-                            ImGui::GetContentRegionAvailWidth(), 30.0f, false)) {
+            if (gfn::button("\ue034 pause updates", HUE_CONTRAST,
+                            getDoc(activeDoc)->isGraphUpdate ? HUE_CONTRAST : HUE_RED_CONTRAST, false,
+                            ImGui::GetContentRegionAvailWidth(), 0, false)) {
+                getDoc(activeDoc)->isGraphUpdate = !getDoc(activeDoc)->isGraphUpdate;
+                getDoc(activeDoc)->isGraphUpdateEx = true;
+            }
+            if (gfn::button("\ue51f pause graph streaming", HUE_CONTRAST, getDoc(activeDoc)->isGraphStreaming ? HUE_CONTRAST : HUE_BLUE_CONTRAST,
+                            false, ImGui::GetContentRegionAvailWidth(), 0, false)) {
+                getDoc(activeDoc)->isGraphStreaming = !getDoc(activeDoc)->isGraphStreaming;
+            }
+            if (gfn::button("\ue028 recalculate", HUE_RED, HUE_DEFAULT, false,
+                            ImGui::GetContentRegionAvailWidth(), 0, false)) {
                 for (auto& v:getDoc(activeDoc)->getItf()->graph.getRead()->props.getVertexPropsList()) {
                     std::uniform_real_distribution dis(-20.0, 20.0);
                     auto randX = dis(gfn::getRng());

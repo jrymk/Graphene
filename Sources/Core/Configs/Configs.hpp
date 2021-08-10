@@ -14,10 +14,10 @@ namespace gfn::configs {
         gfn::serializable::Double c6;
 
         Configs() :
-                c1("c1", 2.0),
+                c1("c1", 1.0),
                 c2("c2", 1.0),
                 c3("c3", 1.0),
-                c4("c4", 0.12),
+                c4("c4", 0.15),
                 c5("c5", 0.1),
                 c6("c6", 0.0001) {
         }

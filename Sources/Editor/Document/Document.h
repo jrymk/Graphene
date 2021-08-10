@@ -51,6 +51,9 @@ namespace gfn {
         bool wantSaveAsAndClose = false;
         bool isDocumentWindowOpen = true; // the p_open for the document main window
         bool closeDocument = false; // the master switch to the document, one frame true and POOF
+        bool isGraphUpdate = true;
+        bool isGraphUpdateEx = false;
+        bool isGraphStreaming = true;
         /// WINDOW STATE
 
         void terminate();

@@ -19,35 +19,37 @@ namespace gfn {
 
         hoveredVertex.clear();
         hoveredEdge.clear();
-        // finds the vertex closest to the mouse cursor and meet the distance requirement
-        float minDistance = FLT_MAX;
-        for (auto& vi : userprops.getVertexPropsList()) {
-            auto v = vi.second;
-            if (!v.enabled.get())
-                continue;
-            ImVec2 center = camera->map(v.position.value);
-            float cursorDistance = distance(ImGui::GetMousePos(), center);
-            if (cursorDistance <= camera->map(v.radius.value) + prefs->graphview_selection_tolerance &&
-                cursorDistance < minDistance) {
-                minDistance = cursorDistance;
-                hoveredVertex = v.uuid.value;
-            }
-        }
-        // finds the edge closest to the mouse cursor and meet the distance requirement
-        if (hoveredVertex.empty()) {
-            minDistance = FLT_MAX;
-            for (auto& ei : userprops.getEdgePropsList()) {
-                auto e = ei.second;
-                if (!e.enabled.get())
+        if (ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) {
+            // finds the vertex closest to the mouse cursor and meet the distance requirement
+            float minDistance = FLT_MAX;
+            for (auto& vi : userprops.getVertexPropsList()) {
+                auto v = vi.second;
+                if (!v.enabled.get())
                     continue;
-                float cursorDistance = distanceToALine(ImGui::GetMousePos(),
-                                                       camera->map(e.startVertexPosition.value),
-                                                       camera->map(e.endVertexPosition.value));
-                if (cursorDistance <=
+                ImVec2 center = camera->map(v.position.value);
+                float cursorDistance = distance(ImGui::GetMousePos(), center);
+                if (cursorDistance <= camera->map(v.radius.value) + prefs->graphview_selection_tolerance &&
+                cursorDistance < minDistance) {
+                    minDistance = cursorDistance;
+                    hoveredVertex = v.uuid.value;
+                }
+            }
+            // finds the edge closest to the mouse cursor and meet the distance requirement
+            if (hoveredVertex.empty()) {
+                minDistance = FLT_MAX;
+                for (auto& ei : userprops.getEdgePropsList()) {
+                    auto e = ei.second;
+                    if (!e.enabled.get())
+                        continue;
+                    float cursorDistance = distanceToALine(ImGui::GetMousePos(),
+                                                           camera->map(e.startVertexPosition.value),
+                                                           camera->map(e.endVertexPosition.value));
+                    if (cursorDistance <=
                     camera->map(e.thickness.value) / 2.0f + prefs->graphview_selection_tolerance &&
                     cursorDistance < minDistance) {
-                    minDistance = cursorDistance;
-                    hoveredEdge = e.edgeUuid.value;
+                        minDistance = cursorDistance;
+                        hoveredEdge = e.edgeUuid.value;
+                    }
                 }
             }
         }
@@ -78,7 +80,7 @@ namespace gfn {
         if (camera->_canPan && !down(Actions::CAMERA_PAN))
             camera->_canPan = false;
 
-        if ((ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
+        if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem) &&
              press(Actions::ZOOM_IN)) {
             camera->_canZoomIn = true;
             camera->_zoomInVelocity = velocity(Actions::ZOOM_IN);
@@ -86,7 +88,7 @@ namespace gfn {
         if (camera->_canZoomIn && !down(Actions::ZOOM_IN))
             camera->_canZoomIn = false;
 
-        if ((ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
+        if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem) &&
              press(Actions::ZOOM_OUT)) {
             camera->_canZoomOut = true;
             camera->_zoomOutVelocity = velocity(Actions::ZOOM_OUT);
@@ -245,7 +247,7 @@ namespace gfn {
         // click to remove all selection and select one item
         // CRITERIA: when unshifted and clicking on a deselected vertex, mouse click selects it. (clicking on a selected vertex moves it)
         //           *dragging a vertex to create an edge DOES select the vertex
-        if ((ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
+        if (ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem) &&
             (press(ADD_SELECT_SINGLE_VERTEX)) ||
             press(SUBTRACT_SELECT_SINGLE_VERTEX) ||
             press(INV_SELECT_SINGLE_VERTEX) ||

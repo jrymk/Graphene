@@ -46,8 +46,6 @@ namespace gfn {
 
             isFocused = ImGui::IsWindowFocused();
 
-            static bool isGraphUpdate = true;
-            static bool isGraphStreaming = true;
             if (ImGui::IsWindowFocused()) {
                 if ((hk->press(TOGGLE_GRAPH_UPDATE) || hk->press(PAUSE_GRAPH_UPDATE)) && isGraphUpdate) {
                     core.terminateBackground();
@@ -56,10 +54,18 @@ namespace gfn {
                     core.startBackground();
                     isGraphUpdate = true;
                 }
-                if ((hk->press(TOGGLE_GRAPH_STREAMING) || hk->press(PAUSE_GRAPH_STREAMING)) && isGraphStreaming)
-                    isGraphStreaming = false;
-                else if ((hk->press(TOGGLE_GRAPH_STREAMING) || hk->release(PAUSE_GRAPH_STREAMING)) && !isGraphStreaming)
-                    isGraphStreaming = true;
+            }
+            if ((hk->press(TOGGLE_GRAPH_STREAMING) || hk->press(PAUSE_GRAPH_STREAMING)) && isGraphStreaming)
+                isGraphStreaming = false;
+            else if ((hk->press(TOGGLE_GRAPH_STREAMING) || hk->release(PAUSE_GRAPH_STREAMING)) && !isGraphStreaming)
+                isGraphStreaming = true;
+
+            if (isGraphUpdateEx) {
+                if (!isGraphUpdate)
+                    core.terminateBackground();
+                else
+                    core.startBackground();
+                isGraphUpdateEx = false;
             }
             if (isGraphStreaming)
                 itf->graph.readDone();

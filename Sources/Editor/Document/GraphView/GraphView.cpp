@@ -31,44 +31,101 @@ namespace gfn {
         camera.update();
         selection.updateSelection();
 
+        /*if (!selection.mouseClickVertex[ImGuiMouseButton_Left].empty() &&
+            selection.vertexSelection.empty() && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+            auto uProps = itf->graph.getRead()->props.getVertexProps(
+                    selection.mouseClickVertex[ImGuiMouseButton_Left]);
+
+        }*/
+
+        if (!selection.vertexSelection.empty()) {
+            for (auto& v: selection.vertexSelection) {
+                auto props = itf->graph.getRead()->props.getVertexProps(v);
+                if (props && props->enabled.get()) {
+                    ImGui::GetWindowDrawList()->AddCircleFilled(
+                            camera.map(props->position.value), camera.map(props->radius.value + prefs->glow_size),
+                            IM_COL32(0, 135, 255, 255),
+                            0);
+                }
+            }
+        }
+
+        if (!selection.edgeSelection.empty()) {
+            for (auto& e : selection.edgeSelection) {
+                auto edgeProps = itf->graph.getRead()->props.getEdgeProps(e);
+                if (edgeProps) {
+                    auto uProps = itf->graph.getRead()->props.getVertexProps(edgeProps->startVertexUuid.value);
+                    auto vProps = itf->graph.getRead()->props.getVertexProps(edgeProps->endVertexUuid.value);
+                    if (uProps && vProps && edgeProps->enabled.get())
+                        ImGui::GetWindowDrawList()->AddLine(camera.map(uProps->position.value), camera.map(vProps->position.value),
+                                                            IM_COL32(0, 135, 255, 255),
+                                                            camera.map(edgeProps->thickness.value + prefs->glow_size * 2.0));
+                }
+            }
+        }
+
+        if (!selection.hoveredVertex.empty()) {
+            auto props = itf->graph.getRead()->props.getVertexProps(selection.hoveredVertex);
+            ImGui::GetWindowDrawList()->AddCircleFilled(camera.map(props->position.value), camera.map(props->radius.value + prefs->glow_size),
+                                                        IM_COL32(0, 255, 255, 100), 0);
+        } else if (!selection.hoveredEdge.empty()) {
+            auto edgeProps = itf->graph.getRead()->props.getEdgeProps(selection.hoveredEdge);
+            auto uProps = itf->graph.getRead()->props.getVertexProps(edgeProps->startVertexUuid.value);
+            auto vProps = itf->graph.getRead()->props.getVertexProps(edgeProps->endVertexUuid.value);
+            ImGui::GetWindowDrawList()->AddLine(camera.map(uProps->position.value), camera.map(vProps->position.value),
+                                                IM_COL32(0, 255, 255, 100),
+                                                camera.map(edgeProps->thickness.value + prefs->glow_size * 2.0));
+        }
+
+        renderer.drawEdges(gfx);
+        renderer.drawVertices(gfx);
+
+
         /// ADD VERTEX PREVIEW
         if ((ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
-            selection.down(Actions::ADD_VERTEX_PREVIEW)) {
-            ImGui::GetWindowDrawList()->AddCircleFilled(ImGui::GetMousePos(),
-                                                        camera.map(0.5f + prefs->glow_size), /// TODO
-                                                        IM_COL32(255, 0, 255, 100), 0);
-            ImGui::SetMouseCursor(ImGuiMouseCursor_None);
+        selection.down(Actions::ADD_VERTEX_PREVIEW) && !selection.down(Actions::ADD_VERTEX)) {
+            ImVec2 offset(10.0f, -10.0f);
+            ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(ImGui::GetMousePos().x + offset.x, ImGui::GetMousePos().y + offset.y),
+                                                        10.0f, IM_COL32(255, 255, 255, 200), 0);
+            std::string label = !selection.hoveredEdge.empty() ? "\ue260" : "\ue3ba";
+            auto labelBB = ImGui::CalcTextSize(label.c_str(), nullptr, false, -1);
+            ImGui::GetWindowDrawList()->AddText(
+                    ImVec2(ImGui::GetMousePos().x + offset.x - labelBB.x / 2.0f, ImGui::GetMousePos().y + offset.y - labelBB.y / 2.0f),
+                    IM_COL32(0, 0, 0, 255), label.c_str());
         }
 
         /// ADD VERTEX
         if ((ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
-            selection.press(Actions::ADD_VERTEX)) {
+        selection.press(Actions::ADD_VERTEX)) {
             if (selection.hoveredVertex.empty() && !selection.hoveredEdge.empty()) {
                 auto eProp = itf->graph.getRead()->props.getEdgeProps(selection.hoveredEdge);
                 execute("rmedge -u=" + eProp->startVertexUuid.value + " -v=" + eProp->endVertexUuid.value);
                 auto vId = gfn::createUuid();
                 execute("mkvertex -uuid=" + vId);
                 execute("setvertexprops -uuid=" + vId +
-                        " -key=position -value=(" + std::to_string(selection.mouseCoord.x)
-                        + "," + std::to_string(selection.mouseCoord.y));
+                " -key=position -value=(" + std::to_string(selection.mouseCoord.x)
+                + "," + std::to_string(selection.mouseCoord.y));
                 execute("mkedge -u=" + vId + " -v=" + eProp->startVertexUuid.value);
                 execute("mkedge -u=" + vId + " -v=" + eProp->endVertexUuid.value);
             } else if (selection.hoveredVertex.empty()) {
                 auto vId = gfn::createUuid();
                 execute("mkvertex -uuid=" + vId);
                 execute("setvertexprops -uuid=" + vId +
-                        " -key=position -value=\"(" + std::to_string(selection.mouseCoord.x)
-                        + ", " + std::to_string(selection.mouseCoord.y) + "\")");
+                " -key=position -value=\"(" + std::to_string(selection.mouseCoord.x)
+                + ", " + std::to_string(selection.mouseCoord.y) + "\")");
             }
         }
 
         /// ADD EDGE PREVIEW
         if ((ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
-            selection.down(Actions::ADD_EDGE_PREVIEW)) {
-            ImGui::GetWindowDrawList()->AddCircleFilled(ImGui::GetMousePos(),
-                                                        camera.map(0.5f + prefs->glow_size), /// TODO
-                                                        IM_COL32(255, 255, 0, 100), 0);
-            ImGui::SetMouseCursor(ImGuiMouseCursor_None);
+        selection.down(Actions::ADD_EDGE_PREVIEW) && !selection.down(Actions::ADD_EDGE)) {
+            ImVec2 offset(10.0f, -10.0f);
+            ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(ImGui::GetMousePos().x + offset.x, ImGui::GetMousePos().y + offset.y),
+                                                        10.0f, IM_COL32(255, 255, 255, 150), 0);
+            auto labelBB = ImGui::CalcTextSize("\ue178", nullptr, false, -1);
+            ImGui::GetWindowDrawList()->AddText(
+                    ImVec2(ImGui::GetMousePos().x + offset.x - labelBB.x / 2.0f, ImGui::GetMousePos().y + offset.y - labelBB.y / 2.0f),
+                    IM_COL32(0, 0, 0, 255), "\ue178");
         }
 
         /// ADD EDGE
@@ -78,7 +135,7 @@ namespace gfn {
             static gfn::Uuid addEdgeVertex;
 
             if ((ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
-                selection.press(Actions::ADD_EDGE)) {
+            selection.press(Actions::ADD_EDGE)) {
                 addingEdge = true;
                 onAddEdgeState = camera.hoverState;
                 addEdgeVertex.clear();
@@ -111,7 +168,7 @@ namespace gfn {
             static gfn::Uuid moveVertex;
 
             if ((ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
-                selection.press(Actions::MOVE_VERTEX)) {
+            selection.press(Actions::MOVE_VERTEX)) {
                 if (!selection.hoveredVertex.empty()) {
                     movingVertex = true;
                     onMoveVertexState = camera.hoverState;
@@ -121,7 +178,7 @@ namespace gfn {
             }
             if (movingVertex) {
                 execute("setvertexprops -uuid=" + moveVertex + " -key=position -value=+(" +
-                        std::to_string(selection.mouseDelta.x) + "," + std::to_string(selection.mouseDelta.y) + ")");
+                std::to_string(selection.mouseDelta.x) + "," + std::to_string(selection.mouseDelta.y) + ")");
             }
             if (movingVertex && !hk->down(Actions::MOVE_VERTEX, onMoveVertexState)) {
                 movingVertex = false;
@@ -135,7 +192,7 @@ namespace gfn {
             static int onMoveSelectionState = 0;
 
             if ((ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
-                selection.press(Actions::MOVE_SELECTION)) {
+            selection.press(Actions::MOVE_SELECTION)) {
                 movingSelection = true;
                 onMoveSelectionState = camera.hoverState;
                 for (auto& v : selection.vertexSelection)
@@ -144,7 +201,7 @@ namespace gfn {
             if (movingSelection) {
                 for (auto& v : selection.vertexSelection)
                     execute("setvertexprops -uuid=" + v + " -key=position -value=+(" +
-                            std::to_string(selection.mouseDelta.x) + "," + std::to_string(selection.mouseDelta.y) + ")");
+                    std::to_string(selection.mouseDelta.x) + "," + std::to_string(selection.mouseDelta.y) + ")");
             }
             if (movingSelection && !hk->down(Actions::MOVE_SELECTION, onMoveSelectionState)) {
                 movingSelection = false;
@@ -297,62 +354,10 @@ namespace gfn {
                 /// paste will be done in core, send the json to core through commands
                 std::string clipb(ImGui::GetClipboardText());
                 if (clipb.substr(0, 22) == "<GRAPHENE_PASTE_BEGIN>"
-                    && clipb.substr(clipb.size() - 20, 20) == "<GRAPHENE_PASTE_END>")
+                && clipb.substr(clipb.size() - 20, 20) == "<GRAPHENE_PASTE_END>")
                     execute("paste " + clipb.substr(22, clipb.size() - 42));
             }
         }
-
-
-
-        /*if (!selection.mouseClickVertex[ImGuiMouseButton_Left].empty() &&
-            selection.vertexSelection.empty() && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
-            auto uProps = itf->graph.getRead()->props.getVertexProps(
-                    selection.mouseClickVertex[ImGuiMouseButton_Left]);
-
-        }*/
-
-        if (!selection.vertexSelection.empty()) {
-            for (auto& v: selection.vertexSelection) {
-                auto props = itf->graph.getRead()->props.getVertexProps(v);
-                if (props && props->enabled.get()) {
-                    ImGui::GetWindowDrawList()->AddCircleFilled(
-                            camera.map(props->position.value), camera.map(props->radius.value + prefs->glow_size),
-                            IM_COL32(0, 135, 255, 255),
-                            0);
-                }
-            }
-        }
-
-        if (!selection.edgeSelection.empty()) {
-            for (auto& e : selection.edgeSelection) {
-                auto edgeProps = itf->graph.getRead()->props.getEdgeProps(e);
-                if (edgeProps) {
-                    auto uProps = itf->graph.getRead()->props.getVertexProps(edgeProps->startVertexUuid.value);
-                    auto vProps = itf->graph.getRead()->props.getVertexProps(edgeProps->endVertexUuid.value);
-                    if (uProps && vProps && edgeProps->enabled.get())
-                        ImGui::GetWindowDrawList()->AddLine(camera.map(uProps->position.value), camera.map(vProps->position.value),
-                                                            IM_COL32(0, 135, 255, 255),
-                                                            camera.map(edgeProps->thickness.value + prefs->glow_size * 2.0));
-                }
-            }
-        }
-
-        if (!selection.hoveredVertex.empty()) {
-            auto props = itf->graph.getRead()->props.getVertexProps(selection.hoveredVertex);
-            ImGui::GetWindowDrawList()->AddCircleFilled(camera.map(props->position.value), camera.map(props->radius.value + prefs->glow_size),
-                                                        IM_COL32(0, 255, 255, 100), 0);
-        } else if (!selection.hoveredEdge.empty()) {
-            auto edgeProps = itf->graph.getRead()->props.getEdgeProps(selection.hoveredEdge);
-            auto uProps = itf->graph.getRead()->props.getVertexProps(edgeProps->startVertexUuid.value);
-            auto vProps = itf->graph.getRead()->props.getVertexProps(edgeProps->endVertexUuid.value);
-            ImGui::GetWindowDrawList()->AddLine(camera.map(uProps->position.value), camera.map(vProps->position.value),
-                                                IM_COL32(0, 255, 255, 100),
-                                                camera.map(edgeProps->thickness.value + prefs->glow_size * 2.0));
-        }
-
-        renderer.drawEdges();
-        renderer.drawVertices(gfx);
-
     }
 
     void GraphView::execute(const std::string& cmd) { commands.push(cmd); }
