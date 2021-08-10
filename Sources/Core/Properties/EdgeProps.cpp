@@ -13,7 +13,7 @@ namespace gfn {
             endVertexUuid("endVertexUuid"),
             endVertexPosition("endVertexPosition"),
             edgeFillColor("edgeFillColor", IM_COL32(0, 0, 0, 255)),
-            thickness("thickness", 0.3) {}
+            thickness("thickness", 0.06) {}
 
     void EdgeProps::serialize(binn* object) {
         binn_object_set_str(object, edgeUuid.key.c_str(), edgeUuid.value.data());
@@ -54,8 +54,8 @@ namespace gfn {
 
     void EdgeProps::serializeJson(nlohmann::json& j) {
         edgeUuid.serialize(j);
-        label.serialize(j);
         enabled.serialize(j);
+        label.serialize(j);
         position.serialize(j);
         startVertexUuid.serialize(j);
         startVertexPosition.serialize(j);

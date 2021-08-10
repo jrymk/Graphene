@@ -1,6 +1,5 @@
 #include <string>
 #include <Editor/Editor.h>
-#include <Tracy.hpp>
 
 int main(int argc, char* argv[]) {
     bool enableEditorGui = true;

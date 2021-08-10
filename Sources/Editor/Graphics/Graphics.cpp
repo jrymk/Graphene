@@ -57,8 +57,8 @@ namespace gfn {
         ImGui::GetIO().Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_MIR, 18.0f, &config, &materialRanges[0]);
 
         config.MergeMode = false;
-        smallDefault = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_BR, 14.0f, &config, ImGui::GetIO().Fonts->GetGlyphRangesDefault());
-        bigFont = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_BR, 128.0f, &config, ImGui::GetIO().Fonts->GetGlyphRangesDefault());
+        fontSmall = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_BR, 14.0f, &config, ImGui::GetIO().Fonts->GetGlyphRangesDefault());
+        fontScalable = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_BR, 256.0f, &config, ImGui::GetIO().Fonts->GetGlyphRangesDefault());
 
         ImGui::GetIO().IniFilename = "Graphene.ini";
         ImGui::GetIO().IniSavingRate = 1;

@@ -3,6 +3,7 @@
 
 #include <Core/Core/Core.h>
 #include <Editor/Document/GraphView/GraphView.h>
+#include <Editor/Graphics/Graphics.h>
 #include <Core/Objects/Uuid.h>
 
 namespace gfn {
@@ -24,7 +25,7 @@ namespace gfn {
         gfn::GraphView graphview; // handles graph rendering and interaction
 
         // obtain preferences from Editor
-        Document(gfn::Uuid docId, gfn::HKHandler* hk , gfn::Preferences* prefs);
+        Document(gfn::Uuid docId, gfn::HKHandler* hk, gfn::Preferences* prefs, gfn::Graphics* gfx);
 
         void setFile(const std::string& _file, bool doNotSetDocName = false);
 

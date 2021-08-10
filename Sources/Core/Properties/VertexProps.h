@@ -9,10 +9,14 @@ namespace gfn {
     struct VertexProps {
         gfn::serializable::Uuid uuid;
         gfn::serializable::String label;
+        gfn::serializable::Double labelSize;
+        gfn::serializable::Color labelColor;
         gfn::serializable::Bool enabled;
         gfn::serializable::Vec2f position;
-        gfn::serializable::Color vertexFillColor;
+        gfn::serializable::Color fillColor;
         gfn::serializable::Double radius;
+        gfn::serializable::Color outlineColor;
+        gfn::serializable::Double outlineThickness;
         gfn::serializable::Vec2f force;
         gfn::serializable::Bool pauseUpdate;
         gfn::serializable::Uuid component;

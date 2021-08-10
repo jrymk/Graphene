@@ -20,6 +20,11 @@ namespace gfn {
         ZOOM_IN = 105,
         ZOOM_OUT = 106,
 
+        PAUSE_GRAPH_UPDATE = 120,
+        TOGGLE_GRAPH_UPDATE = 121,
+        PAUSE_GRAPH_STREAMING = 122,
+        TOGGLE_GRAPH_STREAMING = 123,
+
         /// SELECTION
         ADD_SELECT_SINGLE_VERTEX = 150,//
         ADD_SELECT_SINGLE_EDGE = 151,//

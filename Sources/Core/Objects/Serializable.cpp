@@ -30,7 +30,9 @@ namespace gfn::serializable {
     }
 
     void Uuid::deserialize(nlohmann::json& j) {
-        value = j[key].get<std::string>();
+        if (j.find(key) == j.end())
+            return;
+        value = j.find(key)->get<std::string>();
     }
 
     String::String(std::string key) : key(std::move(key)), value() {}
@@ -54,7 +56,10 @@ namespace gfn::serializable {
     }
 
     void String::deserialize(nlohmann::json& j) {
-        value = j[key].get<std::string>();
+        if (j.find(key) == j.end())
+            return;
+        std::cerr << "serialized " << key << "\n";
+        value = j.find(key)->get<std::string>();
     }
 
 
@@ -88,7 +93,9 @@ namespace gfn::serializable {
     }
 
     void Bool::deserialize(nlohmann::json& j) {
-        value = j[key].get<bool>();
+        if (j.find(key) == j.end())
+            return;
+        value = j.find(key)->get<bool>();
     }
 
 
@@ -128,7 +135,9 @@ namespace gfn::serializable {
     }
 
     void Int::deserialize(nlohmann::json& j) {
-        value = j[key].get<int>();
+        if (j.find(key) == j.end())
+            return;
+        value = j.find(key)->get<int>();
     }
 
 
@@ -168,7 +177,9 @@ namespace gfn::serializable {
     }
 
     void Double::deserialize(nlohmann::json& j) {
-        value = j[key].get<double>();
+        if (j.find(key) == j.end())
+            return;
+        value = j.find(key)->get<double>();
     }
 
 
@@ -231,8 +242,14 @@ namespace gfn::serializable {
     }
 
     void Vec2f::deserialize(nlohmann::json& j) {
-        value.x = j[key]["x"].get<double>();
-        value.y = j[key]["y"].get<double>();
+        if (j.find(key) == j.end())
+            return;
+        if (j.find(key)->find("x") == j.find(key)->end())
+            return;
+        if (j.find(key)->find("y") == j.find(key)->end())
+            return;
+        value.x = j.find(key)->find("x")->get<double>();
+        value.y = j.find(key)->find("y")->get<double>();
     }
 
 
@@ -405,8 +422,10 @@ namespace gfn::serializable {
     }
 
     void Color::deserialize(nlohmann::json& j) {
+        if (j.find(key) == j.end())
+            return;
         std::stringstream ss;
-        ss << std::hex << j[key].get<std::string>();
+        ss << std::hex << j.find(key)->get<std::string>();
         ss >> value;
     }
 }

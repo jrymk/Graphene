@@ -5,19 +5,19 @@ namespace gfn {
     int Document::untitledCounter = 1;
 
 
-    Document::Document(gfn::Uuid docId, gfn::HKHandler* hk, gfn::Preferences* prefs) :
+    Document::Document(gfn::Uuid docId, gfn::HKHandler* hk, gfn::Preferences* prefs, gfn::Graphics* gfx) :
             core(),
             itf(core.getInterface()),
             docId(std::move(docId)),
             hk(hk),
             prefs(prefs),
-            graphview(docId, itf, hk, prefs) {
+            graphview(docId, itf, hk, prefs, gfx) {
         graphview.hk = hk;
         docName = "Untitled (" + std::to_string(untitledCounter) + ")";
         untitledCounter++;
         // start core background update loop
         core.startBackground();
-        execute("echo -off");
+        //execute("echo -off");
     }
 
     void Document::setFile(const std::string& _file, bool doNotSetDocName) {
@@ -38,6 +38,7 @@ namespace gfn {
             ImGui::Begin((docName + "###" + docId).c_str(), &isDocumentWindowOpen, ImGuiWindowFlags_UnsavedDocument);
 
             graphview.update();
+
             while (!graphview.commands.empty()) {
                 execute(graphview.commands.front());
                 graphview.commands.pop();
@@ -45,7 +46,24 @@ namespace gfn {
 
             isFocused = ImGui::IsWindowFocused();
 
-            itf->graph.readDone();
+            static bool isGraphUpdate = true;
+            static bool isGraphStreaming = true;
+            if (ImGui::IsWindowFocused()) {
+                if ((hk->press(TOGGLE_GRAPH_UPDATE) || hk->press(PAUSE_GRAPH_UPDATE)) && isGraphUpdate) {
+                    core.terminateBackground();
+                    isGraphUpdate = false;
+                } else if ((hk->press(TOGGLE_GRAPH_UPDATE) || hk->release(PAUSE_GRAPH_UPDATE)) && !isGraphUpdate) {
+                    core.startBackground();
+                    isGraphUpdate = true;
+                }
+                if ((hk->press(TOGGLE_GRAPH_STREAMING) || hk->press(PAUSE_GRAPH_STREAMING)) && isGraphStreaming)
+                    isGraphStreaming = false;
+                else if ((hk->press(TOGGLE_GRAPH_STREAMING) || hk->release(PAUSE_GRAPH_STREAMING)) && !isGraphStreaming)
+                    isGraphStreaming = true;
+            }
+            if (isGraphStreaming)
+                itf->graph.readDone();
+
             if (itf->commands.wantWrite())
                 itf->commands.writeDone();
 

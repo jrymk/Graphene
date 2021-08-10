@@ -72,19 +72,22 @@ namespace gfn {
             camera->hoverState = COND_SEL_EDGE;
 
         // we all rely on camera, camera itself has no access to the hot key functions
-        if (ImGui::IsItemHovered() && press(Actions::CAMERA_PAN))
+        if ((ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
+             press(Actions::CAMERA_PAN))
             camera->_canPan = true;
         if (camera->_canPan && !down(Actions::CAMERA_PAN))
             camera->_canPan = false;
 
-        if (ImGui::IsItemHovered() && press(Actions::ZOOM_IN)) {
+        if ((ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
+             press(Actions::ZOOM_IN)) {
             camera->_canZoomIn = true;
             camera->_zoomInVelocity = velocity(Actions::ZOOM_IN);
         }
         if (camera->_canZoomIn && !down(Actions::ZOOM_IN))
             camera->_canZoomIn = false;
 
-        if (ImGui::IsItemHovered() && press(Actions::ZOOM_OUT)) {
+        if ((ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
+             press(Actions::ZOOM_OUT)) {
             camera->_canZoomOut = true;
             camera->_zoomOutVelocity = velocity(Actions::ZOOM_OUT);
         }
@@ -106,12 +109,12 @@ namespace gfn {
     void Selection::updateClearSelection() {
         ZoneScoped
 
-        if (ImGui::IsItemHovered()
-            && press(Actions::SUBTRACT_SELECT_ALL_VERTEX)) {
+        if ((ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
+            press(Actions::SUBTRACT_SELECT_ALL_VERTEX)) {
             vertexSelection.clear();
         }
-        if (ImGui::IsItemHovered()
-            && press(Actions::SUBTRACT_SELECT_ALL_EDGE)) {
+        if ((ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
+            press(Actions::SUBTRACT_SELECT_ALL_EDGE)) {
             edgeSelection.clear();
         }
     }
@@ -127,8 +130,8 @@ namespace gfn {
         }
 
         /// LASSO BEGIN
-        if (!lassoSelecting && ImGui::IsItemHovered()
-            && (press(Actions::ADD_SELECT_LASSO_VERTEX) ||
+        if (!lassoSelecting && (ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
+             (press(Actions::ADD_SELECT_LASSO_VERTEX) ||
                 press(Actions::SUBTRACT_SELECT_LASSO_VERTEX) ||
                 press(Actions::INV_SELECT_LASSO_VERTEX) ||
                 press(Actions::ADD_SELECT_LASSO_EDGE) ||
@@ -202,8 +205,8 @@ namespace gfn {
             for (auto& e : itf->graph.getRead()->props.getEdgePropsList()) {
                 // checks if edge's both ends are in selection
                 if (!e.second.enabled.get() ||
-                vertexSelection.find(e.second.startVertexUuid.get()) == vertexSelection.end() ||
-                vertexSelection.find(e.second.endVertexUuid.get()) == vertexSelection.end())
+                    vertexSelection.find(e.second.startVertexUuid.get()) == vertexSelection.end() ||
+                    vertexSelection.find(e.second.endVertexUuid.get()) == vertexSelection.end())
                     continue;
                 if (edgeSelection.find(e.first) == edgeSelection.end()) {
                     // not in selection
@@ -242,8 +245,8 @@ namespace gfn {
         // click to remove all selection and select one item
         // CRITERIA: when unshifted and clicking on a deselected vertex, mouse click selects it. (clicking on a selected vertex moves it)
         //           *dragging a vertex to create an edge DOES select the vertex
-        if (ImGui::IsItemHovered()
-            && (press(ADD_SELECT_SINGLE_VERTEX)) ||
+        if ((ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
+            (press(ADD_SELECT_SINGLE_VERTEX)) ||
             press(SUBTRACT_SELECT_SINGLE_VERTEX) ||
             press(INV_SELECT_SINGLE_VERTEX) ||
             press(ADD_SELECT_SINGLE_EDGE) ||

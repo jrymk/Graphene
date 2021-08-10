@@ -4,11 +4,12 @@
 #include <Tracy.hpp>
 
 namespace gfn {
-    GraphView::GraphView(gfn::Uuid docId, gfn::Interface* itf, gfn::HKHandler* hk, gfn::Preferences* prefs) :
+    GraphView::GraphView(gfn::Uuid docId, gfn::Interface* itf, gfn::HKHandler* hk, gfn::Preferences* prefs, gfn::Graphics* gfx) :
             docId(std::move(docId)),
             itf(itf),
             hk(hk),
             prefs(prefs),
+            gfx(gfx),
             camera(hk, prefs),
             selection(itf, &camera, hk, prefs),
             renderer(itf, &camera, &selection) {
@@ -31,7 +32,8 @@ namespace gfn {
         selection.updateSelection();
 
         /// ADD VERTEX PREVIEW
-        if (ImGui::IsItemHovered() && selection.down(Actions::ADD_VERTEX_PREVIEW)) {
+        if ((ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
+            selection.down(Actions::ADD_VERTEX_PREVIEW)) {
             ImGui::GetWindowDrawList()->AddCircleFilled(ImGui::GetMousePos(),
                                                         camera.map(0.5f + prefs->glow_size), /// TODO
                                                         IM_COL32(255, 0, 255, 100), 0);
@@ -39,7 +41,8 @@ namespace gfn {
         }
 
         /// ADD VERTEX
-        if (ImGui::IsItemHovered() && selection.press(Actions::ADD_VERTEX)) {
+        if ((ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
+            selection.press(Actions::ADD_VERTEX)) {
             if (selection.hoveredVertex.empty() && !selection.hoveredEdge.empty()) {
                 auto eProp = itf->graph.getRead()->props.getEdgeProps(selection.hoveredEdge);
                 execute("rmedge -u=" + eProp->startVertexUuid.value + " -v=" + eProp->endVertexUuid.value);
@@ -60,7 +63,8 @@ namespace gfn {
         }
 
         /// ADD EDGE PREVIEW
-        if (ImGui::IsItemHovered() && selection.down(Actions::ADD_EDGE_PREVIEW)) {
+        if ((ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
+            selection.down(Actions::ADD_EDGE_PREVIEW)) {
             ImGui::GetWindowDrawList()->AddCircleFilled(ImGui::GetMousePos(),
                                                         camera.map(0.5f + prefs->glow_size), /// TODO
                                                         IM_COL32(255, 255, 0, 100), 0);
@@ -73,7 +77,8 @@ namespace gfn {
             static int onAddEdgeState = 0;
             static gfn::Uuid addEdgeVertex;
 
-            if (ImGui::IsItemHovered() && selection.press(Actions::ADD_EDGE)) {
+            if ((ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
+                selection.press(Actions::ADD_EDGE)) {
                 addingEdge = true;
                 onAddEdgeState = camera.hoverState;
                 addEdgeVertex.clear();
@@ -105,7 +110,8 @@ namespace gfn {
             static int onMoveVertexState = 0;
             static gfn::Uuid moveVertex;
 
-            if (ImGui::IsItemHovered() && selection.press(Actions::MOVE_VERTEX)) {
+            if ((ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
+                selection.press(Actions::MOVE_VERTEX)) {
                 if (!selection.hoveredVertex.empty()) {
                     movingVertex = true;
                     onMoveVertexState = camera.hoverState;
@@ -128,7 +134,8 @@ namespace gfn {
             static bool movingSelection = false;
             static int onMoveSelectionState = 0;
 
-            if (selection.press(Actions::MOVE_SELECTION)) {
+            if ((ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
+                selection.press(Actions::MOVE_SELECTION)) {
                 movingSelection = true;
                 onMoveSelectionState = camera.hoverState;
                 for (auto& v : selection.vertexSelection)
@@ -212,7 +219,7 @@ namespace gfn {
                     nlohmann::json eProp;
                     findE->serializeJson(eProp);
                     edgeProps.push_back({std::to_string(eId), eProp});
-                    vEntry[findU->second].push_back({std::to_string(findV->second), std::to_string(eId)});
+                    vEntry[findU->second].push_back({std::to_string(eId), std::to_string(findV->second)});
                     eId++;
                 }
                 clipJ["vertex props"] = vertexProps;
@@ -220,7 +227,8 @@ namespace gfn {
                 for (int i = 0; i < vEntry.size(); i++)
                     clipJ["structure"].push_back({std::to_string(i), vEntry[i]});
 
-                ImGui::SetClipboardText(clipJ.dump(-1, ' ', true).c_str());
+                std::string jDump = clipJ.dump(-1, ' ', true);
+                ImGui::SetClipboardText(("<GRAPHENE_PASTE_BEGIN>" + jDump + "<GRAPHENE_PASTE_END>").c_str());
                 std::cout << "Copied to clipboard\n";
             }
         }
@@ -260,7 +268,7 @@ namespace gfn {
                     nlohmann::json eProp;
                     findE->serializeJson(eProp);
                     edgeProps.push_back({std::to_string(eId), eProp});
-                    vEntry[findU->second].push_back({std::to_string(findV->second), std::to_string(eId)});
+                    vEntry[findU->second].push_back({std::to_string(eId), std::to_string(findV->second)});
                     eId++;
                 }
                 clipJ["vertex props"] = vertexProps;
@@ -268,7 +276,8 @@ namespace gfn {
                 for (int i = 0; i < vEntry.size(); i++)
                     clipJ["structure"].push_back({std::to_string(i), vEntry[i]});
 
-                ImGui::SetClipboardText(clipJ.dump(-1, ' ', true).c_str());
+                std::string jDump = clipJ.dump(-1, ' ', true);
+                ImGui::SetClipboardText(("<GRAPHENE_PASTE_BEGIN>" + jDump + "<GRAPHENE_PASTE_END>").c_str());
                 std::cout << "Copied to clipboard\n";
 
                 if (!selection.edgeSelection.empty()) {
@@ -286,7 +295,10 @@ namespace gfn {
         {
             if (ImGui::IsWindowFocused() && selection.press(Actions::PASTE_SELECTION)) {
                 /// paste will be done in core, send the json to core through commands
-                /// TODO
+                std::string clipb(ImGui::GetClipboardText());
+                if (clipb.substr(0, 22) == "<GRAPHENE_PASTE_BEGIN>"
+                    && clipb.substr(clipb.size() - 20, 20) == "<GRAPHENE_PASTE_END>")
+                    execute("paste " + clipb.substr(22, clipb.size() - 42));
             }
         }
 
@@ -339,7 +351,7 @@ namespace gfn {
         }
 
         renderer.drawEdges();
-        renderer.drawVertices();
+        renderer.drawVertices(gfx);
 
     }
 

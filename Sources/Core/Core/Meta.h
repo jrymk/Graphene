@@ -2,13 +2,13 @@
 #define META_H
 
 #define BUILD_MAJOR 0
-#define BUILD_MIDDLE 2
-#define BUILD_MINOR 4
+#define BUILD_MINOR 2
+#define BUILD_PATCH 5
 
 const char buildVersion[] = {
         'G', 'r', 'a', 'p', 'h', 'e', 'n', 'e', ' ',
         '[', 'V', 'e', 'r', 's', 'i', 'o', 'n', ':', ' ',
-        '0' + BUILD_MAJOR, '.', '0' + BUILD_MIDDLE, '.', '0' + BUILD_MINOR, ' ',
+        '0' + BUILD_MAJOR, '.', '0' + BUILD_MINOR, '.', '0' + BUILD_PATCH, ' ',
         __DATE__[0], __DATE__[1], __DATE__[2], __DATE__[3],
         (__DATE__[4] == ' ' ? '0' : __DATE__[4]), __DATE__[5], __DATE__[6], __DATE__[7],
         __DATE__[8], __DATE__[9], __DATE__[10],
@@ -24,5 +24,7 @@ const char buildVersion[] = {
 // added file hotkeys
 // fix octet nonsense
 // Updated selection, refreshed properties
+// fixed multiple selection problems with window focusing
+// added pause
 
 #endif

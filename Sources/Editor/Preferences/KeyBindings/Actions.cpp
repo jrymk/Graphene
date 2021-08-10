@@ -66,9 +66,9 @@ namespace gfn {
             {"",                                                                 0},
             {"",                                                                 0},
             // 50
-            {"Copy selection",                                                                 0},
-            {"Cut selection",                                                                 0},
-            {"Paste selection",                                                                 0},
+            {"Copy selection",                                                   0},
+            {"Cut selection",                                                    0},
+            {"Paste selection",                                                  0},
             {"",                                                                 0},
             {"",                                                                 0},
             // 55
@@ -152,10 +152,10 @@ namespace gfn {
             {"",                                                                 0},
             {"",                                                                 0},
             // 120
-            {"",                                                                 0},
-            {"",                                                                 0},
-            {"",                                                                 0},
-            {"",                                                                 0},
+            {"Hold to pause graph updates",                                      0},
+            {"Toggle graph updates",                                             0},
+            {"Hold to pause graph streaming",                                    0},
+            {"Toggle graph streaming",                                           0},
             {"",                                                                 0},
             // 125
             {"",                                                                 0},

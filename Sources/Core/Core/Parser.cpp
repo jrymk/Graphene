@@ -1,9 +1,14 @@
-#include "Core.h"
 #include <Tracy.hpp>
+#include "Core.h"
 
 namespace gfn {
     void Core::parse(Args command, gfn::Args& output) {
         ZoneScoped
+
+        /*if (!command.getParamValue("paste").empty()) {
+            std::cerr << "PASTE\n";
+            paste(command.getParamValue("paste"));
+        }*/
 
         std::string cmd = command.getParamValue("command");
         if (cmd.empty()) return;
@@ -53,8 +58,8 @@ namespace gfn {
                 if (output.getParamValue("successful") == "false" || output.getFlag("-error")
                     || output.getFlag("-warning")) {
                     std::cerr << itf.commands.getRead()->buffer.front().getString() << "\n\t" << output.getString() << "\n";
-                } else if (echo > 1)
-                    std::cout << itf.commands.getRead()->buffer.front().getString() << "\n\t" << output.getString() << "\n";
+                } //else if (echo > 1)
+                //std::cout << itf.commands.getRead()->buffer.front().getString() << "\n\t" << output.getString() << "\n";
             }
             itf.commands.getRead()->buffer.pop_front();
         }

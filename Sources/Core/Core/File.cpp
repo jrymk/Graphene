@@ -68,5 +68,54 @@ namespace gfn {
         //    output.newParam("-error", "READ_FILE_FAIL");
         //}
     }
+
+    /*void Core::paste(const std::string& pasteContent) {
+        gfn::Uuid pasteId = gfn::createUuid();
+        nlohmann::json j = nlohmann::json::parse(pasteContent);
+        for (auto& sj : j.items()) {
+            std::cerr << sj.key() << "\n";
+            if (sj.key() == "vertex props") {
+
+                for (auto& vProp : sj.value().items()) {
+                    gfn::Uuid vUuid = gfn::createUuid();
+                    gfn::Args output;
+                    itf.graph.getWrite().addVertex(gfn::Args("mkvertex -uuid=" + vUuid + " -name=" + pasteId + "-v" + vProp.key()), output);
+                    auto vFind = itf.graph.getWrite().props.getVertexPropsList().find(vUuid);
+                    if (vFind == itf.graph.getWrite().props.getVertexPropsList().end()) {
+                        std::cerr << "Paste failed: VERTEX_CREATION_FAILED\n";
+                        return;
+                    }
+                    auto va = vProp.value().find(vProp.key());
+                    vFind->second.deserializeJson(va.value());
+
+                    std::cout << va.value() << "\n";
+                    return;
+                }
+            }
+        }
+        std::cerr << "Paste failed: PARSE_ERROR\n";
+        return;*/
+
+
+    /*for (auto&[u, value] : j["structure"].items()) {
+        for (auto& ve : value.items()) {
+            gfn::Uuid eUuid = gfn::createUuid();
+            gfn::Args output;
+            std::string e = ve.key();
+            std::string v = ve.value();
+            std::string uName = pasteId + "-v" + u;
+            std::string vName = pasteId + "-v" + v;
+            itf.graph.getWrite().addEdge(gfn::Args("mkedge -uuid=" + eUuid + "-e" + e + " -uname=" + uName + " -vname=" + vName), output);
+            auto eFind = itf.graph.getWrite().props.getEdgePropsList().find(eUuid);
+            if (eFind == itf.graph.getWrite().props.getEdgePropsList().end()) {
+                std::cerr << "Paste failed: EDGE_CREATION_FAILED\n";
+                return;
+            }
+            eFind->second.deserializeJson(j["edge props"][e]);
+            eFind->second.startVertexUuid.get() = itf.graph.getWrite().props.convertAccessName(uName);
+            eFind->second.endVertexUuid.get() = itf.graph.getWrite().props.convertAccessName(vName);
+        }
+    }*/
+    //}
 }
 

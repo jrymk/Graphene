@@ -44,6 +44,8 @@ namespace gfn {
         void openFile(Args command, gfn::Args& output);
 
         void saveFile(Args command, gfn::Args& output);
+
+        //void paste(const std::string& pasteContent);
     };
 }
 

@@ -4,6 +4,11 @@ namespace gfn {
     Args::Args() = default;
 
     Args::Args(const std::string& command) {
+        if (command.substr(0, 6) == "paste ") {
+            params.emplace_back("paste", command.substr(6));
+            return;
+        }
+
         params.emplace_back("command", "");
         bool commandState = true;
         bool quotesState = false;

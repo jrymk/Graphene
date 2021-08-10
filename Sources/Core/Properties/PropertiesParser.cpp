@@ -31,12 +31,6 @@ namespace gfn {
             output.newParam("-fix", "Specify key with [-key]");
             return;
         }
-        if (value.empty()) {
-            output.newParam("-uuid", uuid);
-            output.newParam("-error", "VALUE_UNSPECIFIED");
-            output.newParam("-fix", "Specify value with [-value]");
-            return;
-        }
 
         p->set(key, value, output);
     }
@@ -102,12 +96,6 @@ namespace gfn {
             output.newParam("-uuid", uuid);
             output.newParam("-error", "KEY_UNSPECIFIED");
             output.newParam("-fix", "Specify key with [-key]");
-            return;
-        }
-        if (value.empty()) {
-            output.newParam("-uuid", uuid);
-            output.newParam("-error", "VALUE_UNSPECIFIED");
-            output.newParam("-fix", "Specify value with [-value]");
             return;
         }
 
