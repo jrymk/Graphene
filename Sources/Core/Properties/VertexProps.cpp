@@ -44,22 +44,22 @@ namespace gfn {
         binn value;
         char key[256];
         binn_object_foreach(object, key, value) {
-            if (key == uuid.key && value.type == BINN_STRING) uuid.get() = (char*) value.ptr;
-            else if (key == label.key && value.type == BINN_STRING) label.get() = (char*) value.ptr;
-            else if (key == labelSize.key && value.type == BINN_DOUBLE) labelSize.get() = value.vdouble;
-            else if (key == labelColor.key && value.type == BINN_INT32) labelColor.get() = value.vint32;
-            else if (key == enabled.key && value.type == BINN_BOOL) enabled.get() = value.vbool;
-            else if (key == (position.key + ".x") && value.type == BINN_DOUBLE) position.get().x = value.vdouble;
-            else if (key == (position.key + ".y") && value.type == BINN_DOUBLE) position.get().y = value.vdouble;
-            else if (key == fillColor.key && value.type == BINN_INT32) fillColor.get() = value.vint32;
-            else if (key == radius.key && value.type == BINN_DOUBLE) radius.get() = value.vdouble;
-            else if (key == outlineColor.key && value.type == BINN_INT32) outlineColor.get() = value.vint32;
-            else if (key == outlineThickness.key && value.type == BINN_DOUBLE) outlineThickness.get() = value.vdouble;
-            else if (key == (force.key + ".x") && value.type == BINN_DOUBLE) force.get().x = value.vdouble;
-            else if (key == (force.key + ".y") && value.type == BINN_DOUBLE) force.get().y = value.vdouble;
-            else if (key == pauseUpdate.key && value.type == BINN_BOOL) pauseUpdate.get() = value.vbool;
-            else if (key == component.key && value.type == BINN_STRING) component.get() = (char*) value.ptr;
-            else if (key == isComponentRoot.key && value.type == BINN_BOOL) isComponentRoot.get() = value.vbool;
+            if (key == uuid.key && value.type == BINN_STRING) uuid.value = (char*) value.ptr;
+            else if (key == label.key && value.type == BINN_STRING) label.value = (char*) value.ptr;
+            else if (key == labelSize.key && value.type == BINN_DOUBLE) labelSize.value = value.vdouble;
+            else if (key == labelColor.key && value.type == BINN_INT32) labelColor.value = value.vint32;
+            else if (key == enabled.key && value.type == BINN_BOOL) enabled.value = value.vbool;
+            else if (key == (position.key + ".x") && value.type == BINN_DOUBLE) position.value.x = value.vdouble;
+            else if (key == (position.key + ".y") && value.type == BINN_DOUBLE) position.value.y = value.vdouble;
+            else if (key == fillColor.key && value.type == BINN_INT32) fillColor.value = value.vint32;
+            else if (key == radius.key && value.type == BINN_DOUBLE) radius.value = value.vdouble;
+            else if (key == outlineColor.key && value.type == BINN_INT32) outlineColor.value = value.vint32;
+            else if (key == outlineThickness.key && value.type == BINN_DOUBLE) outlineThickness.value = value.vdouble;
+            else if (key == (force.key + ".x") && value.type == BINN_DOUBLE) force.value.x = value.vdouble;
+            else if (key == (force.key + ".y") && value.type == BINN_DOUBLE) force.value.y = value.vdouble;
+            else if (key == pauseUpdate.key && value.type == BINN_BOOL) pauseUpdate.value = value.vbool;
+            else if (key == component.key && value.type == BINN_STRING) component.value = (char*) value.ptr;
+            else if (key == isComponentRoot.key && value.type == BINN_BOOL) isComponentRoot.value = value.vbool;
         }
     }
 

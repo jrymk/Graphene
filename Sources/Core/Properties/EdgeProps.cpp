@@ -15,7 +15,9 @@ namespace gfn {
             endVertexUuid("endVertexUuid"),
             endVertexPosition("endVertexPosition"),
             edgeColor("edgeColor", IM_COL32(0, 0, 0, 255)),
-            thickness("thickness", 0.06) {}
+            thickness("thickness", 0.06),
+            force("force", gfn::Vec2(0.0, 0.0)),
+            pauseUpdate("pauseUpdate", false) {}
 
     void EdgeProps::serialize(binn* object) {
         binn_object_set_str(object, edgeUuid.key.c_str(), edgeUuid.value.data());
@@ -33,6 +35,9 @@ namespace gfn {
         binn_object_set_double(object, (endVertexPosition.key + ".y").c_str(), endVertexPosition.value.y);
         binn_object_set_int32(object, edgeColor.key.c_str(), edgeColor.value);
         binn_object_set_double(object, thickness.key.c_str(), thickness.value);
+        binn_object_set_double(object, (force.key + ".x").c_str(), force.value.x);
+        binn_object_set_double(object, (force.key + ".y").c_str(), force.value.y);
+        binn_object_set_bool(object, pauseUpdate.key.c_str(), pauseUpdate.value);
     }
 
     void EdgeProps::deserialize(void* object) {
@@ -40,21 +45,24 @@ namespace gfn {
         binn value;
         char key[256];
         binn_object_foreach(object, key, value) {
-            if (key == edgeUuid.key && value.type == BINN_STRING) edgeUuid.get() = (char*) value.ptr;
-            else if (key == label.key && value.type == BINN_STRING) label.get() = (char*) value.ptr;
-            else if (key == labelSize.key && value.type == BINN_DOUBLE) labelSize.get() = value.vdouble;
-            else if (key == labelColor.key && value.type == BINN_INT32) labelColor.get() = value.vint32;
-            else if (key == enabled.key && value.type == BINN_BOOL) enabled.get() = value.vbool;
-            else if (key == (position.key + ".x") && value.type == BINN_DOUBLE) position.get().x = value.vdouble;
-            else if (key == (position.key + ".y") && value.type == BINN_DOUBLE) position.get().y = value.vdouble;
-            else if (key == startVertexUuid.key && value.type == BINN_STRING) startVertexUuid.get() = (char*) value.ptr;
-            else if (key == (startVertexPosition.key + ".x") && value.type == BINN_DOUBLE) startVertexPosition.get().x = value.vdouble;
-            else if (key == (startVertexPosition.key + ".y") && value.type == BINN_DOUBLE) startVertexPosition.get().y = value.vdouble;
-            else if (key == endVertexUuid.key && value.type == BINN_STRING) endVertexUuid.get() = (char*) value.ptr;
-            else if (key == (endVertexPosition.key + ".x") && value.type == BINN_DOUBLE) endVertexPosition.get().x = value.vdouble;
-            else if (key == (endVertexPosition.key + ".y") && value.type == BINN_DOUBLE) endVertexPosition.get().y = value.vdouble;
-            else if (key == edgeColor.key && value.type == BINN_INT32) edgeColor.get() = value.vint32;
-            else if (key == thickness.key && value.type == BINN_DOUBLE) thickness.get() = value.vdouble;
+            if (key == edgeUuid.key && value.type == BINN_STRING) edgeUuid.value = (char*) value.ptr;
+            else if (key == label.key && value.type == BINN_STRING) label.value = (char*) value.ptr;
+            else if (key == labelSize.key && value.type == BINN_DOUBLE) labelSize.value = value.vdouble;
+            else if (key == labelColor.key && value.type == BINN_INT32) labelColor.value = value.vint32;
+            else if (key == enabled.key && value.type == BINN_BOOL) enabled.value = value.vbool;
+            else if (key == (position.key + ".x") && value.type == BINN_DOUBLE) position.value.x = value.vdouble;
+            else if (key == (position.key + ".y") && value.type == BINN_DOUBLE) position.value.y = value.vdouble;
+            else if (key == startVertexUuid.key && value.type == BINN_STRING) startVertexUuid.value = (char*) value.ptr;
+            else if (key == (startVertexPosition.key + ".x") && value.type == BINN_DOUBLE) startVertexPosition.value.x = value.vdouble;
+            else if (key == (startVertexPosition.key + ".y") && value.type == BINN_DOUBLE) startVertexPosition.value.y = value.vdouble;
+            else if (key == endVertexUuid.key && value.type == BINN_STRING) endVertexUuid.value = (char*) value.ptr;
+            else if (key == (endVertexPosition.key + ".x") && value.type == BINN_DOUBLE) endVertexPosition.value.x = value.vdouble;
+            else if (key == (endVertexPosition.key + ".y") && value.type == BINN_DOUBLE) endVertexPosition.value.y = value.vdouble;
+            else if (key == edgeColor.key && value.type == BINN_INT32) edgeColor.value = value.vint32;
+            else if (key == thickness.key && value.type == BINN_DOUBLE) thickness.value = value.vdouble;
+            else if (key == (force.key + ".x") && value.type == BINN_DOUBLE) force.value.x = value.vdouble;
+            else if (key == (force.key + ".y") && value.type == BINN_DOUBLE) force.value.y = value.vdouble;
+            else if (key == pauseUpdate.key && value.type == BINN_BOOL) pauseUpdate.value = value.vbool;
         }
     }
 
@@ -71,6 +79,8 @@ namespace gfn {
         endVertexPosition.serialize(j);
         edgeColor.serialize(j);
         thickness.serialize(j);
+        force.serialize(j);
+        pauseUpdate.serialize(j);
     }
 
     void EdgeProps::deserializeJson(nlohmann::json& j) {
@@ -86,6 +96,8 @@ namespace gfn {
         endVertexPosition.deserialize(j);
         edgeColor.deserialize(j);
         thickness.deserialize(j);
+        force.deserialize(j);
+        pauseUpdate.deserialize(j);
     }
 
     void EdgeProps::get(const std::string& key, gfn::Args& output) {
@@ -101,6 +113,8 @@ namespace gfn {
         else if (key == endVertexPosition.key) endVertexPosition.getValueStr(output);
         else if (key == edgeColor.key) edgeColor.getValueStr(output);
         else if (key == thickness.key) thickness.getValueStr(output);
+        else if (key == force.key) force.getValueStr(output);
+        else if (key == pauseUpdate.key) pauseUpdate.getValueStr(output);
     }
 
     void EdgeProps::set(const std::string& key, const std::string& value, gfn::Args& output) {
@@ -116,5 +130,7 @@ namespace gfn {
         else if (key == endVertexPosition.key) endVertexPosition.setValueStr(value, output);
         else if (key == edgeColor.key) edgeColor.setValueStr(value, output);
         else if (key == thickness.key) thickness.setValueStr(value, output);
+        else if (key == force.key) force.setValueStr(value, output);
+        else if (key == pauseUpdate.key) pauseUpdate.setValueStr(value, output);
     }
 }

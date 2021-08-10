@@ -3,7 +3,7 @@
 
 #define BUILD_MAJOR 0
 #define BUILD_MINOR 2
-#define BUILD_PATCH 6
+#define BUILD_PATCH 7
 
 const char buildVersion[] = {
         'G', 'r', 'a', 'p', 'h', 'e', 'n', 'e', ' ',
@@ -27,5 +27,6 @@ const char buildVersion[] = {
 // fixed multiple selection problems with window focusing
 // added pause
 // added pause ui, added edge label, fixed properties panel
+// prototype multiedge rendering
 
 #endif

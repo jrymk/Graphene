@@ -2,14 +2,6 @@
 #include <Tracy.hpp>
 
 namespace gfn {
-    gfn::Vec2 Placement::repelForce(gfn::Interface* itf, gfn::Vec2 u, gfn::Vec2 v) {
-        double dis = (u - v).length();
-        if (dis == 0.0)
-            return {0.0, 0.0};
-        double coeff = std::max(-itf->graph.getWrite().cfg.c3.value / dis / dis, -100.0);
-        return (v - u).normalize() * coeff;
-    }
-
     gfn::Vec2 Placement::attractForce(gfn::Interface* itf, gfn::Vec2 u, gfn::Vec2 v) {
         double dis = (u - v).length();
         if (dis == 0.0f)
@@ -18,16 +10,63 @@ namespace gfn {
         return (v - u).normalize() * coeff;
     }
 
+    gfn::Vec2 Placement::repelForce(gfn::Interface* itf, gfn::Vec2 u, gfn::Vec2 v) {
+        double dis = (u - v).length();
+        if (dis == 0.0)
+            return {0.0, 0.0};
+        double coeff = std::max(-itf->graph.getWrite().cfg.c3.value / dis / dis, -100.0);
+        return (v - u).normalize() * coeff;
+    }
+
+    gfn::Vec2 Placement::edgeAttractForce(gfn::Interface* itf, gfn::Vec2 u, gfn::Vec2 v) {
+        double dis = (u - v).length();
+        if (dis == 0.0f)
+            return {0, 0};
+        double coeff = itf->graph.getWrite().cfg.c5.value * log(dis / itf->graph.getWrite().cfg.c6.value);
+        return (v - u).normalize() * coeff;
+    }
+
+    gfn::Vec2 Placement::edgeRepelForce(gfn::Interface* itf, gfn::Vec2 u, gfn::Vec2 v) {
+        double dis = (u - v).length();
+        if (dis == 0.0)
+            return {0.0, 0.0};
+        double coeff = std::max(-itf->graph.getWrite().cfg.c7.value / dis / dis / dis, -100.0);
+        return (v - u).normalize() * coeff;
+    }
+
     void Placement::updateVertex(gfn::Interface* itf, gfn::Component* c, gfn::Vertex* u) {
         ZoneScoped
 
-        for (auto& v : c->getAdjacentVertices(u))
+        for (auto& v : c->getAdjacentVertices(u)) {
             u->props->force.value += attractForce(itf, u->props->position.value, v->props->position.value);
+
+            //v->props->force += repelForce(itf->graph.getWrite().cfg.v->props->position, u->props->position);
+            std::vector<Edge*> edges;
+            auto edgesUV = c->getAdjList().find(u)->second.second.find(v);
+            if (edgesUV != c->getAdjList().find(u)->second.second.end()) {
+                for (auto &e : edgesUV->second)
+                    edges.push_back(e);
+            }
+            auto edgesVU = c->getAdjList().find(v)->second.second.find(u);
+            if (edgesVU != c->getAdjList().find(u)->second.second.end()) {
+                for (auto &e : edgesVU->second)
+                    edges.push_back(e);
+            }
+
+            for (auto& e : edges) {
+                for (auto& f : edges) {
+                    if (e == f)
+                        continue;
+                    e->props->force.value += edgeRepelForce(itf, e->props->position.value, f->props->position.value);
+                }
+                e->props->force.value += edgeAttractForce(itf, e->props->position.value, u->props->position.value);
+                e->props->force.value += edgeAttractForce(itf, e->props->position.value, v->props->position.value);
+            }
+        }
         for (auto& v : c->vertices) {
             if (u == v)
                 continue;
             u->props->force.value += repelForce(itf, u->props->position.value, v->props->position.value);
-            //v->props->force += repelForce(itf->graph.getWrite().cfg.v->props->position, u->props->position);
         }
         /*for (auto& e : c->edges) {
             u->props->force += repelForce(itf->graph.getWrite().cfg.u->props->position, e->props->position);
@@ -91,11 +130,11 @@ namespace gfn {
     void Placement::updateComponentMultiThreaded(gfn::Interface* itf, gfn::Component* c) {
         ZoneScoped
 
-        gfn::Timer timer;
         for (auto& u : c->vertices)
             u->props->force.value = gfn::Vec2(0.0, 0.0);
-        /*for (auto& e : c->edges)
-            e->props->force = gfn::Vec2f(0.0, 0.0);*/
+        for (auto& e : c->edges)
+            e->props->force.value = gfn::Vec2(0.0, 0.0);
+
         std::vector<std::future<void> > results;
         for (auto& u : c->vertices) {
             if (!u->props->pauseUpdate.value)
@@ -112,14 +151,21 @@ namespace gfn {
         }
 
         for (auto& e : c->edges) {
-            e->props->startVertexPosition = e->startVertex->props->position;
-            e->props->endVertexPosition = e->endVertex->props->position;
-            /// TODO
-            e->props->position.get() = (e->props->startVertexPosition.get() + e->props->endVertexPosition.get()) / 2.0;
+            e->props->startVertexPosition.value = e->startVertex->props->position.value;
+            e->props->endVertexPosition.value = e->endVertex->props->position.value;
+
+            if (!e->props->pauseUpdate.value)
+                e->props->position.value += e->props->force.value * itf->graph.getWrite().cfg.c8.value;
+
+            auto ep = e->props->position.value;
+            auto up = e->props->startVertexPosition.value;
+            auto vp = e->props->endVertexPosition.value;
+            auto perp = (vp - up).rotate(M_PI_2);
+            auto mid = (vp + up) / 2.0f;
+            e->props->position.value = mid + perp.normalize() * (((ep - mid) * perp) / perp.length()); // mid + )
         }
         /*for (auto& e : c->edges)
             e->props->position += e->props->force * itf->graph.getWrite().cfg.c4;*/
-        unsigned long long t = timer.getMicroseconds();
         //std::cerr << "Multi: that took " << t << "us\n";
     }
 }

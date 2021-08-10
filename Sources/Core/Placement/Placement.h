@@ -24,9 +24,13 @@ namespace gfn {
 
         void update(Interface* itf, gfn::Structure* structure);
 
+        static gfn::Vec2 attractForce(gfn::Interface* itf, gfn::Vec2 u, gfn::Vec2 v);
+
         static gfn::Vec2 repelForce(gfn::Interface* itf, gfn::Vec2 u, gfn::Vec2 v);
 
-        static gfn::Vec2 attractForce(gfn::Interface* itf, gfn::Vec2 u, gfn::Vec2 v);
+        static gfn::Vec2 edgeAttractForce(gfn::Interface* itf, gfn::Vec2 u, gfn::Vec2 v);
+
+        static gfn::Vec2 edgeRepelForce(gfn::Interface* itf, gfn::Vec2 u, gfn::Vec2 v);
 
         static void updateVertex(gfn::Interface* itf, gfn::Component* c, gfn::Vertex* u);
 

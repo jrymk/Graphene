@@ -112,8 +112,8 @@ namespace gfn {
                 return;
             }
             eFind->second.deserializeJson(j["edge props"][e]);
-            eFind->second.startVertexUuid.get() = itf.graph.getWrite().props.convertAccessName(uName);
-            eFind->second.endVertexUuid.get() = itf.graph.getWrite().props.convertAccessName(vName);
+            eFind->second.startVertexUuid.value = itf.graph.getWrite().props.convertAccessName(uName);
+            eFind->second.endVertexUuid.value = itf.graph.getWrite().props.convertAccessName(vName);
         }
     }*/
     //}

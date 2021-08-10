@@ -17,13 +17,13 @@ int main(int argc, char* argv[]) {
 
         gfn::Editor editor;
 
-        {
-            std::string path = "./bagel.gfn";
-            auto docId = editor.newDocument();
-            editor.getDoc(docId)->setFile(path);
-            editor.getDoc(docId)->execute("open");
-            editor.getDoc(docId)->fileSaved = true;
-        }
+//        {
+//            std::string path = "./bagel.gfn";
+//            auto docId = editor.newDocument();
+//            editor.getDoc(docId)->setFile(path);
+//            editor.getDoc(docId)->execute("open");
+//            editor.getDoc(docId)->fileSaved = true;
+//        }
 
         while (!editor.gfx.shouldClose()) {
             editor.update();

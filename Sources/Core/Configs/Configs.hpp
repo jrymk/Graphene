@@ -12,14 +12,18 @@ namespace gfn::configs {
         gfn::serializable::Double c4;
         gfn::serializable::Double c5;
         gfn::serializable::Double c6;
+        gfn::serializable::Double c7;
+        gfn::serializable::Double c8;
 
         Configs() :
-                c1("c1", 1.0),
+                c1("c1", 0.1),
                 c2("c2", 1.0),
                 c3("c3", 1.0),
                 c4("c4", 0.15),
-                c5("c5", 0.1),
-                c6("c6", 0.0001) {
+                c5("c5", 1.0), // edge repel
+                c6("c6", 0.5), // edge attract
+                c7("c7", 10.0), // edge attract
+                c8("c8", 0.01) { // edge factor
         }
 
         bool parse(gfn::Args command, gfn::Args& output) {
@@ -36,7 +40,10 @@ namespace gfn::configs {
                     c5.setValueStr(command.getParamValue("-c5"), output);
                 if (!command.getParamValue("-c6").empty())
                     c6.setValueStr(command.getParamValue("-c6"), output);
-                return false;
+                if (!command.getParamValue("-c7").empty())
+                    c7.setValueStr(command.getParamValue("-c7"), output);
+                if (!command.getParamValue("-c8").empty())
+                    c8.setValueStr(command.getParamValue("-c8"), output);
                 return true;
             }
             return false;
@@ -50,6 +57,8 @@ namespace gfn::configs {
             binn_object_set_double(cfg, c4.key.c_str(), c4.value);
             binn_object_set_double(cfg, c5.key.c_str(), c5.value);
             binn_object_set_double(cfg, c6.key.c_str(), c6.value);
+            binn_object_set_double(cfg, c7.key.c_str(), c7.value);
+            binn_object_set_double(cfg, c8.key.c_str(), c8.value);
             binn_object_set_object(document, "configs", cfg);
             binn_free(cfg);
         }
@@ -62,6 +71,8 @@ namespace gfn::configs {
             c4.value = binn_object_double(cfg, c4.key.c_str());
             c5.value = binn_object_double(cfg, c5.key.c_str());
             c6.value = binn_object_double(cfg, c6.key.c_str());
+            c7.value = binn_object_double(cfg, c7.key.c_str());
+            c8.value = binn_object_double(cfg, c8.key.c_str());
         }
     };
 }

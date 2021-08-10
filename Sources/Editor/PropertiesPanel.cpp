@@ -39,7 +39,7 @@ namespace gfn {
                         ImGui::TableSetColumnIndex(1);
                         ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
                         if (vertexProps.size() == 1)
-                            ImGui::Text(props.getVertexProps(vertexProps.begin()->first)->uuid.get().c_str());
+                            ImGui::Text(props.getVertexProps(vertexProps.begin()->first)->uuid.value.c_str());
                         else {
                             ImGui::PushDisabled(true);
                             ImGui::Text("multiple values");
@@ -74,8 +74,8 @@ namespace gfn {
                         //if (getDoc(activeDoc)->graphview.selection.onChangeSelection) {
                         double sx = 0, sy = 0;
                         for (auto& p : vertexProps) {
-                            sx += p.second->position.get().x;
-                            sy += p.second->position.get().y;
+                            sx += p.second->position.value.x;
+                            sy += p.second->position.value.y;
                         }
                         //}
                         widgetX = float(sx / vertexProps.size());
@@ -97,7 +97,7 @@ namespace gfn {
 
                         if (vertexProps.size() == 1) {
                             if (getDoc(activeDoc)->graphview.selection.onChangeSelection)
-                                strcpy(widget, vertexProps.begin()->second->label.get().c_str());
+                                strcpy(widget, vertexProps.begin()->second->label.value.c_str());
                         } else {
                             ImGui::PushDisabled(true);
                             ImGui::PushFont(gfx.fontSmall);
@@ -137,7 +137,7 @@ namespace gfn {
                             ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
                             ImGui::DragFloat("##PROPSPANEL_VERTEXLABELSIZE", (float*) &widget, 0.01, FLT_MIN, FLT_MAX, "%.6f", 0);
                             if (getDoc(activeDoc)->graphview.selection.onChangeSelection) {
-                                double r = vertexProps.begin()->second->labelSize.get();
+                                double r = vertexProps.begin()->second->labelSize.value;
                                 if (r >= 0)
                                     widget = float(r);
                                 else if (r < 0)
@@ -166,11 +166,11 @@ namespace gfn {
                             for (auto& p : vertexProps) {
                                 bool unique = true;
                                 for (auto& vc : colors) {
-                                    if (vc == p.second->labelColor.get())
+                                    if (vc == p.second->labelColor.value)
                                         unique = false;
                                 }
                                 if (unique)
-                                    colors.push_back(p.second->labelColor.get());
+                                    colors.push_back(p.second->labelColor.value);
                             }
                         }
 
@@ -299,7 +299,7 @@ namespace gfn {
                         ImGui::TableSetColumnIndex(1);
                         int mask = 0;
                         for (auto& p : vertexProps)
-                            mask |= (p.second->enabled.get() ? 2 : 1);
+                            mask |= (p.second->enabled.value ? 2 : 1);
                         if (mask == 3)
                             ImGui::PushItemFlag(ImGuiItemFlags_MixedValue, true);
                         bool checkbox = (mask == 2);
@@ -336,11 +336,11 @@ namespace gfn {
                             for (auto& p : vertexProps) {
                                 bool unique = true;
                                 for (auto& vc : colors) {
-                                    if (vc == p.second->fillColor.get())
+                                    if (vc == p.second->fillColor.value)
                                         unique = false;
                                 }
                                 if (unique)
-                                    colors.push_back(p.second->fillColor.get());
+                                    colors.push_back(p.second->fillColor.value);
                             }
                         }
 
@@ -473,7 +473,7 @@ namespace gfn {
                         static float widget;
                         ImGui::DragFloat("##vertexRadius", (float*) &widget, 0.01, FLT_MIN, FLT_MAX, "%.6f", 0);
                         if (getDoc(activeDoc)->graphview.selection.onChangeSelection) {
-                            double r = vertexProps.begin()->second->radius.get();
+                            double r = vertexProps.begin()->second->radius.value;
                             widget = float(r);
                         }
                         if (ImGui::IsItemEdited()) {
@@ -499,11 +499,11 @@ namespace gfn {
                             for (auto& p : vertexProps) {
                                 bool unique = true;
                                 for (auto& vc : colors) {
-                                    if (vc == p.second->fillColor.get())
+                                    if (vc == p.second->fillColor.value)
                                         unique = false;
                                 }
                                 if (unique)
-                                    colors.push_back(p.second->fillColor.get());
+                                    colors.push_back(p.second->fillColor.value);
                             }
                         }
 
@@ -635,7 +635,7 @@ namespace gfn {
                         static float widget;
                         ImGui::DragFloat("##outlineThickness", (float*) &widget, 0.01, FLT_MIN, FLT_MAX, "%.6f", 0);
                         if (getDoc(activeDoc)->graphview.selection.onChangeSelection) {
-                            double r = vertexProps.begin()->second->outlineThickness.get();
+                            double r = vertexProps.begin()->second->outlineThickness.value;
                             widget = float(r);
                         }
                         if (ImGui::IsItemEdited()) {
@@ -655,7 +655,7 @@ namespace gfn {
                         ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
                         int mask = 0;
                         for (auto& p : vertexProps)
-                            mask |= (p.second->pauseUpdate.get() ? 2 : 1);
+                            mask |= (p.second->pauseUpdate.value ? 2 : 1);
                         if (mask == 3)
                             ImGui::PushItemFlag(ImGuiItemFlags_MixedValue, true);
                         bool checkbox = (mask == 2);
@@ -688,7 +688,7 @@ namespace gfn {
                         ImGui::TableSetColumnIndex(1);
                         ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
                         if (edgeProps.size() == 1)
-                            ImGui::Text(props.getEdgeProps(edgeProps.begin()->first)->edgeUuid.get().c_str());
+                            ImGui::Text(props.getEdgeProps(edgeProps.begin()->first)->edgeUuid.value.c_str());
                         else {
                             ImGui::PushDisabled(true);
                             ImGui::Text("multiple values");
@@ -701,7 +701,7 @@ namespace gfn {
                         gfn::button("u##PROPSPANEL_EDGEV_BUTTON", HUE_CONTRAST, HUE_CONTRAST, false, 30.0f, 0, false);
 
                         if (edgeProps.size() == 1)
-                            ImGui::Text(props.getEdgeProps(edgeProps.begin()->first)->startVertexUuid.get().c_str());
+                            ImGui::Text(props.getEdgeProps(edgeProps.begin()->first)->startVertexUuid.value.c_str());
                         else {
                             ImGui::PushDisabled(true);
                             ImGui::Text("multiple values");
@@ -714,7 +714,7 @@ namespace gfn {
                         gfn::button("v##PROPSPANEL_EDGEV_BUTTON", HUE_CONTRAST, HUE_CONTRAST, false, 30.0f, 0, false);
 
                         if (edgeProps.size() == 1)
-                            ImGui::Text(props.getEdgeProps(edgeProps.begin()->first)->endVertexUuid.get().c_str());
+                            ImGui::Text(props.getEdgeProps(edgeProps.begin()->first)->endVertexUuid.value.c_str());
                         else {
                             ImGui::PushDisabled(true);
                             ImGui::Text("multiple values");
@@ -735,7 +735,7 @@ namespace gfn {
 
                         if (edgeProps.size() == 1) {
                             if (getDoc(activeDoc)->graphview.selection.onChangeSelection)
-                                strcpy(widget, edgeProps.begin()->second->label.get().c_str());
+                                strcpy(widget, edgeProps.begin()->second->label.value.c_str());
                         } else {
                             ImGui::PushDisabled(true);
                             ImGui::PushFont(gfx.fontSmall);
@@ -767,7 +767,7 @@ namespace gfn {
                         ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
                         ImGui::DragFloat("##PROPSPANEL_EDGELABELSIZE", (float*) &widget, 0.01, FLT_MIN, FLT_MAX, "%.6f", 0);
                         if (getDoc(activeDoc)->graphview.selection.onChangeSelection) {
-                            double r = edgeProps.begin()->second->labelSize.get();
+                            double r = edgeProps.begin()->second->labelSize.value;
                             widget = float(r);
                         }
                         if (ImGui::IsItemEdited()) {
@@ -792,11 +792,11 @@ namespace gfn {
                             for (auto& p : edgeProps) {
                                 bool unique = true;
                                 for (auto& vc : colors) {
-                                    if (vc == p.second->labelColor.get())
+                                    if (vc == p.second->labelColor.value)
                                         unique = false;
                                 }
                                 if (unique)
-                                    colors.push_back(p.second->labelColor.get());
+                                    colors.push_back(p.second->labelColor.value);
                             }
                         }
 
@@ -933,11 +933,11 @@ namespace gfn {
                             for (auto& p : edgeProps) {
                                 bool unique = true;
                                 for (auto& vc : colors) {
-                                    if (vc == p.second->edgeColor.get())
+                                    if (vc == p.second->edgeColor.value)
                                         unique = false;
                                 }
                                 if (unique)
-                                    colors.push_back(p.second->edgeColor.get());
+                                    colors.push_back(p.second->edgeColor.value);
                             }
                         }
 
@@ -1069,7 +1069,7 @@ namespace gfn {
                         static float widget;
                         ImGui::DragFloat("##thickness", (float*) &widget, 0.01, FLT_MIN, FLT_MAX, "%.6f", 0);
                         if (getDoc(activeDoc)->graphview.selection.onChangeSelection) {
-                            double r = edgeProps.begin()->second->thickness.get();
+                            double r = edgeProps.begin()->second->thickness.value;
                             widget = float(r);
                         }
                         if (ImGui::IsItemEdited()) {

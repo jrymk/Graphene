@@ -24,12 +24,12 @@ namespace gfn {
             float minDistance = FLT_MAX;
             for (auto& vi : userprops.getVertexPropsList()) {
                 auto v = vi.second;
-                if (!v.enabled.get())
+                if (!v.enabled.value)
                     continue;
                 ImVec2 center = camera->map(v.position.value);
                 float cursorDistance = distance(ImGui::GetMousePos(), center);
                 if (cursorDistance <= camera->map(v.radius.value) + prefs->graphview_selection_tolerance &&
-                cursorDistance < minDistance) {
+                    cursorDistance < minDistance) {
                     minDistance = cursorDistance;
                     hoveredVertex = v.uuid.value;
                 }
@@ -39,14 +39,14 @@ namespace gfn {
                 minDistance = FLT_MAX;
                 for (auto& ei : userprops.getEdgePropsList()) {
                     auto e = ei.second;
-                    if (!e.enabled.get())
+                    if (!e.enabled.value)
                         continue;
                     float cursorDistance = distanceToALine(ImGui::GetMousePos(),
                                                            camera->map(e.startVertexPosition.value),
                                                            camera->map(e.endVertexPosition.value));
                     if (cursorDistance <=
-                    camera->map(e.thickness.value) / 2.0f + prefs->graphview_selection_tolerance &&
-                    cursorDistance < minDistance) {
+                        camera->map(e.thickness.value) / 2.0f + prefs->graphview_selection_tolerance &&
+                        cursorDistance < minDistance) {
                         minDistance = cursorDistance;
                         hoveredEdge = e.edgeUuid.value;
                     }
@@ -75,13 +75,13 @@ namespace gfn {
 
         // we all rely on camera, camera itself has no access to the hot key functions
         if ((ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
-             press(Actions::CAMERA_PAN))
+            press(Actions::CAMERA_PAN))
             camera->_canPan = true;
         if (camera->_canPan && !down(Actions::CAMERA_PAN))
             camera->_canPan = false;
 
         if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem) &&
-             press(Actions::ZOOM_IN)) {
+            press(Actions::ZOOM_IN)) {
             camera->_canZoomIn = true;
             camera->_zoomInVelocity = velocity(Actions::ZOOM_IN);
         }
@@ -89,7 +89,7 @@ namespace gfn {
             camera->_canZoomIn = false;
 
         if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem) &&
-             press(Actions::ZOOM_OUT)) {
+            press(Actions::ZOOM_OUT)) {
             camera->_canZoomOut = true;
             camera->_zoomOutVelocity = velocity(Actions::ZOOM_OUT);
         }
@@ -133,12 +133,12 @@ namespace gfn {
 
         /// LASSO BEGIN
         if (!lassoSelecting && (ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
-             (press(Actions::ADD_SELECT_LASSO_VERTEX) ||
-                press(Actions::SUBTRACT_SELECT_LASSO_VERTEX) ||
-                press(Actions::INV_SELECT_LASSO_VERTEX) ||
-                press(Actions::ADD_SELECT_LASSO_EDGE) ||
-                press(Actions::SUBTRACT_SELECT_LASSO_EDGE) ||
-                press(Actions::INV_SELECT_LASSO_EDGE))) {
+            (press(Actions::ADD_SELECT_LASSO_VERTEX) ||
+             press(Actions::SUBTRACT_SELECT_LASSO_VERTEX) ||
+             press(Actions::INV_SELECT_LASSO_VERTEX) ||
+             press(Actions::ADD_SELECT_LASSO_EDGE) ||
+             press(Actions::SUBTRACT_SELECT_LASSO_EDGE) ||
+             press(Actions::INV_SELECT_LASSO_EDGE))) {
             _lassoVertices.clear();
             _lassoVertices.emplace_back(std::vector<std::pair<double, double>>());
 
@@ -178,10 +178,10 @@ namespace gfn {
                 auto p3 = gfn::Vec2(_lassoVertices[0][_lassoIndices[i + 2]].first,
                                     _lassoVertices[0][_lassoIndices[i + 2]].second);
                 for (auto& v : itf->graph.getRead()->props.getVertexPropsList()) {
-                    if (!v.second.enabled.get())
+                    if (!v.second.enabled.value)
                         continue;
                     // checks if vertex is in the triangle
-                    auto p = v.second.position.get();
+                    auto p = v.second.position.value;
                     double d1 = (p.x - p2.x) * (p1.y - p2.y) - (p1.x - p2.x) * (p.y - p2.y);
                     double d2 = (p.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p.y - p3.y);
                     double d3 = (p.x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (p.y - p1.y);
@@ -206,9 +206,9 @@ namespace gfn {
             }
             for (auto& e : itf->graph.getRead()->props.getEdgePropsList()) {
                 // checks if edge's both ends are in selection
-                if (!e.second.enabled.get() ||
-                    vertexSelection.find(e.second.startVertexUuid.get()) == vertexSelection.end() ||
-                    vertexSelection.find(e.second.endVertexUuid.get()) == vertexSelection.end())
+                if (!e.second.enabled.value ||
+                    vertexSelection.find(e.second.startVertexUuid.value) == vertexSelection.end() ||
+                    vertexSelection.find(e.second.endVertexUuid.value) == vertexSelection.end())
                     continue;
                 if (edgeSelection.find(e.first) == edgeSelection.end()) {
                     // not in selection

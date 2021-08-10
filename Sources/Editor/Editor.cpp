@@ -401,6 +401,8 @@ namespace gfn {
             static float c4p;
             static float c5p;
             static float c6p;
+            static float c7p;
+            static float c8p;
 //if (prevActiveDocId != fDoc->docId) {
             prevActiveDocId = fDoc->docId;
             c1p = float(fDoc->getItf()->graph.getRead()->cfg.c1.value);
@@ -409,6 +411,8 @@ namespace gfn {
             c4p = float(fDoc->getItf()->graph.getRead()->cfg.c4.value);
             c5p = float(fDoc->getItf()->graph.getRead()->cfg.c5.value);
             c6p = float(fDoc->getItf()->graph.getRead()->cfg.c6.value);
+            c7p = float(fDoc->getItf()->graph.getRead()->cfg.c7.value);
+            c8p = float(fDoc->getItf()->graph.getRead()->cfg.c8.value);
 //}
             float c1 = c1p;
             float c2 = c2p;
@@ -416,12 +420,16 @@ namespace gfn {
             float c4 = c4p;
             float c5 = c5p;
             float c6 = c6p;
+            float c7 = c7p;
+            float c8 = c8p;
             ImGui::SliderFloat("c1", &c1, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
             ImGui::SliderFloat("c2", &c2, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
             ImGui::SliderFloat("c3", &c3, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
             ImGui::SliderFloat("c4", &c4, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
             ImGui::SliderFloat("c5", &c5, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
             ImGui::SliderFloat("c6", &c6, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+            ImGui::SliderFloat("c7", &c7, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+            ImGui::SliderFloat("c8", &c8, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
             if (c1p != c1)
                 fDoc->execute("configs -c1=" +
                               std::to_string(c1)
@@ -446,12 +454,22 @@ namespace gfn {
                 fDoc->execute("configs -c6=" +
                               std::to_string(c6)
                 );
+            if (c7p != c7)
+                fDoc->execute("configs -c7=" +
+                              std::to_string(c7)
+                );
+            if (c8p != c8)
+                fDoc->execute("configs -c8=" +
+                              std::to_string(c8)
+                );
             c1p = c1;
             c2p = c2;
             c3p = c3;
             c4p = c4;
             c5p = c5;
             c6p = c6;
+            c7p = c7;
+            c8p = c8;
         }
 
         ImGui::End();
