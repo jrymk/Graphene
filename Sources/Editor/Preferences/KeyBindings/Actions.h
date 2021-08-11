@@ -9,6 +9,7 @@ namespace gfn {
         SAVE_AS_FILE = 11,
         CLOSE_DOCUMENT = 15,
         KEY_BINDINGS = 20,
+        PREFERENCES = 19,
         QUIT = 25,
 
         COPY_SELECTION = 50,

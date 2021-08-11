@@ -16,6 +16,7 @@ namespace gfn {
             endVertexPosition("endVertexPosition"),
             edgeColor("edgeColor", IM_COL32(0, 0, 0, 255)),
             thickness("thickness", 0.06),
+            arrowStyle("arrowStyle", 0),
             force("force", gfn::Vec2(0.0, 0.0)),
             pauseUpdate("pauseUpdate", false) {}
 
@@ -23,7 +24,7 @@ namespace gfn {
         binn_object_set_str(object, edgeUuid.key.c_str(), edgeUuid.value.data());
         binn_object_set_str(object, label.key.c_str(), label.value.data());
         binn_object_set_double(object, labelSize.key.c_str(), labelSize.value);
-        binn_object_set_int32(object, labelColor.key.c_str(), labelColor.value);
+        binn_object_set_uint32(object, labelColor.key.c_str(), labelColor.value);
         binn_object_set_bool(object, enabled.key.c_str(), enabled.value);
         binn_object_set_double(object, (position.key + ".x").c_str(), position.value.x);
         binn_object_set_double(object, (position.key + ".y").c_str(), position.value.y);
@@ -33,8 +34,9 @@ namespace gfn {
         binn_object_set_str(object, endVertexUuid.key.c_str(), endVertexUuid.value.data());
         binn_object_set_double(object, (endVertexPosition.key + ".x").c_str(), endVertexPosition.value.x);
         binn_object_set_double(object, (endVertexPosition.key + ".y").c_str(), endVertexPosition.value.y);
-        binn_object_set_int32(object, edgeColor.key.c_str(), edgeColor.value);
+        binn_object_set_uint32(object, edgeColor.key.c_str(), edgeColor.value);
         binn_object_set_double(object, thickness.key.c_str(), thickness.value);
+        binn_object_set_int32(object, arrowStyle.key.c_str(), arrowStyle.value);
         binn_object_set_double(object, (force.key + ".x").c_str(), force.value.x);
         binn_object_set_double(object, (force.key + ".y").c_str(), force.value.y);
         binn_object_set_bool(object, pauseUpdate.key.c_str(), pauseUpdate.value);
@@ -48,7 +50,7 @@ namespace gfn {
             if (key == edgeUuid.key && value.type == BINN_STRING) edgeUuid.value = (char*) value.ptr;
             else if (key == label.key && value.type == BINN_STRING) label.value = (char*) value.ptr;
             else if (key == labelSize.key && value.type == BINN_DOUBLE) labelSize.value = value.vdouble;
-            else if (key == labelColor.key && value.type == BINN_INT32) labelColor.value = value.vint32;
+            else if (key == labelColor.key && value.type == BINN_UINT32) labelColor.value = value.vuint32;
             else if (key == enabled.key && value.type == BINN_BOOL) enabled.value = value.vbool;
             else if (key == (position.key + ".x") && value.type == BINN_DOUBLE) position.value.x = value.vdouble;
             else if (key == (position.key + ".y") && value.type == BINN_DOUBLE) position.value.y = value.vdouble;
@@ -58,8 +60,9 @@ namespace gfn {
             else if (key == endVertexUuid.key && value.type == BINN_STRING) endVertexUuid.value = (char*) value.ptr;
             else if (key == (endVertexPosition.key + ".x") && value.type == BINN_DOUBLE) endVertexPosition.value.x = value.vdouble;
             else if (key == (endVertexPosition.key + ".y") && value.type == BINN_DOUBLE) endVertexPosition.value.y = value.vdouble;
-            else if (key == edgeColor.key && value.type == BINN_INT32) edgeColor.value = value.vint32;
+            else if (key == edgeColor.key && value.type == BINN_UINT32) edgeColor.value = value.vuint32;
             else if (key == thickness.key && value.type == BINN_DOUBLE) thickness.value = value.vdouble;
+            else if (key == arrowStyle.key && value.type == BINN_INT32) arrowStyle.value = value.vint32;
             else if (key == (force.key + ".x") && value.type == BINN_DOUBLE) force.value.x = value.vdouble;
             else if (key == (force.key + ".y") && value.type == BINN_DOUBLE) force.value.y = value.vdouble;
             else if (key == pauseUpdate.key && value.type == BINN_BOOL) pauseUpdate.value = value.vbool;
@@ -79,6 +82,7 @@ namespace gfn {
         endVertexPosition.serialize(j);
         edgeColor.serialize(j);
         thickness.serialize(j);
+        arrowStyle.serialize(j);
         force.serialize(j);
         pauseUpdate.serialize(j);
     }
@@ -96,6 +100,7 @@ namespace gfn {
         endVertexPosition.deserialize(j);
         edgeColor.deserialize(j);
         thickness.deserialize(j);
+        arrowStyle.deserialize(j);
         force.deserialize(j);
         pauseUpdate.deserialize(j);
     }
@@ -113,6 +118,7 @@ namespace gfn {
         else if (key == endVertexPosition.key) endVertexPosition.getValueStr(output);
         else if (key == edgeColor.key) edgeColor.getValueStr(output);
         else if (key == thickness.key) thickness.getValueStr(output);
+        else if (key == arrowStyle.key) arrowStyle.getValueStr(output);
         else if (key == force.key) force.getValueStr(output);
         else if (key == pauseUpdate.key) pauseUpdate.getValueStr(output);
     }
@@ -130,6 +136,7 @@ namespace gfn {
         else if (key == endVertexPosition.key) endVertexPosition.setValueStr(value, output);
         else if (key == edgeColor.key) edgeColor.setValueStr(value, output);
         else if (key == thickness.key) thickness.setValueStr(value, output);
+        else if (key == arrowStyle.key) arrowStyle.setValueStr(value, output);
         else if (key == force.key) force.setValueStr(value, output);
         else if (key == pauseUpdate.key) pauseUpdate.setValueStr(value, output);
     }

@@ -50,14 +50,14 @@ namespace gfn {
         config.OversampleH = 3;
         config.OversampleV = 1;
         config.GlyphOffset = ImVec2(0.0f, -1.0f);
-        ImGui::GetIO().Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_BR, 16.0f, &config, ImGui::GetIO().Fonts->GetGlyphRangesDefault());
+        ImGui::GetIO().Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_BR, prefs->graphics_font_size, &config, ImGui::GetIO().Fonts->GetGlyphRangesDefault());
         config.MergeMode = true;
         config.GlyphOffset = ImVec2(0.0f, 3.0f);
         static const ImWchar materialRanges[] = {0x0030, 0xf23b, 0,};
-        ImGui::GetIO().Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_MIR, 18.0f, &config, &materialRanges[0]);
+        ImGui::GetIO().Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_MIR, prefs->graphics_font_size / 16.0f * 18.0f, &config, &materialRanges[0]);
 
         config.MergeMode = false;
-        fontSmall = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_BR, 14.0f, &config, ImGui::GetIO().Fonts->GetGlyphRangesDefault());
+        fontSmall = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_BR, prefs->graphics_font_size / 16.0f * 14.0f, &config, ImGui::GetIO().Fonts->GetGlyphRangesDefault());
         fontScalable = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_BR, 256.0f, &config, ImGui::GetIO().Fonts->GetGlyphRangesDefault());
 
         ImGui::GetIO().IniFilename = "Graphene.ini";

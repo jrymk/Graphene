@@ -35,17 +35,52 @@ namespace gfn {
                 auto e = ei.second;
                 if (!e.enabled.value)
                     continue;
-                /*drawList->AddLine(camera->map(e.startVertexPosition.value), camera->map(e.endVertexPosition.value),
+                /*drawList->AddLine(camera->map(u), camera->map(v),
                                   e.edgeColor.value, camera->map(e.thickness.value));*/
 
-                drawList->AddBezierQuadratic(camera->map(e.startVertexPosition.value), camera->map(e.position.value),
-                                             camera->map(e.endVertexPosition.value), e.edgeColor.value,
+                gfn::Vec2 u = e.startVertexPosition.value + (e.endVertexPosition.value - e.startVertexPosition.value).normalize() *
+                                                            (userprops.getVertexProps(e.startVertexUuid.value)->radius.value +
+                                                             userprops.getVertexProps(e.startVertexUuid.value)->outlineThickness.value / 2.0);
+                gfn::Vec2 ep = e.position.value;
+                double arrowCompensation = userprops.getVertexProps(e.endVertexUuid.value)->radius.value +
+                                           userprops.getVertexProps(e.endVertexUuid.value)->outlineThickness.value / 2.0;
+                gfn::Vec2 v = u + (e.endVertexPosition.value - u).normalize() * ((e.endVertexPosition.value - u).length() - arrowCompensation);
+
+                drawList->AddBezierQuadratic(camera->map(u + (v - u).normalize() * ((e.arrowStyle.value & 0b10) * 0.1 * (e.thickness.value / 0.06))),
+                                             camera->map(ep),
+                                             camera->map(u + (v - u).normalize() * ((v - u).length() -
+                                                                                    (e.arrowStyle.value & 0b1) * 0.1 * (e.thickness.value / 0.06))),
+                                             e.edgeColor.value,
                                              camera->map(e.thickness.value));
-                /*drawList->AddBezierCurve(camera->map(e.startVertexPosition.value), camera->map(e.position.value),
-                                         camera->map(e.position.value), camera->map(e.endVertexPosition.value), e.edgeColor.value,
+                /*drawList->AddBezierCurve(camera->map(u), camera->map(ep),
+                                         camera->map(ep), camera->map(v), e.edgeColor.value,
                                          camera->map(e.thickness.value));*/
 
                 //drawList->AddCircleFilled(camera->map(e.position), camera->map(e.radius), e.edgeNodeColor.color32, 0);
+
+                static gfn::Vec2 arrowHead[] = {
+                        {0.0,  0.0},
+                        {-0.3, -0.13},
+                        {-0.2, 0.0},
+                        {-0.3, 0.13}
+                };
+
+                if (e.arrowStyle.value & 0b1) {
+                    std::vector<ImVec2> transformedArrowHead;
+                    double theta = acos((v.x - u.x) / (v - u).length()) * (v.y - u.y >= 0 ? -1.0 : 1.0);
+                    for (auto& p : arrowHead)
+                        transformedArrowHead.emplace_back(camera->map((p * (e.thickness.value / 0.06)).rotate(theta) + v));
+                    drawList->AddTriangleFilled(transformedArrowHead[0], transformedArrowHead[2], transformedArrowHead[1], e.edgeColor.value);
+                    drawList->AddTriangleFilled(transformedArrowHead[0], transformedArrowHead[2], transformedArrowHead[3], e.edgeColor.value);
+                }
+                if (e.arrowStyle.value & 0b10) {
+                    std::vector<ImVec2> transformedArrowHead;
+                    double theta = acos((u.x - v.x) / (u - v).length()) * (u.y - v.y >= 0 ? -1.0 : 1.0);
+                    for (auto& p : arrowHead)
+                        transformedArrowHead.emplace_back(camera->map((p * (e.thickness.value / 0.06)).rotate(theta) + u));
+                    drawList->AddTriangleFilled(transformedArrowHead[0], transformedArrowHead[2], transformedArrowHead[1], e.edgeColor.value);
+                    drawList->AddTriangleFilled(transformedArrowHead[0], transformedArrowHead[2], transformedArrowHead[3], e.edgeColor.value);
+                }
 
                 std::string label = ei.second.label.value;
                 ImGui::PushFont(gfx->fontScalable);
@@ -53,8 +88,8 @@ namespace gfn {
                 ImGui::SetWindowFontScale(scale);
                 auto labelBB = ImGui::CalcTextSize(label.c_str(), nullptr, false, -1);
 
-                gfn::Vec2 midpoint((e.startVertexPosition.value + e.endVertexPosition.value) / 2.0);
-                gfn::Vec2 vector(e.endVertexPosition.value - e.startVertexPosition.value);
+                gfn::Vec2 midpoint((u + v) / 2.0);
+                gfn::Vec2 vector(v - u);
                 gfn::Vec2 location(
                         midpoint + (vector.rotate(M_PI_2).normalize() * camera->rMap(std::sqrt(labelBB.x * labelBB.x + labelBB.y * labelBB.y)) / 2.0));
 
@@ -63,13 +98,13 @@ namespace gfn {
                 ImGui::PopFont();
                 ImGui::SetWindowFontScale(1.0f);
 
-                /*drawList->AddCircleFilled(camera->map(e.position.value), camera->map(e.thickness.value),
+                /*drawList->AddCircleFilled(camera->map(ep), camera->map(e.thickness.value),
                                           IM_COL32(255, 0, 0, 255), 0);*/
 
-                camera->xMin = std::min(camera->xMin, e.position.value.x);
-                camera->xMax = std::max(camera->xMax, e.position.value.x);
-                camera->yMin = std::min(camera->yMin, e.position.value.y);
-                camera->yMax = std::max(camera->yMax, e.position.value.y);
+                camera->xMin = std::min(camera->xMin, ep.x);
+                camera->xMax = std::max(camera->xMax, ep.x);
+                camera->yMin = std::min(camera->yMin, ep.y);
+                camera->yMax = std::max(camera->yMax, ep.y);
             }
         }
 
@@ -112,7 +147,8 @@ namespace gfn {
                 camera->yMax = std::max(camera->yMax, v.position.value.y);
             }
 
-            drawList->AddRect(camera->map(gfn::Vec2(camera->xMin, camera->yMin)), camera->map(gfn::Vec2(camera->xMax, camera->yMax)), IM_COL32(0, 255, 0, 255), 0, 0, 2.0f);
+            /*drawList->AddRect(camera->map(gfn::Vec2(camera->xMin, camera->yMin)), camera->map(gfn::Vec2(camera->xMax, camera->yMax)), IM_COL32(0, 255, 0, 255),
+                              0, 0, 2.0f);*/
         }
     };
 }

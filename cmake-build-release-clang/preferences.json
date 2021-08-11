@@ -2,7 +2,7 @@
     "Graph View Options": {
         "Selection highlight glow size": 0.20000000298023224,
         "Selection tolerance": 5.0,
-        "Zoom speed": 1.1
+        "Zoom speed": 1.100000023841858
     },
     "Graphics Options": {
         "Anti-aliasing samples": 4,
@@ -11,7 +11,7 @@
         "Enable vertical sync": true,
         "Font size": 16.0,
         "Launch with window height": 720,
-        "Launch with window maximized": false,
+        "Launch with window maximized": true,
         "Launch with window width": 1280
     },
     "Key Binds": {
@@ -1209,6 +1209,18 @@
             ]
         },
         "Paste selection": null,
+        "Preferences": {
+            "Always": [
+                {
+                    "Keys": [
+                        "P",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
         "Preview add edge": {
             "Hover on selected vertex": [
                 {

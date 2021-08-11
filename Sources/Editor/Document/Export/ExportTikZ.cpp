@@ -5,21 +5,36 @@ namespace gfn {
     std::string Document::exportTikZ() {
         std::string picture;
 
-        picture.append("\\begin{tikzpicture}[scale=0.35]\n");
+        double scale = 0.35;
+
+        picture.append("\\begin{tikzpicture}[scale=" + std::to_string(scale) + "]\n");
 
         // draw edges
         for (auto& e : itf->graph.getRead()->props.getEdgePropsList()) {
-            picture.append("\\draw[color=" + _tikzColor(e.second.edgeColor.value) + ", thick] ");
-            picture.append("(" + std::to_string(e.second.startVertexPosition.value.x) + ", " + std::to_string(e.second.startVertexPosition.value.y) + ")");
+            if (!e.second.enabled.value)
+                continue;
+            gfn::Vec2 u = e.second.startVertexPosition.value + (e.second.endVertexPosition.value - e.second.startVertexPosition.value).normalize() *
+                                                               (itf->graph.getRead()->props.getVertexProps(e.second.startVertexUuid.value)->radius.value +
+                                                                itf->graph.getRead()->props.getVertexProps(
+                                                                        e.second.startVertexUuid.value)->outlineThickness.value / 2.0);
+            gfn::Vec2 ep = e.second.position.value;
+            double arrowCompensation = itf->graph.getRead()->props.getVertexProps(e.second.endVertexUuid.value)->radius.value +
+                                       itf->graph.getRead()->props.getVertexProps(e.second.endVertexUuid.value)->outlineThickness.value / 2.0;
+            gfn::Vec2 v = u + (e.second.endVertexPosition.value - u).normalize() * ((e.second.endVertexPosition.value - u).length() - arrowCompensation);
+
+            picture.append("\\draw[color=" + _tikzColor(e.second.edgeColor.value) + ", line width=" + std::to_string(e.second.thickness.value * scale) + "cm]");
+            if (e.second.arrowStyle.value == 0b01) picture.append("[-stealth]");
+            else if (e.second.arrowStyle.value == 0b10) picture.append("[stealth-]");
+            else if (e.second.arrowStyle.value == 0b11) picture.append("[stealth-stealth]");
+            picture.append(" (" + std::to_string(u.x) + ", " + std::to_string(u.y) + ")");
             picture.append(" -- ");
-            picture.append("(" + std::to_string(e.second.endVertexPosition.value.x) + ", " + std::to_string(e.second.endVertexPosition.value.y) + ")");
+            picture.append("(" + std::to_string(v.x) + ", " + std::to_string(v.y) + ")");
             picture.append(";\n");
 
             gfn::Vec2 midpoint((e.second.startVertexPosition.value + e.second.endVertexPosition.value) / 2.0);
             gfn::Vec2 vector(e.second.endVertexPosition.value - e.second.startVertexPosition.value);
             gfn::Vec2 location(
-                    midpoint + (vector.rotate(M_PI_2).normalize() * 0.7/*PARAM*/ / 2.0));
-
+                    midpoint + (vector.rotate(M_PI_2).normalize() * 0.8/*PARAM*/ / 2.0));
             //\node[draw,align=left] at (3,0) {some text\\ spanning three lines\\ with manual line breaks};
             picture.append("\\node[align=center, font=\\tiny, text=" + _tikzColor(e.second.labelColor.value) + "] at ");
             //            picture.append(std::to_string(v.second.radius.value * 2.0));
@@ -32,7 +47,10 @@ namespace gfn {
 
         // draw vertices
         for (auto& v : itf->graph.getRead()->props.getVertexPropsList()) {
-            picture.append("\\draw[color=black, fill=" + _tikzColor(v.second.fillColor.value) + ", thick] ");
+            if (!v.second.enabled.value)
+                continue;
+            picture.append("\\draw[color=black, fill=" + _tikzColor(v.second.fillColor.value) + ", line width=" +
+                           std::to_string(v.second.outlineThickness.value * scale) + "cm] ");
 
             picture.append("(" + std::to_string(v.second.position.value.x) + ", " + std::to_string(v.second.position.value.y) + ")");
             picture.append(" circle ");
@@ -49,7 +67,7 @@ namespace gfn {
             picture.append("};\n");
         }
 
-        picture.append("\\end{tikzpicture}\n");
+        picture.append("\\end{tikzpicture}");
 
         ImGui::SetClipboardText(picture.c_str());
         std::cout << "Copied to clipboard\n";

@@ -19,6 +19,7 @@ namespace gfn {
         gfn::serializable::Vec2f endVertexPosition;
         gfn::serializable::Color edgeColor;
         gfn::serializable::Double thickness;
+        gfn::serializable::Int arrowStyle;
         gfn::serializable::Vec2f force;
         gfn::serializable::Bool pauseUpdate;
 

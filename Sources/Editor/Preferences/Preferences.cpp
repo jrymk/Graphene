@@ -1,10 +1,12 @@
 #include "Preferences.h"
 #include <iostream>
 #include <fstream>
+#include <Editor/Theme/Theme.h>
 #include <Tracy.hpp>
 
 namespace gfn {
     ZoneScoped
+
     void Preferences::serialize(nlohmann::json& j) {
         bindings.serialize(j["Key Binds"]);
 
@@ -56,6 +58,8 @@ namespace gfn {
             graphview_selection_tolerance = gvOptions["Selection tolerance"];
             glow_size = gvOptions["Selection highlight glow size"];
         }
+
+        //setTheme(this);
     }
 
     void Preferences::saveToFile() {
@@ -87,6 +91,64 @@ namespace gfn {
         if (bindings.wantSaveBindings) {
             saveToFile();
             bindings.wantSaveBindings = false;
+        }
+    }
+
+    void Preferences::preferencesPanel() {
+        ImGui::SetNextWindowSizeConstraints(ImVec2(300.0f, 200.0f), ImVec2(FLT_MAX, FLT_MAX));
+        ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.5f, ImGui::GetIO().DisplaySize.y * 0.5f),
+                                ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+        ImGui::SetNextWindowSize(ImVec2(std::max(800.0f, 100.0f), std::max(400.0f, 100.0f)), ImGuiCond_Appearing);
+
+        if (ImGui::BeginPopupModal("\ue8b8 Preferences")) {
+
+            ImGui::BeginChild("PrefList##PrefsPanel",
+                              ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y - 28.0f), true,
+                              0);
+
+            if (ImGui::BeginTabBar("##PrefListTabBar")) {
+                if (ImGui::BeginTabItem("Graph View")) {
+                    ImGui::DragFloat("Zoom speed", &graphview_zoom_speed, 0.1f, -10.0f, 10.0f, "%f");
+                    ImGui::DragFloat("Selection tolerance", &graphview_selection_tolerance, 1.0f, 0.0f, 50.0f, "%fpx");
+                    ImGui::DragFloat("Selection highlight glow size", &glow_size, 1.0f, 0.0f, 50.0f, "%fpx");
+                    ImGui::EndTabItem();
+                }
+                if (ImGui::BeginTabItem("Themes")) {
+                    gfn::text("*application restart required", HUE_RED);
+                    ImGui::Checkbox("Use dark theme", &themes_use_dark_theme);
+                    ImGui::EndTabItem();
+                }
+                if (ImGui::BeginTabItem("Graphics")) {
+                    gfn::text("*application restart required", HUE_RED);
+                    ImGui::InputText("Default font", graphics_default_font.data(), 1024);
+                    ImGui::DragFloat("Font size", &graphics_font_size, 1.0f, 4.0f, 128.0f, "%fpt");
+                    ImGui::Checkbox("Launch with window maximized", &graphics_launch_maximized);
+                    ImGui::DragInt("Launch with window width", &graphics_launch_window_width, 1, 100, INT_MAX, "%dpx");
+                    ImGui::DragInt("Launch with window height", &graphics_launch_window_height, 1, 100, INT_MAX, "%dpx");
+                    ImGui::Checkbox("Enable vertical sync", &graphics_vertical_sync);
+                    ImGui::DragInt("Anti-aliasing samples", &graphics_antialiasing_samples, 1, 0, 32, "%dx");
+                    ImGui::EndTabItem();
+                }
+                ImGui::EndTabBar();
+            }
+
+            ImGui::EndChild();
+
+            ImGui::SetCursorPosX(ImGui::GetWindowWidth() - 155.0f);
+            if (gfn::button("\ue5cd Cancel##PREFS", HUE_CONTRAST, HUE_RED_CONTRAST, false, 0, 0, false)) {
+                showPrefsWindow = false;
+                loadFromFile();
+                ImGui::CloseCurrentPopup();
+            }
+
+            ImGui::SameLine(ImGui::GetWindowWidth() - 80.0f);
+            if (gfn::button("\ue161 Save##PREFS", HUE_CONTRAST, HUE_BLUE_CONTRAST, false, 0, 0, false)) {
+                showPrefsWindow = false;
+                saveToFile();
+                ImGui::CloseCurrentPopup();
+            }
+
+            ImGui::EndPopup();
         }
     }
 }

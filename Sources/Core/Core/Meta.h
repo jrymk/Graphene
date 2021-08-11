@@ -2,8 +2,8 @@
 #define META_H
 
 #define BUILD_MAJOR 0
-#define BUILD_MINOR 2
-#define BUILD_PATCH 8
+#define BUILD_MINOR 3
+#define BUILD_PATCH 0
 
 const char buildVersion[] = {
         'G', 'r', 'a', 'p', 'h', 'e', 'n', 'e', ' ',
@@ -29,6 +29,7 @@ const char buildVersion[] = {
 // added pause ui, added edge label, fixed properties panel
 // prototype multiedge rendering
 // added tikz picture export
-
+// added edge arrows support
+// added preferences window
 
 #endif

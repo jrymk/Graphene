@@ -1058,6 +1058,42 @@ namespace gfn {
                         }
                         ImGui::PopItemWidth();
                     }
+                    // arrow style
+                    {
+                        ImGui::TableNextRow();
+                        ImGui::TableSetColumnIndex(0);
+                        ImGui::AlignTextToFramePadding();
+                        ImGui::Text("\uea18 Arrows");
+                        ImGui::TableSetColumnIndex(1);
+                        ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
+                        static int widget = 0b0;
+                        bool update = false;
+
+                        if (gfn::button("\uf1e6##arrowcontrol", widget & 0b10 ? HUE_CONTRAST : HUE_DEFAULT, widget & 0b10 ? HUE_CONTRAST : HUE_DEFAULT, 0,
+                                        (ImGui::GetContentRegionAvailWidth() - ImGui::GetStyle().ItemSpacing.x) / 2, 0, false)) {
+                            if (widget & 0b10) widget &= ~0b10;
+                            else widget |= 0b10;
+                            update = true;
+                        }
+
+                        ImGui::SameLine();
+                        if (gfn::button("\uf1df##arrowcontrol", widget & 0b1 ? HUE_CONTRAST : HUE_DEFAULT, widget & 0b1 ? HUE_CONTRAST : HUE_DEFAULT, 0,
+                                        ImGui::GetContentRegionAvailWidth(), 0, false)) {
+                            if (widget & 0b1) widget &= ~0b1;
+                            else widget |= 0b1;
+                            update = true;
+                        }
+
+                        if (update) {
+                            for (auto& s : edgeProps)
+                                getDoc(activeDoc)->execute("setedgeprops -uuid=" + s.first + " -key=arrowStyle -value=" + std::to_string(widget));
+                        }
+
+                        if (getDoc(activeDoc)->graphview.selection.onChangeSelection) {
+                            widget = edgeProps.begin()->second->arrowStyle.value;
+                        }
+                        ImGui::PopItemWidth();
+                    }
                     // thickness
                     {
                         ImGui::TableNextRow();

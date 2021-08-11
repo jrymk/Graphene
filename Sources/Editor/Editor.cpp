@@ -246,6 +246,7 @@ namespace gfn {
         bool actionSaveFile = hk.press(Actions::SAVE_FILE, -1);
         bool actionSaveAsFile = hk.press(Actions::SAVE_AS_FILE, -1);
         bool actionCloseDocument = hk.press(Actions::CLOSE_DOCUMENT, -1);
+        bool actionPreferences = hk.press(Actions::PREFERENCES, -1);
         bool actionKeyBindings = hk.press(Actions::KEY_BINDINGS, -1);
         bool actionQuit = hk.press(Actions::QUIT, -1);
 
@@ -262,6 +263,8 @@ namespace gfn {
             if (ImGui::MenuItem("\ue5cd Close document", nullptr, false, getDoc(activeDoc)))
                 actionCloseDocument = true;
             ImGui::Separator();
+            if (ImGui::MenuItem("\ue8b8 Preferences", nullptr, false, true))
+                actionPreferences = true;
             if (ImGui::MenuItem("\ue312 Key bindings", nullptr, false, true))
                 actionKeyBindings = true;
             ImGui::Separator();
@@ -286,6 +289,10 @@ namespace gfn {
             getDoc(activeDoc)->closeDocument = true;
         }
 
+        if (actionPreferences) {
+            prefs.loadFromFile();
+            prefs.showPrefsWindow = true;
+        }
         if (actionKeyBindings) {
             prefs.loadFromFile();
             prefs.bindings.showBindingsConfigWindow = true;
@@ -484,6 +491,10 @@ namespace gfn {
         if (prefs.bindings.showBindingsConfigWindow) {
             ImGui::OpenPopup("\ue312 Key Binds##KEYBIND_ENROLL");
             prefs.bindings.showKeybindSetup();
+        }
+        if (prefs.showPrefsWindow) {
+            ImGui::OpenPopup("\ue8b8 Preferences");
+            prefs.preferencesPanel();
         }
 
         updateDocuments();

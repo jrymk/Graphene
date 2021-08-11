@@ -28,7 +28,7 @@ namespace gfn {
             {"",                                                                 0},
             {"",                                                                 0},
             {"",                                                                 0},
-            {"",                                                                 0},
+            {"Preferences",                                                      0},
             // 20
             {"Key bindings",                                                     0},
             {"",                                                                 0},
