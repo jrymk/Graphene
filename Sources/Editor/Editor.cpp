@@ -351,6 +351,11 @@ namespace gfn {
                             "setvertexprops -uuid=" + v.first + " -key=position -value=(" + std::to_string(randX) + "," + std::to_string(randY) + ")");
                 }
             }
+
+            if (gfn::button("\ue6b8 export", HUE_CYAN, HUE_DEFAULT, false,
+                            ImGui::GetContentRegionAvailWidth(), 0, false)) {
+                getDoc(activeDoc)->exportTikZ();
+            }
         }
 
 /*if (!gfn::activeDocumentUuid.empty()) {

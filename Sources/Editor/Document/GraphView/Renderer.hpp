@@ -23,6 +23,12 @@ namespace gfn {
 
         void drawEdges(gfn::Graphics* gfx) {
             ZoneScoped
+
+            camera->xMin = FLT_MAX;
+            camera->xMax = -FLT_MAX;
+            camera->yMin = FLT_MAX;
+            camera->yMax = -FLT_MAX;
+
             auto drawList = ImGui::GetWindowDrawList();
             auto userprops = itf->graph.getRead()->props;
             for (auto& ei : userprops.getEdgePropsList()) {
@@ -35,6 +41,9 @@ namespace gfn {
                 drawList->AddBezierQuadratic(camera->map(e.startVertexPosition.value), camera->map(e.position.value),
                                              camera->map(e.endVertexPosition.value), e.edgeColor.value,
                                              camera->map(e.thickness.value));
+                /*drawList->AddBezierCurve(camera->map(e.startVertexPosition.value), camera->map(e.position.value),
+                                         camera->map(e.position.value), camera->map(e.endVertexPosition.value), e.edgeColor.value,
+                                         camera->map(e.thickness.value));*/
 
                 //drawList->AddCircleFilled(camera->map(e.position), camera->map(e.radius), e.edgeNodeColor.color32, 0);
 
@@ -56,11 +65,17 @@ namespace gfn {
 
                 /*drawList->AddCircleFilled(camera->map(e.position.value), camera->map(e.thickness.value),
                                           IM_COL32(255, 0, 0, 255), 0);*/
+
+                camera->xMin = std::min(camera->xMin, e.position.value.x);
+                camera->xMax = std::max(camera->xMax, e.position.value.x);
+                camera->yMin = std::min(camera->yMin, e.position.value.y);
+                camera->yMax = std::max(camera->yMax, e.position.value.y);
             }
         }
 
         void drawVertices(gfn::Graphics* gfx) {
             ZoneScoped
+
             auto drawList = ImGui::GetWindowDrawList();
             auto userprops = itf->graph.getRead()->props;
             for (auto& vi : userprops.getVertexPropsList()) {
@@ -90,7 +105,14 @@ namespace gfn {
                                   v.labelColor.value, label.c_str());
                 ImGui::PopFont();
                 ImGui::SetWindowFontScale(1.0f);
+
+                camera->xMin = std::min(camera->xMin, v.position.value.x);
+                camera->xMax = std::max(camera->xMax, v.position.value.x);
+                camera->yMin = std::min(camera->yMin, v.position.value.y);
+                camera->yMax = std::max(camera->yMax, v.position.value.y);
             }
+
+            drawList->AddRect(camera->map(gfn::Vec2(camera->xMin, camera->yMin)), camera->map(gfn::Vec2(camera->xMax, camera->yMax)), IM_COL32(0, 255, 0, 255), 0, 0, 2.0f);
         }
     };
 }

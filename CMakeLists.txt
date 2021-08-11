@@ -86,7 +86,7 @@ add_executable(Graphene
         Sources/Editor/Graphics/Barlow.cpp
         Sources/Editor/Graphics/Material.cpp
         Sources/Editor/Preferences/KeyBindings/KeyBindDialog.cpp
-        Sources/Editor/PropertiesPanel.cpp)
+        Sources/Editor/PropertiesPanel.cpp Sources/Editor/Document/Export/ExportTikZ.h Sources/Editor/Document/Export/ExportTikZ.cpp)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)

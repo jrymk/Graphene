@@ -19,6 +19,11 @@ namespace gfn {
         float _zoomInVelocity = 0.0f;
         float _zoomOutVelocity = 0.0f;
 
+        double xMin;
+        double xMax;
+        double yMin;
+        double yMax;
+        
         gfn::Vec2 centerCoord;
         double zoom;
 

@@ -56,6 +56,16 @@ namespace gfn {
         bool isGraphStreaming = true;
         /// WINDOW STATE
 
+        /// GRAPH
+        double xMin;
+        double xMax;
+        double yMin;
+        double yMax;
+        /// GRAPH
+
+        std::string exportTikZ();
+        std::string _tikzColor(uint32_t color);
+
         void terminate();
     };
 }

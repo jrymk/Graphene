@@ -1,0 +1,2001 @@
+{
+    "Graph View Options": {
+        "Selection highlight glow size": 0.20000000298023224,
+        "Selection tolerance": 5.0,
+        "Zoom speed": 1.1
+    },
+    "Graphics Options": {
+        "Anti-aliasing samples": 4,
+        "Default font": ".\\Barlow-Regular.ttf",
+        "Enable multiple viewports": true,
+        "Enable vertical sync": true,
+        "Font size": 16.0,
+        "Launch with window height": 720,
+        "Launch with window maximized": false,
+        "Launch with window width": 1280
+    },
+    "Key Binds": {
+        "": null,
+        "Add all edges to selection": {
+            "Hover on selected edge": [
+                {
+                    "Keys": [
+                        "A",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on selected vertex": [
+                {
+                    "Keys": [
+                        "A",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected edge": [
+                {
+                    "Keys": [
+                        "A",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected vertex": [
+                {
+                    "Keys": [
+                        "A",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on void": [
+                {
+                    "Keys": [
+                        "A",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Add all vertices to selection": {
+            "Hover on selected edge": [
+                {
+                    "Keys": [
+                        "A",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on selected vertex": [
+                {
+                    "Keys": [
+                        "A",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected edge": [
+                {
+                    "Keys": [
+                        "A",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected vertex": [
+                {
+                    "Keys": [
+                        "A",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on void": [
+                {
+                    "Keys": [
+                        "A",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Add edge": {
+            "Hover on selected vertex": [
+                {
+                    "Keys": [
+                        "left ctrl",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "V",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "V",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected vertex": [
+                {
+                    "Keys": [
+                        "left ctrl",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "V",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "V",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Add edge to selection": {
+            "Hover on selected edge": [
+                {
+                    "Keys": [
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected edge": [
+                {
+                    "Keys": [
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Add edges to selection with lasso selection tool": {
+            "Hover on void": [
+                {
+                    "Keys": [
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "left shift",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left shift",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Add edges to selection with rectangular selection tool": null,
+        "Add vertex": {
+            "Hover on selected edge": [
+                {
+                    "Keys": [
+                        "left ctrl",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "V",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "V",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected edge": [
+                {
+                    "Keys": [
+                        "left ctrl",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "V",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "V",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on void": [
+                {
+                    "Keys": [
+                        "left ctrl",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "V",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "V",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Add vertex to selection": {
+            "Hover on selected vertex": [
+                {
+                    "Keys": [
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected vertex": [
+                {
+                    "Keys": [
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Add vertices to selection with lasso selection tool": {
+            "Hover on void": [
+                {
+                    "Keys": [
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "left shift",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left shift",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Add vertices to selection with rectangular selection tool": null,
+        "Camera pan": {
+            "Hover on selected edge": [
+                {
+                    "Keys": [
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "left ctrl",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "left shift",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left shift",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on selected vertex": [
+                {
+                    "Keys": [
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "left ctrl",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "left shift",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left shift",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected edge": [
+                {
+                    "Keys": [
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "left ctrl",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "left shift",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left shift",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected vertex": [
+                {
+                    "Keys": [
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "left ctrl",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "left shift",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left shift",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on void": [
+                {
+                    "Keys": [
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "left ctrl",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "left shift",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left shift",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl",
+                        "right_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Close document": {
+            "Always": [
+                {
+                    "Keys": [
+                        "f4",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Copy selection": {
+            "Always": [
+                {
+                    "Keys": [
+                        "C",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Cut selection": {
+            "Always": [
+                {
+                    "Keys": [
+                        "X",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Delete hovered edge": null,
+        "Delete hovered vertex": null,
+        "Delete selected edges": {
+            "Hover on selected edge": [
+                {
+                    "Keys": [
+                        "delete"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "backspace"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on selected vertex": [
+                {
+                    "Keys": [
+                        "delete"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "backspace"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected edge": [
+                {
+                    "Keys": [
+                        "delete"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "backspace"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected vertex": [
+                {
+                    "Keys": [
+                        "delete"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "backspace"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on void": [
+                {
+                    "Keys": [
+                        "delete"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "backspace"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Delete selected vertices": {
+            "Hover on selected edge": [
+                {
+                    "Keys": [
+                        "delete"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "backspace"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on selected vertex": [
+                {
+                    "Keys": [
+                        "delete"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "backspace"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected edge": [
+                {
+                    "Keys": [
+                        "delete"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "backspace"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected vertex": [
+                {
+                    "Keys": [
+                        "delete"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "backspace"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on void": [
+                {
+                    "Keys": [
+                        "delete"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "backspace"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Hold to pause graph streaming": {
+            "Hover on selected edge": [
+                {
+                    "Keys": [
+                        "space"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left shift"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on selected vertex": [
+                {
+                    "Keys": [
+                        "space"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left shift"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected edge": [
+                {
+                    "Keys": [
+                        "space"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left shift"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected vertex": [
+                {
+                    "Keys": [
+                        "space"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left shift"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on void": [
+                {
+                    "Keys": [
+                        "space"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left shift"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Hold to pause graph updates": null,
+        "Invert selection of all edges": null,
+        "Invert selection of all vertices": null,
+        "Invert selection of edge": {
+            "Hover on selected edge": [
+                {
+                    "Keys": [
+                        "left shift",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left shift",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected edge": [
+                {
+                    "Keys": [
+                        "left shift",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left shift",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Invert selection of edges with lasso selection tool": null,
+        "Invert selection of edges with rectangular selection tool": null,
+        "Invert selection of vertex": {
+            "Hover on selected vertex": [
+                {
+                    "Keys": [
+                        "left shift",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left shift",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected vertex": [
+                {
+                    "Keys": [
+                        "left shift",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left shift",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Invert selection of vertices with lasso selection tool": null,
+        "Invert selection of vertices with rectangular selection tool": null,
+        "Key bindings": {
+            "Always": [
+                {
+                    "Keys": [
+                        "B",
+                        "left shift",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Move hovered vertex": {
+            "Hover on selected vertex": [
+                {
+                    "Keys": [
+                        "middle_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected vertex": [
+                {
+                    "Keys": [
+                        "middle_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Move selected vertices": {
+            "Hover on selected edge": [
+                {
+                    "Keys": [
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on selected vertex": [
+                {
+                    "Keys": [
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "New document": {
+            "Always": [
+                {
+                    "Keys": [
+                        "N",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "T",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Open file": {
+            "Always": [
+                {
+                    "Keys": [
+                        "O",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Paste selection": null,
+        "Preview add edge": {
+            "Hover on selected vertex": [
+                {
+                    "Keys": [
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "V"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "V"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected vertex": [
+                {
+                    "Keys": [
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "V"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "V"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Preview add vertex": {
+            "Hover on selected edge": [
+                {
+                    "Keys": [
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "V"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "V"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected edge": [
+                {
+                    "Keys": [
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "V"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "V"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on void": [
+                {
+                    "Keys": [
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "V"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "V"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Quit": {
+            "Always": [
+                {
+                    "Keys": [
+                        "f4",
+                        "left alt"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Save as file": {
+            "Always": [
+                {
+                    "Keys": [
+                        "S",
+                        "left shift",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Save file": {
+            "Always": [
+                {
+                    "Keys": [
+                        "S",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Subtract all edges from selection": {
+            "Hover on unselected edge": [
+                {
+                    "Keys": [
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected vertex": [
+                {
+                    "Keys": [
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on void": [
+                {
+                    "Keys": [
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Subtract all vertices from selection": {
+            "Hover on unselected edge": [
+                {
+                    "Keys": [
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected vertex": [
+                {
+                    "Keys": [
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on void": [
+                {
+                    "Keys": [
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Subtract edge from selection": null,
+        "Subtract edges from selection with lasso selection tool": null,
+        "Subtract edges from selection with rectangular selection tool": null,
+        "Subtract vertex from selection": null,
+        "Subtract vertices from selection with lasso selection tool": null,
+        "Subtract vertices from selection with rectangular selection tool": null,
+        "Toggle graph streaming": null,
+        "Toggle graph updates": {
+            "Hover on selected edge": [
+                {
+                    "Keys": [
+                        "P"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on selected vertex": [
+                {
+                    "Keys": [
+                        "P"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected edge": [
+                {
+                    "Keys": [
+                        "P"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected vertex": [
+                {
+                    "Keys": [
+                        "P"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on void": [
+                {
+                    "Keys": [
+                        "P"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Zoom in": {
+            "Hover on selected edge": [
+                {
+                    "Keys": [
+                        "scroll_up"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "left ctrl",
+                        "scroll_up"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "=",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": 250
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "scroll_up"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl",
+                        "scroll_up"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on selected vertex": [
+                {
+                    "Keys": [
+                        "scroll_up"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "left ctrl",
+                        "scroll_up"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "=",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": 250
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "scroll_up"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl",
+                        "scroll_up"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected edge": [
+                {
+                    "Keys": [
+                        "scroll_up"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "left ctrl",
+                        "scroll_up"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "=",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": 250
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "scroll_up"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl",
+                        "scroll_up"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected vertex": [
+                {
+                    "Keys": [
+                        "scroll_up"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "left ctrl",
+                        "scroll_up"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "=",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": 250
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "scroll_up"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl",
+                        "scroll_up"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on void": [
+                {
+                    "Keys": [
+                        "scroll_up"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "left ctrl",
+                        "scroll_up"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "=",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": 250
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "scroll_up"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl",
+                        "scroll_up"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
+        "Zoom out": {
+            "Hover on selected edge": [
+                {
+                    "Keys": [
+                        "scroll_down"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "left ctrl",
+                        "scroll_down"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "-",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": 250
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "scroll_down"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl",
+                        "scroll_down"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on selected vertex": [
+                {
+                    "Keys": [
+                        "scroll_down"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "left ctrl",
+                        "scroll_down"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "-",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": 250
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "scroll_down"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl",
+                        "scroll_down"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected edge": [
+                {
+                    "Keys": [
+                        "scroll_down"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "left ctrl",
+                        "scroll_down"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "-",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": 250
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "scroll_down"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl",
+                        "scroll_down"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on unselected vertex": [
+                {
+                    "Keys": [
+                        "scroll_down"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "left ctrl",
+                        "scroll_down"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "-",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": 250
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "scroll_down"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl",
+                        "scroll_down"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ],
+            "Hover on void": [
+                {
+                    "Keys": [
+                        "scroll_down"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "left ctrl",
+                        "scroll_down"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "-",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": 250
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "scroll_down"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left ctrl",
+                        "scroll_down"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        }
+    },
+    "Theme Options": {
+        "Use dark theme": true
+    }
+}
