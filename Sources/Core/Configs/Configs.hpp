@@ -14,16 +14,18 @@ namespace gfn::configs {
         gfn::serializable::Double c6;
         gfn::serializable::Double c7;
         gfn::serializable::Double c8;
+        gfn::serializable::Double c9;
 
         Configs() :
                 c1("c1", 0.1),
                 c2("c2", 1.0),
                 c3("c3", 1.0),
                 c4("c4", 0.15),
-                c5("c5", 1.0), // edge repel
-                c6("c6", 0.5), // edge attract
-                c7("c7", 10.0), // edge attract
-                c8("c8", 0.01) { // edge factor
+                c5("c5", 1.0), // edge attract
+                c6("c6", 1.3), // edge attract
+                c7("c7", 20.0), // edge repel edge
+                c8("c8", 0.01), // edge repel vertex
+                c9("c9", 0.05) { // edge factor
         }
 
         bool parse(gfn::Args command, gfn::Args& output) {
@@ -44,6 +46,8 @@ namespace gfn::configs {
                     c7.setValueStr(command.getParamValue("-c7"), output);
                 if (!command.getParamValue("-c8").empty())
                     c8.setValueStr(command.getParamValue("-c8"), output);
+                if (!command.getParamValue("-c9").empty())
+                    c9.setValueStr(command.getParamValue("-c9"), output);
                 return true;
             }
             return false;
@@ -59,6 +63,7 @@ namespace gfn::configs {
             binn_object_set_double(cfg, c6.key.c_str(), c6.value);
             binn_object_set_double(cfg, c7.key.c_str(), c7.value);
             binn_object_set_double(cfg, c8.key.c_str(), c8.value);
+            binn_object_set_double(cfg, c9.key.c_str(), c9.value);
             binn_object_set_object(document, "configs", cfg);
             binn_free(cfg);
         }
@@ -73,6 +78,7 @@ namespace gfn::configs {
             c6.value = binn_object_double(cfg, c6.key.c_str());
             c7.value = binn_object_double(cfg, c7.key.c_str());
             c8.value = binn_object_double(cfg, c8.key.c_str());
+            c9.value = binn_object_double(cfg, c9.key.c_str());
         }
     };
 }

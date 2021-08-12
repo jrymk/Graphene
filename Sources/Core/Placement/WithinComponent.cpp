@@ -26,11 +26,19 @@ namespace gfn {
         return (v - u).normalize() * coeff;
     }
 
-    gfn::Vec2 Placement::edgeRepelForce(gfn::Interface* itf, gfn::Vec2 u, gfn::Vec2 v) {
+    gfn::Vec2 Placement::edgeRepelEdgeForce(gfn::Interface* itf, gfn::Vec2 u, gfn::Vec2 v) {
         double dis = (u - v).length();
         if (dis == 0.0)
             return {0.0, 0.0};
         double coeff = std::max(-itf->graph.getWrite().cfg.c7.value / dis / dis / dis, -100.0);
+        return (v - u).normalize() * coeff;
+    }
+
+    gfn::Vec2 Placement::edgeRepelVertexForce(gfn::Interface* itf, gfn::Vec2 u, gfn::Vec2 v) {
+        double dis = (u - v).length();
+        if (dis == 0.0)
+            return {0.0, 0.0};
+        double coeff = std::max(-itf->graph.getWrite().cfg.c8.value / dis / dis / dis, -100.0);
         return (v - u).normalize() * coeff;
     }
 
@@ -44,23 +52,13 @@ namespace gfn {
             std::vector<Edge*> edges;
             auto edgesUV = c->getAdjList().find(u)->second.second.find(v);
             if (edgesUV != c->getAdjList().find(u)->second.second.end()) {
-                for (auto &e : edgesUV->second)
+                for (auto& e : edgesUV->second)
                     edges.push_back(e);
             }
             auto edgesVU = c->getAdjList().find(v)->second.second.find(u);
             if (edgesVU != c->getAdjList().find(u)->second.second.end()) {
-                for (auto &e : edgesVU->second)
+                for (auto& e : edgesVU->second)
                     edges.push_back(e);
-            }
-
-            for (auto& e : edges) {
-                for (auto& f : edges) {
-                    if (e == f)
-                        continue;
-                    e->props->force.value += edgeRepelForce(itf, e->props->position.value, f->props->position.value);
-                }
-                e->props->force.value += edgeAttractForce(itf, e->props->position.value, u->props->position.value);
-                e->props->force.value += edgeAttractForce(itf, e->props->position.value, v->props->position.value);
             }
         }
         for (auto& v : c->vertices) {
@@ -72,6 +70,29 @@ namespace gfn {
             u->props->force += repelForce(itf->graph.getWrite().cfg.u->props->position, e->props->position);
             //e->props->force += repelForce(itf->graph.getWrite().cfg.e->props->position, u->props->position);
         }*/
+    }
+
+    void Placement::updateEdge(gfn::Interface* itf, gfn::Component* c, gfn::Edge* e) {
+        if (c->getAdjList().find(e->startVertex)->second.second.find(e->endVertex) != c->getAdjList().find(e->startVertex)->second.second.end()) {
+            for (auto& f : c->getAdjList().find(e->startVertex)->second.second.find(e->endVertex)->second) {
+                if (e == f)
+                    continue;
+                e->props->force.value += edgeRepelEdgeForce(itf, e->props->position.value, f->props->position.value);
+            }
+        }
+        if (c->getAdjList().find(e->endVertex)->second.second.find(e->startVertex) != c->getAdjList().find(e->endVertex)->second.second.end()) {
+            for (auto& f : c->getAdjList().find(e->endVertex)->second.second.find(e->startVertex)->second) {
+                if (e == f)
+                    continue;
+                e->props->force.value += edgeRepelEdgeForce(itf, e->props->position.value, f->props->position.value);
+            }
+        }
+        e->props->force.value += edgeAttractForce(itf, e->props->position.value, e->startVertex->props->position.value);
+        e->props->force.value += edgeAttractForce(itf, e->props->position.value, e->endVertex->props->position.value);
+
+        for (auto& v : c->vertices) {
+            e->props->force.value += edgeRepelVertexForce(itf, e->props->position.value, v->props->position.value);
+        }
     }
 
     /*void updateEdge(gfn::Interface* itf, gfn::structure::Component* c, gfn::structure::Edge* u) {
@@ -140,6 +161,10 @@ namespace gfn {
             if (!u->props->pauseUpdate.value)
                 results.emplace_back(pool.enqueue(&Placement::updateVertex, itf, c, u));
         }
+        for (auto& e : c->edges) {
+            if (!e->props->pauseUpdate.value)
+                results.emplace_back(pool.enqueue(&Placement::updateEdge, itf, c, e));
+        }
 
         for (auto& f : results)
             f.get();
@@ -155,14 +180,16 @@ namespace gfn {
             e->props->endVertexPosition.value = e->endVertex->props->position.value;
 
             if (!e->props->pauseUpdate.value)
-                e->props->position.value += e->props->force.value * itf->graph.getWrite().cfg.c8.value;
+                e->props->position.value += e->props->force.value * itf->graph.getWrite().cfg.c9.value;
 
             auto ep = e->props->position.value;
             auto up = e->props->startVertexPosition.value;
             auto vp = e->props->endVertexPosition.value;
             auto perp = (vp - up).rotate(M_PI_2);
             auto mid = (vp + up) / 2.0f;
-            e->props->position.value = mid + perp.normalize() * (((ep - mid) * perp) / perp.length()); // mid + )
+
+            if (e->props->startVertexUuid.value != e->props->endVertexUuid.value)
+                e->props->position.value = mid + perp.normalize() * (((ep - mid) * perp) / perp.length()); // mid + )
         }
         /*for (auto& e : c->edges)
             e->props->position += e->props->force * itf->graph.getWrite().cfg.c4;*/

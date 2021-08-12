@@ -2,12 +2,13 @@
 #include <Core/Objects/Random.h>
 #include <Editor/Theme/Theme.h> /// TODO
 #include <ImGuiFileDialog.h> /// TODO
+#include <iostream>
 #include <Tracy.hpp>
 
 namespace gfn {
     Editor::Editor() :
             hk(&prefs) {
-        //cmdStartup();
+        startTerminal();
         prefs.loadFromFile();
         gfx.launchWindow(&prefs);
         gfn::setTheme(&prefs);
@@ -21,6 +22,18 @@ namespace gfn {
         gfx.preFrame();
 
         hk.updateHotKeyState();
+
+        if (!terminalBuffer.empty()) {
+            if (gfn::isUuid(terminalBuffer.front())) {
+                if (getDoc(terminalBuffer.front().substr(0, 36)))
+                    getDoc(terminalBuffer.front().substr(0, 36))->execute(terminalBuffer.front().substr(37));
+            } else {
+                if (!getDoc(gfn::createNil()))
+                    newDocument(gfn::createNil());
+                getDoc(gfn::createNil())->execute(terminalBuffer.front());
+            }
+            terminalBuffer.pop();
+        }
 
         /*gfn::setColorLight();
         ImGui::Begin("LIGHT THEME");
@@ -216,29 +229,11 @@ namespace gfn {
         //            gfn::loadDragAndDrop(argc, argv, true);
         //            first = false;
         //        }
-        //
-        ImGui::ShowDemoWindow();
-        ImGui::ShowMetricsWindow();
 
-        /*auto fDoc = gfn::getActiveDocument();*/
 
-        ImGui::Begin("Hot keys 2.0");
-        if (getDoc(activeDoc)) {
-            gfn::text(getDoc(activeDoc)->docName + ": " + std::to_string(getDoc(activeDoc)->graphview.camera.hoverState), HUE_DEFAULT);
-            for (int i = 0; i < gfn::Bindings::actions.size(); i++) {
-                if (hk.timeSincePressMs(i, getDoc(activeDoc)->graphview.camera.hoverState) < 100)
-                    gfn::text(gfn::Bindings::actions[i].first + " PRESSED", HUE_RED);
-                if (hk.down(i, getDoc(activeDoc)->graphview.camera.hoverState))
-                    gfn::text(gfn::Bindings::actions[i].first + " DOWN", HUE_YELLOW);
-                if (hk.timeSinceReleaseMs(i, getDoc(activeDoc)->graphview.camera.hoverState) < 100)
-                    gfn::text(gfn::Bindings::actions[i].first + " RELEASED", HUE_BLUE);
-            }
-        } else
-            gfn::text("No active document", HUE_RED);
+        auto fDoc = getDoc(activeDoc);
 
-        ImGui::End();
-
-        ImGui::Begin("Args centre", nullptr, 0);
+        ImGui::Begin("\ue30f Controls", nullptr, 0);
 
 
         bool actionNewDocument = hk.press(Actions::NEW_DOCUMENT, -1);
@@ -256,11 +251,11 @@ namespace gfn {
                 actionNewDocument = true;
             if (ImGui::MenuItem("\ue2c7 Open file", nullptr, false, true))
                 actionOpenFile = true;
-            if (ImGui::MenuItem("\ue161 Save file", nullptr, false, getDoc(activeDoc)))
+            if (ImGui::MenuItem("\ue161 Save file", nullptr, false, fDoc))
                 actionSaveFile = true;
-            if (ImGui::MenuItem("\ue161 Save as file", nullptr, false, getDoc(activeDoc)))
+            if (ImGui::MenuItem("\ue161 Save as file", nullptr, false, fDoc))
                 actionSaveAsFile = true;
-            if (ImGui::MenuItem("\ue5cd Close document", nullptr, false, getDoc(activeDoc)))
+            if (ImGui::MenuItem("\ue5cd Close document", nullptr, false, fDoc))
                 actionCloseDocument = true;
             ImGui::Separator();
             if (ImGui::MenuItem("\ue8b8 Preferences", nullptr, false, true))
@@ -278,15 +273,15 @@ namespace gfn {
             newDocument();
         if (actionOpenFile)
             ImGuiFileDialog::Instance()->OpenDialog("OpenFile", "\ue2c7 Open file", ".gfn,.*", ".", 0, nullptr, 0);
-        if (actionSaveFile && getDoc(activeDoc))
-            getDoc(activeDoc)->execute("save");
-        if (actionSaveAsFile && getDoc(activeDoc)) {
+        if (actionSaveFile && fDoc)
+            fDoc->execute("save");
+        if (actionSaveAsFile && fDoc) {
             ImGuiFileDialog::Instance()->OpenDialog("SaveAsFile", "\ue2c7 Save as file", ".gfn,.*", ".", 0, nullptr,
                                                     ImGuiFileDialogFlags_IsSave | ImGuiFileDialogFlags_ConfirmOverwrite);
         }
-        if (actionCloseDocument && getDoc(activeDoc)) {
-            getDoc(activeDoc)->showCloseConfirmationDialog = true;
-            getDoc(activeDoc)->closeDocument = true;
+        if (actionCloseDocument && fDoc) {
+            fDoc->showCloseConfirmationDialog = true;
+            fDoc->closeDocument = true;
         }
 
         if (actionPreferences) {
@@ -329,82 +324,51 @@ namespace gfn {
                 std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
                 std::replace(filePathName.begin(), filePathName.end(), '\\', '/');
 
-                getDoc(activeDoc)->docName = filePathName.substr(filePathName.find_last_of('/') + 1);
-                getDoc(activeDoc)->setFile(filePathName);
-                getDoc(activeDoc)->execute("save");
+                fDoc->docName = filePathName.substr(filePathName.find_last_of('/') + 1);
+                fDoc->setFile(filePathName);
+                fDoc->execute("save");
             }
             ImGuiFileDialog::Instance()->Close();
         }
 
 
-        if (getDoc(activeDoc)) {
+        if (fDoc) {
             if (gfn::button("\ue034 pause updates", HUE_CONTRAST,
-                            getDoc(activeDoc)->isGraphUpdate ? HUE_CONTRAST : HUE_RED_CONTRAST, false,
+                            fDoc->isGraphUpdate ? HUE_CONTRAST : HUE_RED_CONTRAST, false,
                             ImGui::GetContentRegionAvailWidth(), 0, false)) {
-                getDoc(activeDoc)->isGraphUpdate = !getDoc(activeDoc)->isGraphUpdate;
-                getDoc(activeDoc)->isGraphUpdateEx = true;
+                fDoc->isGraphUpdate = !fDoc->isGraphUpdate;
+                fDoc->isGraphUpdateEx = true;
             }
-            if (gfn::button("\ue51f pause graph streaming", HUE_CONTRAST, getDoc(activeDoc)->isGraphStreaming ? HUE_CONTRAST : HUE_BLUE_CONTRAST,
+            if (gfn::button("\ue51f pause graph streaming", HUE_CONTRAST, fDoc->isGraphStreaming ? HUE_CONTRAST : HUE_BLUE_CONTRAST,
                             false, ImGui::GetContentRegionAvailWidth(), 0, false)) {
-                getDoc(activeDoc)->isGraphStreaming = !getDoc(activeDoc)->isGraphStreaming;
+                fDoc->isGraphStreaming = !fDoc->isGraphStreaming;
             }
             if (gfn::button("\ue028 recalculate", HUE_RED, HUE_DEFAULT, false,
                             ImGui::GetContentRegionAvailWidth(), 0, false)) {
-                for (auto& v:getDoc(activeDoc)->getItf()->graph.getRead()->props.getVertexPropsList()) {
+                for (auto& v:fDoc->getItf()->graph.getRead()->props.getVertexPropsList()) {
                     std::uniform_real_distribution dis(-20.0, 20.0);
                     auto randX = dis(gfn::getRng());
                     auto randY = dis(gfn::getRng());
-                    getDoc(activeDoc)->execute(
+                    fDoc->execute(
                             "setvertexprops -uuid=" + v.first + " -key=position -value=(" + std::to_string(randX) + "," + std::to_string(randY) + ")");
                 }
             }
 
             if (gfn::button("\ue6b8 export", HUE_CYAN, HUE_DEFAULT, false,
                             ImGui::GetContentRegionAvailWidth(), 0, false)) {
-                getDoc(activeDoc)->exportTikZ();
+                fDoc->showExportPopup = true;
             }
-        }
 
-/*if (!gfn::activeDocumentUuid.empty()) {
-    ImGui::SameLine();
-    if (gfn::getActiveDocument()->file.empty()) {
-        ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
-        ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(200, 200, 200, 255));
-    }
-    if (ImGui::Button("Save File"))
-        gfn::saveFile();
-    if (gfn::getActiveDocument()->file.empty()) {
-        ImGui::PopItemFlag();
-        ImGui::PopStyleColor(1);
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("Save As File"))
-        gfn::saveAsFile(gfn::activeDocumentUuid);
-}*/
-
-
-        ImGui::Separator();
-
-        gfn::Document* fDoc = getDoc(activeDoc);
-
-        if (fDoc) {
-//if (gfn::isOpeningFile)
-            ImGui::Text(fDoc->docName.c_str());
-            ImGui::Text("Documents:");
-//if (gfn::isSavingAsFile)
-            for (auto& d                    : documents) {
-                ImGui::Text(d.first.c_str());
-                if (d.second->isFocused) {
-                    ImGui::SameLine(300.0f);
-                    ImGui::Text("focused");
-                    ImGui::SameLine(380.0f);
-                    ImGui::Text(d.second->getFileName().c_str());
-                }
-            }
+            ImGui::Text(("DocID: " + fDoc->docId).c_str());
+            if (ImGui::IsItemHovered())
+                ImGui::SetTooltip("Copy to clipboard");
+            if (ImGui::IsItemClicked())
+                ImGui::SetClipboardText(fDoc->docId.c_str());
         }
 
         ImGui::Separator();
 
+        ImGui::Text("\ue9ef Constants");
         static gfn::Uuid prevActiveDocId;
         if (fDoc) {
             static float c1p;
@@ -415,6 +379,7 @@ namespace gfn {
             static float c6p;
             static float c7p;
             static float c8p;
+            static float c9p;
 //if (prevActiveDocId != fDoc->docId) {
             prevActiveDocId = fDoc->docId;
             c1p = float(fDoc->getItf()->graph.getRead()->cfg.c1.value);
@@ -425,6 +390,7 @@ namespace gfn {
             c6p = float(fDoc->getItf()->graph.getRead()->cfg.c6.value);
             c7p = float(fDoc->getItf()->graph.getRead()->cfg.c7.value);
             c8p = float(fDoc->getItf()->graph.getRead()->cfg.c8.value);
+            c9p = float(fDoc->getItf()->graph.getRead()->cfg.c9.value);
 //}
             float c1 = c1p;
             float c2 = c2p;
@@ -434,46 +400,118 @@ namespace gfn {
             float c6 = c6p;
             float c7 = c7p;
             float c8 = c8p;
-            ImGui::SliderFloat("c1", &c1, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
-            ImGui::SliderFloat("c2", &c2, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
-            ImGui::SliderFloat("c3", &c3, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
-            ImGui::SliderFloat("c4", &c4, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
-            ImGui::SliderFloat("c5", &c5, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
-            ImGui::SliderFloat("c6", &c6, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
-            ImGui::SliderFloat("c7", &c7, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
-            ImGui::SliderFloat("c8", &c8, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+            float c9 = c9p;
+            if (ImGui::BeginTable("##CONSTANTS", 2, ImGuiTableFlags_BordersH | ImGuiTableFlags_Resizable)) {
+                {
+                    ImGui::TableNextRow();
+                    ImGui::TableSetColumnIndex(0);
+                    ImGui::AlignTextToFramePadding();
+                    ImGui::Text("c1");
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
+                    ImGui::SliderFloat("##c1", &c1, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+                    ImGui::PopItemWidth();
+                }
+                {
+                    ImGui::TableNextRow();
+                    ImGui::TableSetColumnIndex(0);
+                    ImGui::AlignTextToFramePadding();
+                    ImGui::Text("c2");
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
+                    ImGui::SliderFloat("##c2", &c2, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+                    ImGui::PopItemWidth();
+                }
+                {
+                    ImGui::TableNextRow();
+                    ImGui::TableSetColumnIndex(0);
+                    ImGui::AlignTextToFramePadding();
+                    ImGui::Text("c3");
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
+                    ImGui::SliderFloat("##c3", &c3, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+                    ImGui::PopItemWidth();
+                }
+                {
+                    ImGui::TableNextRow();
+                    ImGui::TableSetColumnIndex(0);
+                    ImGui::AlignTextToFramePadding();
+                    ImGui::Text("c4");
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
+                    ImGui::SliderFloat("##c4", &c4, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+                    ImGui::PopItemWidth();
+                }
+                {
+                    ImGui::TableNextRow();
+                    ImGui::TableSetColumnIndex(0);
+                    ImGui::AlignTextToFramePadding();
+                    ImGui::Text("c5");
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
+                    ImGui::SliderFloat("##c5", &c5, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+                    ImGui::PopItemWidth();
+                }
+                {
+                    ImGui::TableNextRow();
+                    ImGui::TableSetColumnIndex(0);
+                    ImGui::AlignTextToFramePadding();
+                    ImGui::Text("c6");
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
+                    ImGui::SliderFloat("##c6", &c6, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+                    ImGui::PopItemWidth();
+                }
+                {
+                    ImGui::TableNextRow();
+                    ImGui::TableSetColumnIndex(0);
+                    ImGui::AlignTextToFramePadding();
+                    ImGui::Text("c7");
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
+                    ImGui::SliderFloat("##c7", &c7, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+                    ImGui::PopItemWidth();
+                }
+                {
+                    ImGui::TableNextRow();
+                    ImGui::TableSetColumnIndex(0);
+                    ImGui::AlignTextToFramePadding();
+                    ImGui::Text("c8");
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
+                    ImGui::SliderFloat("##c8", &c8, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+                    ImGui::PopItemWidth();
+                }
+                {
+                    ImGui::TableNextRow();
+                    ImGui::TableSetColumnIndex(0);
+                    ImGui::AlignTextToFramePadding();
+                    ImGui::Text("c9");
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
+                    ImGui::SliderFloat("##c9", &c9, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+                    ImGui::PopItemWidth();
+                }
+                ImGui::EndTable();
+            }
             if (c1p != c1)
-                fDoc->execute("configs -c1=" +
-                              std::to_string(c1)
-                );
+                fDoc->execute("configs -c1=" + std::to_string(c1));
             if (c2p != c2)
-                fDoc->execute("configs -c2=" +
-                              std::to_string(c2)
-                );
+                fDoc->execute("configs -c2=" + std::to_string(c2));
             if (c3p != c3)
-                fDoc->execute("configs -c3=" +
-                              std::to_string(c3)
-                );
+                fDoc->execute("configs -c3=" + std::to_string(c3));
             if (c4p != c4)
-                fDoc->execute("configs -c4=" +
-                              std::to_string(c4)
-                );
+                fDoc->execute("configs -c4=" + std::to_string(c4));
             if (c5p != c5)
-                fDoc->execute("configs -c5=" +
-                              std::to_string(c5)
-                );
+                fDoc->execute("configs -c5=" + std::to_string(c5));
             if (c6p != c6)
-                fDoc->execute("configs -c6=" +
-                              std::to_string(c6)
-                );
+                fDoc->execute("configs -c6=" + std::to_string(c6));
             if (c7p != c7)
-                fDoc->execute("configs -c7=" +
-                              std::to_string(c7)
-                );
+                fDoc->execute("configs -c7=" + std::to_string(c7));
             if (c8p != c8)
-                fDoc->execute("configs -c8=" +
-                              std::to_string(c8)
-                );
+                fDoc->execute("configs -c8=" + std::to_string(c8));
+            if (c9p != c9)
+                fDoc->execute("configs -c9=" + std::to_string(c9));
             c1p = c1;
             c2p = c2;
             c3p = c3;
@@ -482,6 +520,14 @@ namespace gfn {
             c6p = c6;
             c7p = c7;
             c8p = c8;
+            c9p = c9;
+        }
+
+        ImGui::Separator();
+
+        if (fDoc) {
+            if (gfn::button("\ue5d0 zoom to fit", HUE_YELLOW, HUE_DEFAULT, false, ImGui::GetContentRegionAvailWidth(), 0, false))
+                fDoc->doZoomToFit = true;
         }
 
         ImGui::End();
@@ -496,6 +542,11 @@ namespace gfn {
             ImGui::OpenPopup("\ue8b8 Preferences");
             prefs.preferencesPanel();
         }
+        if (fDoc && fDoc->showExportPopup) {
+            ImGui::OpenPopup("\ue6b8 Export");
+            fDoc->exportTikZ();
+        }
+
 
         updateDocuments();
 
@@ -528,6 +579,24 @@ namespace gfn {
         for (auto& d : documents) {
             d.second->update();
         }
+    }
+
+    bool Editor::terminateTerminal = false;
+    std::queue<std::string> Editor::terminalBuffer;
+
+    void Editor::startTerminal() {
+        std::thread terminalThread([]() {
+            while (!terminateTerminal) {
+                std::string cmd;
+                std::getline(std::cin, cmd);
+                Editor::execute(cmd);
+            }
+        });
+        terminalThread.detach();
+    }
+
+    void Editor::execute(const std::string& cmd) {
+        terminalBuffer.push(cmd);
     }
 
     void Editor::terminate() {

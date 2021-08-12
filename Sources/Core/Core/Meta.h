@@ -3,7 +3,7 @@
 
 #define BUILD_MAJOR 0
 #define BUILD_MINOR 3
-#define BUILD_PATCH 0
+#define BUILD_PATCH 2
 
 const char buildVersion[] = {
         'G', 'r', 'a', 'p', 'h', 'e', 'n', 'e', ' ',
@@ -31,5 +31,8 @@ const char buildVersion[] = {
 // added tikz picture export
 // added edge arrows support
 // added preferences window
+// added zoom to fit
+// added export window
+// added very bad self cycle rendering
 
 #endif

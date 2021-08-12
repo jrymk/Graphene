@@ -202,6 +202,9 @@ namespace gfn {
                 for (auto& v : selection.vertexSelection)
                     execute("setvertexprops -uuid=" + v + " -key=position -value=+(" +
                             std::to_string(selection.mouseDelta.x) + "," + std::to_string(selection.mouseDelta.y) + ")");
+                for (auto& e : selection.edgeSelection)
+                    execute("setedgeprops -uuid=" + e + " -key=position -value=+(" +
+                    std::to_string(selection.mouseDelta.x) + "," + std::to_string(selection.mouseDelta.y) + ")");
             }
             if (movingSelection && !hk->down(Actions::MOVE_SELECTION, onMoveSelectionState)) {
                 movingSelection = false;

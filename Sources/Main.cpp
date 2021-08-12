@@ -17,18 +17,19 @@ int main(int argc, char* argv[]) {
 
         gfn::Editor editor;
 
-        {
+        /*{
             std::string path = "./small tree.gfn";
             auto docId = editor.newDocument();
             editor.getDoc(docId)->setFile(path);
             editor.getDoc(docId)->execute("open");
             editor.getDoc(docId)->fileSaved = true;
-        }
+        }*/
+        auto docId = editor.newDocument();
 
         while (!editor.gfx.shouldClose()) {
             editor.update();
         }
         editor.terminate();
-    }
+    } 
     return 0;
 }

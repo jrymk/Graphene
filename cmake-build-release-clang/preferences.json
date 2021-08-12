@@ -1623,6 +1623,14 @@
                     ],
                     "Repeat rate interval (ms)": 75,
                     "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "=",
+                        "right ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": 250
                 }
             ],
             "Hover on selected vertex": [
@@ -1665,6 +1673,14 @@
                     ],
                     "Repeat rate interval (ms)": 75,
                     "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "=",
+                        "right ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": 250
                 }
             ],
             "Hover on unselected edge": [
@@ -1707,6 +1723,14 @@
                     ],
                     "Repeat rate interval (ms)": 75,
                     "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "=",
+                        "right ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": 250
                 }
             ],
             "Hover on unselected vertex": [
@@ -1749,6 +1773,14 @@
                     ],
                     "Repeat rate interval (ms)": 75,
                     "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "=",
+                        "right ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": 250
                 }
             ],
             "Hover on void": [
@@ -1791,6 +1823,14 @@
                     ],
                     "Repeat rate interval (ms)": 75,
                     "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "=",
+                        "right ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": 250
                 }
             ]
         },
@@ -1835,6 +1875,14 @@
                     ],
                     "Repeat rate interval (ms)": 75,
                     "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "-",
+                        "right ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": 250
                 }
             ],
             "Hover on selected vertex": [
@@ -1877,6 +1925,14 @@
                     ],
                     "Repeat rate interval (ms)": 75,
                     "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "-",
+                        "right ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": 250
                 }
             ],
             "Hover on unselected edge": [
@@ -1919,6 +1975,14 @@
                     ],
                     "Repeat rate interval (ms)": 75,
                     "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "-",
+                        "right ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": 250
                 }
             ],
             "Hover on unselected vertex": [
@@ -1961,6 +2025,14 @@
                     ],
                     "Repeat rate interval (ms)": 75,
                     "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "-",
+                        "right ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": 250
                 }
             ],
             "Hover on void": [
@@ -2003,6 +2075,14 @@
                     ],
                     "Repeat rate interval (ms)": 75,
                     "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "-",
+                        "right ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": 250
                 }
             ]
         }

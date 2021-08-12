@@ -5,26 +5,30 @@ namespace gfn {
     int Document::untitledCounter = 1;
 
 
-    Document::Document(gfn::Uuid docId, gfn::HKHandler* hk, gfn::Preferences* prefs, gfn::Graphics* gfx) :
+    Document::Document(const gfn::Uuid& _docId, gfn::HKHandler* hk, gfn::Preferences* prefs, gfn::Graphics* gfx) :
             core(),
             itf(core.getInterface()),
-            docId(std::move(docId)),
+            docId(_docId),
             hk(hk),
             prefs(prefs),
-            graphview(docId, itf, hk, prefs, gfx) {
+            graphview(_docId, itf, hk, prefs, gfx) {
         graphview.hk = hk;
-        docName = "Untitled (" + std::to_string(untitledCounter) + ")";
-        untitledCounter++;
+        if (_docId == gfn::createNil()) {
+            docName = "\ue86f Terminal";
+        } else {
+            docName = "\ue24d Untitled (" + std::to_string(untitledCounter) + ")";
+            untitledCounter++;
+            execute("echo -off");
+        }
         // start core background update loop
         core.startBackground();
-        //execute("echo -off");
     }
 
     void Document::setFile(const std::string& _file, bool doNotSetDocName) {
         file = _file;
         std::replace(file.begin(), file.end(), '\\', '/'); // windows is nasty
         core.file = _file;
-        docName = getFileName();
+        docName = "\uea0d " + getFileName();
         untitledCounter--;
     }
 
@@ -36,6 +40,14 @@ namespace gfn {
         if (!closeDocument) {
             ImGui::SetNextWindowSizeConstraints(ImVec2(200, 200), ImVec2(FLT_MAX, FLT_MAX));
             ImGui::Begin((docName + "###" + docId).c_str(), &isDocumentWindowOpen, ImGuiWindowFlags_UnsavedDocument);
+
+            if (doZoomToFit) {
+                graphview.camera.zoom = (1.0 / std::max(graphview.camera.xMax - graphview.camera.xMin, graphview.camera.yMax - graphview.camera.yMin)) *
+                                        std::min(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()) * 0.8;
+                graphview.camera.centerCoord.x = (graphview.camera.xMax + graphview.camera.xMin) / 2.0;
+                graphview.camera.centerCoord.y = (graphview.camera.yMax + graphview.camera.yMin) / 2.0;
+                doZoomToFit = false;
+            }
 
             graphview.update();
 

@@ -30,9 +30,12 @@ namespace gfn {
 
         static gfn::Vec2 edgeAttractForce(gfn::Interface* itf, gfn::Vec2 u, gfn::Vec2 v);
 
-        static gfn::Vec2 edgeRepelForce(gfn::Interface* itf, gfn::Vec2 u, gfn::Vec2 v);
+        static gfn::Vec2 edgeRepelEdgeForce(gfn::Interface* itf, gfn::Vec2 u, gfn::Vec2 v);
+
+        static gfn::Vec2 edgeRepelVertexForce(gfn::Interface* itf, gfn::Vec2 u, gfn::Vec2 v);
 
         static void updateVertex(gfn::Interface* itf, gfn::Component* c, gfn::Vertex* u);
+        static void updateEdge(gfn::Interface* itf, gfn::Component* c, gfn::Edge* e);
 
         void updateComponentSingleThreaded(gfn::Interface* itf, gfn::Component* c);
 

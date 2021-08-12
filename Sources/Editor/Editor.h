@@ -2,6 +2,7 @@
 #define EDITOR_H
 
 #include <queue>
+
 #include <Editor/Document/Document.h>
 #include <Editor/HotKeyHandler.h>
 #include <Editor/Preferences/Preferences.h>
@@ -18,9 +19,13 @@ namespace gfn {
 
         void updateDocuments();
 
+        static bool terminateTerminal;
+        static std::queue<std::string> terminalBuffer;
+
     public:
         gfn::Graphics gfx; // TODO
         std::unordered_map<gfn::Uuid, gfn::Document*> documents;
+
         Editor();
 
         void update();
@@ -28,6 +33,8 @@ namespace gfn {
         gfn::Document* getDoc(const gfn::Uuid& docId);
 
         gfn::Uuid newDocument();
+
+        gfn::Uuid newDocument(gfn::Uuid docId);
 
         void closeDocument(const gfn::Uuid& docId);
 
@@ -38,6 +45,10 @@ namespace gfn {
 
         // stops all core instances
         void terminate();
+
+        static void startTerminal();
+
+        static void execute(const std::string& cmd);
 
         // deallocate memory
         //void cleanup();

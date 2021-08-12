@@ -108,7 +108,7 @@ namespace gfn {
 
             if (ImGui::BeginTabBar("##PrefListTabBar")) {
                 if (ImGui::BeginTabItem("Graph View")) {
-                    ImGui::DragFloat("Zoom speed", &graphview_zoom_speed, 0.1f, -10.0f, 10.0f, "%f");
+                    ImGui::DragFloat("Zoom speed", &graphview_zoom_speed, 0.1f, 0.1f, 10.0f, "%f", ImGuiSliderFlags_Logarithmic | ImGuiSliderFlags_AlwaysClamp);
                     ImGui::DragFloat("Selection tolerance", &graphview_selection_tolerance, 1.0f, 0.0f, 50.0f, "%fpx");
                     ImGui::DragFloat("Selection highlight glow size", &glow_size, 1.0f, 0.0f, 50.0f, "%fpx");
                     ImGui::EndTabItem();

@@ -38,13 +38,33 @@ namespace gfn {
                 /*drawList->AddLine(camera->map(u), camera->map(v),
                                   e.edgeColor.value, camera->map(e.thickness.value));*/
 
+                /*if (e.startVertexUuid.value == e.endVertexUuid.value) {
+
+                    continue;
+                }*/
+
+                if (e.startVertexUuid.value == e.endVertexUuid.value) {
+                    gfn::Vec2 vec = e.position.value - e.startVertexPosition.value;
+                    drawList->AddBezierCubic(camera->map(e.startVertexPosition.value),
+                                             camera->map(e.startVertexPosition.value + vec.rotate(M_PI_4)),
+                                             camera->map(e.startVertexPosition.value + vec.rotate(-M_PI_4)),
+                                             camera->map(e.endVertexPosition.value),
+                                             e.edgeColor.value,
+                                             camera->map(e.thickness.value));
+                    continue;
+                }
+
+                float fixEdgeEndpoints = 0.0f;
+
                 gfn::Vec2 u = e.startVertexPosition.value + (e.endVertexPosition.value - e.startVertexPosition.value).normalize() *
-                                                            (userprops.getVertexProps(e.startVertexUuid.value)->radius.value +
-                                                             userprops.getVertexProps(e.startVertexUuid.value)->outlineThickness.value / 2.0);
+                                                            fixEdgeEndpoints * (userprops.getVertexProps(e.startVertexUuid.value)->radius.value +
+                                                                                userprops.getVertexProps(e.startVertexUuid.value)->outlineThickness.value /
+                                                                                2.0);
                 gfn::Vec2 ep = e.position.value;
                 double arrowCompensation = userprops.getVertexProps(e.endVertexUuid.value)->radius.value +
                                            userprops.getVertexProps(e.endVertexUuid.value)->outlineThickness.value / 2.0;
-                gfn::Vec2 v = u + (e.endVertexPosition.value - u).normalize() * ((e.endVertexPosition.value - u).length() - arrowCompensation);
+                gfn::Vec2 v =
+                        u + (e.endVertexPosition.value - u).normalize() * ((e.endVertexPosition.value - u).length() - fixEdgeEndpoints * arrowCompensation);
 
                 drawList->AddBezierQuadratic(camera->map(u + (v - u).normalize() * ((e.arrowStyle.value & 0b10) * 0.1 * (e.thickness.value / 0.06))),
                                              camera->map(ep),
@@ -55,8 +75,6 @@ namespace gfn {
                 /*drawList->AddBezierCurve(camera->map(u), camera->map(ep),
                                          camera->map(ep), camera->map(v), e.edgeColor.value,
                                          camera->map(e.thickness.value));*/
-
-                //drawList->AddCircleFilled(camera->map(e.position), camera->map(e.radius), e.edgeNodeColor.color32, 0);
 
                 static gfn::Vec2 arrowHead[] = {
                         {0.0,  0.0},
@@ -91,15 +109,16 @@ namespace gfn {
                 gfn::Vec2 midpoint((u + v) / 2.0);
                 gfn::Vec2 vector(v - u);
                 gfn::Vec2 location(
-                        midpoint + (vector.rotate(M_PI_2).normalize() * camera->rMap(std::sqrt(labelBB.x * labelBB.x + labelBB.y * labelBB.y)) / 2.0));
+                        midpoint + (vector.rotate(M_PI_2).normalize() *
+                                    (camera->rMap(std::sqrt(labelBB.x * labelBB.x + labelBB.y * labelBB.y)) / 2.0 + e.thickness.value / 2.0)));
 
                 drawList->AddText(ImVec2(camera->map(location).x - labelBB.x / 2.0f, camera->map(location).y - labelBB.y / 2.0f * 1.1f),
                                   e.labelColor.value, label.c_str());
                 ImGui::PopFont();
                 ImGui::SetWindowFontScale(1.0f);
 
-                /*drawList->AddCircleFilled(camera->map(ep), camera->map(e.thickness.value),
-                                          IM_COL32(255, 0, 0, 255), 0);*/
+//                drawList->AddCircleFilled(camera->map(ep), camera->map(e.thickness.value),
+//                                          IM_COL32(255, 0, 0, 255), 0);
 
                 camera->xMin = std::min(camera->xMin, ep.x);
                 camera->xMax = std::max(camera->xMax, ep.x);

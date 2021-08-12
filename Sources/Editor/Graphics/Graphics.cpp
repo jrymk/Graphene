@@ -102,7 +102,7 @@ namespace gfn {
                          ImGuiDockNodeFlags_PassthruCentralNode);
 
         ImGuiWindowFlags documentWindowFlags = ImGuiWindowFlags_NoCollapse;
-        ImGui::Begin("Graph View", nullptr, documentWindowFlags);
+        ImGui::Begin("\ue417 Graph View", nullptr, documentWindowFlags);
         ImGui::PopStyleVar(2);
         ImGuiID documentDockspaceId = ImGui::GetID("DocumentDockspace");
         ImGui::DockSpace(documentDockspaceId, ImVec2(0.0f, 0.0f),

@@ -25,7 +25,7 @@ namespace gfn {
         gfn::GraphView graphview; // handles graph rendering and interaction
 
         // obtain preferences from Editor
-        Document(gfn::Uuid docId, gfn::HKHandler* hk, gfn::Preferences* prefs, gfn::Graphics* gfx);
+        Document(const gfn::Uuid& _docId, gfn::HKHandler* hk, gfn::Preferences* prefs, gfn::Graphics* gfx);
 
         void setFile(const std::string& _file, bool doNotSetDocName = false);
 
@@ -54,16 +54,15 @@ namespace gfn {
         bool isGraphUpdate = true;
         bool isGraphUpdateEx = false;
         bool isGraphStreaming = true;
+        bool showExportPopup = false;
         /// WINDOW STATE
 
         /// GRAPH
-        double xMin;
-        double xMax;
-        double yMin;
-        double yMax;
+        bool doZoomToFit = false;
         /// GRAPH
 
-        std::string exportTikZ();
+        void exportTikZ();
+
         std::string _tikzColor(uint32_t color);
 
         void terminate();
