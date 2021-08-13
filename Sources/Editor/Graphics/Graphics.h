@@ -13,6 +13,7 @@ namespace gfn {
         std::queue<std::string> dockBuildWindow;
         ImFont* fontSmall;
         ImFont* fontScalable;
+        ImFont* fontSvg;
 
         bool launchWindow(Preferences* prefs);
 

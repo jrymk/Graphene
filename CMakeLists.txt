@@ -26,6 +26,10 @@ include_directories(Dependencies/json)
 include_directories(Dependencies/binn/src)
 include_directories(Dependencies/ImGuiFileDialog)
 include_directories(Dependencies/earcut)
+include_directories(Dependencies/simple-svg)
+include_directories(Dependencies/lunasvg/include)
+include_directories(Dependencies/lunasvg/source)
+include_directories(Dependencies/stb)
 include_directories(Sources/)
 
 
@@ -85,13 +89,20 @@ add_executable(Graphene
         Sources/Editor/Theme/Styles.cpp
         Sources/Editor/Graphics/Barlow.cpp
         Sources/Editor/Graphics/Material.cpp
+        Sources/Editor/Graphics/Arial.cpp
         Sources/Editor/Preferences/KeyBindings/KeyBindDialog.cpp
-        Sources/Editor/PropertiesPanel.cpp Sources/Editor/Document/Export/ExportTikZ.h Sources/Editor/Document/Export/ExportTikZ.cpp)
+        Sources/Editor/PropertiesPanel.cpp
+        Sources/Editor/Document/Export/ExportTikZ.cpp
+        Sources/Editor/Document/Export/ExportMenu.cpp
+        Sources/Editor/Document/Export/ExportSVG.cpp
+        Sources/Editor/Document/Export/ExportPNG.cpp)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(Dependencies/glfw-3.3.4)
+
+add_subdirectory(Dependencies/lunasvg)
 
 option(TRACY_ENABLE "" ON)
 option(TRACY_ON_DEMAND "" ON)
@@ -101,6 +112,7 @@ set(CMAKE_EXE_LINKER_FLAGS " -static")
 
 target_link_libraries(Graphene
         PUBLIC TracyClient
+        lunasvg
         imm32.lib
         glfw
         -static-libgcc

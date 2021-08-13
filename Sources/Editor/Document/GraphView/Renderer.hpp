@@ -54,7 +54,7 @@ namespace gfn {
                     continue;
                 }
 
-                float fixEdgeEndpoints = 0.0f;
+                float fixEdgeEndpoints = 1.0f;
 
                 gfn::Vec2 u = e.startVertexPosition.value + (e.endVertexPosition.value - e.startVertexPosition.value).normalize() *
                                                             fixEdgeEndpoints * (userprops.getVertexProps(e.startVertexUuid.value)->radius.value +
@@ -160,10 +160,10 @@ namespace gfn {
                 ImGui::PopFont();
                 ImGui::SetWindowFontScale(1.0f);
 
-                camera->xMin = std::min(camera->xMin, v.position.value.x);
-                camera->xMax = std::max(camera->xMax, v.position.value.x);
-                camera->yMin = std::min(camera->yMin, v.position.value.y);
-                camera->yMax = std::max(camera->yMax, v.position.value.y);
+                camera->xMin = std::min(camera->xMin, v.position.value.x - v.radius.value - v.outlineThickness.value / 2.0);
+                camera->xMax = std::max(camera->xMax, v.position.value.x + v.radius.value + v.outlineThickness.value / 2.0);
+                camera->yMin = std::min(camera->yMin, v.position.value.y - v.radius.value - v.outlineThickness.value / 2.0);
+                camera->yMax = std::max(camera->yMax, v.position.value.y + v.radius.value + v.outlineThickness.value / 2.0);
             }
 
             /*drawList->AddRect(camera->map(gfn::Vec2(camera->xMin, camera->yMin)), camera->map(gfn::Vec2(camera->xMax, camera->yMax)), IM_COL32(0, 255, 0, 255),

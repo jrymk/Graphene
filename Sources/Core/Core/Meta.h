@@ -2,8 +2,8 @@
 #define META_H
 
 #define BUILD_MAJOR 0
-#define BUILD_MINOR 3
-#define BUILD_PATCH 2
+#define BUILD_MINOR 4
+#define BUILD_PATCH 0
 
 const char buildVersion[] = {
         'G', 'r', 'a', 'p', 'h', 'e', 'n', 'e', ' ',
@@ -34,5 +34,7 @@ const char buildVersion[] = {
 // added zoom to fit
 // added export window
 // added very bad self cycle rendering
+// added svg export
+// added png export
 
 #endif

@@ -61,7 +61,16 @@ namespace gfn {
         bool doZoomToFit = false;
         /// GRAPH
 
+        void exportMenu();
+
         void exportTikZ();
+
+        void exportSVG();
+        void exportPNG();
+
+        bool showTikZMenu = false;
+        bool showSVGMenu = false;
+        bool showPNGMenu = false;
 
         std::string _tikzColor(uint32_t color);
 

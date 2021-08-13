@@ -1,6 +1,7 @@
 #include "Graphics.h"
 #include "Barlow.cpp"
 #include "Material.cpp"
+#include "Arial.cpp"
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <imgui_impl_glfw.h>
@@ -59,6 +60,7 @@ namespace gfn {
         config.MergeMode = false;
         fontSmall = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_BR, prefs->graphics_font_size / 16.0f * 14.0f, &config, ImGui::GetIO().Fonts->GetGlyphRangesDefault());
         fontScalable = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_BR, 256.0f, &config, ImGui::GetIO().Fonts->GetGlyphRangesDefault());
+        fontSvg = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_AR, 256.0f, &config, ImGui::GetIO().Fonts->GetGlyphRangesDefault());
 
         ImGui::GetIO().IniFilename = "Graphene.ini";
         ImGui::GetIO().IniSavingRate = 1;

@@ -4,19 +4,13 @@
 
 namespace gfn {
     void Document::exportTikZ() {
-        ImGui::SetNextWindowSizeConstraints(ImVec2(300.0f, 200.0f), ImVec2(FLT_MAX, FLT_MAX));
-        ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.5f, ImGui::GetIO().DisplaySize.y * 0.5f),
-                                ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-        ImGui::SetNextWindowSize(ImVec2(std::max(300.0f, 100.0f), std::max(200.0f, 100.0f)), ImGuiCond_Appearing);
+        static float scale = 0.1;
+        ImGui::SliderFloat("\ue8ff Scale", &scale, 0.01f, 2.0f, "%.2f", 0);
 
-        ImGui::BeginPopupModal("\ue6b8 Export");
-
-        if (gfn::button("Export as TikZ picture", HUE_CONTRAST, HUE_CONTRAST, false, ImGui::GetContentRegionAvailWidth(), 0, false)) {
+        ImGui::SetCursorPosY(ImGui::GetWindowHeight() - 64.0f);
+        if (gfn::button("\ue14d Copy to clipboard", HUE_BLUE_CONTRAST, HUE_CONTRAST, false, ImGui::GetContentRegionAvailWidth(), 0, false)) {
             std::string picture;
-            double scale = 0.1;
-
             picture.append("\\begin{tikzpicture}[scale=" + std::to_string(scale) + "]\n");
-
             // draw edges
             for (auto& e : itf->graph.getRead()->props.getEdgePropsList()) {
                 if (!e.second.enabled.value)
@@ -81,9 +75,10 @@ namespace gfn {
             ImGui::SetClipboardText(picture.c_str());
             std::cout << "Copied to clipboard\n";
         }
-        //std::cout << picture << "\n";
-        //return picture;
-        ImGui::EndPopup();
+        if (gfn::button("\ue876 Done", HUE_GREEN, HUE_DEFAULT, false, ImGui::GetContentRegionAvailWidth(), 0, false)) {
+            showTikZMenu = false;
+            ImGui::CloseCurrentPopup();
+        }
     }
 
     std::string Document::_tikzColor(uint32_t color) {
