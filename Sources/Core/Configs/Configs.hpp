@@ -20,9 +20,9 @@ namespace gfn::configs {
                 c1("c1", 0.1),
                 c2("c2", 1.0),
                 c3("c3", 1.0),
-                c4("c4", 0.15),
+                c4("c4", 0.8),
                 c5("c5", 1.0), // edge attract
-                c6("c6", 1.3), // edge attract
+                c6("c6", 0.1), // edge attract
                 c7("c7", 20.0), // edge repel edge
                 c8("c8", 0.01), // edge repel vertex
                 c9("c9", 0.05) { // edge factor

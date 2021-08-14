@@ -204,7 +204,7 @@ namespace gfn {
                             std::to_string(selection.mouseDelta.x) + "," + std::to_string(selection.mouseDelta.y) + ")");
                 for (auto& e : selection.edgeSelection)
                     execute("setedgeprops -uuid=" + e + " -key=position -value=+(" +
-                    std::to_string(selection.mouseDelta.x) + "," + std::to_string(selection.mouseDelta.y) + ")");
+                            std::to_string(selection.mouseDelta.x) + "," + std::to_string(selection.mouseDelta.y) + ")");
             }
             if (movingSelection && !hk->down(Actions::MOVE_SELECTION, onMoveSelectionState)) {
                 movingSelection = false;
@@ -245,7 +245,7 @@ namespace gfn {
         }
 
         /// COPY
-        {
+        /*{
             if (ImGui::IsWindowFocused() && selection.press(Actions::COPY_SELECTION)) {
                 nlohmann::json clipJ;
                 auto vertexProps = nlohmann::json::array();
@@ -291,10 +291,41 @@ namespace gfn {
                 ImGui::SetClipboardText(("<GRAPHENE_PASTE_BEGIN>" + jDump + "<GRAPHENE_PASTE_END>").c_str());
                 std::cout << "Copied to clipboard\n";
             }
+        }*/
+
+        /// COPY
+        {
+            if (ImGui::IsWindowFocused() && selection.press(Actions::COPY_SELECTION)) {
+                std::string edges;
+                std::unordered_map<gfn::Uuid, int> vertexMapping;
+                int vCount = 0;
+
+                for (auto& v : selection.vertexSelection) {
+                    auto findV = itf->graph.getRead()->props.getVertexProps(v);
+                    if (!findV)
+                        continue;
+                    vertexMapping.insert({v, vCount});
+                    vCount++;
+                }
+                int eCount = 0;
+                for (auto& e : selection.edgeSelection) {
+                    auto findE = itf->graph.getRead()->props.getEdgeProps(e);
+                    if (!findE)
+                        continue;
+                    auto findU = vertexMapping.find(findE->startVertexUuid.value);
+                    auto findV = vertexMapping.find(findE->endVertexUuid.value);
+                    if (findU == vertexMapping.end() || findV == vertexMapping.end())
+                        continue;
+                    edges.append(std::to_string(findU->second) + " " + std::to_string(findV->second) + "\n");
+                    eCount++;
+                }
+                ImGui::SetClipboardText((std::to_string(vCount) + " " + std::to_string(eCount) + "\n" + edges).c_str());
+                std::cout << "Copied to clipboard\n";
+            }
         }
 
         /// CUT
-        {
+        /*{
             if (ImGui::IsWindowFocused() && selection.press(Actions::CUT_SELECTION)) {
                 nlohmann::json clipJ;
                 auto vertexProps = nlohmann::json::array();
@@ -349,16 +380,78 @@ namespace gfn {
                         execute("rmvertex -uuid=" + v);
                 }
             }
+        }*/
+
+        /// CUT
+        {
+            if (ImGui::IsWindowFocused() && selection.press(Actions::CUT_SELECTION)) {
+                std::string edges;
+                std::unordered_map<gfn::Uuid, int> vertexMapping;
+                int vCount = 0;
+
+                for (auto& v : selection.vertexSelection) {
+                    auto findV = itf->graph.getRead()->props.getVertexProps(v);
+                    if (!findV)
+                        continue;
+                    vertexMapping.insert({v, vCount});
+                    vCount++;
+                }
+                int eCount = 0;
+                for (auto& e : selection.edgeSelection) {
+                    auto findE = itf->graph.getRead()->props.getEdgeProps(e);
+                    if (!findE)
+                        continue;
+                    auto findU = vertexMapping.find(findE->startVertexUuid.value);
+                    auto findV = vertexMapping.find(findE->endVertexUuid.value);
+                    if (findU == vertexMapping.end() || findV == vertexMapping.end())
+                        continue;
+                    edges.append(std::to_string(findU->second) + " " + std::to_string(findV->second) + "\n");
+                    eCount++;
+                }
+                ImGui::SetClipboardText((std::to_string(vCount) + " " + std::to_string(eCount) + "\n" + edges).c_str());
+                std::cout << "Copied to clipboard\n";
+
+                if (!selection.edgeSelection.empty()) {
+                    for (auto& e : selection.edgeSelection)
+                        execute("rmedge -uuid=" + e);
+                }
+                if (!selection.vertexSelection.empty()) {
+                    for (auto& v : selection.vertexSelection)
+                        execute("rmvertex -uuid=" + v);
+                }
+            }
         }
 
         /// PASTE
-        {
+        /*{
             if (ImGui::IsWindowFocused() && selection.press(Actions::PASTE_SELECTION)) {
                 /// paste will be done in core, send the json to core through commands
                 std::string clipb(ImGui::GetClipboardText());
                 if (clipb.substr(0, 22) == "<GRAPHENE_PASTE_BEGIN>"
                     && clipb.substr(clipb.size() - 20, 20) == "<GRAPHENE_PASTE_END>")
                     execute("paste " + clipb.substr(22, clipb.size() - 42));
+            }
+        }*/
+
+        /// PASTE
+        {
+            if (ImGui::IsWindowFocused() && selection.press(Actions::PASTE_SELECTION)) {
+                gfn::Uuid insertId = gfn::createUuid();
+                std::uniform_real_distribution dis(-1.0, 1.0);
+                int v, e;
+                std::stringstream ss(ImGui::GetClipboardText());
+                ss >> v >> e;
+                for (int i = 0; i < v; i++) {
+                    execute("mkvertex -name=" + insertId + ":" + std::to_string(i));
+                    execute("setvertexprops -name=" + insertId + ":" + std::to_string(i) + " -key=label -value=" + std::to_string(i));
+                    execute("setvertexprops -name=" + insertId + ":" + std::to_string(i) +
+                    " -key=position -value=(" + std::to_string(selection.mouseCoord.x + dis(gfn::getRng())) + "," + std::to_string(selection.mouseCoord.y + dis(gfn::getRng())) + ")");
+                }
+                for (int i = 0; i < e; i++) {
+                    int a, b;
+                    ss >> a >> b;
+                    execute("mkedge -uname=" + insertId + ":" + std::to_string(a) + " -vname=" + insertId + ":" + std::to_string(b));
+                }
             }
         }
     }

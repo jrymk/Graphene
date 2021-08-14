@@ -64,6 +64,8 @@ namespace gfn {
         for (auto& v : c->vertices) {
             if (u == v)
                 continue;
+            //if (c->getAdjacentVertices(u).find(v) == c->getAdjacentVertices(u).end())
+            //    continue;
             u->props->force.value += repelForce(itf, u->props->position.value, v->props->position.value);
         }
         /*for (auto& e : c->edges) {

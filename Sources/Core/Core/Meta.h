@@ -3,7 +3,7 @@
 
 #define BUILD_MAJOR 0
 #define BUILD_MINOR 4
-#define BUILD_PATCH 0
+#define BUILD_PATCH 1
 
 const char buildVersion[] = {
         'G', 'r', 'a', 'p', 'h', 'e', 'n', 'e', ' ',
@@ -36,5 +36,6 @@ const char buildVersion[] = {
 // added very bad self cycle rendering
 // added svg export
 // added png export
+// added copy and paste in string format
 
 #endif

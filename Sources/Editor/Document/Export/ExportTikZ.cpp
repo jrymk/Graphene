@@ -37,7 +37,7 @@ namespace gfn {
                 gfn::Vec2 midpoint((e.second.startVertexPosition.value + e.second.endVertexPosition.value) / 2.0);
                 gfn::Vec2 vector(e.second.endVertexPosition.value - e.second.startVertexPosition.value);
                 gfn::Vec2 location(
-                        midpoint + (vector.rotate(M_PI_2).normalize() * 0.8/*PARAM*/ / 2.0));
+                        midpoint + (vector.rotate(M_PI_2).normalize() / scale * 0.35/*PARAM*/ / 2.0));
                 //\node[draw,align=left] at (3,0) {some text\\ spanning three lines\\ with manual line breaks};
                 picture.append("\\node[align=center, font=\\tiny, text=" + _tikzColor(e.second.labelColor.value) + "] at ");
                 //            picture.append(std::to_string(v.second.radius.value * 2.0));
@@ -61,7 +61,7 @@ namespace gfn {
                 picture.append(";\n");
 
                 //\node[draw,align=left] at (3,0) {some text\\ spanning three lines\\ with manual line breaks};
-                picture.append("\\node[alig n=center, font=\\scriptsize, text=" + _tikzColor(v.second.labelColor.value) + "] at ");
+                picture.append("\\node[align=center, font=\\scriptsize, text=" + _tikzColor(v.second.labelColor.value) + "] at ");
                 //            picture.append(std::to_string(v.second.radius.value * 2.0));
                 //            picture.append("cm] at ");
                 picture.append("(" + std::to_string(v.second.position.value.x) + ", " + std::to_string(v.second.position.value.y) + ")");

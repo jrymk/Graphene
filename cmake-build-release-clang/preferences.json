@@ -1208,7 +1208,18 @@
                 }
             ]
         },
-        "Paste selection": null,
+        "Paste selection": {
+            "Always": [
+                {
+                    "Keys": [
+                        "V",
+                        "left ctrl"
+                    ],
+                    "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                }
+            ]
+        },
         "Preferences": {
             "Always": [
                 {

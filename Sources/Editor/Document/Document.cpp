@@ -58,7 +58,7 @@ namespace gfn {
 
             isFocused = ImGui::IsWindowFocused();
 
-            if (ImGui::IsWindowFocused()) {
+            if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) {
                 if ((hk->press(TOGGLE_GRAPH_UPDATE) || hk->press(PAUSE_GRAPH_UPDATE)) && isGraphUpdate) {
                     core.terminateBackground();
                     isGraphUpdate = false;

@@ -351,6 +351,60 @@ namespace gfn {
             fDoc->exportMenu();
         }
 
+        ImGui::Begin("\ue922 Timeline");
+        if (fDoc) {
+            static int frame = 0;
+            int was = frame;
+            bool update = false;
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth() - 64.0f);
+            ImGui::SliderInt("##Timeline", &frame, 0, 4, "%d", 0);
+            if (ImGui::IsItemEdited()) update = true;
+            ImGui::SameLine();
+            if (ImGui::Button("\ue5c4")) {
+                frame--;
+                update = true;
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("\ue5c8")) {
+                frame++;
+                update = true;
+            }
+
+            frame = std::max(0, std::min(4, frame));
+            if (update) {
+                fDoc->execute("save -f=\"timeline/" + std::to_string(was) + ".gfn");
+                fDoc->setFile("timeline/" + std::to_string(frame) + ".gfn");
+                fDoc->execute("open");
+            }
+        }
+
+        ImGui::Begin("\ue8ee Insert graph");
+        static char insertGraph[65536];
+
+        if (fDoc &&
+            gfn::button("\ue147 Insert", HUE_CONTRAST, HUE_BLUE_CONTRAST, false, (ImGui::GetContentRegionAvailWidth() - ImGui::GetStyle().ItemSpacing.x) / 2, 0,
+                        false)) {
+            gfn::Uuid insertId = gfn::createUuid();
+            int v, e;
+            std::stringstream ss(insertGraph);
+            ss >> v >> e;
+            for (int i = 0; i < v; i++) {
+                fDoc->execute("mkvertex -name=" + insertId + ":" + std::to_string(i));
+                fDoc->execute("setvertexprops -name=" + insertId + ":" + std::to_string(i) + " -key=label -value=" + std::to_string(i));
+            }
+            for (int i = 0; i < e; i++) {
+                int a, b;
+                ss >> a >> b;
+                fDoc->execute("mkedge -uname=" + insertId + ":" + std::to_string(a) + " -vname=" + insertId + ":" + std::to_string(b));
+            }
+        }
+        ImGui::SameLine();
+        if (gfn::button("\ue872 Clear", HUE_RED, HUE_DEFAULT, false, ImGui::GetContentRegionAvailWidth(), 0, false))
+            insertGraph[0] = '\0';
+
+        ImGui::InputTextMultiline("##insertGraph", insertGraph, 65536, ImGui::GetContentRegionAvail());
+
+        ImGui::End();
 
         updateDocuments();
 
