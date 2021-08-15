@@ -84,7 +84,10 @@ add_executable(Graphene
         Sources/Core/Core/Core.cpp
         Sources/Core/Placement/Placement.cpp
         Sources/Core/Core/File.cpp
-        Sources/Core/Core/Parser.cpp Sources/Core/Objects/Random.cpp Sources/Core/Core/Background.cpp Sources/Core/Interface/Interface.cpp Sources/Editor/Graphics/Graphics.cpp Sources/Core/Core/Meta.h Sources/Editor/Document/GraphView/Camera.cpp)
+        Sources/Core/Core/Parser.cpp Sources/Core/Objects/Random.cpp Sources/Core/Core/Background.cpp Sources/Core/Interface/Interface.cpp Sources/Editor/Graphics/Graphics.cpp Sources/Core/Core/Meta.h Sources/Editor/Document/GraphView/Camera.cpp
+        Sources/Core/Structure/BlockCutTree/BlockCutTree.cpp
+        Sources/Core/Structure/BlockCutTree/BlockCutTreeBuilder.cpp
+        )
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)

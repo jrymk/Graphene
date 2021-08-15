@@ -1,5 +1,4 @@
 #include "Structure.h"
-#include <Core/Structure/BlockCutTree/BlockCutTreeBuilder.hpp>
 
 using namespace gfn;
 
@@ -127,8 +126,7 @@ void Structure::componentify() {
 
     // build block cut trees
     for (auto& c : components) {
-        gfn::structure::BlockCutTreeBuilder builder(c);
-        builder.build();
+        c->rebuildBlockCutTree();
     }
 }
 
