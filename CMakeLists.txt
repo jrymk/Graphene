@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.15)
 include(GenerateExportHeader)
+include(FetchContent)
 project(Graphene)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_definitions(-DNDEBUG -DTRACY_ENABLE)
+add_definitions(-DNDEBUG)
 
-include_directories(Dependencies/tracy)
 include_directories(Dependencies/glad/include)
 include_directories(Dependencies/glad/include/glad)
 include_directories(Dependencies/glad/include/KHR)
@@ -20,16 +20,12 @@ include_directories(Dependencies/imgui/misc/freetype)
 include_directories(Dependencies/imgui/misc/single_file)
 include_directories(Dependencies/stduuid/include)
 include_directories(Dependencies/stduuid/gsl)
-include_directories(Dependencies/ThreadPool)
-include_directories(Dependencies/lib)
+include_directories(Dependencies/thread_pool)
 include_directories(Dependencies/json)
 include_directories(Dependencies/binn/src)
-include_directories(Dependencies/ImGuiFileDialog)
+include_directories(Dependencies/ImGui-Addons/FileBrowser)
 include_directories(Dependencies/earcut)
-include_directories(Dependencies/simple-svg)
-include_directories(Dependencies/lunasvg/include)
-include_directories(Dependencies/lunasvg/source)
-include_directories(Dependencies/stb)
+include_directories(Dependencies/minitrace)
 include_directories(Sources/)
 
 
@@ -37,7 +33,6 @@ find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
 
 add_executable(Graphene
-        Dependencies/tracy/TracyClient.cpp
         Dependencies/glad/src/glad.c
         Dependencies/imgui/imgui_demo.cpp
         Dependencies/imgui/imgui_draw.cpp
@@ -95,7 +90,13 @@ add_executable(Graphene
         Sources/Editor/Document/Export/ExportTikZ.cpp
         Sources/Editor/Document/Export/ExportMenu.cpp
         Sources/Editor/Document/Export/ExportSVG.cpp
-        Sources/Editor/Document/Export/ExportPNG.cpp)
+        Sources/Editor/Document/Export/ExportPNG.cpp
+        Sources/Core/Core/Parser.cpp
+        Sources/Core/Objects/Random.cpp
+        Sources/Core/Core/Background.cpp Sources/Core/Interface/Interface.cpp Sources/Editor/Graphics/Graphics.cpp Sources/Core/Core/Meta.h Sources/Editor/Document/GraphView/Camera.cpp
+        Sources/Core/Structure/BlockCutTree/BlockCutTree.cpp
+        Sources/Core/Structure/BlockCutTree/BlockCutTreeBuilder.cpp
+        )
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
@@ -111,21 +112,11 @@ add_subdirectory(Dependencies/tracy)
 set(CMAKE_EXE_LINKER_FLAGS " -static")
 
 target_link_libraries(Graphene
-        PUBLIC TracyClient
-        lunasvg
         imm32.lib
         glfw
+        lunasvg
         -static-libgcc
         -static-libstdc++
-        ws2_32.lib
-        dbghelp.lib
-        advapi32.lib
-        user32.lib
         )
 
 target_compile_features(Graphene PRIVATE cxx_std_20)
-
-add_custom_target(file_toucher
-        COMMAND ${CMAKE_COMMAND} -E touch_nocreate Sources/Core/Core/Meta.h)
-
-add_dependencies(Graphene file_toucher)

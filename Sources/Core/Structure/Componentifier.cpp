@@ -1,5 +1,4 @@
 #include "Structure.h"
-#include <Core/Structure/BlockCutTree/BlockCutTreeBuilder.hpp>
 #include <Tracy.hpp>
 
 using namespace gfn;
@@ -23,8 +22,6 @@ std::unordered_set<Component*>& Structure::getComponents() {
 }
 
 void Structure::componentify() {
-    ZoneScoped
-
     // no props validation here, as this function is the one that actually creates props
     for (auto& v : vertices)
         delete v;

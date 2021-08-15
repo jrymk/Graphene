@@ -5,15 +5,18 @@
 #include <unordered_set>
 #include <Core/Structure/Vertex.hpp>
 #include <Core/Structure/Edge.hpp>
-#include <Core/Structure/BlockCutTree/BlockCutTree.hpp>
+#include <Core/Structure/BlockCutTree/BlockCutTree.h>
 
 namespace gfn {
+
+    class BlockCutTree;
+
     class Component {
     private:
         std::unordered_map<Vertex*, std::pair<std::unordered_set<Vertex*>,        // connectivity-based
                 std::unordered_map<Vertex*, std::unordered_set<Edge*>>>> adjList; // directional-edge-based
 
-        gfn::structure::BlockCutTree blockCutTree;
+        gfn::BlockCutTree* blockCutTree = nullptr;
 
     public:
         gfn::Uuid uuid;
@@ -34,7 +37,8 @@ namespace gfn {
         /// @brief check if vertices are adjacent to each other in the component (non directional)
         bool isAdjacent(Vertex* u, Vertex* v);
 
-        gfn::structure::BlockCutTree& getBlockCutTree();
+        gfn::BlockCutTree* getBlockCutTree();
+        void rebuildBlockCutTree();
     };
 }
 
