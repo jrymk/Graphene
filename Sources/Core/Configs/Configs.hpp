@@ -15,17 +15,20 @@ namespace gfn::configs {
         gfn::serializable::Double c7;
         gfn::serializable::Double c8;
         gfn::serializable::Double c9;
+        gfn::serializable::Bool doGraphUpdate;
+        bool energySavingMode = true;
 
         Configs() :
-                c1("c1", 0.1),
-                c2("c2", 1.0),
-                c3("c3", 1.0),
-                c4("c4", 0.8),
-                c5("c5", 1.0), // edge attract
-                c6("c6", 0.1), // edge attract
-                c7("c7", 20.0), // edge repel edge
-                c8("c8", 0.01), // edge repel vertex
-                c9("c9", 0.05) { // edge factor
+                c1("c1", 0.1), // edge attract coeff
+                c2("c2", 1.0), // preferred edge length
+                c3("c3", 1.0), // repel force coeff
+                c4("c4", 0.8), // c1 - c3 coeff
+                c5("c5", 1.0), // edge attract coeff
+                c6("c6", 0.1), // preferred edge to vertex distance
+                c7("c7", 20.0), // multi edge (edge to edge) repel force coeff
+                c8("c8", 0.01), // edge to vertex repel force coeff
+                c9("c9", 0.05), // c5 - c8 coeff
+                doGraphUpdate("doGraphUpdate", true) {
         }
 
         bool parse(gfn::Args command, gfn::Args& output) {
@@ -48,6 +51,12 @@ namespace gfn::configs {
                     c8.setValueStr(command.getParamValue("-c8"), output);
                 if (!command.getParamValue("-c9").empty())
                     c9.setValueStr(command.getParamValue("-c9"), output);
+                if (command.getFlag("-pause"))
+                    doGraphUpdate.setValueStr("false", output);
+                if (command.getFlag("-resume")) {
+                    doGraphUpdate.setValueStr("true", output);
+                    energySavingMode = false;
+                }
                 return true;
             }
             return false;

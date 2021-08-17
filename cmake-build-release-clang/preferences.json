@@ -11,7 +11,7 @@
         "Enable vertical sync": true,
         "Font size": 16.0,
         "Launch with window height": 720,
-        "Launch with window maximized": true,
+        "Launch with window maximized": false,
         "Launch with window width": 1280
     },
     "Key Binds": {
@@ -346,7 +346,7 @@
                         "left ctrl",
                         "left_mouse"
                     ],
-                    "Repeat rate interval (ms)": 75,
+                    "Repeat rate interval (ms)": 0,
                     "Start repeat (ms)": -1
                 },
                 {
@@ -909,13 +909,14 @@
                 }
             ]
         },
-        "Hold to pause graph streaming": {
+        "Hold to pause graph streaming": null,
+        "Hold to pause graph updates": {
             "Hover on selected edge": [
                 {
                     "Keys": [
                         "space"
                     ],
-                    "Repeat rate interval (ms)": 75,
+                    "Repeat rate interval (ms)": 0,
                     "Start repeat (ms)": -1
                 },
                 {
@@ -923,7 +924,7 @@
                         "space",
                         "left shift"
                     ],
-                    "Repeat rate interval (ms)": 75,
+                    "Repeat rate interval (ms)": 0,
                     "Start repeat (ms)": -1
                 },
                 {
@@ -931,7 +932,7 @@
                         "space",
                         "left ctrl"
                     ],
-                    "Repeat rate interval (ms)": 75,
+                    "Repeat rate interval (ms)": 0,
                     "Start repeat (ms)": -1
                 }
             ],
@@ -940,7 +941,7 @@
                     "Keys": [
                         "space"
                     ],
-                    "Repeat rate interval (ms)": 75,
+                    "Repeat rate interval (ms)": 0,
                     "Start repeat (ms)": -1
                 },
                 {
@@ -948,7 +949,7 @@
                         "space",
                         "left shift"
                     ],
-                    "Repeat rate interval (ms)": 75,
+                    "Repeat rate interval (ms)": 0,
                     "Start repeat (ms)": -1
                 },
                 {
@@ -956,7 +957,7 @@
                         "space",
                         "left ctrl"
                     ],
-                    "Repeat rate interval (ms)": 75,
+                    "Repeat rate interval (ms)": 0,
                     "Start repeat (ms)": -1
                 }
             ],
@@ -965,7 +966,7 @@
                     "Keys": [
                         "space"
                     ],
-                    "Repeat rate interval (ms)": 75,
+                    "Repeat rate interval (ms)": 0,
                     "Start repeat (ms)": -1
                 },
                 {
@@ -973,7 +974,7 @@
                         "space",
                         "left shift"
                     ],
-                    "Repeat rate interval (ms)": 75,
+                    "Repeat rate interval (ms)": 0,
                     "Start repeat (ms)": -1
                 },
                 {
@@ -981,7 +982,7 @@
                         "space",
                         "left ctrl"
                     ],
-                    "Repeat rate interval (ms)": 75,
+                    "Repeat rate interval (ms)": 0,
                     "Start repeat (ms)": -1
                 }
             ],
@@ -990,7 +991,7 @@
                     "Keys": [
                         "space"
                     ],
-                    "Repeat rate interval (ms)": 75,
+                    "Repeat rate interval (ms)": 0,
                     "Start repeat (ms)": -1
                 },
                 {
@@ -998,7 +999,7 @@
                         "space",
                         "left shift"
                     ],
-                    "Repeat rate interval (ms)": 75,
+                    "Repeat rate interval (ms)": 0,
                     "Start repeat (ms)": -1
                 },
                 {
@@ -1006,7 +1007,7 @@
                         "space",
                         "left ctrl"
                     ],
-                    "Repeat rate interval (ms)": 75,
+                    "Repeat rate interval (ms)": 0,
                     "Start repeat (ms)": -1
                 }
             ],
@@ -1015,7 +1016,7 @@
                     "Keys": [
                         "space"
                     ],
-                    "Repeat rate interval (ms)": 75,
+                    "Repeat rate interval (ms)": 0,
                     "Start repeat (ms)": -1
                 },
                 {
@@ -1023,7 +1024,7 @@
                         "space",
                         "left shift"
                     ],
-                    "Repeat rate interval (ms)": 75,
+                    "Repeat rate interval (ms)": 0,
                     "Start repeat (ms)": -1
                 },
                 {
@@ -1031,12 +1032,11 @@
                         "space",
                         "left ctrl"
                     ],
-                    "Repeat rate interval (ms)": 75,
+                    "Repeat rate interval (ms)": 0,
                     "Start repeat (ms)": -1
                 }
             ]
         },
-        "Hold to pause graph updates": null,
         "Invert selection of all edges": null,
         "Invert selection of all vertices": null,
         "Invert selection of edge": {
@@ -1164,6 +1164,14 @@
                     ],
                     "Repeat rate interval (ms)": 75,
                     "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 0,
+                    "Start repeat (ms)": -1
                 }
             ],
             "Hover on selected vertex": [
@@ -1172,6 +1180,14 @@
                         "left_mouse"
                     ],
                     "Repeat rate interval (ms)": 75,
+                    "Start repeat (ms)": -1
+                },
+                {
+                    "Keys": [
+                        "space",
+                        "left_mouse"
+                    ],
+                    "Repeat rate interval (ms)": 0,
                     "Start repeat (ms)": -1
                 }
             ]
@@ -1550,7 +1566,7 @@
             "Hover on selected edge": [
                 {
                     "Keys": [
-                        "P"
+                        "esc"
                     ],
                     "Repeat rate interval (ms)": 75,
                     "Start repeat (ms)": -1
@@ -1559,7 +1575,7 @@
             "Hover on selected vertex": [
                 {
                     "Keys": [
-                        "P"
+                        "esc"
                     ],
                     "Repeat rate interval (ms)": 75,
                     "Start repeat (ms)": -1
@@ -1568,7 +1584,7 @@
             "Hover on unselected edge": [
                 {
                     "Keys": [
-                        "P"
+                        "esc"
                     ],
                     "Repeat rate interval (ms)": 75,
                     "Start repeat (ms)": -1
@@ -1577,7 +1593,7 @@
             "Hover on unselected vertex": [
                 {
                     "Keys": [
-                        "P"
+                        "esc"
                     ],
                     "Repeat rate interval (ms)": 75,
                     "Start repeat (ms)": -1
@@ -1586,7 +1602,7 @@
             "Hover on void": [
                 {
                     "Keys": [
-                        "P"
+                        "esc"
                     ],
                     "Repeat rate interval (ms)": 75,
                     "Start repeat (ms)": -1

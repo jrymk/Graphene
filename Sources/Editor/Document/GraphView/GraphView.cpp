@@ -437,7 +437,7 @@ namespace gfn {
         {
             if (ImGui::IsWindowFocused() && selection.press(Actions::PASTE_SELECTION)) {
                 gfn::Uuid insertId = gfn::createUuid();
-                std::uniform_real_distribution dis(-1.0, 1.0);
+                std::uniform_real_distribution dis(-10.0, 10.0);
                 int v, e;
                 std::stringstream ss(ImGui::GetClipboardText());
                 ss >> v >> e;

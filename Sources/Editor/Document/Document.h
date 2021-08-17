@@ -18,7 +18,6 @@ namespace gfn {
         std::atomic<bool> _enableCoreUpdate = true;
         std::atomic<bool> _terminateCoreUpdate = false;
 
-
         static int untitledCounter;
 
     public:
@@ -66,6 +65,7 @@ namespace gfn {
         void exportTikZ();
 
         void exportSVG();
+
         void exportPNG();
 
         bool showTikZMenu = false;

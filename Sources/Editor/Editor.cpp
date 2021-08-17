@@ -37,9 +37,6 @@ namespace gfn {
 
         auto fDoc = getDoc(activeDoc);
 
-        ImGui::Begin("\ue30f Controls", nullptr, 0);
-
-
         bool actionNewDocument = hk.press(Actions::NEW_DOCUMENT, -1);
         bool actionOpenFile = hk.press(Actions::OPEN_FILE, -1);
         bool actionSaveFile = hk.press(Actions::SAVE_FILE, -1);
@@ -70,6 +67,18 @@ namespace gfn {
             if (ImGui::MenuItem("\ue5cd Quit", nullptr, false))
                 actionQuit = true;
             ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Edit")) {
+
+        }
+        if (ImGui::BeginMenu("Insert")) {
+
+        }
+        if (ImGui::BeginMenu("Export")) {
+
+        }
+        if (ImGui::BeginMenu("Help")) {
+
         }
         ImGui::EndMainMenuBar();
 
@@ -136,17 +145,39 @@ namespace gfn {
         }
 
 
+        ImGui::Begin("\ue30f Controls", nullptr, 0);
+
         if (fDoc) {
-            if (gfn::button("\ue034 pause updates", HUE_CONTRAST,
-                            fDoc->isGraphUpdate ? HUE_CONTRAST : HUE_RED_CONTRAST, false,
+            if (gfn::button("\ue5d0 zoom to fit", HUE_YELLOW, HUE_DEFAULT, false, ImGui::GetContentRegionAvailWidth(), 0, false))
+                fDoc->doZoomToFit = true;
+
+            if (gfn::button("\ue6b8 export", HUE_CYAN, HUE_DEFAULT, false,
                             ImGui::GetContentRegionAvailWidth(), 0, false)) {
+                fDoc->showExportPopup = true;
+            }
+
+            gfn::Hue color = HUE_ORANGE_CONTRAST;
+            std::string icon = "\uef55";
+            if (!fDoc->isGraphUpdate) {
+                color = HUE_RED_CONTRAST;
+                icon = "\ue034";
+            }
+            else if (fDoc->getItf()->graph.getRead()->cfg.energySavingMode) {
+                color = HUE_GREEN_CONTRAST;
+                icon = "\uea35";
+            }
+
+            if (gfn::button(icon + " pause updates", color, color, false, ImGui::GetContentRegionAvailWidth(), 0, false)) {
                 fDoc->isGraphUpdate = !fDoc->isGraphUpdate;
                 fDoc->isGraphUpdateEx = true;
             }
-            if (gfn::button("\ue51f pause graph streaming", HUE_CONTRAST, fDoc->isGraphStreaming ? HUE_CONTRAST : HUE_BLUE_CONTRAST,
+
+            /*if (gfn::button("\ue51f pause graph streaming", fDoc->isGraphStreaming ? HUE_DEFAULT : HUE_BLUE_CONTRAST,
+                            fDoc->isGraphStreaming ? HUE_DEFAULT : HUE_BLUE_CONTRAST,
                             false, ImGui::GetContentRegionAvailWidth(), 0, false)) {
                 fDoc->isGraphStreaming = !fDoc->isGraphStreaming;
-            }
+            }*/
+
             if (gfn::button("\ue028 recalculate", HUE_RED, HUE_DEFAULT, false,
                             ImGui::GetContentRegionAvailWidth(), 0, false)) {
                 for (auto& v:fDoc->getItf()->graph.getRead()->props.getVertexPropsList()) {
@@ -158,22 +189,21 @@ namespace gfn {
                 }
             }
 
-            if (gfn::button("\ue6b8 export", HUE_CYAN, HUE_DEFAULT, false,
-                            ImGui::GetContentRegionAvailWidth(), 0, false)) {
-                fDoc->showExportPopup = true;
-            }
+            ImGui::PushFont(gfx.fontSmall);
+            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(160, 160, 160, 255));
+            ImGui::TextWrapped(("DocID: " + fDoc->docId).c_str());
+            ImGui::PopFont();
+            ImGui::PopStyleColor(1);
 
-            ImGui::Text(("DocID: " + fDoc->docId).c_str());
             if (ImGui::IsItemHovered())
                 ImGui::SetTooltip("Copy to clipboard");
             if (ImGui::IsItemClicked())
                 ImGui::SetClipboardText(fDoc->docId.c_str());
         }
+        ImGui::End();
 
-        ImGui::Separator();
 
-        ImGui::Text("\ue9ef Constants");
-        static gfn::Uuid prevActiveDocId;
+        ImGui::Begin("\ue9ef Constants");
         if (fDoc) {
             static float c1p;
             static float c2p;
@@ -184,157 +214,121 @@ namespace gfn {
             static float c7p;
             static float c8p;
             static float c9p;
-//if (prevActiveDocId != fDoc->docId) {
-            prevActiveDocId = fDoc->docId;
-            c1p = float(fDoc->getItf()->graph.getRead()->cfg.c1.value);
-            c2p = float(fDoc->getItf()->graph.getRead()->cfg.c2.value);
-            c3p = float(fDoc->getItf()->graph.getRead()->cfg.c3.value);
-            c4p = float(fDoc->getItf()->graph.getRead()->cfg.c4.value);
-            c5p = float(fDoc->getItf()->graph.getRead()->cfg.c5.value);
-            c6p = float(fDoc->getItf()->graph.getRead()->cfg.c6.value);
-            c7p = float(fDoc->getItf()->graph.getRead()->cfg.c7.value);
-            c8p = float(fDoc->getItf()->graph.getRead()->cfg.c8.value);
-            c9p = float(fDoc->getItf()->graph.getRead()->cfg.c9.value);
-//}
-            float c1 = c1p;
-            float c2 = c2p;
-            float c3 = c3p;
-            float c4 = c4p;
-            float c5 = c5p;
-            float c6 = c6p;
-            float c7 = c7p;
-            float c8 = c8p;
-            float c9 = c9p;
-            if (ImGui::BeginTable("##CONSTANTS", 2, ImGuiTableFlags_BordersH | ImGuiTableFlags_Resizable)) {
-                {
-                    ImGui::TableNextRow();
-                    ImGui::TableSetColumnIndex(0);
-                    ImGui::AlignTextToFramePadding();
-                    ImGui::Text("c1");
-                    ImGui::TableSetColumnIndex(1);
-                    ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
-                    ImGui::SliderFloat("##c1", &c1, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
-                    ImGui::PopItemWidth();
+
+
+            ImGui::BeginTabBar("##constantModes");
+            if (ImGui::BeginTabItem("Basic")) {
+                bool edit = false;
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
+                static float preferredEdgeLength = 2.0f;
+                ImGui::TextWrapped("Preferred edge length");
+
+                ImGui::PushFont(gfx.fontSmall);
+                ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 8.0f);
+                ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(160, 160, 160, 255));
+                ImGui::TextWrapped("First, change this value so the edge length looks reasonable");
+                ImGui::PopFont();
+                ImGui::PopStyleColor(1);
+
+                ImGui::DragFloat("##preferredEdgeLength", &preferredEdgeLength, 0.01f, 0.001f, FLT_MAX, "%.3f");
+                if (ImGui::IsItemEdited()) edit = true;
+                ImGui::Separator();
+
+                static float repelForce = 1.0f;
+                ImGui::TextWrapped("Repel force between vertices");
+
+                ImGui::PushFont(gfx.fontSmall);
+                ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 8.0f);
+                ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(160, 160, 160, 255));
+                ImGui::TextWrapped("Then, increase this value if the graph is all crammed together");
+                ImGui::PopFont();
+                ImGui::PopStyleColor(1);
+
+                ImGui::DragFloat("##repelForce", &repelForce, 0.01f, 0.001f, FLT_MAX, "%.3f");
+                if (ImGui::IsItemEdited()) edit = true;
+                ImGui::Separator();
+
+                static float attractCoeff = 1.0f;
+                ImGui::TextWrapped("Attract force coefficient");
+
+                ImGui::PushFont(gfx.fontSmall);
+                ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 8.0f);
+                ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(160, 160, 160, 255));
+                ImGui::TextWrapped("If some edges become too long, increase this value");
+                ImGui::PopFont();
+                ImGui::PopStyleColor(1);
+
+                ImGui::DragFloat("##attractCoeff", &attractCoeff, 0.01f, 0.001f, FLT_MAX, "%.3f");
+                if (ImGui::IsItemEdited()) edit = true;
+                ImGui::Separator();
+
+                ImGui::PopItemWidth();
+
+                if (edit) {
+                    fDoc->execute("configs -c3=" + std::to_string(repelForce));
+                    fDoc->execute("configs -c1=" + std::to_string(attractCoeff));
+                    fDoc->execute("configs -c2=" +
+                                  std::to_string(preferredEdgeLength / pow(10, (repelForce / (attractCoeff * preferredEdgeLength * preferredEdgeLength)))));
                 }
-                {
-                    ImGui::TableNextRow();
-                    ImGui::TableSetColumnIndex(0);
-                    ImGui::AlignTextToFramePadding();
-                    ImGui::Text("c2");
-                    ImGui::TableSetColumnIndex(1);
-                    ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
-                    ImGui::SliderFloat("##c2", &c2, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
-                    ImGui::PopItemWidth();
-                }
-                {
-                    ImGui::TableNextRow();
-                    ImGui::TableSetColumnIndex(0);
-                    ImGui::AlignTextToFramePadding();
-                    ImGui::Text("c3");
-                    ImGui::TableSetColumnIndex(1);
-                    ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
-                    ImGui::SliderFloat("##c3", &c3, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
-                    ImGui::PopItemWidth();
-                }
-                {
-                    ImGui::TableNextRow();
-                    ImGui::TableSetColumnIndex(0);
-                    ImGui::AlignTextToFramePadding();
-                    ImGui::Text("c4");
-                    ImGui::TableSetColumnIndex(1);
-                    ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
-                    ImGui::SliderFloat("##c4", &c4, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
-                    ImGui::PopItemWidth();
-                }
-                {
-                    ImGui::TableNextRow();
-                    ImGui::TableSetColumnIndex(0);
-                    ImGui::AlignTextToFramePadding();
-                    ImGui::Text("c5");
-                    ImGui::TableSetColumnIndex(1);
-                    ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
-                    ImGui::SliderFloat("##c5", &c5, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
-                    ImGui::PopItemWidth();
-                }
-                {
-                    ImGui::TableNextRow();
-                    ImGui::TableSetColumnIndex(0);
-                    ImGui::AlignTextToFramePadding();
-                    ImGui::Text("c6");
-                    ImGui::TableSetColumnIndex(1);
-                    ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
-                    ImGui::SliderFloat("##c6", &c6, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
-                    ImGui::PopItemWidth();
-                }
-                {
-                    ImGui::TableNextRow();
-                    ImGui::TableSetColumnIndex(0);
-                    ImGui::AlignTextToFramePadding();
-                    ImGui::Text("c7");
-                    ImGui::TableSetColumnIndex(1);
-                    ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
-                    ImGui::SliderFloat("##c7", &c7, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
-                    ImGui::PopItemWidth();
-                }
-                {
-                    ImGui::TableNextRow();
-                    ImGui::TableSetColumnIndex(0);
-                    ImGui::AlignTextToFramePadding();
-                    ImGui::Text("c8");
-                    ImGui::TableSetColumnIndex(1);
-                    ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
-                    ImGui::SliderFloat("##c8", &c8, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
-                    ImGui::PopItemWidth();
-                }
-                {
-                    ImGui::TableNextRow();
-                    ImGui::TableSetColumnIndex(0);
-                    ImGui::AlignTextToFramePadding();
-                    ImGui::Text("c9");
-                    ImGui::TableSetColumnIndex(1);
-                    ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
-                    ImGui::SliderFloat("##c9", &c9, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
-                    ImGui::PopItemWidth();
-                }
-                ImGui::EndTable();
+                ImGui::EndTabItem();
             }
-            if (c1p != c1)
-                fDoc->execute("configs -c1=" + std::to_string(c1));
-            if (c2p != c2)
-                fDoc->execute("configs -c2=" + std::to_string(c2));
-            if (c3p != c3)
-                fDoc->execute("configs -c3=" + std::to_string(c3));
-            if (c4p != c4)
-                fDoc->execute("configs -c4=" + std::to_string(c4));
-            if (c5p != c5)
-                fDoc->execute("configs -c5=" + std::to_string(c5));
-            if (c6p != c6)
-                fDoc->execute("configs -c6=" + std::to_string(c6));
-            if (c7p != c7)
-                fDoc->execute("configs -c7=" + std::to_string(c7));
-            if (c8p != c8)
-                fDoc->execute("configs -c8=" + std::to_string(c8));
-            if (c9p != c9)
-                fDoc->execute("configs -c9=" + std::to_string(c9));
-            c1p = c1;
-            c2p = c2;
-            c3p = c3;
-            c4p = c4;
-            c5p = c5;
-            c6p = c6;
-            c7p = c7;
-            c8p = c8;
-            c9p = c9;
+            if (ImGui::BeginTabItem("Advanced")) {
+                bool edit = false;
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
+                float c1 = float(fDoc->getItf()->graph.getRead()->cfg.c1.value);
+                float c2 = float(fDoc->getItf()->graph.getRead()->cfg.c2.value);
+                float c3 = float(fDoc->getItf()->graph.getRead()->cfg.c3.value);
+                float c4 = float(fDoc->getItf()->graph.getRead()->cfg.c4.value);
+                float c5 = float(fDoc->getItf()->graph.getRead()->cfg.c5.value);
+                float c6 = float(fDoc->getItf()->graph.getRead()->cfg.c6.value);
+                float c7 = float(fDoc->getItf()->graph.getRead()->cfg.c7.value);
+                float c8 = float(fDoc->getItf()->graph.getRead()->cfg.c8.value);
+                float c9 = float(fDoc->getItf()->graph.getRead()->cfg.c9.value);
+
+                ImGui::Text("c1");
+                ImGui::SliderFloat("##c1", &c1, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+                if (ImGui::IsItemEdited())
+                    fDoc->execute("configs -c1=" + std::to_string(c1));
+                ImGui::Text("c2");
+                ImGui::SliderFloat("##c2", &c2, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+                if (ImGui::IsItemEdited())
+                    fDoc->execute("configs -c2=" + std::to_string(c2));
+                ImGui::Text("c3");
+                ImGui::SliderFloat("##c3", &c3, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+                if (ImGui::IsItemEdited())
+                    fDoc->execute("configs -c3=" + std::to_string(c3));
+                ImGui::Text("c4");
+                ImGui::SliderFloat("##c4", &c4, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+                if (ImGui::IsItemEdited())
+                    fDoc->execute("configs -c4=" + std::to_string(c4));
+                ImGui::Text("c5");
+                ImGui::SliderFloat("##c5", &c5, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+                if (ImGui::IsItemEdited())
+                    fDoc->execute("configs -c5=" + std::to_string(c5));
+                ImGui::Text("c6");
+                ImGui::SliderFloat("##c6", &c6, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+                if (ImGui::IsItemEdited())
+                    fDoc->execute("configs -c6=" + std::to_string(c6));
+                ImGui::Text("c7");
+                ImGui::SliderFloat("##c7", &c7, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+                if (ImGui::IsItemEdited())
+                    fDoc->execute("configs -c7=" + std::to_string(c7));
+                ImGui::Text("c8");
+                ImGui::SliderFloat("##c8", &c8, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+                if (ImGui::IsItemEdited())
+                    fDoc->execute("configs -c8=" + std::to_string(c8));
+                ImGui::Text("c9");
+                ImGui::SliderFloat("##c9", &c9, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
+                if (ImGui::IsItemEdited())
+                    fDoc->execute("configs -c9=" + std::to_string(c9));
+                ImGui::PopItemWidth();
+
+                ImGui::EndTabItem();
+            }
+            ImGui::EndTabBar();
         }
-
-        ImGui::Separator();
-
-        if (fDoc) {
-            if (gfn::button("\ue5d0 zoom to fit", HUE_YELLOW, HUE_DEFAULT, false, ImGui::GetContentRegionAvailWidth(), 0, false))
-                fDoc->doZoomToFit = true;
-        }
-
         ImGui::End();
+
 
         showPropertiesPanel();
 
@@ -357,7 +351,7 @@ namespace gfn {
             int was = frame;
             bool update = false;
             ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth() - 64.0f);
-            ImGui::SliderInt("##Timeline", &frame, 0, 4, "%d", 0);
+            ImGui::SliderInt("##Timeline", &frame, 0, 100, "%d", 0);
             if (ImGui::IsItemEdited()) update = true;
             ImGui::SameLine();
             if (ImGui::Button("\ue5c4")) {
@@ -370,9 +364,9 @@ namespace gfn {
                 update = true;
             }
 
-            frame = std::max(0, std::min(4, frame));
+            frame = std::max(0, std::min(100, frame));
             if (update) {
-                fDoc->execute("save -f=\"timeline/" + std::to_string(was) + ".gfn");
+                //  fDoc->execute("save -f=\"timeline/" + std::to_string(was) + ".gfn");
                 fDoc->setFile("timeline/" + std::to_string(frame) + ".gfn");
                 fDoc->execute("open");
             }
@@ -447,6 +441,8 @@ namespace gfn {
             while (!terminateTerminal) {
                 std::string cmd;
                 std::getline(std::cin, cmd);
+                if (cmd == "exit")
+                    break;
                 Editor::execute(cmd);
             }
         });

@@ -45,11 +45,13 @@ namespace gfn {
     void Placement::updateVertex(gfn::Interface* itf, gfn::Component* c, gfn::Vertex* u) {
         ZoneScoped
 
+        //u->props->force.value.y -= 0.001;
+
         for (auto& v : c->getAdjacentVertices(u)) {
             u->props->force.value += attractForce(itf, u->props->position.value, v->props->position.value);
 
             //v->props->force += repelForce(itf->graph.getWrite().cfg.v->props->position, u->props->position);
-            std::vector<Edge*> edges;
+            /*std::vector<Edge*> edges;
             auto edgesUV = c->getAdjList().find(u)->second.second.find(v);
             if (edgesUV != c->getAdjList().find(u)->second.second.end()) {
                 for (auto& e : edgesUV->second)
@@ -59,7 +61,7 @@ namespace gfn {
             if (edgesVU != c->getAdjList().find(u)->second.second.end()) {
                 for (auto& e : edgesVU->second)
                     edges.push_back(e);
-            }
+            }*/
         }
         for (auto& v : c->vertices) {
             if (u == v)
@@ -153,6 +155,8 @@ namespace gfn {
     void Placement::updateComponentMultiThreaded(gfn::Interface* itf, gfn::Component* c) {
         ZoneScoped
 
+        stablized = true;
+
         for (auto& u : c->vertices)
             u->props->force.value = gfn::Vec2(0.0, 0.0);
         for (auto& e : c->edges)
@@ -171,28 +175,48 @@ namespace gfn {
         for (auto& f : results)
             f.get();
 
-        bool stablized = true;
-        for (auto& u : c->vertices) {
-            if (!u->props->pauseUpdate.value)
-                u->props->position.value += u->props->force.value * itf->graph.getWrite().cfg.c4.value;
-        }
-
         for (auto& e : c->edges) {
             e->props->startVertexPosition.value = e->startVertex->props->position.value;
             e->props->endVertexPosition.value = e->endVertex->props->position.value;
 
-            if (!e->props->pauseUpdate.value)
-                e->props->position.value += e->props->force.value * itf->graph.getWrite().cfg.c9.value;
-
-            auto ep = e->props->position.value;
-            auto up = e->props->startVertexPosition.value;
-            auto vp = e->props->endVertexPosition.value;
-            auto perp = (vp - up).rotate(M_PI_2);
-            auto mid = (vp + up) / 2.0f;
-
-            if (e->props->startVertexUuid.value != e->props->endVertexUuid.value)
-                e->props->position.value = mid + perp.normalize() * (((ep - mid) * perp) / perp.length()); // mid + )
+            if (!itf->graph.getWrite().cfg.doGraphUpdate.value)
+                e->props->position.value = (e->props->startVertexPosition.value + e->props->endVertexPosition.value) / 2.0;
         }
+
+        if (itf->graph.getWrite().cfg.doGraphUpdate.value) {
+            for (auto& u : c->vertices) {
+                if (!u->props->pauseUpdate.value)
+                    u->props->position.value += u->props->force.value * itf->graph.getWrite().cfg.c4.value;
+
+                if ((u->props->force.value * itf->graph.getWrite().cfg.c4.value).length() >= 0.0005f)
+                    stablized = false;
+            }
+
+            for (auto& e : c->edges) {
+                e->props->startVertexPosition.value = e->startVertex->props->position.value;
+                e->props->endVertexPosition.value = e->endVertex->props->position.value;
+
+                if (!e->props->pauseUpdate.value)
+                    e->props->position.value += e->props->force.value * itf->graph.getWrite().cfg.c9.value;
+                //e->props->position.value = (e->props->startVertexPosition.value + e->props->endVertexPosition.value) / 2.0;
+
+                auto ep = e->props->position.value;
+                auto up = e->props->startVertexPosition.value;
+                auto vp = e->props->endVertexPosition.value;
+                auto perp = (vp - up).rotate(M_PI_2);
+                auto mid = (vp + up) / 2.0f;
+
+                if (e->props->startVertexUuid.value != e->props->endVertexUuid.value)
+                    e->props->position.value = mid + perp.normalize() * (((ep - mid) * perp) / perp.length()); // mid + )
+
+                if ((e->props->force.value * itf->graph.getWrite().cfg.c9.value).length() >= 0.0005f)
+                    stablized = false;
+            }
+        }
+
+        if (!stablized)
+            itf->graph.getWrite().cfg.energySavingMode = false;
+
         /*for (auto& e : c->edges)
             e->props->position += e->props->force * itf->graph.getWrite().cfg.c4;*/
         //std::cerr << "Multi: that took " << t << "us\n";

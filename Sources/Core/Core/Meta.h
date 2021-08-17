@@ -3,7 +3,7 @@
 
 #define BUILD_MAJOR 0
 #define BUILD_MINOR 4
-#define BUILD_PATCH 1
+#define BUILD_PATCH 2
 
 const char buildVersion[] = {
         'G', 'r', 'a', 'p', 'h', 'e', 'n', 'e', ' ',
@@ -37,5 +37,6 @@ const char buildVersion[] = {
 // added svg export
 // added png export
 // added copy and paste in string format
+// added energy saving mode
 
 #endif

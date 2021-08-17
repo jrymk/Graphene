@@ -32,7 +32,11 @@ namespace gfn {
         untitledCounter--;
     }
 
-    void Document::execute(const std::string& cmd) { itf->commands.getWrite().buffer.emplace_back(cmd); }
+    void Document::execute(const std::string& cmd) {
+        if (itf->graph.getRead()->cfg.energySavingMode)
+            itf->commands.getWrite().buffer.emplace_back("configs -resume");
+        itf->commands.getWrite().buffer.emplace_back(cmd);
+    }
 
     void Document::update() {
         ZoneScoped
@@ -58,25 +62,28 @@ namespace gfn {
 
             isFocused = ImGui::IsWindowFocused();
 
-            if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) {
+
+            if (ImGui::IsWindowFocused()) {
                 if ((hk->press(TOGGLE_GRAPH_UPDATE) || hk->press(PAUSE_GRAPH_UPDATE)) && isGraphUpdate) {
-                    core.terminateBackground();
                     isGraphUpdate = false;
+                    isGraphUpdateEx = true;
                 } else if ((hk->press(TOGGLE_GRAPH_UPDATE) || hk->release(PAUSE_GRAPH_UPDATE)) && !isGraphUpdate) {
-                    core.startBackground();
                     isGraphUpdate = true;
+                    isGraphUpdateEx = true;
                 }
+                if ((hk->press(TOGGLE_GRAPH_STREAMING) || hk->press(PAUSE_GRAPH_STREAMING)) && isGraphStreaming)
+                    isGraphStreaming = false;
+                else if ((hk->press(TOGGLE_GRAPH_STREAMING) || hk->release(PAUSE_GRAPH_STREAMING)) && !isGraphStreaming)
+                    isGraphStreaming = true;
             }
-            if ((hk->press(TOGGLE_GRAPH_STREAMING) || hk->press(PAUSE_GRAPH_STREAMING)) && isGraphStreaming)
-                isGraphStreaming = false;
-            else if ((hk->press(TOGGLE_GRAPH_STREAMING) || hk->release(PAUSE_GRAPH_STREAMING)) && !isGraphStreaming)
-                isGraphStreaming = true;
 
             if (isGraphUpdateEx) {
                 if (!isGraphUpdate)
-                    core.terminateBackground();
+                    execute("configs -pause");
                 else
-                    core.startBackground();
+                    execute("configs -resume");
+//                    core.startBackground();
+//                    core.terminateBackground();
                 isGraphUpdateEx = false;
             }
             if (isGraphStreaming)

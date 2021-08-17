@@ -24,7 +24,8 @@ namespace gfn {
             /// TODO: partial update
         }
 
-        placement.update(&itf, &structure);
+        if (!itf.graph.getWrite().cfg.energySavingMode)
+            placement.update(&itf, &structure);
 
         if (itf.graph.wantWrite()) {
             itf.graph.writeDone();

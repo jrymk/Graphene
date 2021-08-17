@@ -20,6 +20,8 @@ namespace gfn {
     public:
         Properties();
 
+        bool stablized = false;
+
         ///@brief serializes vertices and edges props data into binary form, remember to free the buffer after read
         void serialize(binn* document);
 

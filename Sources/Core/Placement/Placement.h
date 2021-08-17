@@ -17,6 +17,7 @@ namespace gfn {
         int multiThreadingMode = 2;
         gfn::Timer performanceCheckTimer;
         ThreadPool pool;
+        bool stablized = false;
         //nThread::CThreadPool tp{std::thread::hardware_concurrency()};
 
     public:
