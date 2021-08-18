@@ -48,8 +48,10 @@ namespace gfn {
 
         if (d == 0) radius = 0;
         else {
+            double lastRadius = radius;
             for (auto i : depth[d]) {
                 radius = std::max(radius, getWidth(i) / angleSize[i]);
+                radius = std::max(radius, lastRadius + getWidth(i) / 2);
             }
         }
 
