@@ -96,6 +96,7 @@ add_executable(Graphene
         Sources/Core/Core/Background.cpp Sources/Core/Interface/Interface.cpp Sources/Editor/Graphics/Graphics.cpp Sources/Core/Core/Meta.h Sources/Editor/Document/GraphView/Camera.cpp
         Sources/Core/Structure/BlockCutTree/BlockCutTree.cpp
         Sources/Core/Structure/BlockCutTree/BlockCutTreeBuilder.cpp
+        Sources/Core/Placement/PosInitializer.cpp
         )
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
