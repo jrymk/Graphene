@@ -1,3 +1,4 @@
+#include <Core/Placement/PosInitializer.h>
 #include "Core.h"
 
 namespace gfn {
@@ -21,6 +22,7 @@ namespace gfn {
         if (itf.graph.getWrite().pendingUpdate) {
             // update component list with usergraph and rebuild block cut tree
             structure.componentify();
+            PosInitializer(&structure).init();
             itf.graph.getWrite().pendingUpdate = false;
             /// TODO: partial update
         }
