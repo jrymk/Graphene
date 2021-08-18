@@ -49,7 +49,7 @@ namespace gfn {
         if (d == 0) radius = 0;
         else {
             for (auto i : depth[d]) {
-                radius = std::max(radius, (getWidth(i) / 2) / angleSize[i]);
+                radius = std::max(radius, getWidth(i) / angleSize[i]);
             }
         }
 
