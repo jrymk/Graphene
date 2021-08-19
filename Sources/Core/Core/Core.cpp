@@ -1,6 +1,5 @@
 #include <Core/Placement/PosInitializer.h>
 #include "Core.h"
-#include <Tracy.hpp>
 
 namespace gfn {
     Core::Core() :
@@ -14,13 +13,12 @@ namespace gfn {
     }
 
     void Core::update() {
-        FrameMarkNamed("Core update")
-        ZoneScoped
         parseCommands();
 
         if (itf.graph.getWrite().pendingUpdate) {
             // update component list with usergraph and rebuild block cut tree
             structure.componentify();
+            std::cerr << "start init " << structure.components.size() << "\n";
             PosInitializer(&structure).init();
             itf.graph.getWrite().pendingUpdate = false;
             /// TODO: partial update

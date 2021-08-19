@@ -7,12 +7,9 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <Core/Core/Meta.h>
-#include <Tracy.hpp>
 
 namespace gfn {
     bool Graphics::launchWindow(Preferences* prefs) {
-        ZoneScoped
-
         if (!glfwInit())
             return false;
 
@@ -69,7 +66,6 @@ namespace gfn {
     }
 
     void Graphics::closeWindow() {
-        ZoneScoped
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
@@ -79,8 +75,6 @@ namespace gfn {
     }
 
     void Graphics::preFrame() {
-        ZoneScoped
-
         glfwPollEvents();
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -117,13 +111,11 @@ namespace gfn {
             } else
                 break;
         }
-
+        ImGui::End();
         ImGui::End();
     }
 
     void Graphics::postFrame() {
-        ZoneScoped
-
         ImGui::Render();
         int display_w, display_h;
         glfwGetFramebufferSize(glfwWindow, &display_w, &display_h);

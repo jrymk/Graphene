@@ -1,7 +1,6 @@
 #include "GraphView.h"
 #include <Editor/Theme/Theme.h>
 #include <Core/Objects/Random.h>
-#include <Tracy.hpp>
 
 namespace gfn {
     GraphView::GraphView(gfn::Uuid docId, gfn::Interface* itf, gfn::HKHandler* hk, gfn::Preferences* prefs, gfn::Graphics* gfx) :
@@ -16,8 +15,6 @@ namespace gfn {
     }
 
     void GraphView::update() {
-        ZoneScoped
-
         ImGui::InvisibleButton("graphview_canvas",
                                ImGui::GetContentRegionAvail(),
                                0b11111); // accept all mouse buttons

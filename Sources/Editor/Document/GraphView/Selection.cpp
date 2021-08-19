@@ -1,5 +1,4 @@
 #include "Selection.h"
-#include <Tracy.hpp>
 
 namespace gfn {
     Selection::Selection(gfn::Interface* itf, Camera* camera, gfn::HKHandler* hk, gfn::Preferences* prefs) :
@@ -10,7 +9,6 @@ namespace gfn {
     }
 
     void Selection::updateHoverState() {
-        ZoneScoped
         // update mouse related variables, for example which vertex is hovered? which one is clicked?
         // map the mouse position to the actual position for the vertices and edges
         mouseCoord = camera->rMap(ImGui::GetMousePos()); // (one frame later)
@@ -99,8 +97,6 @@ namespace gfn {
     }
 
     void Selection::updateSelection() {
-        ZoneScoped
-
         onChangeSelection = false;
         updateClearSelection();
         updateLassoSelection();
@@ -109,8 +105,6 @@ namespace gfn {
     }
 
     void Selection::updateClearSelection() {
-        ZoneScoped
-
         if ((ImGui::IsWindowFocused() && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) &&
             press(Actions::SUBTRACT_SELECT_ALL_VERTEX)) {
             vertexSelection.clear();
@@ -122,8 +116,6 @@ namespace gfn {
     }
 
     void Selection::updateLassoSelection() {
-        ZoneScoped
-
         if (lassoSelecting) {
             // undo previous lasso selection
             onChangeSelection = true;
@@ -243,7 +235,6 @@ namespace gfn {
     }
 
     void Selection::updateClickSelection() {
-        ZoneScoped
         // click to remove all selection and select one item
         // CRITERIA: when unshifted and clicking on a deselected vertex, mouse click selects it. (clicking on a selected vertex moves it)
         //           *dragging a vertex to create an edge DOES select the vertex
@@ -285,8 +276,6 @@ namespace gfn {
     }
 
     void Selection::updateSelectAll() {
-        ZoneScoped
-
         if (ImGui::IsWindowFocused()) {
             if (press(ADD_SELECT_ALL_VERTEX)) {
                 for (auto& v : itf->graph.getRead()->props.getVertexPropsList())

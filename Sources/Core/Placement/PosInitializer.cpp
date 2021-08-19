@@ -8,11 +8,11 @@ namespace gfn {
         const double PI = acos(-1);
     }
 
-    double ComponentInitializer::getWidth(BiconnectedComponent *b) {
+    double ComponentInitializer::getWidth(BiconnectedComponent* b) {
         return (b->size() + 1) / 2 * VERTEX_CIRCLE;
     }
 
-    void ComponentInitializer::dfs1(BiconnectedComponent *now, BiconnectedComponent *parent) {
+    void ComponentInitializer::dfs1(BiconnectedComponent* now, BiconnectedComponent* parent) {
         width[now] = getWidth(now);
         double sum = 0;
         for (auto i : component->getBlockCutTree()->getAdjacentBCC(now)) {
@@ -23,7 +23,7 @@ namespace gfn {
         width[now] = std::max(width[now], sum);
     }
 
-    void ComponentInitializer::dfs2(BiconnectedComponent *now, BiconnectedComponent *parent, int d) {
+    void ComponentInitializer::dfs2(BiconnectedComponent* now, BiconnectedComponent* parent, int d) {
         if (depth.size() <= d) depth.emplace_back();
         depth[d].emplace_back(now);
         double sum = 0;
@@ -75,11 +75,11 @@ namespace gfn {
         return out;
     }
 
-    ComponentInitializer::ComponentInitializer(Component *c) : component(c) {
+    ComponentInitializer::ComponentInitializer(Component* c) : component(c) {
         position = new ComponentPosition({component});
     }
 
-    void ComponentInitializer::findRoot1(gfn::BiconnectedComponent *now, gfn::BiconnectedComponent *parent) {
+    void ComponentInitializer::findRoot1(gfn::BiconnectedComponent* now, gfn::BiconnectedComponent* parent) {
         subtreeDepth[now] = getWidth(now);
         for (auto i : component->getBlockCutTree()->getAdjacentBCC(now)) {
             if (i == parent) continue;
@@ -88,7 +88,7 @@ namespace gfn {
         }
     }
 
-    void ComponentInitializer::findRoot2(gfn::BiconnectedComponent *now, gfn::BiconnectedComponent *parent) {
+    void ComponentInitializer::findRoot2(gfn::BiconnectedComponent* now, gfn::BiconnectedComponent* parent) {
         std::multiset<double> subtrees;
         for (auto i : component->getBlockCutTree()->getAdjacentBCC(now)) {
             if (i == parent) continue;
@@ -106,17 +106,27 @@ namespace gfn {
         }
     }
 
-    ComponentPosition *ComponentInitializer::init() {
+    ComponentPosition* ComponentInitializer::init() {
+        std::cerr << "pos init\n";
+        auto bct = component->getBlockCutTree();
+        std::cerr << "bct ok\n";
+        auto bccs = component->getBlockCutTree()->getBCCs();
+        std::cerr << "bccs ok\n";
+        BiconnectedComponent* temp = *component->getBlockCutTree()->getBCCs().begin();
+        std::cerr << "temp ok\n";
 
-        BiconnectedComponent *temp = *component->getBlockCutTree()->getBCCs().begin();
         findRoot1(temp, temp);
+        std::cerr << "find root 1 ok\n";
         findRoot2(temp, temp);
+        std::cerr << "find root 2 ok\n";
 
         assert(root != nullptr);
         dfs1(root, root);
+        std::cerr << "dfs 1 ok\n";
         fromAngle[root] = 0;
         angleSize[root] = 2 * PI;
         dfs2(root, root, 0);
+        std::cerr << "dfs 2 ok\n";
         double now = 0;
         for (int i = 0; i < depth.size(); i++) {
             now = initDepth(i, now);
@@ -131,34 +141,36 @@ namespace gfn {
             minY = std::min(minY, i.second.y);
         }
 
-        for (auto &i : position->pos) {
+        for (auto& i : position->pos) {
             i.second.x -= minX;
             i.second.y -= minY;
         }
-
+        std::cerr << "init ok\n";
         return position;
     }
 
-    void PosInitializer::putComponent(ComponentPosition *c, Vec2 pos) {
+    void PosInitializer::putComponent(ComponentPosition* c, Vec2 pos) {
         for (auto p : c->pos) {
             p.first->props->position.value = pos + p.second;
         }
     }
 
-    PosInitializer::PosInitializer(Structure *s) : structure(s) {}
+    PosInitializer::PosInitializer(Structure* s) : structure(s) {}
 
     void PosInitializer::init() {
-
-        std::vector<ComponentPosition *> components;
-
+        std::vector<ComponentPosition*> components;
+        std::cerr << structure->components.size() << "\n";
         for (auto c : structure->components) {
-            ComponentPosition *pos = ComponentInitializer(c).init();
+            std::cerr << c->uuid << "\n";
+            ComponentPosition* pos = ComponentInitializer(c).init();
             components.emplace_back(pos);
         }
+        std::cerr << "component " << components.size() << "\n";
 
-        std::sort(components.begin(), components.end(), [](ComponentPosition *a, ComponentPosition *b) {
+        std::sort(components.begin(), components.end(), [](ComponentPosition* a, ComponentPosition* b) {
             return a->diameter > b->diameter;
         });
+        std::cerr << "sort ok\n";
 
         double minX = 0, minY = 0, maxX = 0, maxY = 0;
         double newMinX = minX, newMinY = minY, newMaxX = maxX, newMaxY = maxY;

@@ -1,6 +1,5 @@
 #include "Structure.h"
-#include <Tracy.hpp>
-
+#include <Core/Structure/BlockCutTree/BlockCutTree.h>
 using namespace gfn;
 
 Structure::Structure(gfn::Interface* _itf) :
@@ -127,8 +126,7 @@ void Structure::componentify() {
 
     // build block cut trees
     for (auto& c : components) {
-        gfn::structure::BlockCutTreeBuilder builder(c);
-        builder.build();
+        c->rebuildBlockCutTree();
     }
 }
 

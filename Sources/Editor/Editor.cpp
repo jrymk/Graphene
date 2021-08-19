@@ -3,7 +3,6 @@
 #include <Editor/Theme/Theme.h> /// TODO
 #include <ImGuiFileDialog.h> /// TODO
 #include <iostream>
-#include <Tracy.hpp>
 
 namespace gfn {
     Editor::Editor() :
@@ -69,16 +68,16 @@ namespace gfn {
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Edit")) {
-
+            ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Insert")) {
-
+            ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Export")) {
-
+            ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Help")) {
-
+            ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
 
@@ -146,7 +145,6 @@ namespace gfn {
 
 
         ImGui::Begin("\ue30f Controls", nullptr, 0);
-
         if (fDoc) {
             if (gfn::button("\ue5d0 zoom to fit", HUE_YELLOW, HUE_DEFAULT, false, ImGui::GetContentRegionAvailWidth(), 0, false))
                 fDoc->doZoomToFit = true;
@@ -161,8 +159,7 @@ namespace gfn {
             if (!fDoc->isGraphUpdate) {
                 color = HUE_RED_CONTRAST;
                 icon = "\ue034";
-            }
-            else if (fDoc->getItf()->graph.getRead()->cfg.energySavingMode) {
+            } else if (fDoc->getItf()->graph.getRead()->cfg.energySavingMode) {
                 color = HUE_GREEN_CONTRAST;
                 icon = "\uea35";
             }
@@ -371,6 +368,7 @@ namespace gfn {
                 fDoc->execute("open");
             }
         }
+        ImGui::End();
 
         ImGui::Begin("\ue8ee Insert graph");
         static char insertGraph[65536];
@@ -405,12 +403,9 @@ namespace gfn {
         prefs.checkSave();
 
         gfx.postFrame();
-
-        FrameMark
     }
 
     void Editor::updateDocuments() {
-        ZoneScoped
         // document close handling
         // the close confirmation and state is handled by the document itself
         for (auto dIt = documents.begin(); dIt != documents.end();) {

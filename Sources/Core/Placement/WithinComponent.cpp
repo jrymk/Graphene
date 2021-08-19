@@ -1,5 +1,4 @@
 #include "Placement.h"
-#include <Tracy.hpp>
 
 namespace gfn {
     gfn::Vec2 Placement::attractForce(gfn::Interface* itf, gfn::Vec2 u, gfn::Vec2 v) {
@@ -43,8 +42,6 @@ namespace gfn {
     }
 
     void Placement::updateVertex(gfn::Interface* itf, gfn::Component* c, gfn::Vertex* u) {
-        ZoneScoped
-
         //u->props->force.value.y -= 0.001;
 
         for (auto& v : c->getAdjacentVertices(u)) {
@@ -120,8 +117,6 @@ namespace gfn {
     }*/
 
     void Placement::updateComponentSingleThreaded(gfn::Interface* itf, gfn::Component* c) {
-        ZoneScoped
-
         gfn::Timer timer;
         for (auto& u : c->vertices)
             u->props->force.value = gfn::Vec2(0.0, 0.0);
@@ -153,8 +148,6 @@ namespace gfn {
     }
 
     void Placement::updateComponentMultiThreaded(gfn::Interface* itf, gfn::Component* c) {
-        ZoneScoped
-
         stablized = true;
 
         for (auto& u : c->vertices)

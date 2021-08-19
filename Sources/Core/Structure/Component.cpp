@@ -26,6 +26,7 @@ namespace gfn {
     }
 
     gfn::BlockCutTree* Component::getBlockCutTree() { return blockCutTree; }
+
     void Component::rebuildBlockCutTree() {
         if (blockCutTree != nullptr) delete blockCutTree;
         blockCutTree = BlockCutTreeBuilder().build(this);

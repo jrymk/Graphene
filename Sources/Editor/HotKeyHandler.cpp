@@ -1,6 +1,5 @@
 #include "HotKeyHandler.h"
 #include <iostream>
-#include <Tracy.hpp>
 
 namespace gfn {
     HKHandler::HKHandler(gfn::Preferences* prefs) :
@@ -16,7 +15,6 @@ namespace gfn {
     }
 
     void HKHandler::updateHotKeyState() {
-        ZoneScoped
         for (int a = 0; a < gfn::Bindings::actions.size(); a++) {
             for (int c = 0; c < 5; c++) {
                 bool prev = _hotKeyDown[a][c];

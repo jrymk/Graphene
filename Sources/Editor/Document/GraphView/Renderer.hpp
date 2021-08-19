@@ -4,7 +4,6 @@
 #include <Core/Interface/Interface.h>
 #include <Editor/Document/GraphView/Camera.h>
 #include <Editor/Graphics/Graphics.h>
-#include <Tracy.hpp>
 
 namespace gfn {
     class Renderer {
@@ -22,8 +21,6 @@ namespace gfn {
         }
 
         void drawEdges(gfn::Graphics* gfx) {
-            ZoneScoped
-
             camera->xMin = FLT_MAX;
             camera->xMax = -FLT_MAX;
             camera->yMin = FLT_MAX;
@@ -128,8 +125,6 @@ namespace gfn {
         }
 
         void drawVertices(gfn::Graphics* gfx) {
-            ZoneScoped
-
             auto drawList = ImGui::GetWindowDrawList();
             auto userprops = itf->graph.getRead()->props;
             for (auto& vi : userprops.getVertexPropsList()) {

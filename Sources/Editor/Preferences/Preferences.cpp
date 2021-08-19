@@ -2,11 +2,8 @@
 #include <iostream>
 #include <fstream>
 #include <Editor/Theme/Theme.h>
-#include <Tracy.hpp>
 
 namespace gfn {
-    ZoneScoped
-
     void Preferences::serialize(nlohmann::json& j) {
         bindings.serialize(j["Key Binds"]);
 
@@ -33,7 +30,6 @@ namespace gfn {
     }
 
     void Preferences::deserialize(nlohmann::json& j) {
-        ZoneScoped
         bindings.deserialize(j["Key Binds"]);
 
         nlohmann::json themeOptions = j["Theme Options"];
@@ -63,7 +59,6 @@ namespace gfn {
     }
 
     void Preferences::saveToFile() {
-        ZoneScoped
         std::ofstream prefFile("preferences.json", std::ios::out);
         if (prefFile) {
             nlohmann::json j;
@@ -77,7 +72,6 @@ namespace gfn {
     }
 
     void Preferences::loadFromFile() {
-        ZoneScoped
         std::ifstream prefFile("preferences.json", std::ios::in);
         if (prefFile) {
             nlohmann::json j = nlohmann::json::parse(prefFile);
@@ -87,7 +81,6 @@ namespace gfn {
     }
 
     void Preferences::checkSave() {
-        ZoneScoped
         if (bindings.wantSaveBindings) {
             saveToFile();
             bindings.wantSaveBindings = false;

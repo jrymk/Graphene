@@ -5,7 +5,7 @@ project(Graphene)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_definitions(-DNDEBUG)
+#add_definitions(-DNDEBUG)
 
 include_directories(Dependencies/glad/include)
 include_directories(Dependencies/glad/include/glad)
@@ -23,9 +23,12 @@ include_directories(Dependencies/stduuid/gsl)
 include_directories(Dependencies/thread_pool)
 include_directories(Dependencies/json)
 include_directories(Dependencies/binn/src)
-include_directories(Dependencies/ImGui-Addons/FileBrowser)
+include_directories(Dependencies/ImGuiFileDialog)
+include_directories(Dependencies/ThreadPool)
+include_directories(Dependencies/stb)
 include_directories(Dependencies/earcut)
-include_directories(Dependencies/minitrace)
+include_directories(Dependencies/simple-svg)
+include_directories(Dependencies/lunasvg/include)
 include_directories(Sources/)
 
 
@@ -108,7 +111,6 @@ add_subdirectory(Dependencies/lunasvg)
 
 option(TRACY_ENABLE "" ON)
 option(TRACY_ON_DEMAND "" ON)
-add_subdirectory(Dependencies/tracy)
 
 set(CMAKE_EXE_LINKER_FLAGS " -static")
 

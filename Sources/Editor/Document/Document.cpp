@@ -1,5 +1,4 @@
 #include "Document.h"
-#include <Tracy.hpp>
 
 namespace gfn {
     int Document::untitledCounter = 1;
@@ -39,8 +38,6 @@ namespace gfn {
     }
 
     void Document::update() {
-        ZoneScoped
-
         if (!closeDocument) {
             ImGui::SetNextWindowSizeConstraints(ImVec2(200, 200), ImVec2(FLT_MAX, FLT_MAX));
             ImGui::Begin((docName + "###" + docId).c_str(), &isDocumentWindowOpen, ImGuiWindowFlags_UnsavedDocument);

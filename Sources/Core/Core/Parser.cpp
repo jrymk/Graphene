@@ -1,10 +1,7 @@
-#include <Tracy.hpp>
 #include "Core.h"
 
 namespace gfn {
     void Core::parse(Args command, gfn::Args& output) {
-        ZoneScoped
-
         /*if (!command.getParamValue("paste").empty()) {
             std::cerr << "PASTE\n";
             paste(command.getParamValue("paste"));
@@ -48,8 +45,6 @@ namespace gfn {
     }
 
     void Core::parseCommands() {
-        ZoneScoped
-
         while (!itf.commands.getRead()->buffer.empty()) {
             gfn::Args output;
             parse(itf.commands.getRead()->buffer.front(), output);

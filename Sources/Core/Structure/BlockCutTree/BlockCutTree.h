@@ -1,5 +1,5 @@
-#ifndef GRAPHENE_BLOCKCUTTREE_H
-#define GRAPHENE_BLOCKCUTTREE_H
+#ifndef BLOCKCUTTREE_H
+#define BLOCKCUTTREE_H
 
 #include <map>
 #include <vector>
@@ -10,10 +10,11 @@ namespace gfn {
 
     class BiconnectedComponent {
         friend class BlockCutTree;
+
     private:
-        std::unordered_set<Vertex *> vertices;
+        std::unordered_set<Vertex*> vertices;
     public:
-        std::unordered_set<Vertex *> getVertices();
+        std::unordered_set<Vertex*> getVertices();
 
         int size();
     };
@@ -22,42 +23,42 @@ namespace gfn {
         friend class BlockCutTreeBuilder;
 
     private:
-        std::unordered_map<Vertex *, BiconnectedComponent *> vertexToBCC;
-        std::unordered_set<BiconnectedComponent *> bcc;
-        std::unordered_map<BiconnectedComponent *, std::vector<BiconnectedComponent *>> adjList;
+        std::unordered_map<Vertex*, BiconnectedComponent*> vertexToBCC;
+        std::unordered_set<BiconnectedComponent*> bcc;
+        std::unordered_map<BiconnectedComponent*, std::vector<BiconnectedComponent*>> adjList;
 
-        void addEdge(BiconnectedComponent *u, BiconnectedComponent *v);
+        void addEdge(BiconnectedComponent* u, BiconnectedComponent* v);
 
-        void setBCC(Vertex *v, BiconnectedComponent *b);
+        void setBCC(Vertex* v, BiconnectedComponent* b);
 
     public:
         ~BlockCutTree();
 
-        BiconnectedComponent *getBCC(Vertex *v);
+        BiconnectedComponent* getBCC(Vertex* v);
 
-        std::unordered_set<BiconnectedComponent *> getBCCs();
+        std::unordered_set<BiconnectedComponent*> getBCCs();
 
-        std::vector<BiconnectedComponent *> getAdjacentBCC(BiconnectedComponent *b);
+        std::vector<BiconnectedComponent*> getAdjacentBCC(BiconnectedComponent* b);
     };
 
     class BlockCutTreeBuilder {
     private:
-        std::vector<Vertex *> visited;
-        std::unordered_map<Vertex *, int> in, low;
+        std::vector<Vertex*> visited;
+        std::unordered_map<Vertex*, int> in, low;
         int timeStamp = 0;
-        std::stack<Vertex *> vertexStack;
-        std::unordered_set<Vertex *> articulation;
+        std::stack<Vertex*> vertexStack;
+        std::unordered_set<Vertex*> articulation;
 
-        void addVertex(BiconnectedComponent *b, Vertex *v);
+        void addVertex(BiconnectedComponent* b, Vertex* v);
 
-        void dfs(Component *component, Vertex *now, Vertex *parent);
+        void dfs(Component* component, Vertex* now, Vertex* parent);
 
-        BlockCutTree *tree;
+        BlockCutTree* tree;
 
     public:
-        BlockCutTree *build(Component *component);
+        BlockCutTree* build(Component* component);
     };
 
 }
 
-#endif //GRAPHENE_BLOCKCUTTREE_H
+#endif

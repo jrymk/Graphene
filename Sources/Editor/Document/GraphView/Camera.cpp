@@ -1,5 +1,4 @@
 #include "Camera.h"
-#include <Tracy.hpp>
 
 namespace gfn {
     Camera::Camera(gfn::HKHandler* hk, gfn::Preferences* prefs) :
@@ -33,8 +32,6 @@ namespace gfn {
     }
 
     void Camera::update() {
-        ZoneScoped
-
         /// ZOOM
         if (_canZoomIn) {
             // determine mouse wheel velocity based on the cursor state from selection (one frame later)
