@@ -181,7 +181,7 @@ namespace gfn {
                 if (!u->props->pauseUpdate.value)
                     u->props->position.value += u->props->force.value * itf->graph.getWrite().cfg.c4.value;
 
-                if ((u->props->force.value * itf->graph.getWrite().cfg.c4.value).length() >= 0.0005f)
+                if ((u->props->force.value * itf->graph.getWrite().cfg.c4.value).length() >= 0.0001)
                     stablized = false;
             }
 
@@ -202,7 +202,7 @@ namespace gfn {
                 if (e->props->startVertexUuid.value != e->props->endVertexUuid.value)
                     e->props->position.value = mid + perp.normalize() * (((ep - mid) * perp) / perp.length()); // mid + )
 
-                if ((e->props->force.value * itf->graph.getWrite().cfg.c9.value).length() >= 0.0005f)
+                if ((e->props->force.value * itf->graph.getWrite().cfg.c9.value).length() >= 0.0002)
                     stablized = false;
             }
         }

@@ -2,8 +2,8 @@
 #define META_H
 
 #define BUILD_MAJOR 0
-#define BUILD_MINOR 4
-#define BUILD_PATCH 2
+#define BUILD_MINOR 5
+#define BUILD_PATCH 0
 
 const char buildVersion[] = {
         'G', 'r', 'a', 'p', 'h', 'e', 'n', 'e', ' ',
@@ -38,5 +38,7 @@ const char buildVersion[] = {
 // added png export
 // added copy and paste in string format
 // added energy saving mode
+// added pos initializer
+// fixed energy saving mode and pause graph update
 
 #endif

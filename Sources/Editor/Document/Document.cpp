@@ -32,8 +32,6 @@ namespace gfn {
     }
 
     void Document::execute(const std::string& cmd) {
-        if (itf->graph.getRead()->cfg.energySavingMode)
-            itf->commands.getWrite().buffer.emplace_back("configs -resume");
         itf->commands.getWrite().buffer.emplace_back(cmd);
     }
 

@@ -18,9 +18,9 @@ namespace gfn {
         if (itf.graph.getWrite().pendingUpdate) {
             // update component list with usergraph and rebuild block cut tree
             structure.componentify();
-            std::cerr << "start init " << structure.components.size() << "\n";
-            PosInitializer(&structure).init();
             itf.graph.getWrite().pendingUpdate = false;
+            //itf.graph.getWrite().cfg.doGraphUpdate.value = true;
+            itf.graph.getWrite().cfg.energySavingMode = false;
             /// TODO: partial update
         }
 

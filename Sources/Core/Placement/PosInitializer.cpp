@@ -2,7 +2,6 @@
 #include <set>
 
 namespace gfn {
-
     namespace {
         const double VERTEX_CIRCLE = 1;
         const double PI = acos(-1);
@@ -107,26 +106,16 @@ namespace gfn {
     }
 
     ComponentPosition* ComponentInitializer::init() {
-        std::cerr << "pos init\n";
         auto bct = component->getBlockCutTree();
-        std::cerr << "bct ok\n";
         auto bccs = component->getBlockCutTree()->getBCCs();
-        std::cerr << "bccs ok\n";
         BiconnectedComponent* temp = *component->getBlockCutTree()->getBCCs().begin();
-        std::cerr << "temp ok\n";
-
         findRoot1(temp, temp);
-        std::cerr << "find root 1 ok\n";
         findRoot2(temp, temp);
-        std::cerr << "find root 2 ok\n";
-
         assert(root != nullptr);
         dfs1(root, root);
-        std::cerr << "dfs 1 ok\n";
         fromAngle[root] = 0;
         angleSize[root] = 2 * PI;
         dfs2(root, root, 0);
-        std::cerr << "dfs 2 ok\n";
         double now = 0;
         for (int i = 0; i < depth.size(); i++) {
             now = initDepth(i, now);
@@ -145,7 +134,6 @@ namespace gfn {
             i.second.x -= minX;
             i.second.y -= minY;
         }
-        std::cerr << "init ok\n";
         return position;
     }
 
@@ -155,97 +143,111 @@ namespace gfn {
         }
     }
 
-    PosInitializer::PosInitializer(Structure* s) : structure(s) {}
+    PosInitializer::PosInitializer(Structure* structure, bool maintainCentroid) :
+            structure(structure),
+            maintainCentroid(maintainCentroid) {
+    }
 
     void PosInitializer::init() {
         std::vector<ComponentPosition*> components;
-        std::cerr << structure->components.size() << "\n";
+
         for (auto c : structure->components) {
             std::cerr << c->uuid << "\n";
             ComponentPosition* pos = ComponentInitializer(c).init();
             components.emplace_back(pos);
         }
-        std::cerr << "component " << components.size() << "\n";
 
         std::sort(components.begin(), components.end(), [](ComponentPosition* a, ComponentPosition* b) {
             return a->diameter > b->diameter;
         });
-        std::cerr << "sort ok\n";
 
-        double minX = 0, minY = 0, maxX = 0, maxY = 0;
-        double newMinX = minX, newMinY = minY, newMaxX = maxX, newMaxY = maxY;
-        int side = -1;
-        Vec2 now(0, 0);
-        for (auto i : components) {
-            if (side == -1) {
-                putComponent(i, now);
-                maxX += i->diameter;
-                maxY += i->diameter;
-                newMaxX = maxX;
-                newMaxY = maxY;
-                side = 0;
-                now = Vec2(minX, maxY);
-                continue;
+        if (maintainCentroid) {
+            for (auto i : components) {
+                Vec2 pSum;
+                for (auto& v : i->component->vertices)
+                    pSum += v->props->position.value;
+                pSum /= double(i->component->vertices.size());
+                putComponent(i, Vec2(0, 0));
+                Vec2 nSum;
+                for (auto& v : i->component->vertices)
+                    nSum += v->props->position.value;
+                nSum /= double(i->component->vertices.size());
+                for (auto& v : i->component->vertices)
+                    v->props->position.value += (pSum - nSum);
             }
-
-            if (side == 0) {
-                if (now.x + i->diameter > maxX) {
-                    side = 1;
-                    minX = newMinX;
-                    minY = newMinY;
-                    maxX = newMaxX;
-                    maxY = newMaxY;
-                    now = Vec2(maxX, maxY);
-                }
-            } else if (side == 1) {
-                if (now.y - i->diameter < minY) {
-                    side = 2;
-                    minX = newMinX;
-                    minY = newMinY;
-                    maxX = newMaxX;
-                    maxY = newMaxY;
-                    now = Vec2(maxX, minY);
-                }
-            } else if (side == 2) {
-                if (now.x - i->diameter < minX) {
-                    side = 3;
-                    minX = newMinX;
-                    minY = newMinY;
-                    maxX = newMaxX;
-                    maxY = newMaxY;
-                    now = Vec2(minX, minY);
-                }
-            } else {
-                if (now.y + i->diameter > maxY) {
+        } else {
+            double minX = 0, minY = 0, maxX = 0, maxY = 0;
+            double newMinX = minX, newMinY = minY, newMaxX = maxX, newMaxY = maxY;
+            int side = -1;
+            Vec2 now(0, 0);
+            for (auto i : components) {
+                if (side == -1) {
+                    putComponent(i, now);
+                    maxX += i->diameter;
+                    maxY += i->diameter;
+                    newMaxX = maxX;
+                    newMaxY = maxY;
                     side = 0;
-                    minX = newMinX;
-                    minY = newMinY;
-                    maxX = newMaxX;
-                    maxY = newMaxY;
                     now = Vec2(minX, maxY);
+                    continue;
+                }
+
+                if (side == 0) {
+                    if (now.x + i->diameter > maxX) {
+                        side = 1;
+                        minX = newMinX;
+                        minY = newMinY;
+                        maxX = newMaxX;
+                        maxY = newMaxY;
+                        now = Vec2(maxX, maxY);
+                    }
+                } else if (side == 1) {
+                    if (now.y - i->diameter < minY) {
+                        side = 2;
+                        minX = newMinX;
+                        minY = newMinY;
+                        maxX = newMaxX;
+                        maxY = newMaxY;
+                        now = Vec2(maxX, minY);
+                    }
+                } else if (side == 2) {
+                    if (now.x - i->diameter < minX) {
+                        side = 3;
+                        minX = newMinX;
+                        minY = newMinY;
+                        maxX = newMaxX;
+                        maxY = newMaxY;
+                        now = Vec2(minX, minY);
+                    }
+                } else {
+                    if (now.y + i->diameter > maxY) {
+                        side = 0;
+                        minX = newMinX;
+                        minY = newMinY;
+                        maxX = newMaxX;
+                        maxY = newMaxY;
+                        now = Vec2(minX, maxY);
+                    }
+                }
+
+                if (side == 0) {
+                    putComponent(i, now);
+                    newMaxY = std::max(newMaxY, maxY + i->diameter);
+                    now += Vec2(i->diameter, 0);
+                } else if (side == 1) {
+                    putComponent(i, now + Vec2(0, -i->diameter));
+                    newMaxX = std::max(newMaxX, maxX + i->diameter);
+                    now += Vec2(0, -i->diameter);
+                } else if (side == 2) {
+                    putComponent(i, now + Vec2(-i->diameter, -i->diameter));
+                    newMinY = std::min(newMinY, minY - i->diameter);
+                    now += Vec2(-i->diameter, 0);
+                } else {
+                    putComponent(i, now + Vec2(-i->diameter, 0));
+                    newMinX = std::min(newMinX, minX - i->diameter);
+                    now += Vec2(0, i->diameter);
                 }
             }
-
-            if (side == 0) {
-                putComponent(i, now);
-                newMaxY = std::max(newMaxY, maxY + i->diameter);
-                now += Vec2(i->diameter, 0);
-            } else if (side == 1) {
-                putComponent(i, now + Vec2(0, -i->diameter));
-                newMaxX = std::max(newMaxX, maxX + i->diameter);
-                now += Vec2(0, -i->diameter);
-            } else if (side == 2) {
-                putComponent(i, now + Vec2(-i->diameter, -i->diameter));
-                newMinY = std::min(newMinY, minY - i->diameter);
-                now += Vec2(-i->diameter, 0);
-            } else {
-                putComponent(i, now + Vec2(-i->diameter, 0));
-                newMinX = std::min(newMinX, minX - i->diameter);
-                now += Vec2(0, i->diameter);
-            }
-
         }
-
     }
-
 }

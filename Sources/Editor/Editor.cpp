@@ -177,13 +177,7 @@ namespace gfn {
 
             if (gfn::button("\ue028 recalculate", HUE_RED, HUE_DEFAULT, false,
                             ImGui::GetContentRegionAvailWidth(), 0, false)) {
-                for (auto& v:fDoc->getItf()->graph.getRead()->props.getVertexPropsList()) {
-                    std::uniform_real_distribution dis(-20.0, 20.0);
-                    auto randX = dis(gfn::getRng());
-                    auto randY = dis(gfn::getRng());
-                    fDoc->execute(
-                            "setvertexprops -uuid=" + v.first + " -key=position -value=(" + std::to_string(randX) + "," + std::to_string(randY) + ")");
-                }
+                fDoc->execute("optimize");
             }
 
             ImGui::PushFont(gfx.fontSmall);

@@ -1,11 +1,13 @@
 #include "Core.h"
+#include <Core/Placement/PosInitializer.h>
 
 namespace gfn {
     void Core::parse(Args command, gfn::Args& output) {
+        itf.graph.getWrite().cfg.energySavingMode = false;
         /*if (!command.getParamValue("paste").empty()) {
-            std::cerr << "PASTE\n";
-            paste(command.getParamValue("paste"));
-        }*/
+                    std::cerr << "PASTE\n";
+                    paste(command.getParamValue("paste"));
+                }*/
 
         std::string cmd = command.getParamValue("command");
         if (cmd.empty()) return;
@@ -37,7 +39,12 @@ namespace gfn {
         else if (cmd == "getvertexprops") itf.graph.getWrite().props.getVertexProp(command, output);
         else if (cmd == "setedgeprops") itf.graph.getWrite().props.setEdgeProp(command, output);
         else if (cmd == "getedgeprops") itf.graph.getWrite().props.getEdgeProp(command, output);
-        else if (cmd == "help") {
+        else if (cmd == "optimize") {
+            if (command.getFlag("-place-components"))
+                PosInitializer(&structure, false).init();
+            else
+                PosInitializer(&structure, true).init();
+        } else if (cmd == "help") {
             output.newParam("-output", "Available commands: "
                                        "select\topen\tsave\tconfigs\tmkvertex\trmvertex\tmkedge\trmedge\tsetvertexprops\t"
                                        "getvertexprops\tsetedgeprops\tgetedgeprops\thelp");
