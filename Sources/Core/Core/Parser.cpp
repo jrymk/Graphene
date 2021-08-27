@@ -1,5 +1,6 @@
 #include "Core.h"
 #include <Core/Placement/PosInitializer.h>
+#include <Core/Objects/Random.h>
 
 namespace gfn {
     void Core::parse(Args command, gfn::Args& output) {
@@ -48,6 +49,12 @@ namespace gfn {
             output.newParam("-output", "Available commands: "
                                        "select\topen\tsave\tconfigs\tmkvertex\trmvertex\tmkedge\trmedge\tsetvertexprops\t"
                                        "getvertexprops\tsetedgeprops\tgetedgeprops\thelp");
+        }
+        else if (cmd == "shuffle") {
+            for (auto &v : itf.graph.getWrite().props.getVertexPropsList()) {
+                std::uniform_real_distribution<double> dis(-20, 20);
+                v.second.position.value = Vec2(dis(getRng()), dis(getRng()));
+            }
         }
     }
 

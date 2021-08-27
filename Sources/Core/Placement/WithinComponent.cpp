@@ -160,10 +160,10 @@ namespace gfn {
             if (!u->props->pauseUpdate.value)
                 results.emplace_back(pool.enqueue(&Placement::updateVertex, itf, c, u));
         }
-        for (auto& e : c->edges) {
+        /*for (auto& e : c->edges) {
             if (!e->props->pauseUpdate.value)
                 results.emplace_back(pool.enqueue(&Placement::updateEdge, itf, c, e));
-        }
+        }*/
 
         for (auto& f : results)
             f.get();
@@ -181,7 +181,7 @@ namespace gfn {
                 if (!u->props->pauseUpdate.value)
                     u->props->position.value += u->props->force.value * itf->graph.getWrite().cfg.c4.value;
 
-                if ((u->props->force.value * itf->graph.getWrite().cfg.c4.value).length() >= 0.0001)
+                if ((u->props->force.value * itf->graph.getWrite().cfg.c4.value).length() >= 0.000000001)
                     stablized = false;
             }
 
@@ -191,7 +191,7 @@ namespace gfn {
 
                 if (!e->props->pauseUpdate.value)
                     e->props->position.value += e->props->force.value * itf->graph.getWrite().cfg.c9.value;
-                //e->props->position.value = (e->props->startVertexPosition.value + e->props->endVertexPosition.value) / 2.0;
+                e->props->position.value = (e->props->startVertexPosition.value + e->props->endVertexPosition.value) / 2.0;
 
                 auto ep = e->props->position.value;
                 auto up = e->props->startVertexPosition.value;
@@ -202,7 +202,7 @@ namespace gfn {
                 if (e->props->startVertexUuid.value != e->props->endVertexUuid.value)
                     e->props->position.value = mid + perp.normalize() * (((ep - mid) * perp) / perp.length()); // mid + )
 
-                if ((e->props->force.value * itf->graph.getWrite().cfg.c9.value).length() >= 0.0002)
+                if ((e->props->force.value * itf->graph.getWrite().cfg.c9.value).length() >= 0.000000002)
                     stablized = false;
             }
         }

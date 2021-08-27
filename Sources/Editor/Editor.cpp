@@ -19,6 +19,7 @@ namespace gfn {
 
     void Editor::update() {
         gfx.preFrame();
+        ImGui::ShowDemoWindow();
 
         hk.updateHotKeyState();
 
@@ -177,7 +178,14 @@ namespace gfn {
 
             if (gfn::button("\ue028 recalculate", HUE_RED, HUE_DEFAULT, false,
                             ImGui::GetContentRegionAvailWidth(), 0, false)) {
+                Uuid uuid = createUuid();
+                fDoc->execute("mkvertex -uuid=" + uuid);
+                fDoc->execute("rmvertex -uuid=" + uuid);
                 fDoc->execute("optimize");
+            }
+            if (gfn::button("\ue043 shuffle", HUE_RED, HUE_DEFAULT, false,
+                            ImGui::GetContentRegionAvailWidth(), 0, false)) {
+                fDoc->execute("shuffle");
             }
 
             ImGui::PushFont(gfx.fontSmall);
@@ -265,7 +273,6 @@ namespace gfn {
             }
             if (ImGui::BeginTabItem("Advanced")) {
                 bool edit = false;
-                ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
                 float c1 = float(fDoc->getItf()->graph.getRead()->cfg.c1.value);
                 float c2 = float(fDoc->getItf()->graph.getRead()->cfg.c2.value);
                 float c3 = float(fDoc->getItf()->graph.getRead()->cfg.c3.value);
@@ -276,39 +283,49 @@ namespace gfn {
                 float c8 = float(fDoc->getItf()->graph.getRead()->cfg.c8.value);
                 float c9 = float(fDoc->getItf()->graph.getRead()->cfg.c9.value);
 
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth() - 30);
                 ImGui::Text("c1");
+                ImGui::SameLine(30);
                 ImGui::SliderFloat("##c1", &c1, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
                 if (ImGui::IsItemEdited())
                     fDoc->execute("configs -c1=" + std::to_string(c1));
                 ImGui::Text("c2");
+                ImGui::SameLine(30);
                 ImGui::SliderFloat("##c2", &c2, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
                 if (ImGui::IsItemEdited())
                     fDoc->execute("configs -c2=" + std::to_string(c2));
                 ImGui::Text("c3");
+                ImGui::SameLine(30);
                 ImGui::SliderFloat("##c3", &c3, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
                 if (ImGui::IsItemEdited())
                     fDoc->execute("configs -c3=" + std::to_string(c3));
                 ImGui::Text("c4");
+                ImGui::SameLine(30);
                 ImGui::SliderFloat("##c4", &c4, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
                 if (ImGui::IsItemEdited())
                     fDoc->execute("configs -c4=" + std::to_string(c4));
                 ImGui::Text("c5");
+                ImGui::SameLine(30);
                 ImGui::SliderFloat("##c5", &c5, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
                 if (ImGui::IsItemEdited())
                     fDoc->execute("configs -c5=" + std::to_string(c5));
                 ImGui::Text("c6");
+                ImGui::SameLine(30);
                 ImGui::SliderFloat("##c6", &c6, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
                 if (ImGui::IsItemEdited())
                     fDoc->execute("configs -c6=" + std::to_string(c6));
                 ImGui::Text("c7");
+                ImGui::SameLine(30);
                 ImGui::SliderFloat("##c7", &c7, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
                 if (ImGui::IsItemEdited())
                     fDoc->execute("configs -c7=" + std::to_string(c7));
                 ImGui::Text("c8");
+                ImGui::SameLine(30);
                 ImGui::SliderFloat("##c8", &c8, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
                 if (ImGui::IsItemEdited())
                     fDoc->execute("configs -c8=" + std::to_string(c8));
                 ImGui::Text("c9");
+                ImGui::SameLine(30);
                 ImGui::SliderFloat("##c9", &c9, 0.000001, 1000.0, "%f", ImGuiSliderFlags_Logarithmic);
                 if (ImGui::IsItemEdited())
                     fDoc->execute("configs -c9=" + std::to_string(c9));
@@ -342,7 +359,10 @@ namespace gfn {
             int was = frame;
             bool update = false;
             ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth() - 64.0f);
-            ImGui::SliderInt("##Timeline", &frame, 0, 100, "%d", 0);
+            ImGui::PushStyleColor(ImGuiCol_SliderGrab, IM_COL32(41, 128, 185, 255));
+            ImGui::PushStyleColor(ImGuiCol_SliderGrabActive, IM_COL32(52, 152, 219, 255));
+            ImGui::SliderInt("##Timeline", &frame, 0, 12, "%d", 0);
+            ImGui::PopStyleColor(2);
             if (ImGui::IsItemEdited()) update = true;
             ImGui::SameLine();
             if (ImGui::Button("\ue5c4")) {
@@ -355,7 +375,7 @@ namespace gfn {
                 update = true;
             }
 
-            frame = std::max(0, std::min(100, frame));
+            frame = std::max(0, std::min(12, frame));
             if (update) {
                 //  fDoc->execute("save -f=\"timeline/" + std::to_string(was) + ".gfn");
                 fDoc->setFile("timeline/" + std::to_string(frame) + ".gfn");
@@ -451,3 +471,7 @@ namespace gfn {
     }
 
 }
+
+/*
+
+ */

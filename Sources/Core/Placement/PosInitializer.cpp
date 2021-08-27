@@ -1,14 +1,16 @@
 #include <Core/Placement/PosInitializer.h>
 #include <set>
+#include <cmath>
 
 namespace gfn {
     namespace {
-        const double VERTEX_CIRCLE = 1;
+        const double VERTEX_CIRCLE = 1.5;
         const double PI = acos(-1);
     }
 
     double ComponentInitializer::getWidth(BiconnectedComponent* b) {
-        return (b->size() + 1) / 2 * VERTEX_CIRCLE;
+        return (b->size() <= 1) ? 0 : (std::ceil((b->size() / PI)) * VERTEX_CIRCLE);
+//        return (b->size() + 1) / 2 * VERTEX_CIRCLE;
     }
 
     void ComponentInitializer::dfs1(BiconnectedComponent* now, BiconnectedComponent* parent) {
@@ -20,6 +22,7 @@ namespace gfn {
             sum += width[i];
         }
         width[now] = std::max(width[now], sum);
+        width[now] = std::max(width[now], VERTEX_CIRCLE);
     }
 
     void ComponentInitializer::dfs2(BiconnectedComponent* now, BiconnectedComponent* parent, int d) {
@@ -49,7 +52,7 @@ namespace gfn {
         else {
             double lastRadius = radius;
             for (auto i : depth[d]) {
-                radius = std::max(radius, getWidth(i) / angleSize[i]);
+                radius = std::max(radius, std::max(getWidth(i), VERTEX_CIRCLE) / angleSize[i]);
                 radius = std::max(radius, lastRadius + getWidth(i) / 2);
             }
         }
@@ -59,6 +62,7 @@ namespace gfn {
 
             double t = fromAngle[i] + angleSize[i] / 2;
             Vec2 center = Vec2(radius * std::cos(t), radius * std::sin(t));
+            std::cerr << center << "\n";
             double r = getWidth(i) / 2;
             double single = 2 * PI / i->size();
             double now = 0;

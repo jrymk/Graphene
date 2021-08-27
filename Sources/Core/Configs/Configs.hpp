@@ -28,7 +28,7 @@ namespace gfn::configs {
                 c7("c7", 20.0), // multi edge (edge to edge) repel force coeff
                 c8("c8", 0.01), // edge to vertex repel force coeff
                 c9("c9", 0.05), // c5 - c8 coeff
-                doGraphUpdate("doGraphUpdate", true) {
+                doGraphUpdate("doGraphUpdate", false) {
         }
 
         bool parse(gfn::Args command, gfn::Args& output) {
