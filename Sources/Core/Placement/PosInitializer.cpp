@@ -97,8 +97,10 @@ namespace gfn {
             if (i == parent) continue;
             subtrees.insert(subtreeDepth[i]);
         }
-        subtrees.insert(upDepth[now]);
+        //subtrees.insert(upDepth[now]);
+        subtrees.insert(upDepth[now] - getWidth(now) - VERTEX_CIRCLE);
         rootDepth[now] = *subtrees.rbegin() + VERTEX_CIRCLE + getWidth(now);
+
         if (root == nullptr || rootDepth[now] < rootDepth[root]) root = now;
 
         for (auto i : component->getBlockCutTree()->getAdjacentBCC(now)) {
