@@ -11,7 +11,7 @@
         "Enable vertical sync": true,
         "Font size": 16.0,
         "Launch with window height": 720,
-        "Launch with window maximized": false,
+        "Launch with window maximized": true,
         "Launch with window width": 1280
     },
     "Key Binds": {

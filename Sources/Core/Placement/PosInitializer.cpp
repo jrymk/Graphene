@@ -105,6 +105,7 @@ namespace gfn {
             if (i == parent) continue;
             subtrees.erase(subtrees.find(subtreeDepth[i]));
             upDepth[i] = *subtrees.rbegin() + getWidth(now) + 2 * VERTEX_CIRCLE;
+            subtrees.insert(subtreeDepth[i]);
             findRoot2(i, now);
         }
     }

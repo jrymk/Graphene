@@ -26,7 +26,18 @@ int main(int argc, char* argv[]) {
             editor.execute(line);
         }*/
 
-        auto docId = editor.newDocument();
+        //auto docId = editor.newDocument();
+
+        /*int treeSize = 16384;
+        editor.getDoc(docId)->execute("mkvertex -name=0");
+        for (int i = 0; i < treeSize - 1; i++) {
+            std::uniform_int_distribution<int> dis(0, i);
+            editor.getDoc(docId)->execute("mkvertex -name=" + std::to_string(i + 1));
+            editor.getDoc(docId)->execute(
+                    "mkedge -uname=" + std::to_string(dis(gfn::getRng())) + " -vname=" + std::to_string(i));
+        }*/
+
+
         /*int bctSize = 1000;
         int maxBlkSize = 4;
 

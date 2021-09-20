@@ -3,5 +3,8 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Dependencies/lunasvg" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cmake-build-debug-clang/_deps/tracy-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cmake-build-debug-mingw/_deps/tracy-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cmake-build-release-clang/_deps/tracy-src" vcs="Git" />
   </component>
 </project>
