@@ -1,0 +1,73 @@
+echo -on
+mkvertex -name=0
+setvertexprops -name=0 -key=label -value=0
+mkvertex -name=1
+setvertexprops -name=1 -key=label -value=1
+mkvertex -name=2
+setvertexprops -name=2 -key=label -value=2
+mkvertex -name=3
+setvertexprops -name=3 -key=label -value=3
+mkvertex -name=4
+setvertexprops -name=4 -key=label -value=4
+mkvertex -name=5
+setvertexprops -name=5 -key=label -value=5
+mkvertex -name=6
+setvertexprops -name=6 -key=label -value=6
+mkvertex -name=7
+setvertexprops -name=7 -key=label -value=7
+mkvertex -name=8
+setvertexprops -name=8 -key=label -value=8
+mkvertex -name=9
+setvertexprops -name=9 -key=label -value=9
+mkedge -uname=0 -vname=7 -name=0,7
+setedgeprops -name=0,7 -key=label -value=55
+mkedge -uname=4 -vname=8 -name=4,8
+setedgeprops -name=4,8 -key=label -value=60
+mkedge -uname=1 -vname=3 -name=1,3
+setedgeprops -name=1,3 -key=label -value=2
+mkedge -uname=3 -vname=4 -name=3,4
+setedgeprops -name=3,4 -key=label -value=17
+mkedge -uname=7 -vname=8 -name=7,8
+setedgeprops -name=7,8 -key=label -value=8
+mkedge -uname=3 -vname=9 -name=3,9
+setedgeprops -name=3,9 -key=label -value=41
+mkedge -uname=6 -vname=7 -name=6,7
+setedgeprops -name=6,7 -key=label -value=82
+mkedge -uname=5 -vname=9 -name=5,9
+setedgeprops -name=5,9 -key=label -value=7
+mkedge -uname=0 -vname=5 -name=0,5
+setedgeprops -name=0,5 -key=label -value=43
+mkedge -uname=2 -vname=6 -name=2,6
+setedgeprops -name=2,6 -key=label -value=77
+mkedge -uname=0 -vname=8 -name=0,8
+setedgeprops -name=0,8 -key=label -value=44
+mkedge -uname=1 -vname=7 -name=1,7
+setedgeprops -name=1,7 -key=label -value=12
+mkedge -uname=7 -vname=9 -name=7,9
+setedgeprops -name=7,9 -key=label -value=27
+mkedge -uname=1 -vname=8 -name=1,8
+setedgeprops -name=1,8 -key=label -value=48
+setvertexprops -name=0 -key=fillColor -value=rgb(255,255,0)
+save -f=./timeline/0.gfn
+save -f=./timeline/1.gfn
+save -f=./timeline/2.gfn
+save -f=./timeline/3.gfn
+setedgeprops -name=0,5 -key=edgeColor -value=rgb(255,0,0)
+save -f=./timeline/4.gfn
+save -f=./timeline/5.gfn
+setedgeprops -name=0,7 -key=edgeColor -value=rgb(255,0,0)
+save -f=./timeline/6.gfn
+setedgeprops -name=0,8 -key=edgeColor -value=rgb(255,0,0)
+save -f=./timeline/7.gfn
+save -f=./timeline/8.gfn
+setedgeprops -name=0,5 -key=edgeColor -value=rgb(0,0,255)
+save -f=./timeline/9.gfn
+setedgeprops -name=0,7 -key=edgeColor -value=rgb(0,0,255)
+setedgeprops -name=1,7 -key=edgeColor -value=rgb(255,0,0)
+save -f=./timeline/10.gfn
+setedgeprops -name=1,7 -key=edgeColor -value=rgb(0,0,255)
+save -f=./timeline/11.gfn
+setedgeprops -name=0,8 -key=edgeColor -value=rgb(0,0,255)
+save -f=./timeline/12.gfn
+grace
+exit

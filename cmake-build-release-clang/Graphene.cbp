@@ -1,0 +1,1077 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="Graphene"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="clang"/>
+		<Option virtualFolders="CMake Files\;CMake Files\Dependencies\;CMake Files\Dependencies\glfw-3.3.4\;CMake Files\Dependencies\glfw-3.3.4\src\;CMake Files\Dependencies\lunasvg\;CMake Files\Dependencies\lunasvg\include\;CMake Files\Dependencies\lunasvg\source\;CMake Files\Dependencies\lunasvg\source\geometry\;CMake Files\Dependencies\lunasvg\source\graphics\;CMake Files\Dependencies\lunasvg\3rdparty\;CMake Files\Dependencies\lunasvg\3rdparty\stb\;CMake Files\Dependencies\lunasvg\3rdparty\software\;CMake Files\Dependencies\lunasvg\3rdparty\plutovg\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="C:/Users/jerry/repos/Graphene/cmake-build-release-clang"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="Graphene">
+				<Option output="C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Graphene.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/jerry/repos/Graphene/cmake-build-release-clang"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glad/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glad/include/glad"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glad/include/KHR"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64/include/GLFW"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/backends"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/misc/cpp"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/misc/freetype"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/misc/single_file"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/stduuid/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/stduuid/gsl"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/thread_pool"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/json"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/binn/src"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/ImGuiFileDialog"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/ThreadPool"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/stb"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/earcut"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/simple-svg"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Sources"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/include"/>
+					<Add directory="C:/Program Files/msys64/clang64/include/c++/v1"/>
+					<Add directory="C:/Program Files/msys64/clang64/lib/clang/12.0.1/include"/>
+					<Add directory="C:/Program Files/msys64/clang64/x86_64-w64-mingw32/include"/>
+					<Add directory="C:/Program Files/msys64/clang64/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 Graphene"/>
+					<CompileFile command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="Graphene/fast">
+				<Option output="C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Graphene.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/jerry/repos/Graphene/cmake-build-release-clang"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glad/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glad/include/glad"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glad/include/KHR"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64/include/GLFW"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/backends"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/misc/cpp"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/misc/freetype"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/misc/single_file"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/stduuid/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/stduuid/gsl"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/thread_pool"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/json"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/binn/src"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/ImGuiFileDialog"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/ThreadPool"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/stb"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/earcut"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/simple-svg"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Sources"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/include"/>
+					<Add directory="C:/Program Files/msys64/clang64/include/c++/v1"/>
+					<Add directory="C:/Program Files/msys64/clang64/lib/clang/12.0.1/include"/>
+					<Add directory="C:/Program Files/msys64/clang64/x86_64-w64-mingw32/include"/>
+					<Add directory="C:/Program Files/msys64/clang64/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 Graphene/fast"/>
+					<CompileFile command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/local">
+				<Option working_dir="C:/Users/jerry/repos/Graphene/cmake-build-release-clang"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 install/local"/>
+					<CompileFile command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install">
+				<Option working_dir="C:/Users/jerry/repos/Graphene/cmake-build-release-clang"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 install"/>
+					<CompileFile command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="C:/Users/jerry/repos/Graphene/cmake-build-release-clang"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="C:/Users/jerry/repos/Graphene/cmake-build-release-clang"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="list_install_components">
+				<Option working_dir="C:/Users/jerry/repos/Graphene/cmake-build-release-clang"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 list_install_components"/>
+					<CompileFile command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/strip">
+				<Option working_dir="C:/Users/jerry/repos/Graphene/cmake-build-release-clang"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 install/strip"/>
+					<CompileFile command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="uninstall">
+				<Option working_dir="C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/glfw-3.3.4"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/glfw-3.3.4/Makefile&quot;  VERBOSE=1 uninstall"/>
+					<CompileFile command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/glfw-3.3.4/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/glfw-3.3.4/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/glfw-3.3.4/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="glfw">
+				<Option output="C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/glfw-3.3.4/src/libglfw3.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/glfw-3.3.4/src"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add option="-D_GLFW_USE_CONFIG_H"/>
+					<Add option="-D_UNICODE"/>
+					<Add option="-DUNICODE"/>
+					<Add option="-DWINVER=0x0501"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glad/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glad/include/glad"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glad/include/KHR"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64/include/GLFW"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/backends"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/misc/cpp"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/misc/freetype"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/misc/single_file"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/stduuid/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/stduuid/gsl"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/thread_pool"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/json"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/binn/src"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/ImGuiFileDialog"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/ThreadPool"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/stb"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/earcut"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/simple-svg"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Sources"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/glfw-3.3.4/src"/>
+					<Add directory="C:/Program Files/msys64/clang64/include/c++/v1"/>
+					<Add directory="C:/Program Files/msys64/clang64/lib/clang/12.0.1/include"/>
+					<Add directory="C:/Program Files/msys64/clang64/x86_64-w64-mingw32/include"/>
+					<Add directory="C:/Program Files/msys64/clang64/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/glfw-3.3.4/src/Makefile&quot;  VERBOSE=1 glfw"/>
+					<CompileFile command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/glfw-3.3.4/src/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/glfw-3.3.4/src/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/glfw-3.3.4/src/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="glfw/fast">
+				<Option output="C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/glfw-3.3.4/src/libglfw3.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/glfw-3.3.4/src"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add option="-D_GLFW_USE_CONFIG_H"/>
+					<Add option="-D_UNICODE"/>
+					<Add option="-DUNICODE"/>
+					<Add option="-DWINVER=0x0501"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glad/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glad/include/glad"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glad/include/KHR"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64/include/GLFW"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/backends"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/misc/cpp"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/misc/freetype"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/misc/single_file"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/stduuid/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/stduuid/gsl"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/thread_pool"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/json"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/binn/src"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/ImGuiFileDialog"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/ThreadPool"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/stb"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/earcut"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/simple-svg"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Sources"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/glfw-3.3.4/src"/>
+					<Add directory="C:/Program Files/msys64/clang64/include/c++/v1"/>
+					<Add directory="C:/Program Files/msys64/clang64/lib/clang/12.0.1/include"/>
+					<Add directory="C:/Program Files/msys64/clang64/x86_64-w64-mingw32/include"/>
+					<Add directory="C:/Program Files/msys64/clang64/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/glfw-3.3.4/src/Makefile&quot;  VERBOSE=1 glfw/fast"/>
+					<CompileFile command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/glfw-3.3.4/src/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/glfw-3.3.4/src/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/glfw-3.3.4/src/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="lunasvg">
+				<Option output="C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/lunasvg/liblunasvg.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/lunasvg"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glad/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glad/include/glad"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glad/include/KHR"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64/include/GLFW"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/backends"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/misc/cpp"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/misc/freetype"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/misc/single_file"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/stduuid/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/stduuid/gsl"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/thread_pool"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/json"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/binn/src"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/ImGuiFileDialog"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/ThreadPool"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/stb"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/earcut"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/simple-svg"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Sources"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/geometry"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/graphics"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/3rdparty/stb"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/3rdparty/software"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/3rdparty/plutovg"/>
+					<Add directory="C:/Program Files/msys64/clang64/include/c++/v1"/>
+					<Add directory="C:/Program Files/msys64/clang64/lib/clang/12.0.1/include"/>
+					<Add directory="C:/Program Files/msys64/clang64/x86_64-w64-mingw32/include"/>
+					<Add directory="C:/Program Files/msys64/clang64/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/lunasvg/Makefile&quot;  VERBOSE=1 lunasvg"/>
+					<CompileFile command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/lunasvg/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/lunasvg/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/lunasvg/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="lunasvg/fast">
+				<Option output="C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/lunasvg/liblunasvg.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/lunasvg"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glad/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glad/include/glad"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glad/include/KHR"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4.bin.WIN64/include/GLFW"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/backends"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/misc/cpp"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/misc/freetype"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/imgui/misc/single_file"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/stduuid/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/stduuid/gsl"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/thread_pool"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/json"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/binn/src"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/ImGuiFileDialog"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/ThreadPool"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/stb"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/earcut"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/simple-svg"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/include"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Sources"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/geometry"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/graphics"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/3rdparty/stb"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/3rdparty/software"/>
+					<Add directory="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/3rdparty/plutovg"/>
+					<Add directory="C:/Program Files/msys64/clang64/include/c++/v1"/>
+					<Add directory="C:/Program Files/msys64/clang64/lib/clang/12.0.1/include"/>
+					<Add directory="C:/Program Files/msys64/clang64/x86_64-w64-mingw32/include"/>
+					<Add directory="C:/Program Files/msys64/clang64/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/lunasvg/Makefile&quot;  VERBOSE=1 lunasvg/fast"/>
+					<CompileFile command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/lunasvg/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/lunasvg/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~1/msys64/clang64/bin/mingw32-make.exe -f &quot;C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/lunasvg/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/ImGuiFileDialog/ImGuiFileDialog.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/ImGuiFileDialog/ImGuiFileDialog.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/binn/src/binn.c">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/binn/src/binn.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glad/src/glad.c">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/include/GLFW/glfw3.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/include/GLFW/glfw3native.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/Init.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/context.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/egl_context.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/egl_context.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/input.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/internal.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/mappings.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/monitor.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/osmesa_context.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/osmesa_context.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/vulkan.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/wgl_context.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/wgl_context.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/win32_init.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/win32_joystick.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/win32_joystick.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/win32_monitor.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/win32_platform.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/win32_thread.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/win32_time.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/win32_window.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/window.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/imgui/backends/imgui_impl_glfw.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/imgui/backends/imgui_impl_glfw.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/imgui/backends/imgui_impl_opengl3.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/imgui/backends/imgui_impl_opengl3.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/imgui/imgui.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/imgui/imgui.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/imgui/imgui_demo.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/imgui/imgui_draw.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/imgui/imgui_tables.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/imgui/imgui_widgets.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/3rdparty/plutovg/plutovg-blend.c">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/3rdparty/plutovg/plutovg-dash.c">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/3rdparty/plutovg/plutovg-geometry.c">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/3rdparty/plutovg/plutovg-paint.c">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/3rdparty/plutovg/plutovg-rle.c">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/3rdparty/plutovg/plutovg.c">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/3rdparty/plutovg/plutovg.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/3rdparty/software/sw_ft_math.c">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/3rdparty/software/sw_ft_math.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/3rdparty/software/sw_ft_raster.c">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/3rdparty/software/sw_ft_raster.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/3rdparty/software/sw_ft_stroker.c">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/3rdparty/software/sw_ft_stroker.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/cssproperty.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/cssproperty.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/geometry/affinetransform.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/geometry/affinetransform.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/geometry/font.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/geometry/font.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/geometry/path.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/geometry/path.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/geometry/pathiterator.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/geometry/pathiterator.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/graphics/canvas.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/graphics/canvas.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/graphics/canvasimpl.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/graphics/canvasimpl.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/graphics/paint.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/graphics/paint.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/graphics/strokedata.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/graphics/strokedata.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/rendercontext.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/rendercontext.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgangle.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgangle.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgclippathelement.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgclippathelement.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgcolor.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgcolor.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgcontentutils.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgcontentutils.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgdefselement.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgdefselement.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgdocument.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgdocumentimpl.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgdocumentimpl.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgelement.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgelementimpl.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgelementimpl.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgelementiter.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgenumeration.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgenumeration.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgfittoviewbox.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgfittoviewbox.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svggelement.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svggelement.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svggeometryelement.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svggeometryelement.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svggraphicselement.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svggraphicselement.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svglength.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svglength.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgmarkerelement.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgmarkerelement.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgmaskelement.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgmaskelement.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgnumber.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgnumber.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgpaintelement.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgpaintelement.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgparser.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgparser.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgpath.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgpath.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgpoint.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgpoint.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgpreserveaspectratio.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgpreserveaspectratio.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgproperty.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgproperty.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgrect.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgrect.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgstopelement.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgstopelement.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgstring.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgstring.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgstyledelement.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgstyledelement.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgsvgelement.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgsvgelement.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgsymbolelement.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgsymbolelement.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgtextelement.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgtextelement.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgtransform.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgtransform.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgurireference.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svgurireference.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svguseelement.cpp">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/svguseelement.h">
+			<Option target="lunasvg"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Core/Background.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Core/Core.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Core/Core.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Core/File.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Core/Meta.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Core/Parser.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Graph/Graph.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Graph/Graph.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Interface/Interface.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Interface/Interface.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Interface/TripleBuffer.tpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Objects/Args.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Objects/Args.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Objects/Random.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Objects/Random.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Objects/Serializable.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Objects/Serializable.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Objects/Timer.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Objects/Timer.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Objects/Uuid.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Objects/Uuid.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Objects/Vec2.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Objects/Vec2.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Placement/Placement.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Placement/Placement.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Placement/PosInitializer.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Placement/PosInitializer.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Placement/WithinComponent.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Properties/EdgeProps.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Properties/EdgeProps.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Properties/Properties.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Properties/Properties.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Properties/PropertiesParser.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Properties/VertexProps.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Properties/VertexProps.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Structure/BlockCutTree/BlockCutTree.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Structure/BlockCutTree/BlockCutTree.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Structure/BlockCutTree/BlockCutTreeBuilder.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Structure/Component.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Structure/Component.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Core/Structure/Componentifier.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Console.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/DocsMgr.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Document/Document.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Document/Document.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Document/Export/ExportMenu.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Document/Export/ExportPNG.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Document/Export/ExportSVG.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Document/Export/ExportTikZ.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Document/GraphView/Camera.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Document/GraphView/Camera.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Document/GraphView/GraphView.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Document/GraphView/GraphView.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Document/GraphView/Selection.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Document/GraphView/Selection.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Editor.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Editor.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Graphics/Arial.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Graphics/Arial.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Graphics/Barlow.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Graphics/Barlow.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Graphics/Graphics.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Graphics/Graphics.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Graphics/Material.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Graphics/Material.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/HotKeyHandler.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/HotKeyHandler.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Preferences/KeyBindings/Actions.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Preferences/KeyBindings/Actions.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Preferences/KeyBindings/Bindings.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Preferences/KeyBindings/HotKey.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Preferences/KeyBindings/KeyBindDialog.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Preferences/KeyBindings/KeyNames.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Preferences/Preferences.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Preferences/Preferences.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/PropertiesPanel.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Theme/Styles.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Theme/Theme.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Editor/Theme/Theme.h">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Sources/Main.cpp">
+			<Option target="Graphene"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/cmake-build-release-clang/Dependencies/glfw-3.3.4/src/glfw_config.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\Dependencies\glfw-3.3.4\"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/cmake_uninstall.cmake.in">
+			<Option virtualFolder="CMake Files\Dependencies\glfw-3.3.4\"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\Dependencies\glfw-3.3.4\src\"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/glfw3.pc.in">
+			<Option virtualFolder="CMake Files\Dependencies\glfw-3.3.4\src\"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/glfw3Config.cmake.in">
+			<Option virtualFolder="CMake Files\Dependencies\glfw-3.3.4\src\"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/glfw-3.3.4/src/glfw_config.h.in">
+			<Option virtualFolder="CMake Files\Dependencies\glfw-3.3.4\src\"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\Dependencies\lunasvg\"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/include/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\Dependencies\lunasvg\include\"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\Dependencies\lunasvg\source\"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/geometry/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\Dependencies\lunasvg\source\geometry\"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/source/graphics/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\Dependencies\lunasvg\source\graphics\"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/3rdparty/stb/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\Dependencies\lunasvg\3rdparty\stb\"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/3rdparty/software/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\Dependencies\lunasvg\3rdparty\software\"/>
+		</Unit>
+		<Unit filename="C:/Users/jerry/repos/Graphene/Dependencies/lunasvg/3rdparty/plutovg/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\Dependencies\lunasvg\3rdparty\plutovg\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

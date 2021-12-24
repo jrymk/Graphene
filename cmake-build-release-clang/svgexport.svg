@@ -1,0 +1,122 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="24.116px" height="24.8501px" xmlns="http://www.w3.org/2000/svg" version="1.1" >
+	<line x1="7.98721" y1="11.1106" x2="4.9188" y2="9.94704" stroke-width="0.09" stroke="rgb(9,147,0)" />
+	<polygon points="4.77854,9.89386 5.26845,9.87108 5.05905,10.0002 5.13016,10.2357 4.77854,9.89386 " fill="rgb(9,147,0)" />
+	<text x="6.4191" y="10.3326" fill="rgb(0,0,0)" font-size="0.8" font-family="Arial" ></text>
+	<line x1="3.40845" y1="10.0885" x2="1.54131" y2="11.4925" stroke-width="0.09" stroke="rgb(9,147,0)" />
+	<polygon points="1.42142,11.5826 1.66389,11.1563 1.6612,11.4023 1.89828,11.468 1.42142,11.5826 " fill="rgb(9,147,0)" />
+	<text x="2.1475" y="10.7725" fill="rgb(0,0,0)" font-size="0.8" font-family="Arial" ></text>
+	<line x1="8.90791" y1="11.615" x2="10.8908" y2="13.091" stroke-width="0.09" stroke="rgb(9,147,0)" />
+	<polygon points="11.0111,13.1806 10.5337,13.0683 10.7705,13.0015 10.7666,12.7555 11.0111,13.1806 " fill="rgb(9,147,0)" />
+	<text x="9.84537" y="13.3604" fill="rgb(0,0,0)" font-size="0.8" font-family="Arial" >y</text>
+	<line x1="13.2419" y1="5.66865" x2="12.9608" y2="8.58961" stroke-width="0.09" stroke="rgb(166,0,219)" />
+	<polygon points="12.9464,8.73892 12.7954,8.27231 12.9752,8.4403 13.1836,8.30967 12.9464,8.73892 " fill="rgb(166,0,219)" />
+	<text x="12.6637" y="7.32432" fill="rgb(0,0,0)" font-size="0.8" font-family="Arial" ></text>
+	<line x1="17.5073" y1="10.8838" x2="19.5031" y2="8.64621" stroke-width="0.09" stroke="rgb(9,147,0)" />
+	<polygon points="19.603,8.53426 19.449,8.99989 19.4033,8.75815 19.1579,8.74029 19.603,8.53426 " fill="rgb(9,147,0)" />
+	<text x="18.7821" y="10.232" fill="rgb(0,0,0)" font-size="0.8" font-family="Arial" >1</text>
+	<line x1="20.7427" y1="7.44737" x2="22.5956" y2="5.94597" stroke-width="0.09" stroke="rgb(9,147,0)" />
+	<polygon points="22.7122,5.85154 22.4853,6.28634 22.4791,6.0404 22.2398,5.98333 22.7122,5.85154 " fill="rgb(9,147,0)" />
+	<text x="22.0076" y="7.28777" fill="rgb(0,0,0)" font-size="0.8" font-family="Arial" ></text>
+	<line x1="20.5015" y1="11.6553" x2="17.8303" y2="11.3552" stroke-width="0.09" stroke="rgb(9,147,0)" />
+	<polygon points="17.6812,11.3385 18.1502,11.1949 17.9793,11.372 18.1066,11.5825 17.6812,11.3385 " fill="rgb(9,147,0)" />
+	<text x="19.0488" y="11.3152" fill="rgb(0,0,0)" font-size="0.8" font-family="Arial" >2</text>
+	<line x1="7.68518" y1="14.5958" x2="8.3229" y2="11.9595" stroke-width="0.09" stroke="rgb(9,147,0)" />
+	<polygon points="8.35816,11.8137 8.4419,12.2969 8.28763,12.1053 8.06283,12.2052 8.35816,11.8137 " fill="rgb(9,147,0)" />
+	<text x="8.25661" y="13.7373" fill="rgb(0,0,0)" font-size="0.8" font-family="Arial" >x</text>
+	<line x1="3.44546" y1="9.09339" x2="1.60171" y2="7.47933" stroke-width="0.09" stroke="rgb(9,147,0)" />
+	<polygon points="1.48884,7.38053 1.95588,7.53021 1.71457,7.57813 1.69899,7.82366 1.48884,7.38053 " fill="rgb(9,147,0)" />
+	<text x="2.76026" y="8.1947" fill="rgb(0,0,0)" font-size="0.8" font-family="Arial" ></text>
+	<line x1="16.3438" y1="10.8962" x2="13.5406" y2="9.57129" stroke-width="0.11" stroke="rgb(9,147,0)" />
+	<polygon points="13.3748,9.49295 13.9739,9.51249 13.7063,9.64963 13.7703,9.94345 13.3748,9.49295 " fill="rgb(9,147,0)" />
+	<polygon points="16.6753,11.0528 16.0762,11.0333 16.3438,10.8962 16.2799,10.6023 16.6753,11.0528 " fill="rgb(9,147,0)" />
+	<text x="15.2195" y="10.1541" fill="rgb(0,0,0)" font-size="0.8" font-family="Arial" ></text>
+	<line x1="15.0657" y1="19.7354" x2="16.0984" y2="16.6281" stroke-width="0.09" stroke="rgb(9,147,0)" />
+	<polygon points="16.1457,16.4858 16.1888,16.9743 16.051,16.7704 15.8187,16.8513 16.1457,16.4858 " fill="rgb(9,147,0)" />
+	<text x="16.0279" y="18.5435" fill="rgb(0,0,0)" font-size="0.8" font-family="Arial" ></text>
+	<line x1="19.9587" y1="16.4618" x2="16.987" y2="16.0714" stroke-width="0.09" stroke="rgb(9,147,0)" />
+	<polygon points="16.8383,16.0518 17.3099,15.9171 17.1357,16.0909 17.2591,16.3038 16.8383,16.0518 " fill="rgb(9,147,0)" />
+	<text x="18.0541" y="15.8996" fill="rgb(255,12,0)" font-size="1.66" font-family="Arial" >4</text>
+	<line x1="18.0068" y1="19.6926" x2="15.5683" y2="20.1208" stroke-width="0.09" stroke="rgb(255,61,36)" />
+	<polygon points="15.4205,20.1467 15.83,19.8768 15.716,20.0948 15.8975,20.261 15.4205,20.1467 " fill="rgb(255,61,36)" />
+	<text x="16.6367" y="19.7739" fill="rgb(0,0,0)" font-size="0.8" font-family="Arial" ></text>
+	<line x1="14.8985" y1="20.2384" x2="14.8985" y2="20.2384" stroke-width="0.09" stroke="rgb(9,147,0)" />
+	<polygon points="nan,nan nan,nan nan,nan nan,nan nan,nan " fill="rgb(9,147,0)" />
+	<text x="14.8985" y="20.5309" fill="rgb(0,0,0)" font-size="0.8" font-family="Arial" ></text>
+	<line x1="5.20749" y1="13.5978" x2="6.75482" y2="14.79" stroke-width="0.09" stroke="rgb(9,147,0)" />
+	<polygon points="6.87364,14.8815 6.39816,14.7613 6.636,14.6984 6.63619,14.4524 6.87364,14.8815 " fill="rgb(9,147,0)" />
+	<text x="5.76897" y="14.8847" fill="rgb(0,0,0)" font-size="0.8" font-family="Arial" ></text>
+	<line x1="8.00234" y1="11.5223" x2="5.43379" y2="12.7187" stroke-width="0.09" stroke="rgb(9,147,0)" />
+	<polygon points="5.29782,12.7821 5.6234,12.4153 5.56976,12.6554 5.78807,12.7688 5.29782,12.7821 " fill="rgb(9,147,0)" />
+	<text x="6.34434" y="12.0963" fill="rgb(0,0,0)" font-size="0.8" font-family="Arial" ></text>
+	<line x1="7.82198" y1="8.02822" x2="8.34809" y2="10.632" stroke-width="0.09" stroke="rgb(9,147,0)" />
+	<polygon points="8.3778,10.779 8.09754,10.3766 8.31839,10.485 8.47982,10.2993 8.3778,10.779 " fill="rgb(9,147,0)" />
+	<text x="7.63796" y="9.6569" fill="rgb(0,0,0)" font-size="0.8" font-family="Arial" ></text>
+	<line x1="13.531" y1="14.685" x2="15.6966" y2="15.6953" stroke-width="0.09" stroke="rgb(255,61,36)" />
+	<polygon points="15.8325,15.7587 15.3423,15.7452 15.5606,15.6319 15.5071,15.3918 15.8325,15.7587 " fill="rgb(255,61,36)" />
+	<text x="14.0654" y="15.7179" fill="rgb(0,0,0)" font-size="0.8" font-family="Arial" ></text>
+	<line x1="16.5896" y1="16.4348" x2="18.1737" y2="19.0211" stroke-width="0.09" stroke="rgb(255,61,36)" />
+	<polygon points="18.252,19.149 17.8507,18.8671 18.0953,18.8932 18.1833,18.6634 18.252,19.149 " fill="rgb(255,61,36)" />
+	<text x="17.0413" y="18.3169" fill="rgb(0,0,0)" font-size="0.8" font-family="Arial" ></text>
+	<line x1="14.411" y1="23.7951" x2="14.8062" y2="20.9121" stroke-width="0.09" stroke="rgb(9,147,0)" />
+	<polygon points="14.8265,20.7635 14.9586,21.2358 14.7858,21.0607 14.5722,21.1828 14.8265,20.7635 " fill="rgb(9,147,0)" />
+	<text x="15.0596" y="22.6323" fill="rgb(0,0,0)" font-size="0.8" font-family="Arial" ></text>
+	<line x1="1.55092" y1="12.2698" x2="3.6763" y2="12.863" stroke-width="0.09" stroke="rgb(9,147,0)" />
+	<polygon points="3.82078,12.9033 3.33492,12.9701 3.53182,12.8226 3.43976,12.5945 3.82078,12.9033 " fill="rgb(9,147,0)" />
+	<text x="2.56622" y="13.3077" fill="rgb(0,0,0)" font-size="0.8" font-family="Arial" ></text>
+	<line x1="18.8135" y1="19.1539" x2="20.1189" y2="17.1043" stroke-width="0.09" stroke="rgb(9,147,0)" />
+	<polygon points="20.1995,16.9778 20.1222,17.4621 20.0383,17.2309 19.7933,17.2526 20.1995,16.9778 " fill="rgb(9,147,0)" />
+	<text x="19.8634" y="19.222" fill="rgb(194,0,255)" font-size="1.7" font-family="Arial" >5</text>
+	<line x1="16.4708" y1="15.1002" x2="17.0289" y2="11.9815" stroke-width="0.11" stroke="rgb(9,147,0)" />
+	<polygon points="17.0611,11.801 17.1989,12.3844 16.9966,12.162 16.7297,12.3004 17.0611,11.801 " fill="rgb(9,147,0)" />
+	<polygon points="16.4062,15.4611 16.2684,14.8777 16.4708,15.1002 16.7377,14.9617 16.4062,15.4611 " fill="rgb(9,147,0)" />
+	<text x="17.001" y="14.012" fill="rgb(0,0,0)" font-size="0.8" font-family="Arial" >3</text>
+	<line x1="12.0812" y1="9.64153" x2="9.13071" y2="11.0002" stroke-width="0.11" stroke="rgb(166,0,219)" />
+	<polygon points="8.96418,11.0768 9.36408,10.6303 9.29724,10.9235 9.56345,11.0633 8.96418,11.0768 " fill="rgb(166,0,219)" />
+	<polygon points="12.4143,9.48816 12.0144,9.93469 12.0812,9.64153 11.815,9.50173 12.4143,9.48816 " fill="rgb(166,0,219)" />
+	<text x="10.2784" y="10.1268" fill="rgb(0,0,0)" font-size="0.8" font-family="Arial" >z</text>
+	<line x1="13.5178" y1="1.57855" x2="13.3744" y2="3.944" stroke-width="0.09" stroke="rgb(166,0,219)" />
+	<polygon points="13.3654,4.09373 13.1979,3.63275 13.3835,3.79427 13.5872,3.65634 13.3654,4.09373 " fill="rgb(166,0,219)" />
+	<text x="12.9974" y="3.1018" fill="rgb(0,0,0)" font-size="0.8" font-family="Arial" ></text>
+	<circle cx="13.5656" cy="0.79" r="0.73" fill="rgb(255,177,154)" stroke-width="0.12" stroke="rgb(254,69,29)" />
+	<text x="13.2122" y="1.16859" fill="rgb(120,120,120)" font-size="1.03521" font-family="Arial" >A</text>
+	<circle cx="7.49944" cy="15.3637" r="0.73" fill="rgb(255,177,154)" stroke-width="0.12" stroke="rgb(254,69,29)" />
+	<text x="7.14611" y="15.7423" fill="rgb(120,120,120)" font-size="1.03521" font-family="Arial" >A</text>
+	<circle cx="17.1545" cy="11.2793" r="0.5" fill="rgb(255,255,255)" stroke-width="0.06" stroke="rgb(0,0,0)" />
+	<text x="17.1545" y="11.5887" fill="rgb(0,0,0)" font-size="0.846" font-family="Arial" ></text>
+	<circle cx="12.8957" cy="9.26648" r="0.5" fill="rgb(255,255,255)" stroke-width="0.06" stroke="rgb(0,0,0)" />
+	<text x="12.8957" y="9.57588" fill="rgb(0,0,0)" font-size="0.846" font-family="Arial" ></text>
+	<circle cx="0.894431" cy="6.86017" r="0.73" fill="rgb(255,177,154)" stroke-width="0.12" stroke="rgb(254,69,29)" />
+	<text x="0.541098" y="7.23876" fill="rgb(120,120,120)" font-size="1.03521" font-family="Arial" >A</text>
+	<circle cx="13.3176" cy="4.88228" r="0.73" fill="rgb(255,177,154)" stroke-width="0.12" stroke="rgb(254,69,29)" />
+	<text x="12.9643" y="5.26087" fill="rgb(120,120,120)" font-size="1.03521" font-family="Arial" >A</text>
+	<circle cx="21.2866" cy="11.7435" r="0.73" fill="rgb(255,177,154)" stroke-width="0.12" stroke="rgb(254,69,29)" />
+	<text x="20.9333" y="12.1221" fill="rgb(120,120,120)" font-size="1.03521" font-family="Arial" >A</text>
+	<circle cx="16.3128" cy="15.9828" r="0.5" fill="rgb(64,149,255)" stroke-width="0.06" stroke="rgb(142,0,178)" />
+	<text x="16.0973" y="16.2595" fill="rgb(255,255,255)" font-size="0.756685" font-family="Arial" >b</text>
+	<circle cx="20.1289" cy="7.94471" r="0.73" fill="rgb(255,177,154)" stroke-width="0.12" stroke="rgb(254,69,29)" />
+	<text x="19.7755" y="8.3233" fill="rgb(120,120,120)" font-size="1.03521" font-family="Arial" >A</text>
+	<circle cx="23.326" cy="5.35419" r="0.73" fill="rgb(255,177,154)" stroke-width="0.12" stroke="rgb(254,69,29)" />
+	<text x="22.9726" y="5.73278" fill="rgb(120,120,120)" font-size="1.03521" font-family="Arial" >A</text>
+	<circle cx="20.4842" cy="16.5308" r="0.5" fill="rgb(64,149,255)" stroke-width="0.06" stroke="rgb(142,0,178)" />
+	<text x="20.2686" y="16.8075" fill="rgb(255,255,255)" font-size="0.756685" font-family="Arial" >a</text>
+	<circle cx="4.03987" cy="9.61375" r="0.73" fill="rgb(255,177,154)" stroke-width="0.12" stroke="rgb(254,69,29)" />
+	<text x="3.68654" y="9.99234" fill="rgb(120,120,120)" font-size="1.03521" font-family="Arial" >A</text>
+	<circle cx="0.79" cy="12.0574" r="0.73" fill="rgb(255,177,154)" stroke-width="0.12" stroke="rgb(254,69,29)" />
+	<text x="0.436667" y="12.436" fill="rgb(120,120,120)" font-size="1.03521" font-family="Arial" >A</text>
+	<circle cx="4.5817" cy="13.1156" r="0.73" fill="rgb(255,177,154)" stroke-width="0.12" stroke="rgb(254,69,29)" />
+	<text x="4.22836" y="13.4942" fill="rgb(120,120,120)" font-size="1.03521" font-family="Arial" >A</text>
+	<circle cx="8.48277" cy="11.2985" r="0.5" fill="rgb(255,255,255)" stroke-width="0.06" stroke="rgb(0,0,0)" />
+	<text x="8.48277" y="11.6079" fill="rgb(0,0,0)" font-size="0.846" font-family="Arial" ></text>
+	<circle cx="18.5288" cy="19.601" r="0.5" fill="rgb(64,149,255)" stroke-width="0.06" stroke="rgb(142,0,178)" />
+	<text x="18.331" y="19.8832" fill="rgb(255,255,255)" font-size="0.771711" font-family="Arial" >c</text>
+	<circle cx="14.339" cy="24.3201" r="0.5" fill="rgb(255,255,255)" stroke-width="0.06" stroke="rgb(0,0,0)" />
+	<text x="14.339" y="24.6295" fill="rgb(0,0,0)" font-size="0.846" font-family="Arial" ></text>
+	<circle cx="14.8985" cy="20.2384" r="0.5" fill="rgb(64,149,255)" stroke-width="0.06" stroke="rgb(142,0,178)" />
+	<text x="14.683" y="20.5151" fill="rgb(255,255,255)" font-size="0.756685" font-family="Arial" >d</text>
+	<circle cx="12.1943" cy="14.0613" r="1.41" fill="rgb(255,255,255)" stroke-width="0.13" stroke="rgb(255,0,0)" />
+	<text x="10.9698" y="14.4668" fill="rgb(0,0,0)" font-size="1.10861" font-family="Arial" >abcd</text>
+	<circle cx="7.66552" cy="7.25387" r="0.73" fill="rgb(255,177,154)" stroke-width="0.12" stroke="rgb(254,69,29)" />
+	<text x="7.31218" y="7.63246" fill="rgb(120,120,120)" font-size="1.03521" font-family="Arial" >A</text>
+</svg>

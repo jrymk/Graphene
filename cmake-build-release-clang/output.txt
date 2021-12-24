@@ -1,0 +1,95 @@
+echo -off
+mkvertex -name=0
+setvertexprops -name=0 -key=label -value=0
+mkvertex -name=1
+setvertexprops -name=1 -key=label -value=1
+mkvertex -name=2
+setvertexprops -name=2 -key=label -value=2
+mkvertex -name=3
+setvertexprops -name=3 -key=label -value=3
+mkvertex -name=4
+setvertexprops -name=4 -key=label -value=4
+mkvertex -name=5
+setvertexprops -name=5 -key=label -value=5
+mkvertex -name=6
+setvertexprops -name=6 -key=label -value=6
+mkvertex -name=7
+setvertexprops -name=7 -key=label -value=7
+mkvertex -name=8
+setvertexprops -name=8 -key=label -value=8
+mkvertex -name=9
+setvertexprops -name=9 -key=label -value=9
+mkedge -uname=0 -vname=2 -name=0,2
+setedgeprops -name=0,2 -key=label -value=47
+mkedge -uname=9 -vname=9 -name=9,9
+setedgeprops -name=9,9 -key=label -value=39
+mkedge -uname=7 -vname=7 -name=7,7
+setedgeprops -name=7,7 -key=label -value=29
+mkedge -uname=4 -vname=8 -name=4,8
+setedgeprops -name=4,8 -key=label -value=1
+mkedge -uname=0 -vname=3 -name=0,3
+setedgeprops -name=0,3 -key=label -value=37
+mkedge -uname=1 -vname=1 -name=1,1
+setedgeprops -name=1,1 -key=label -value=64
+mkedge -uname=7 -vname=9 -name=7,9
+setedgeprops -name=7,9 -key=label -value=9
+mkedge -uname=1 -vname=8 -name=1,8
+setedgeprops -name=1,8 -key=label -value=99
+mkedge -uname=2 -vname=5 -name=2,5
+setedgeprops -name=2,5 -key=label -value=47
+mkedge -uname=6 -vname=8 -name=6,8
+setedgeprops -name=6,8 -key=label -value=4
+mkedge -uname=3 -vname=8 -name=3,8
+setedgeprops -name=3,8 -key=label -value=52
+mkedge -uname=0 -vname=4 -name=0,4
+setedgeprops -name=0,4 -key=label -value=2
+mkedge -uname=1 -vname=5 -name=1,5
+setedgeprops -name=1,5 -key=label -value=52
+setvertexprops -name=0 -key=fillColor -value=rgb(255,255,0)
+save -f=./timeline/0.gfn
+setedgeprops -name=-2,2 -key=edgeColor -value=rgb(0,0,0)
+setedgeprops -name=-2,2 -key=thickness -value=0.06
+setedgeprops -name=0,2 -key=edgeColor -value=rgb(255,0,0)
+setedgeprops -name=0,2 -key=thickness -value=0.4
+save -f=./timeline/1.gfn
+setedgeprops -name=-2,3 -key=edgeColor -value=rgb(0,0,0)
+setedgeprops -name=-2,3 -key=thickness -value=0.06
+setedgeprops -name=0,3 -key=edgeColor -value=rgb(255,0,0)
+setedgeprops -name=0,3 -key=thickness -value=0.4
+save -f=./timeline/2.gfn
+setedgeprops -name=-2,4 -key=edgeColor -value=rgb(0,0,0)
+setedgeprops -name=-2,4 -key=thickness -value=0.06
+setedgeprops -name=0,4 -key=edgeColor -value=rgb(255,0,0)
+setedgeprops -name=0,4 -key=thickness -value=0.4
+save -f=./timeline/3.gfn
+setedgeprops -name=-2,5 -key=edgeColor -value=rgb(0,0,0)
+setedgeprops -name=-2,5 -key=thickness -value=0.06
+setedgeprops -name=2,5 -key=edgeColor -value=rgb(255,0,0)
+setedgeprops -name=2,5 -key=thickness -value=0.4
+save -f=./timeline/4.gfn
+setedgeprops -name=-2,8 -key=edgeColor -value=rgb(0,0,0)
+setedgeprops -name=-2,8 -key=thickness -value=0.06
+setedgeprops -name=3,8 -key=edgeColor -value=rgb(255,0,0)
+setedgeprops -name=3,8 -key=thickness -value=0.4
+save -f=./timeline/5.gfn
+setedgeprops -name=3,8 -key=edgeColor -value=rgb(0,0,0)
+setedgeprops -name=3,8 -key=thickness -value=0.06
+setedgeprops -name=4,8 -key=edgeColor -value=rgb(255,0,0)
+setedgeprops -name=4,8 -key=thickness -value=0.4
+save -f=./timeline/6.gfn
+setedgeprops -name=-2,1 -key=edgeColor -value=rgb(0,0,0)
+setedgeprops -name=-2,1 -key=thickness -value=0.06
+setedgeprops -name=1,5 -key=edgeColor -value=rgb(255,0,0)
+setedgeprops -name=1,5 -key=thickness -value=0.4
+save -f=./timeline/7.gfn
+setedgeprops -name=1,5 -key=edgeColor -value=rgb(0,0,0)
+setedgeprops -name=1,5 -key=thickness -value=0.06
+setedgeprops -name=1,8 -key=edgeColor -value=rgb(255,0,0)
+setedgeprops -name=1,8 -key=thickness -value=0.4
+save -f=./timeline/8.gfn
+setedgeprops -name=-2,6 -key=edgeColor -value=rgb(0,0,0)
+setedgeprops -name=-2,6 -key=thickness -value=0.06
+setedgeprops -name=6,8 -key=edgeColor -value=rgb(255,0,0)
+setedgeprops -name=6,8 -key=thickness -value=0.4
+save -f=./timeline/9.gfn
+exit

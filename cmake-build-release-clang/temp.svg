@@ -1,0 +1,52 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="21.5857px" height="8.86721px" xmlns="http://www.w3.org/2000/svg" version="1.1" >
+	<line x1="3.8009" y1="5.27215" x2="7.50419" y2="4.01072" stroke-width="0.06" stroke="rgb(0,0,0)" />
+	<text x="5.45875" y="5.29008" fill="rgb(0,0,0)" font-size="0.6" font-family="Arial" >48</text>
+	<line x1="8.528" y1="3.93091" x2="13.1628" y2="4.73943" stroke-width="0.2" stroke="rgb(255,0,0)" />
+	<text x="10.4155" y="5.07025" fill="rgb(0,0,0)" font-size="0.6" font-family="Arial" >32</text>
+	<line x1="7.71669" y1="3.39568" x2="6.13995" y2="0.974146" stroke-width="0.2" stroke="rgb(255,0,0)" />
+	<text x="7.02697" y="2.11873" fill="rgb(0,0,0)" font-size="0.6" font-family="Arial" >16</text>
+	<line x1="5.2158" y1="2.68046" x2="5.70067" y2="1.03831" stroke-width="0.2" stroke="rgb(255,0,0)" />
+	<text x="5.62024" y="2.22704" fill="rgb(0,0,0)" font-size="0.6" font-family="Arial" >19</text>
+	<line x1="7.48842" y1="3.72524" x2="5.58317" y2="3.30335" stroke-width="0.06" stroke="rgb(0,0,0)" />
+	<text x="6.29383" y="3.29101" fill="rgb(0,0,0)" font-size="0.6" font-family="Arial" >70</text>
+	<line x1="14.7953" y1="7.78707" x2="13.8713" y2="5.32667" stroke-width="0.2" stroke="rgb(255,0,0)" />
+	<text x="14.4833" y="6.59226" fill="rgb(0,0,0)" font-size="0.6" font-family="Arial" >87</text>
+	<line x1="3.02405" y1="2.0398" x2="4.60383" y2="2.92884" stroke-width="0.06" stroke="rgb(0,0,0)" />
+	<text x="3.25156" y="3.09891" fill="rgb(0,0,0)" font-size="0.6" font-family="Arial" >99</text>
+	<line x1="3.05759" y1="1.59158" x2="5.35533" y2="0.718293" stroke-width="0.2" stroke="rgb(255,0,0)" />
+	<text x="4.05242" y="1.86366" fill="rgb(0,0,0)" font-size="0.6" font-family="Arial" >96</text>
+	<line x1="0.53" y1="8.33721" x2="0.53" y2="8.33721" stroke-width="0.06" stroke="rgb(0,0,0)" />
+	<text x="0.19" y="8.55664" fill="rgb(0,0,0)" font-size="0.6" font-family="Arial" >76</text>
+	<line x1="3.19466" y1="4.92345" x2="2.66671" y2="2.29946" stroke-width="0.06" stroke="rgb(0,0,0)" />
+	<text x="3.03521" y="3.74145" fill="rgb(0,0,0)" font-size="0.6" font-family="Arial" >79</text>
+	<line x1="0.896408" y1="7.95427" x2="2.9328" y2="5.82598" stroke-width="0.2" stroke="rgb(255,0,0)" />
+	<text x="1.9528" y="7.47142" fill="rgb(0,0,0)" font-size="0.6" font-family="Arial" >21</text>
+	<line x1="17.2806" y1="3.13643" x2="14.1644" y2="4.60462" stroke-width="0.2" stroke="rgb(255,0,0)" />
+	<text x="15.1594" y="3.61644" fill="rgb(0,0,0)" font-size="0.6" font-family="Arial" >25</text>
+	<line x1="3.62611" y1="5.02587" x2="4.7388" y2="3.60594" stroke-width="0.2" stroke="rgb(255,0,0)" />
+	<text x="4.3542" y="4.804" fill="rgb(0,0,0)" font-size="0.6" font-family="Arial" >8</text>
+	<line x1="18.2519" y1="2.71309" x2="20.5638" y2="1.78497" stroke-width="0.2" stroke="rgb(255,0,0)" />
+	<text x="19.3991" y="2.87268" fill="rgb(0,0,0)" font-size="0.6" font-family="Arial" >3</text>
+	<circle cx="17.7601" cy="2.91054" r="0.5" fill="rgb(255,255,0)" stroke-width="0.06" stroke="rgb(0,0,0)" />
+	<text x="17.5445" y="3.18727" fill="rgb(0,0,0)" font-size="0.756685" font-family="Arial" >0</text>
+	<circle cx="0.53" cy="8.33721" r="0.5" fill="rgb(255,255,255)" stroke-width="0.06" stroke="rgb(0,0,0)" />
+	<text x="0.314444" y="8.61394" fill="rgb(0,0,0)" font-size="0.756685" font-family="Arial" >1</text>
+	<circle cx="3.29921" cy="5.44304" r="0.5" fill="rgb(255,255,255)" stroke-width="0.06" stroke="rgb(0,0,0)" />
+	<text x="3.08365" y="5.71977" fill="rgb(0,0,0)" font-size="0.756685" font-family="Arial" >2</text>
+	<circle cx="14.9817" cy="8.28323" r="0.5" fill="rgb(255,255,255)" stroke-width="0.06" stroke="rgb(0,0,0)" />
+	<text x="14.7661" y="8.55996" fill="rgb(0,0,0)" font-size="0.756685" font-family="Arial" >3</text>
+	<circle cx="2.56216" cy="1.77988" r="0.5" fill="rgb(255,255,255)" stroke-width="0.06" stroke="rgb(0,0,0)" />
+	<text x="2.34661" y="2.05661" fill="rgb(0,0,0)" font-size="0.756685" font-family="Arial" >4</text>
+	<circle cx="5.85076" cy="0.53" r="0.5" fill="rgb(255,255,255)" stroke-width="0.06" stroke="rgb(0,0,0)" />
+	<text x="5.6352" y="0.806731" fill="rgb(0,0,0)" font-size="0.756685" font-family="Arial" >9</text>
+	<circle cx="8.00588" cy="3.83983" r="0.5" fill="rgb(255,255,255)" stroke-width="0.06" stroke="rgb(0,0,0)" />
+	<text x="7.79033" y="4.11656" fill="rgb(0,0,0)" font-size="0.756685" font-family="Arial" >5</text>
+	<circle cx="5.06571" cy="3.18877" r="0.5" fill="rgb(255,255,255)" stroke-width="0.06" stroke="rgb(0,0,0)" />
+	<text x="4.85015" y="3.4655" fill="rgb(0,0,0)" font-size="0.756685" font-family="Arial" >8</text>
+	<circle cx="13.6849" cy="4.83051" r="0.5" fill="rgb(255,255,255)" stroke-width="0.06" stroke="rgb(0,0,0)" />
+	<text x="13.4694" y="5.10724" fill="rgb(0,0,0)" font-size="0.756685" font-family="Arial" >6</text>
+	<circle cx="21.0557" cy="1.58752" r="0.5" fill="rgb(255,255,255)" stroke-width="0.06" stroke="rgb(0,0,0)" />
+	<text x="20.8401" y="1.86425" fill="rgb(0,0,0)" font-size="0.756685" font-family="Arial" >7</text>
+</svg>
