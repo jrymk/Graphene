@@ -19,16 +19,16 @@ namespace gfn {
 
         glfwWindowHint(GLFW_SAMPLES, prefs->graphics_antialiasing_samples);
         glfwWindowHint(GLFW_MAXIMIZED, prefs->graphics_launch_maximized);
-        glfwWindowHint(GLFW_DECORATED, false);
+        //glfwWindowHint(GLFW_DECORATED, true);
 
-        glfwWindow = glfwCreateWindow(glfwGetVideoMode(glfwGetPrimaryMonitor())->width,
+        /*glfwWindow = glfwCreateWindow(glfwGetVideoMode(glfwGetPrimaryMonitor())->width,
                                       glfwGetVideoMode(glfwGetPrimaryMonitor())->height, buildVersion,
                                                 glfwGetPrimaryMonitor(), nullptr);
+*/
 
-
-        /*glfwWindow = glfwCreateWindow(prefs->graphics_launch_window_width,
+        glfwWindow = glfwCreateWindow(prefs->graphics_launch_window_width,
                                       prefs->graphics_launch_window_height,
-                                      buildVersion, nullptr, nullptr);*/
+                                      buildVersion, nullptr, nullptr);
         if (!glfwWindow)
             return false;
 
