@@ -160,10 +160,13 @@ namespace gfn {
             if (!u->props->pauseUpdate.value)
                 results.emplace_back(pool.enqueue(&Placement::updateVertex, itf, c, u));
         }
-        /*for (auto& e : c->edges) {
-            if (!e->props->pauseUpdate.value)
-                results.emplace_back(pool.enqueue(&Placement::updateEdge, itf, c, e));
-        }*/
+
+        if (itf->graph.getWrite().cfg.qualityMode) {
+            for (auto& e : c->edges) {
+                if (!e->props->pauseUpdate.value)
+                    results.emplace_back(pool.enqueue(&Placement::updateEdge, itf, c, e));
+            }
+        }
 
         for (auto& f : results)
             f.get();
@@ -210,8 +213,10 @@ namespace gfn {
         if (!stablized)
             itf->graph.getWrite().cfg.energySavingMode = false;
 
-        /*for (auto& e : c->edges)
-            e->props->position += e->props->force * itf->graph.getWrite().cfg.c4;*/
+        if (itf->graph.getWrite().cfg.qualityMode) {
+            for (auto& e : c->edges)
+                e->props->position.value += e->props->force.value * itf->graph.getWrite().cfg.c9.value;
+        }
         //std::cerr << "Multi: that took " << t << "us\n";
     }
 }

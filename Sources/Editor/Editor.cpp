@@ -19,7 +19,7 @@ namespace gfn {
 
     void Editor::update() {
         gfx.preFrame();
-        ImGui::ShowDemoWindow();
+        //ImGui::ShowDemoWindow();
 
         hk.updateHotKeyState();
 
@@ -47,6 +47,8 @@ namespace gfn {
         bool actionQuit = hk.press(Actions::QUIT, -1);
 
         ImGui::BeginMainMenuBar();
+        gfn::button("demo mode", gfn::HUE_CONTRAST, gfn::HUE_BLUE_CONTRAST, false, 0, 0, true);
+
         if (ImGui::BeginMenu("File")) {
             if (ImGui::MenuItem("\ue24d New document", nullptr, false, true))
                 actionNewDocument = true;
@@ -68,7 +70,8 @@ namespace gfn {
                 actionQuit = true;
             ImGui::EndMenu();
         }
-        if (ImGui::BeginMenu("Edit")) {
+        //ImGui::Text("Demo mode");
+        /*if (ImGui::BeginMenu("Edit")) {
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Insert")) {
@@ -79,7 +82,7 @@ namespace gfn {
         }
         if (ImGui::BeginMenu("Help")) {
             ImGui::EndMenu();
-        }
+        }*/
         ImGui::EndMainMenuBar();
 
         if (actionNewDocument)
@@ -188,6 +191,16 @@ namespace gfn {
                 fDoc->execute("shuffle");
             }
 
+            static bool usePerformanceMode = true;
+            if (gfn::button("\uea0b performance mode", usePerformanceMode ? HUE_CONTRAST : HUE_DEFAULT,
+                            usePerformanceMode ? HUE_YELLOW_CONTRAST : HUE_DEFAULT, false, ImGui::GetContentRegionAvailWidth(), 0, false)) {
+                if (!usePerformanceMode)
+                    fDoc->execute("configs -performance");
+                else
+                    fDoc->execute("configs -quality");
+                usePerformanceMode = !usePerformanceMode;
+            }
+
             ImGui::PushFont(gfx.fontSmall);
             ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(160, 160, 160, 255));
             ImGui::TextWrapped(("DocID: " + fDoc->docId).c_str());
@@ -219,7 +232,7 @@ namespace gfn {
             if (ImGui::BeginTabItem("Basic")) {
                 bool edit = false;
                 ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
-                static float preferredEdgeLength = 2.0f;
+                static float preferredEdgeLength = 4.0f;
                 ImGui::TextWrapped("Preferred edge length");
 
                 ImGui::PushFont(gfx.fontSmall);

@@ -52,6 +52,8 @@ namespace gfn {
                 }
 
                 float fixEdgeEndpoints = 1.0f;
+                if (itf->graph.getRead()->cfg.qualityMode)
+                    fixEdgeEndpoints = 0.0f;
 
                 gfn::Vec2 u = e.startVertexPosition.value + (e.endVertexPosition.value - e.startVertexPosition.value).normalize() *
                                                             fixEdgeEndpoints * (userprops.getVertexProps(e.startVertexUuid.value)->radius.value +
@@ -60,6 +62,7 @@ namespace gfn {
                 gfn::Vec2 ep = e.position.value;
                 double arrowCompensation = userprops.getVertexProps(e.endVertexUuid.value)->radius.value +
                                            userprops.getVertexProps(e.endVertexUuid.value)->outlineThickness.value / 2.0;
+
                 gfn::Vec2 v =
                         u + (e.endVertexPosition.value - u).normalize() * ((e.endVertexPosition.value - u).length() - fixEdgeEndpoints * arrowCompensation);
 

@@ -6,7 +6,7 @@
 #define BUILD_PATCH 0
 
 const char buildVersion[] = {
-        'G', 'r', 'a', 'p', 'h', 'e', 'n', 'e', ' ',
+        'G', 'r', 'a', 'p', 'h', 'e', 'n', 'e', ' ', //'D', 'E', 'M', 'O', ' ', 'M', 'O', 'D', 'E', ' ',
         '[', 'V', 'e', 'r', 's', 'i', 'o', 'n', ':', ' ',
         '0' + BUILD_MAJOR, '.', '0' + BUILD_MINOR, '.', '0' + BUILD_PATCH, ' ',
         __DATE__[0], __DATE__[1], __DATE__[2], __DATE__[3],

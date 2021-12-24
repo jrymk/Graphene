@@ -17,6 +17,7 @@ namespace gfn::configs {
         gfn::serializable::Double c9;
         gfn::serializable::Bool doGraphUpdate;
         bool energySavingMode = true;
+        bool qualityMode = false;
 
         Configs() :
                 c1("c1", 0.1), // edge attract coeff
@@ -57,6 +58,11 @@ namespace gfn::configs {
                     doGraphUpdate.setValueStr("true", output);
                     energySavingMode = false;
                 }
+                if (command.getFlag("-performance"))
+                    qualityMode = false;
+                if (command.getFlag("-quality"))
+                    qualityMode = true;
+
                 return true;
             }
             return false;
